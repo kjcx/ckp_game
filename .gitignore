@@ -1,4 +1,6 @@
 /vendor
 /.idea
-composer.lock
-easyswoole.install
+/Log
+/composer.lock
+/Temp
+.DS_Store
