@@ -1,0 +1,2102 @@
+syntax = "proto3";
+package AutoMsg;
+
+message MsgBaseRev {
+	int32 PartitionKey=1;
+	int32 MsgId=2;
+	string SignKey=3;
+    bytes Data=4;
+}
+message MsgBaseSend {
+	int32 MsgID=1;
+	int32 Result=2;
+    bytes Data=3;
+	string ErrorMsg=4;
+}
+message AddItemReq{
+    map<int32, int64> Item=1;
+}
+message BuyLandReq{
+    int32 Pos=1;
+    int32 Level=2;
+}
+message ChangeAvatarReq{
+    repeated int32 Id=1;
+}
+message CompanyLvUpReq{
+
+}
+message ConnectingReq{
+    string Token=1;
+}
+message CreateBuildReq{
+    int32 Pos=1;
+    int32 AreaId=2;
+    int32 ShopType=3;
+}
+message CreateCompanyReq{
+    string Name=1;
+}
+message CreateRoleReq{
+    string Name=1;
+    int32 Sex=2;
+}
+message DeleteRoleReq{
+    string RoleId=1;
+}
+message DepartmentUpdateReq{
+    int32 Type=1;
+}
+message DestoryBuildReq{
+    string Id=1;
+}
+message GetMapReq{
+    string Zone=1;
+    repeated int32 Pos=2;
+}
+message JoinGameReq{
+    string RoleId=1;
+}
+message RemoveItemReq{
+    int32 ItemId=1;
+    int32 Count=2;
+}
+message SellItemReq{
+    int32 ItemId=1;
+    int64 Count=2;
+}
+message UseItemReq{
+    int32 ItemId=1;
+    int32 Count=2;
+}
+message AchievementReq{
+
+}
+message AchievementResult{
+    LoadAchievement Achi=1;
+}
+message LoadAchievement{
+    map<int32, bool> Gets=1;
+    map<int32, bool> Rewards=2;
+}
+message TCAchievementResult{
+    int32 Id=1;
+    bool Statuss=2;
+}
+message ActiveAchievementReq{
+    int32 Id=1;
+}
+message ActiveAchievementResult{
+    int32 Id=1;
+}
+message GetAchievementRewardReq{
+    int32 Id=1;
+}
+message GetAchievementRewardResult{
+    int32 Id=1;
+    bool Status=2;
+}
+message UnLoadAchievementReq{
+    int32 Id=1;
+}
+message UnLoadAchievementResult{
+    int32 Id=1;
+}
+message AppointManagerReq{
+    int32 Id=1;
+    int32 Index=2;
+    int32 DepartmentType=3;
+}
+message AppointManagerResult{
+    int32 Id=1;
+    int32 Index=2;
+    int32 DepartmentType=3;
+}
+message ChangeManagerReq{
+    int32 Id=1;
+    int32 Index=2;
+    int32 DepartmentType=3;
+}
+message ChangeManagerResult{
+    int32 Id=1;
+    int32 Index=2;
+    int32 DepartmentType=3;
+}
+message GetManagerInfoReq{
+    repeated int32 IdList=1;
+}
+message GetManagerInfoResult{
+    repeated LoadRefStaff LoadRefStaffList=1;
+}
+message AuctionShopReq{
+    int32 Page=1;
+    string Keyword=2;
+    int32 ShopType=3;
+}
+message AuctionShopResult{
+    repeated PublicShop PublicShop=1;
+}
+message RoleAuctionShopReq{
+
+}
+message RoleAuctionShopResult{
+    repeated PublicShop RoleAuctionShop=1;
+}
+message UpdataRoleShopResult{
+    PublicShop PushPublicShop=1;
+}
+message ShopAuctionReq{
+    string ShopId=1;
+    int64 Price=2;
+}
+message ShopAuctionResult{
+    PublicShop OnePublicShop=1;
+}
+message TestReq{
+
+}
+message TestResult{
+
+}
+message PublicRoleShopReq{
+
+}
+message PublicRoleShopResult{
+    repeated LoadBuildInfo LandBuildInfo=1;
+}
+message ShopInfoReq{
+    string ShopId=1;
+}
+message ShopInfoResult{
+    PublicShop ShopInfo=1;
+}
+message NoBodyShopReq{
+    int32 Page=1;
+    int32 ShopType=3;
+}
+message NoBodyShopResult{
+    repeated PublicShop NoBodyShop=1;
+}
+message PurchaseShopReq{
+    string ShopId=1;
+}
+message PurchaseShopResult{
+    LoadBuildInfo LandBuildInfo=1;
+}
+message PublicShop{
+    string BuildId=1;
+    int32 BuildType=2;
+    string Name=3;
+    int64 CurrSellPrice=4;
+    int64 StartCurrSellPrice=5;
+    string RoleId=6;
+    int32 CurExtendLv=7;
+    int32 ShopLevel=8;
+    int32 Pos=9;
+}
+message BiddingAhReq{
+    string AhId=1;
+    int32 GoldType=2;
+    int64 GoldCount=3;
+}
+message BiddingAhResult{
+    DealGoodsUpdate Goods=1;
+}
+message BiddingGoodsReq{
+    string DealId=1;
+    int64 GoldCount=2;
+}
+message BiddingGoodsResult{
+    DealGoodsUpdate Goods=1;
+}
+message BuildAdvReq{
+    repeated string BuildingIds=1;
+}
+message BuildAdvResult{
+    int32 AdvCount=1;
+    repeated BuildAdvAffect BuildingIds=2;
+}
+message BuildAdvAffect{
+    string BuildId=1;
+    int32 AdvNumber=2;
+}
+message BuildAdvFailedResult{
+    string BuildId=1;
+}
+message BuildExtendReq{
+    repeated string BuildId=1;
+}
+message BuildExtendResult{
+    repeated LoadBuildInfo BuildInfo=1;
+}
+message BuildExtendFailedResult{
+    string BuildId=1;
+}
+message BuildLvUpReq{
+    repeated string BuildId=1;
+}
+message BuildLvUpResult{
+    repeated LoadBuildInfo LandBuildInfo=1;
+}
+message BuildLvUpFailedResult{
+    string BuildId=1;
+}
+message SendMsgToChannelReq{
+    string Msg=1;
+    int32 ChannelId=2;
+}
+message SendMsgToChannelResult{
+    int32 Status=1;
+}
+message TCRecMsgFromChannelResult{
+    string Msg=1;
+    string RoleId=2;
+    int32 ChannelId=3;
+    string Name=4;
+    int32 Time=5;
+    string Icon=6;
+}
+message TCRecMsgHorseResult{
+    string Msg=1;
+}
+message AuctionEndStartResult{
+    bool EndIsStart=1;
+}
+message TCRecSystemMsgResult{
+    string Msg=1;
+    string SystemHead=2;
+    string SystemName=3;
+}
+message RedPacketMsgResult{
+    string Msg=1;
+    string SystemHead=2;
+    string SystemName=3;
+    int32 ChannelId=4;
+}
+message TextShopEndMsgResult{
+
+}
+message ChatToChatReq{
+    string RoleId=1;
+    string Message=2;
+}
+message ChatToChatResult{
+    int32 Status=1;
+}
+message ChatMessage{
+    int32 Time=1;
+    string Message=2;
+}
+message ChatMessageInfo{
+    string RoleId=1;
+    string Name=2;
+    string Icon=3;
+    string VIP=4;
+    int64 OnlineTime=5;
+    repeated ChatMessage Messages=6;
+}
+message ChatNoReadResult{
+    repeated ChatMessageInfo Messages=1;
+}
+message CKApiReq{
+    string Key=1;
+    int32 Type=2;
+    PayParams PayParams=3;
+    PayLogParams PayLogParams=4;
+    TeamParams TeamParams=5;
+    GetRmbParams GetRmbParams=6;
+}
+message GetRmbParams{
+    int32 Gold=1;
+    string Pwd=2;
+}
+message CKErrResult{
+    string Error=1;
+}
+message CkTeamResult{
+    bool HasMore=1;
+    string Total=2;
+    repeated CkTeamsInfo Teams=3;
+}
+message CkTeamsInfo{
+    string MemberId=1;
+    string MemberName=2;
+    string MemberNickname=3;
+    string MemberMobile=4;
+    string InviteNum=5;
+    string InviteMoney=6;
+}
+message CkGetRmbResult{
+    bool Status=1;
+}
+message CkPayResult{
+    bool Status=1;
+}
+message CKRichResult{
+    string Point=1;
+    string Predepoit=2;
+    string Voucher=3;
+    string Credit=4;
+    string Team=5;
+    string Invite=6;
+    string Chuangke_invite=7;
+}
+message CKPayLogResult{
+    string LgId=1;
+    string LgMemberId=2;
+    string LgMemberName=3;
+    string LgAdminName=4;
+    string LgType=5;
+    string LgAvAmount=6;
+    string LgFreezeAmount=7;
+    string LgAddTime=8;
+    string LgDesc=9;
+    string LgInviteMemberId=10;
+    string LgAdminMemo=11;
+    string LgSourceOnly=12;
+}
+message CKApiResult{
+
+}
+message PayParams{
+    int32 Id=1;
+    string Pwd=2;
+}
+message PayLogParams{
+    string OrderId=1;
+}
+message TeamParams{
+    string Page=1;
+    string Curpage=2;
+    string Sex=3;
+    string Invite=4;
+}
+message CKConnectReq{
+    string UserId=1;
+}
+message CKConnectResult{
+    bool NoRole=1;
+}
+message DataCountReq{
+    repeated int32 Key=1;
+}
+message DataCountResult{
+    map<int32, int64> DataStatistics=1;
+}
+message DelMailsReq{
+    repeated string Id=1;
+}
+message DelMailsResult{
+    repeated string Id=1;
+}
+message DropShopReq{
+    int32 ShopType=1;
+}
+message DropShopResult{
+    repeated LoadDropData LoadConsume=1;
+    int32 Time=2;
+    int32 Date=3;
+    int32 ShopTypeId=4;
+}
+message SeedShopReq{
+    int32 ShopTypeId=1;
+}
+message SeedShopResult{
+    repeated int32 IiteId=1;
+}
+message DropShopPingReq{
+    int32 DropKuId=1;
+    int32 ItemId=2;
+    int32 ShopTypeId=3;
+    int32 GridId=4;
+}
+message DropShopPingResult{
+    LoadDropData LoadConsume=1;
+}
+message SeedShopPingReq{
+    int32 ItemId=1;
+    int32 ItemCount=2;
+}
+message SeedShopPingResult{
+    int32 ItemId=1;
+    int32 ItemCount=2;
+    int32 Price=3;
+}
+message RefDropShopReq{
+    int32 ShopTypeId=1;
+}
+message RefDropShopResult{
+    repeated LoadDropData LoadConsume=1;
+    int32 Time=2;
+    int32 Date=3;
+    int32 ShopTypeId=4;
+}
+message ShopAllReq{
+
+}
+message ShopAllResult{
+    repeated LoadDropData LoadConsume=1;
+    int32 Time=2;
+    int32 Date=3;
+    int32 MenSWearTime=4;
+    int32 WoMenSWearTime=5;
+    int32 HairdressingTime=6;
+    int32 OrnamentTime=7;
+}
+message ModelClothesReq{
+    repeated int32 Id=1;
+}
+message ModelClothesResult{
+    repeated int32 Id=1;
+}
+message LoadDropData{
+    int32 Id=1;
+    int32 DropKuId=2;
+    int32 Count=3;
+    int32 ShopType=4;
+    int32 GridId=5;
+    int64 DiscountedPrice=6;
+}
+message FriendAwardReq{
+
+}
+message FriendAwardResult{
+    map<int32, int64> Award=1;
+}
+message FriendApplyReq{
+    string RoleId=1;
+}
+message FriendApplyResult{
+    FriendInfo Info=1;
+    bool To=2;
+    bool Applyed=3;
+}
+message FriendAddReq{
+    repeated string RoleIds=1;
+}
+message FriendRemoveReq{
+    string RoleId=1;
+}
+message FriendRemoveResult{
+    string RoleId=1;
+}
+message FriendAddResult{
+    repeated FriendInfo Infos=1;
+    bool To=2;
+}
+message FriendInfo{
+    string Name=1;
+    string Icon=2;
+    int32 VIP=3;
+    int64 SocialStatus=4;
+    uint32 Status=5;
+    int32 OnlineTime=6;
+    int32 AddTime=7;
+    int32 ApplyTime=8;
+    string RoleId=9;
+    int32 Level=10;
+    int32 FriendValue=13;
+    string WorkCompany=14;
+    int32 DigCount=15;
+    string ShopId=16;
+    int32 HireTime=17;
+}
+message FriendListResult{
+    repeated FriendInfo Friends=1;
+    repeated FriendInfo Blacks=3;
+}
+message FriendUpdateResult{
+    FriendInfo Friend=1;
+}
+message FriendSearchReq{
+    string Name=1;
+    bool Search=2;
+}
+message FriendSearchResult{
+    repeated FriendInfo Friends=1;
+}
+message FriendApplyClearReq{
+
+}
+message FriendApplyClearResult{
+
+}
+message FriendAddBlackReq{
+    string RoleId=1;
+}
+message FriendAddBlackResult{
+    FriendInfo Role=1;
+}
+message FriendRemoveBlackReq{
+    string RoleId=1;
+}
+message FriendRemoveBlackResult{
+    string RoleId=1;
+}
+message FriendOnlineResult{
+    string RoleId=1;
+    bool Online=2;
+}
+message FriendBaseResult{
+    string RoleId=1;
+    int64 SocialStatus=2;
+}
+message FriendValueUpdateResult{
+    string RoleId=1;
+    int32 Value=2;
+}
+message FriendInteractiveReq{
+    int32 Type=1;
+    string RoleId=2;
+}
+message FriendInteractiveResult{
+    bool Complete=1;
+    string RoleId=2;
+}
+message FruitsDataReq{
+
+}
+message FruitsDataResult{
+    map<int32, LoadFruitsData> LoadFruits=1;
+}
+message RaffleFruitsReq{
+    int32 Id=1;
+}
+message RaffleFruitsResult{
+    repeated int32 ItemId=1;
+}
+message LoadFruitsData{
+    int32 ItemId=1;
+    int32 FruitsId=2;
+    int32 Count=3;
+}
+message BuyFurnitureReq{
+    int32 Id=1;
+    int32 Count=2;
+}
+message BuyFurnitureResult{
+    map<int64, LoadRoleBagInfo> Furnitures=1;
+}
+message SellFurnitureReq{
+    repeated int32 Id=1;
+}
+message SellFurnitureResult{
+    repeated int64 Id=1;
+}
+message FurnitureStarReq{
+    int32 Id=1;
+}
+message FurnitureStarResult{
+    map<int64, LoadRoleBagInfo> Furnitures=1;
+    map<int32, int64> Items=2;
+}
+message AddFurnReq{
+    map<int32, int32> Items=1;
+}
+message AddFurnResult{
+    repeated LoadRoleBagInfo Items=1;
+}
+message UpdateFurnitureResult{
+    map<int64, LoadRoleBagInfo> Furnitures=1;
+}
+message GetMailItemsReq{
+    repeated string Id=1;
+}
+message GetMailItemsResult{
+    repeated string Id=1;
+}
+message GetMailItemsFailedResult{
+    string Id=1;
+}
+message GetPrivateLandReq{
+
+}
+message GetPrivateLandResult{
+    map<int32, LoadLandInfo> LoadLandInfoDic=1;
+    PrivateBuildInfo PrivateBuildInfo=2;
+}
+message ItemBuyReq{
+    int32 ItemId=1;
+    int32 Count=2;
+}
+message ItemBuyResult{
+
+}
+message UpdateItemResult{
+    map<int32, int64> itemUpdate=1;
+}
+message ItemInfoCls{
+    int32 ItemId=1;
+    int64 Count=2;
+}
+message LoadingGoldReq{
+    string Id=1;
+}
+message LoadingGoldResult{
+    SavingInfo SavingInfo=1;
+}
+message MailReq{
+
+}
+message MailResult{
+    MailMsg Mail=1;
+}
+message MailMsg{
+    map<int32, int64> Item=1;
+    string Msg=2;
+    string SenderId=3;
+    int32 SendTime=4;
+    string Title=5;
+    string Id=6;
+    bool Reward=7;
+    string SenderName=8;
+    bool Read=9;
+    string SenderIcon=10;
+}
+message ReadMailReq{
+    string Id=1;
+}
+message ReadMailResult{
+    string Id=1;
+}
+message MakeReq{
+    int32 Id=1;
+    int32 Count=2;
+}
+message MakeResult{
+    map<int32, int64> ItemCount=1;
+}
+message ManorSystemProto{
+
+}
+message RequestManorReq{
+    string UserId=1;
+}
+message RequestManorResult{
+    repeated LoadManorData LoadManor=1;
+    int32 Time=2;
+    string UserName=3;
+    string RoleId=4;
+}
+message InitiativeRequestManorReq{
+    string UserId=1;
+}
+message InitiativeRequestManorResult{
+    repeated LoadManorData LoadManor=1;
+    int32 Time=2;
+}
+message ClearStateReq{
+    int32 Id=1;
+    int32 State=2;
+    string UserId=3;
+}
+message ClearStateResult{
+    int32 Id=1;
+    int32 State=2;
+    int32 SemenId=3;
+    int32 Count=4;
+}
+message GrowPlantsReq{
+    int32 Id=1;
+    int32 SemenId=2;
+}
+message GrowPlantsResult{
+    LoadManorData LoadManor=1;
+}
+message HarvestPlantReq{
+    repeated int32 HarvestPlanId=1;
+}
+message HarvestPlanResult{
+    repeated LoadListId LoadHarvestCount=1;
+}
+message StealSemenReq{
+    repeated int32 Id=1;
+    string UserId=2;
+}
+message StealSemenResult{
+    repeated LoadListId LoadHarvestCount=1;
+}
+message DismantleReq{
+    int32 Id=1;
+    string UserId=2;
+}
+message DismantleResult{
+    int32 Id=1;
+}
+message AddSoilReq{
+    int32 Id=1;
+}
+message AddSoilResult{
+    int32 Id=1;
+}
+message RefFitnessReq{
+    int32 Id=1;
+    string UserId=2;
+}
+message RefFitnessResult{
+    LoadManorData LoadManor=1;
+}
+message AKeyMatureReq{
+    int32 Id=1;
+    int64 Money=2;
+}
+message AKeyMatureResult{
+    LoadListId LoadHarvestCount=1;
+}
+message UpgradeLandLevelReq{
+    int32 Id=1;
+}
+message UpgradeLandLevelResult{
+    LoadManorData LoadManor=1;
+}
+message LoadManorData{
+    int32 Id=1;
+    int64 PlantDate=2;
+    int32 SemenId=3;
+    float StatusTime=4;
+    int32 Status=5;
+    int32 PhasesStatus=6;
+    int32 StealTime=7;
+    int32 SoilState=8;
+    string UserName=9;
+    int32 SoilLevel=10;
+}
+message LoadListId{
+    int32 Id=1;
+    int32 SemenId=2;
+    int64 Count=3;
+    int32 Time=4;
+}
+message ManorVisitInfoTipResult{
+    ManorVisitInfoRes Record=1;
+}
+message ManorVisitInfoReq{
+
+}
+message ManorVisitInfoResult{
+    repeated ManorVisitInfoRes Visits=1;
+}
+message ManorVisitInfoRes{
+    string RoleId=1;
+    string Name=2;
+    int32 Time=3;
+    int32 Type=4;
+    int32 Value1=5;
+    int32 Value2=6;
+    map<int32, int64> ItmeCount=7;
+    int32 Status=8;
+}
+message MissionResult{
+    map<int32, int32> Completes=1;
+    map<int32, MissionDataResult> Doings=2;
+    map<int32, bool> VitalityStatus=3;
+    int32 Vitality=4;
+    map<int32, int32> CreateRoadCount=5;
+    int32 CreateRoad=6;
+}
+message CreateRoadOpenResult{
+    int32 Id=1;
+}
+message CreateRoadRewardReq{
+
+}
+message CreateRoadRewardResult{
+    int32 Id=1;
+    int32 NewId=2;
+    map<int32, int32> Rewards=3;
+}
+message MissionVitalityGetReq{
+    int32 Id=1;
+}
+message MissionVitalityGetResult{
+    int32 Id=1;
+    map<int32, int32> Rewards=2;
+}
+message MissionVitalityResult{
+    int32 Vitality=1;
+}
+message MissionGetRewardReq{
+    int32 MissionId=1;
+}
+message MissionGetRewardResult{
+    int32 MissionId=1;
+    map<int32, int32> Rewards=2;
+}
+message MissionCompleteResult{
+    MissionDataResult Mission=1;
+}
+message MissionNewResult{
+    MissionDataResult Mission=1;
+}
+message MissionDataResult{
+    int32 MissId=1;
+    repeated float Progress=2;
+    bool GetReward=3;
+    bool Complete=4;
+}
+message MissionFirstCompleteReq{
+    int32 MissionId=1;
+}
+message MissionFirstCompleteResult{
+    int32 MissionId=1;
+}
+message MoneyChangeReq{
+    int64 Count=1;
+    int32 ChangeTo=2;
+}
+message MoneyChangeResult{
+    int64 Count=1;
+    int32 ChangeTo=2;
+}
+message NpcFavorabilityReq{
+
+}
+message NpcFavorabilityResult{
+    repeated LoadNpcFavorability NpcFavorabilityData=1;
+}
+message NpcRelationAdvanceReq{
+    int32 NpcId=1;
+}
+message NpcRelationAdvanceResult{
+    LoadNpcFavorability NpcFavorabilityData=1;
+}
+message AddNpcRelationAdvanceReq{
+    AddNpcFavorability AddNpcFavor=1;
+}
+message AddNpcRelationAdvanceResult{
+    LoadNpcFavorability NpcFavorabilityData=1;
+}
+message LoadNpcFavorability{
+    int32 NpcId=1;
+    int32 CurrentFavorability=2;
+    int32 FavorabilityLevel=3;
+}
+message AddNpcFavorability{
+    int32 NpcId=1;
+    int32 ItemId=2;
+    int32 ItemCount=3;
+}
+message ProcurementReq{
+
+}
+message ProcurementResult{
+    repeated LoadPurchaseData LoadPurchase=1;
+}
+message ConsumeReq{
+    repeated string ShopId=1;
+}
+message ConsumeResult{
+    repeated LoadConsumeData LoadConsume=1;
+}
+message ShopBasisReq{
+    string ShopId=1;
+}
+message ShopBasisResult{
+    int64 Basis=1;
+}
+message HarvestPublicShopReq{
+    repeated string ShopId=1;
+}
+message HarvestPublicShopResult{
+    repeated LoadConsumeData LoadConsume=1;
+}
+message PurchaseReq{
+    repeated LoadShopData LoadShopData=1;
+}
+message PurchaseResult{
+    repeated LoadPurchaseData LoadPurchase=1;
+}
+message StrategyStrikeReq{
+    string ShopId=1;
+    int32 Strategystrike=2;
+}
+message GetUserShopReq{
+    string RoleId=1;
+}
+message GetUserShopResult{
+    repeated LoadBuildInfo LoadBuild=1;
+    int32 PraiseTime=2;
+    string RoleId=3;
+    string RoleName=4;
+}
+message StrategyStrikeResult{
+    int64 Money=1;
+    int32 Type=2;
+    int32 Count=3;
+    string ShopId=4;
+    int32 ShopCount=5;
+    int32 DelKuCun=6;
+}
+message LoadPurchaseData{
+    string ShopId=1;
+    int32 OutputGoldDate=2;
+    int32 HarvestDate=3;
+    int32 Surplus=4;
+    int32 ItmeCount=5;
+    int32 ItmeDate=6;
+}
+message LoadShopData{
+    string ShopId=1;
+    int32 Quantity=2;
+}
+message LoadConsumeData{
+    string ShopId=1;
+    int32 HarvestDate=2;
+    int32 Surplus=3;
+    map<int32, int64> ItemCount=4;
+    int32 ItmeDate=5;
+    int64 Money=6;
+    int32 MoneyType=7;
+}
+message RandomPosReq{
+    string Zone=1;
+}
+message RandomPosResult{
+    int32 Pos=1;
+}
+message RankingReq{
+    int32 RankingType=1;
+}
+message RankingResult{
+    LoadRanking LoadRanking=1;
+}
+message GetRankingReq{
+
+}
+message GetRankingResult{
+    int32 IncomeRanking=1;
+    int32 CompanyRanking=2;
+    int32 GoldCountRanking=3;
+    int32 FeelingRanking=4;
+    int32 PKWin=5;
+    int32 PKWinCount=6;
+    int32 PKLostCount=7;
+    int32 PKPingCount=8;
+}
+message LoadRanking{
+    map<int32, RankdataListProto> Ranking=1;
+}
+message RankdataListProto{
+    repeated RankDataProto RankDataProtoList=1;
+}
+message RankDataProto{
+    int32 Rank=1;
+    int64 Value=2;
+    int32 Value1=3;
+    int32 Value2=4;
+    int32 Value3=5;
+    string RoleId=6;
+    string Name=7;
+    string Icon=8;
+}
+message RedPacketProtocol{
+
+}
+message Get2RedPacketResult{
+
+}
+message UpdateRedPacketRecordReq{
+
+}
+message UpdateRedPacketRecordResult{
+    repeated int32 KeyId=1;
+}
+message GetRedPacketReq{
+    LoadRedPacket loadRedPacket=1;
+}
+message GetRedPacketResult{
+    LoadResultRedPacket loadRedPacket=1;
+}
+message ReceiveRedPacketReq{
+    int32 KeyId=1;
+}
+message ReceiveRedPacketResult{
+    LoadResultRedPacket loadRedPacket=1;
+}
+message LoadRedPacket{
+    int32 RedPacketPrice=1;
+    string RedPacketMessage=2;
+    int32 RedPacketNumber=3;
+    int32 ChannelId=4;
+}
+message LoadResultRedPacket{
+    string Id=1;
+    int32 RedPacketPrice=2;
+    string RedPacketMessage=3;
+    int32 RedPacketNumber=4;
+    int64 RedPacketData=5;
+    int32 KeyId=6;
+    int32 ChannelId=7;
+    repeated LoadReceiveRedPacket LoadReceiveRedPacket=8;
+    int32 SurplusRedPacketPrice=9;
+    int32 SurpluRedPacketNumber=10;
+    string Name=11;
+    string Icon=12;
+    int64 RedPacketMaxMoney=13;
+}
+message LoadReceiveRedPacket{
+    string RoleId=1;
+    string Nmae=2;
+    int64 Price=3;
+}
+message RefreshAHReq{
+
+}
+message RefreshAHResult{
+    repeated DealGoodsUpdate GenAhGoods=1;
+    repeated DealGoodsUpdate ValAhGoods=2;
+}
+message RefreshDealGoodsReq{
+    int32 Page=1;
+    string Keyword=2;
+    int32 GoodsType=3;
+    int32 DealType=4;
+}
+message RefreshDealGoodsResult{
+    repeated DealGoodsUpdate Goods=1;
+}
+message DealGoodsUpdateResult{
+    DealGoodsUpdate Goods=1;
+}
+message DealGoodsUpdate{
+    int32 Id=1;
+    int32 Count=2;
+    int32 GoldType=3;
+    int64 Price=4;
+    int64 DealType=5;
+    int32 UpTime=6;
+    int64 CurPrice=7;
+    string DealId=8;
+    string BiddingRoleId=9;
+    string Name=10;
+    int32 BiddingCount=11;
+    string BiddingName=12;
+    string Owner=13;
+}
+message RefStaffReq{
+    int32 TypeId=1;
+}
+message RefStaffResult{
+    repeated LoadRefStaff LoadRefStaffList=1;
+    map<int32, TypeCountStaff> TypeCountStaff=2;
+}
+message LoadStaffReq{
+
+}
+message LoadStaffResult{
+    repeated LoadRefStaff LoadRefStaffList=1;
+}
+message TypeCountStaffReq{
+
+}
+message TypeCountStaffResult{
+    map<int32, TypeCountStaff> TypeCountStaff=1;
+    int32 TrainTime=2;
+}
+message EmployeesCardReq{
+    int32 Id=1;
+    string CompanyId=2;
+}
+message EmployeesCardResult{
+    LoadRefStaff LoadRefStaffList=1;
+    string CompanyId=2;
+}
+message LevelUpEmployeeReq{
+    repeated int32 ListId=1;
+}
+message LevelUpEmployeeResult{
+    repeated LoadRefStaff LevelUpStaffList=1;
+}
+message CultivateEmployeeReq{
+    repeated int32 ListId=1;
+}
+message CultivateEmployeeResult{
+    repeated LoadRefStaff CultivateStaffList=1;
+    int32 TrainTime=2;
+}
+message DismissalEmployeeReq{
+    repeated int32 ListId=1;
+}
+message DismissalEmployeeResult{
+    repeated int32 ListId=1;
+}
+message ComeOutEmployeeReq{
+    string ShopId=1;
+    int32 ComeOutInEmployee=2;
+    repeated int32 NpcCardId=3;
+}
+message ComeOutEmployeeResult{
+    string BuildShopId=1;
+    repeated LoadRefStaff StaffData=2;
+    int32 BuildShopStaffCount=3;
+}
+message TypeCountStaff{
+    int32 Count=1;
+    int32 Date=2;
+}
+message LoadRefStaff{
+    int32 Id=1;
+    int32 EmployersDate=2;
+    string Name=3;
+    map<int32, int32> BasicProperties=4;
+    int32 LevelUpTime=5;
+    string ShopId=6;
+    int32 NpcId=7;
+    int32 ComprehensionTime=8;
+    bool Appointed=9;
+    int32 Pos=10;
+}
+message RequestGoodsDownReq{
+    string DealId=1;
+}
+message RequestGoodsDownResult{
+    bool Status=1;
+    int32 ItemID=2;
+    int32 Count=3;
+}
+message OnGetMyGoodsReq{
+
+}
+message OnGetMyGoodsResult{
+    repeated DealGoodsUpdate Goods=1;
+}
+message ResidentDelegateReq{
+
+}
+message ResidentDelegateResult{
+    map<int32, LoadResidentDelegate> ItemCount=1;
+    int32 Count=2;
+    int32 RefCount=3;
+}
+message RefResidentDelegateReq{
+
+}
+message RefResidentDelegateResult{
+    map<int32, LoadResidentDelegate> ItemCount=1;
+    int32 RefCount=2;
+}
+message AccomplishResidentDelegateReq{
+    int32 ArrayId=1;
+}
+message AccomplishResidentDelegateResult{
+    map<int32, LoadResidentDelegate> ItemCount=1;
+    int32 Count=2;
+}
+message LoadResidentDelegate{
+    int32 NpcId=1;
+    map<int32, int64> ItemCount=2;
+    bool IsAccomplish=3;
+}
+message RoomReq{
+    string RoleId=1;
+}
+message RoomResult{
+    string RoleId=1;
+    int32 RoomId=2;
+    map<int32, int32> Config=3;
+}
+message RoomListResult{
+    repeated RoomResult Rooms=1;
+}
+message RoomVisitInfoReq{
+
+}
+message RoomVisitInfoResult{
+    repeated RoomVisitInfo Visits=1;
+}
+message RoomVisitInfoTipResult{
+    RoomVisitInfo Record=1;
+}
+message RoomVisitInfo{
+    string RoleId=1;
+    string Name=2;
+    int32 Time=3;
+    int32 Type=4;
+    int32 Value1=5;
+    int32 Value2=6;
+    int32 Value3=7;
+    int32 Status=8;
+}
+message RoomConfigUpdateReq{
+    map<int32, RoomFurUpdateInfo> Config=3;
+}
+message RoomFurUpdateInfo{
+    int32 ItemId=1;
+    int32 FurId=2;
+}
+message RoomConfigUpdateResult{
+    map<int32, int32> Config=3;
+}
+message RoomBuyReq{
+    int32 roomId=1;
+}
+message RoomBuyResult{
+    int32 roomId=1;
+}
+message RoomSellReq{
+    int32 RoomId=1;
+}
+message RoomSellResult{
+    int32 RoomId=1;
+    RoomResult Room=2;
+}
+message RoomLiveReq{
+    int32 RoomId=1;
+}
+message RoomLiveResult{
+    RoomResult Room=1;
+}
+message RoomVisitReq{
+    string RoleId=1;
+}
+message RoomVisitResult{
+    RoomResult Room=1;
+    RoleVisitInfo Role=2;
+    repeated LoadRoleBagInfo Furnitures=3;
+}
+message RoleVisitInfo{
+    string RoleId=1;
+    string Icon=2;
+    string Name=3;
+    int32 Sex=4;
+    string VipLevel=5;
+    int64 SocialStatus=6;
+    repeated int32 Avatar=7;
+    int64 RoomPraiseTime=8;
+    int32 Achieve=9;
+    int32 VipId=10;
+}
+message RoomUpdateReq{
+    int32 Id=1;
+}
+message RoomUpdateResult{
+    RoomResult RoomResult=1;
+}
+message SavingGoldReq{
+    int32 GoldType=1;
+    int64 GoldCount=2;
+    int32 SaveType=3;
+    int32 TimeLimit=4;
+}
+message SavingGoldResult{
+    SavingInfo SavingInfo=1;
+}
+message LoadLoansReq{
+
+}
+message LoadLoansResult{
+    LoansInfo Loans=1;
+}
+message LoansReq{
+    int64 GoldCount=1;
+    int32 GoldType=2;
+    int32 Day=3;
+}
+message LoansResult{
+    LoansInfo Loans=1;
+}
+message GoldRepaymentReq{
+    int64 GoldCount=1;
+    int32 GoldType=2;
+}
+message GoldRepaymentResult{
+    LoansInfo Loans=1;
+}
+message StaffRepaymentReq{
+    repeated int32 ListId=1;
+}
+message StaffRepaymentResult{
+    LoansInfo Loans=1;
+    repeated int32 ListId=2;
+}
+message ShopRepaymentReq{
+    repeated ShopTypeInfo ShopType=1;
+}
+message ShopRepaymentResult{
+    repeated ShopTypeInfo ShopType=1;
+    LoansInfo Loans=2;
+}
+message ShopTypeInfo{
+    string ShopId=1;
+    int32 Area=2;
+}
+message ItemRepaymentReq{
+    repeated int32 ItemId=1;
+}
+message ItemRepaymentResult{
+    repeated int32 ItemId=1;
+    LoansInfo Loans=2;
+}
+message LoansInfo{
+    string Id=1;
+    int32 LoansTime=2;
+    int32 Day=3;
+    int64 GoldCount=4;
+    int32 GoldType=5;
+    int32 WhetherTheLoan=6;
+}
+message SavingInfo{
+    int32 SavingType=1;
+    int32 SavingTime=2;
+    int32 TimeLimit=3;
+    double GoldCount=4;
+    int32 GoldType=5;
+    double SavingInst=6;
+    int32 LoadingTime=7;
+    string Id=8;
+    double Earnings=9;
+}
+message SellLandReq{
+    repeated int32 Pos=1;
+}
+message SellLandResult{
+    repeated int32 Pos=1;
+}
+message SevenDaysProto{
+
+}
+message SevenDaysReq{
+
+}
+message SevenDaysResult{
+    repeated SevenDaysInfo SevenDaysList=1;
+}
+message PickUpSevenDaysReq{
+    int32 Id=1;
+}
+message PickUpSevenDaysResult{
+    SevenDaysInfo SevenDaysList=1;
+}
+message SignReq{
+
+}
+message SignResult{
+    map<int32, LoadSignInfoList> LoaSignInfo=1;
+}
+message DaySignReq{
+    int32 Day=1;
+}
+message DaySignResult{
+    map<int32, LoadSignInfo> LoaSignInfo=1;
+}
+message DrawLotsReq{
+
+}
+message DrawLotsResult{
+    int32 LotteryId=1;
+}
+message OnLineAwardsReq{
+
+}
+message OnLineAwardsResult{
+    OnLineAwardsInfo onLineAward=1;
+}
+message GetOnLineAwardsReq{
+
+}
+message GetOnLineAwardsResult{
+    OnLineAwardsInfo onLineAward=1;
+}
+message SevenDaysInfo{
+    int32 Id=1;
+    bool IsPickUp=2;
+    bool IsLogin=3;
+}
+message LoadSignInfo{
+    int32 Day=1;
+    bool IsSign=2;
+}
+message LoadSignInfoList{
+    repeated LoadSignInfo LoadSignList=1;
+}
+message OnLineAwardsInfo{
+    string RoleId=1;
+    int32 SectionTime=2;
+    int32 HowManyStages=3;
+    bool IsOnline=4;
+}
+message ShopLeaderReq{
+    string BuildId=1;
+    string FriendId=2;
+}
+message ShopLeaderResult{
+    string FriendId=1;
+    string BuildId=2;
+    int32 StartTime=3;
+}
+message TCShopLeaderResult{
+    string UserId=1;
+    string BuildId=2;
+    int32 StartTime=3;
+}
+message LoadLeaderInfo{
+    string ShopLeader=1;
+    int32 LeaderTime=2;
+}
+message FireLeaderReq{
+    string BuildId=1;
+    string FriendId=2;
+}
+message FireLeaderResult{
+    string BuildId=1;
+    int64 Money=2;
+    int64 MoneyType=3;
+}
+message SkillReq{
+
+}
+message SkillResult{
+    map<int32, int32> Skills=1;
+}
+message UnLockSkillResult{
+    map<int32, int32> Skills=1;
+}
+message LearnSkillReq{
+    int32 SkillId=1;
+}
+message LearnSkillResult{
+    int32 SkillId=1;
+    int32 SkillLv=2;
+}
+message SkillLvUpReq{
+    int32 SkillId=1;
+}
+message SkillLvUpResult{
+    int32 SkillId=1;
+    int32 SkillLv=2;
+}
+message TakeOutReq{
+
+}
+message UpdateOutReq{
+
+}
+message TakeOutResult{
+    map<string, TakeOutP> FriendFlavor=1;
+}
+message TakeOutP{
+    bool Status=1;
+    repeated int32 Flavor=2;
+}
+message GiftTakeOutReq{
+    string FriendId=1;
+    int32 Item=2;
+}
+message GiftTakeOutResult{
+    string FriendId=1;
+    bool Status=2;
+    int32 FriendValue=3;
+    int32 FriendValuePro=4;
+}
+message GetTalentListReq{
+
+}
+message GetTalentListResult{
+    repeated TalentInfo List=1;
+    TalentMarketInfo Info=2;
+}
+message TalentRefreshReq{
+
+}
+message TalentRefreshResult{
+    repeated TalentInfo List=1;
+    TalentMarketInfo Info=2;
+}
+message TalentMarketInfo{
+    int32 RefreshTime=1;
+    int32 RefreshCount=2;
+    int32 RefreshCountTime=3;
+    int32 DigCount=4;
+}
+message TalentHireReq{
+    string ShopId=1;
+    string RoleId=2;
+}
+message TalentHireResult{
+    string ShopId=1;
+    string RoleId=2;
+    TalentInfo Info=3;
+    bool Complete=4;
+}
+message TalentFireReq{
+    string RoleId=1;
+}
+message TalentFireResult{
+    string RoleId=1;
+    TalentInfo Info=2;
+    bool Complete=3;
+}
+message TalentDigReq{
+    string ShopId=1;
+    string RoleId=2;
+}
+message TalentDigResult{
+    string ShopId=1;
+    string RoleId=2;
+    TalentInfo Info=3;
+    bool Complete=4;
+}
+message TalentDigSelfResult{
+    string RoleId=1;
+    string Company=2;
+}
+message TalentLeaveReq{
+
+}
+message TalentLeaveResult{
+
+}
+message TalentChangeResult{
+    string RoleId=1;
+    int64 Score=2;
+    bool Status=3;
+    string ShopId=4;
+    string Company=5;
+    string CompanyUserName=6;
+}
+message TalentInfo{
+    string RoleId=1;
+    string Name=2;
+    string Icon=3;
+    int64 SocialStatus=4;
+    bool Status=5;
+    int32 Level=6;
+    string Company=7;
+    int32 DigCount=8;
+    string ShopId=9;
+    int32 LandPos=10;
+    int32 HireTime=11;
+    string CompanyUserName=12;
+    string HireRoleId=13;
+}
+message ScoreShopReq{
+
+}
+message ScoreShopResult{
+    int32 RefshTime=1;
+    map<int32, int32> BuyInfo=2;
+    repeated ScoreShopRecordResult ScoreRecords=3;
+}
+message ScoreShopRecordResult{
+    int32 Type=1;
+    int32 Score=2;
+    int32 Value1=3;
+    int32 Value2=4;
+    int32 Value3=5;
+    int32 Time=6;
+}
+message ScoreShopBuyReq{
+    int32 Index=1;
+    int32 Count=2;
+}
+message ScoreShopBuyResult{
+    int32 Index=1;
+    int32 Count=2;
+    map<int32, int32> BuyInfo=3;
+}
+message TalkingGroupReq{
+    repeated int32 Ids=1;
+    bool Replace=2;
+}
+message TalkingGroupResult{
+    repeated int32 Ids=1;
+    repeated int32 DownId=2;
+}
+message TalkIngGroupChangeReq{
+    int32 UpId=1;
+    int32 DownId=2;
+}
+message TalkIngGroupChangeResult{
+    int32 UpId=1;
+    int32 DownId=2;
+}
+message TalkingGroupPKReq{
+    string RoleId=1;
+}
+message TalkingGroupPKResult{
+    string Winer=1;
+    int32 NpcId=2;
+    TalkingGroupTeam TeamA=3;
+    TalkingGroupTeam TeamB=4;
+    int32 PKCount=5;
+}
+message TalkingGroupTeam{
+    string RoleId=1;
+    string RoleName=2;
+    string Icon=3;
+    int64 Status=4;
+    int64 Fighting=5;
+    int64 FightingPlus=6;
+    int32 Win=7;
+    repeated NpcPKerData Npcs=8;
+    int32 Plus=9;
+}
+message NpcPKerData{
+    int32 Id=1;
+    int32 NpcId=2;
+    string Name=3;
+    int32 Win=4;
+    int64 Fighting=5;
+    int64 FightingPlus=6;
+    int32 Level=7;
+}
+message TCBuildUpdateResult{
+    LoadBuildInfo LandBuildInfo=1;
+}
+message TCDepartmentInvestmentResult{
+    InvestmentInfo InvestmentInfo=1;
+}
+message TCDepartmentFinanceResult{
+    FinanceInfo FinanceInfo=1;
+}
+message TCDepartmentPersonnelResult{
+    PersonnelInfo PersonnelInfo=1;
+}
+message TCDepartmentMarketResult{
+    MarketInfo MarketInfo=1;
+}
+message TopUpReq{
+
+}
+message TopUpResult{
+    repeated int32 TopUpId=1;
+}
+message TopUpGoldReq{
+    int32 Id=1;
+}
+message TopUpGoldResult{
+    bool IsSuccessful=1;
+}
+message LoadTradeDataResult{
+    map<int32, LoadTradeData> LoadTrade=1;
+    int32 Time=2;
+}
+message AccomplisTradehReq{
+    int32 Id=1;
+}
+message AccomplisTradehResult{
+    map<int32, LoadTradeData> LoadTrade=1;
+}
+message StartTradehReq{
+    int32 Id=1;
+    int32 ShipType=2;
+    repeated string FriendId=3;
+}
+message StartTradehResult{
+    map<int32, LoadTradeData> LoadTrade=1;
+}
+message OpenPortReq{
+    int32 Id=1;
+}
+message OpenPortResult{
+    map<int32, LoadTradeData> LoadTrade=1;
+}
+message LoadTradeData{
+    map<int32, int64> ItemCount=1;
+    int32 ShipType=2;
+    repeated string FriendId=3;
+    int32 TradeDate=4;
+    int64 Money=5;
+}
+message UpdateRoleInfoIconReq{
+    string RoleIcon=1;
+}
+message UpdateRoleInfoIconResult{
+    string RoleIcon=1;
+}
+message UpdateRoleInfoNameReq{
+    string RoleName=1;
+}
+message UpdateRoleInfoNameResult{
+    string RoleName=1;
+}
+message PraiseRoleIdReq{
+    string RoleId=1;
+    int32 RolePraiseType=2;
+}
+message PraiseRoleIdResult{
+    string RoleId=1;
+    int32 PraiseTime=2;
+    int32 RolePraiseType=3;
+}
+message GetPraiseRoleIdReq{
+    string RoleId=1;
+}
+message GetPraiseRoleIdResult{
+    LoadRoleInfos LoadRoleInfos=1;
+}
+message LoadRoleInfos{
+    int32 PraiseTime=1;
+    string RoleName=2;
+    int32 RoleLevel=3;
+    int64 SocialStatus=4;
+    repeated int32 Avatar=5;
+    int32 Sex=6;
+    string Id=7;
+}
+message RolePraiseResult{
+    string RoleId=1;
+    int32 PraiseTime=2;
+    int32 RolePraiseType=3;
+}
+message UserSalesReq{
+    int32 Id=1;
+    int32 Count=2;
+    int32 GoldType=3;
+    int64 Price=4;
+    int32 DealType=5;
+}
+message UserSalesResult{
+    DealGoodsUpdate Goods=1;
+}
+message UserDownGoodsReq{
+    string DealId=1;
+}
+message UserDownGoodsResult{
+    string DealId=1;
+}
+message VipGiftReq{
+
+}
+message VipGiftResult{
+    repeated int32 GiftId=1;
+    repeated int32 TakeGiftList=2;
+}
+message GiftTakeLogsResult{
+    repeated int32 TakeGiftList=1;
+}
+message AddFavourLevelResult{
+    int32 Level=1;
+    int32 NpcId=2;
+}
+message AddFavourCountResult{
+    int32 FavourCount=1;
+    int32 ArrayId=2;
+    int32 Level=3;
+    int32 NpcId=4;
+}
+message GMResult{
+    int32 Manor=1;
+}
+message AddItemResult{
+    LoadBagInfo BagInfo=1;
+    CanChangeAttr ChangeAttr=2;
+    int64 ShenJia=3;
+}
+message BuyLandResult{
+    int32 State=1;
+    int32 Pos=2;
+    string RoleId=3;
+    string RoleName=4;
+}
+message ChangeAvatarResult{
+    LoadBagInfo BagInfo=1;
+    repeated LoadUserAttr ChangeAttr=2;
+}
+message CompanyLvUpResult{
+    int32 Level=1;
+}
+message CompanyExpResult{
+    int64 Exp=1;
+}
+message ConnectingResult{
+    repeated RoleLists RoleLists=1;
+}
+message RoleLists{
+    string RoleId=1;
+    string Name=2;
+    int32 Sex=3;
+}
+message CreateBuildResult{
+    LoadBuildInfo LandBuildInfo=1;
+}
+message CreateCompanyResult{
+    LoadCompanyInfo CompanyInfo=1;
+    LoadDepartMentInfo DepartmentInfo=2;
+}
+message CreateRoleResult{
+    string ErrorDesc=1;
+    string RoleId=2;
+    int32 Sex=3;
+    string Name=4;
+}
+message DeleteRoleResult{
+    int32 State=1;
+}
+message DepartmentUpdateResult{
+    int32 Level=1;
+    int32 Type=2;
+}
+message DestoryBuildResult{
+    string ShopId=1;
+}
+message GetMapResult{
+    map<int32, LoadLandInfo> LoadLandInfoDic=1;
+    repeated LoadBuildInfo LoadBuildInfo=2;
+}
+message LoadLandInfo{
+    int32 State=1;
+    int32 Pos=2;
+    string RoleId=3;
+    string BuildId=4;
+    string RoleName=5;
+    int64 RoleOwnsCounts=6;
+}
+message PrivateBuildInfo{
+    map<int32, LoadBuildInfo> LoadBuildInfo=1;
+}
+message LoadBuildInfo{
+    string BuildId=1;
+    int32 BuildType=2;
+    string Name=3;
+    int32 Level=4;
+    int32 Popularity=5;
+    int32 Star=6;
+    int32 Employee=7;
+    int64 GetMoney=8;
+    int32 Pos=9;
+    string RoleId=10;
+    int32 CustomerAddtion=11;
+    int32 CurExtendLv=12;
+    int32 Income=13;
+    int64 CostGold=14;
+    string RoleName=15;
+    string CompanyName=16;
+    int32 HarvestDate=17;
+    int32 OutputGoldDate=18;
+    int32 WhetherBeStrategyStrike=19;
+    int32 EmployeeLimit=20;
+    string LeaderId=21;
+    int32 LeaderTime=22;
+    map<int32, int64> ItemOutput=23;
+    int32 PurchaseItmeDate=24;
+    repeated string Master=25;
+    int64 CurrSellPrice=26;
+    int64 StartCurrSellPrice=27;
+    int32 Area=28;
+    int64 EveryHarvest=29;
+}
+message GoldChangedResult{
+    map<int32, int64> Gold=1;
+}
+message JoinGameResult{
+    LoadRoleInfo LoadRoleInfo=1;
+    repeated LoadUserAttr UserAttr=2;
+    LoadBagInfo RoleBag=3;
+    LoadCompanyInfo CompanyInfo=4;
+    LoadDepartMentInfo DepartInfoInfo=5;
+    repeated LoadFinanceLogInfo FinanceLogInfo=6;
+    GetMapResult MapInfo=7;
+    RoomListResult Room=8;
+    FriendListResult Friend=9;
+    ChatNoReadResult Message=10;
+    LoadServerConfig ServerConfig=11;
+    MissionResult Mission=12;
+    repeated SavingInfo LoadingGoldResult=13;
+    repeated MailMsg Mails=14;
+    AchievementResult Achievement=15;
+    DayCountInfo DayCountInfo=16;
+    map<int32, LoadManager> ManagerList=17;
+    LoadLeaderInfo LoadLeaderInfo=18;
+    GetRankingResult RankingValue=19;
+    SkillResult SkillResult=20;
+    DataCountResult DataCountResult=21;
+    repeated FriendAwardInfoResult FriendAwardInfo=22;
+    GetPrivateLandResult PrivateMapInfo=23;
+    TalentInfo TalentInfo=25;
+    repeated TalentInfo TalentDatas=26;
+    TypeCountStaffResult TypeCountStaff=27;
+    LoadLoansResult LoadLoans=28;
+    int32 TalkingPkCount=29;
+    OnLineAwardsResult OnLineAwards=30;
+    GiftTakeLogsResult GiftTakeLogs=31;
+    LoadTradeDataResult LoadTradeInfo=32;
+}
+message FriendAwardInfoResult{
+    string Name=1;
+    int32 Lv=2;
+    int64 FriendPoint=3;
+    int32 FrindPointType=4;
+}
+message LoadManager{
+    int32 Id=1;
+    string Name=2;
+}
+message LoadServerConfig{
+    int32 ServerTime=1;
+}
+message LoadRoleInfo{
+    string RoleId=1;
+    int64 Exp=2;
+    string Icon=3;
+    string Name=4;
+    int32 Level=5;
+    repeated int32 Avatar=6;
+    int32 Type=7;
+    int32 Sex=8;
+    string Desc=9;
+    string VipLevel=10;
+    int64 Gold=11;
+    int32 Intelligence=12;
+    int32 Charm=13;
+    int32 Affinity=14;
+    int32 Concentration=15;
+    int32 Constitution=16;
+    int64 SocialStatus=17;
+    repeated int32 Certificates=18;
+    repeated int32 CertificatesExp=19;
+    int32 LastLoginTime=20;
+    int32 Power=21;
+    int32 ActivedAchievement=22;
+    int32 PraiseTime=23;
+    repeated string RecordPraiseRole=24;
+    int32 RoomPraiseTime=25;
+    repeated string AuctionShopId=26;
+    int64 RedPacketMaxMoney=27;
+    int32 PkWinCount=28;
+    int32 PkLostCount=29;
+    int32 PkPingCount=30;
+    int32 WhetherTheLoan=31;
+    map<int32, LoadRecordType> LoadRecordType=32;
+}
+message LoadRecordType{
+    int32 PraiseTime=1;
+    repeated string RecordPraiseRole=2;
+}
+message LoadUserAttr{
+    int32 UserAttrID=1;
+    int32 Count=2;
+}
+message CanChangeAttr{
+    repeated LoadUserAttr UserAttr=1;
+    repeated int32 Avatar=2;
+    int32 Intelligence=3;
+    int32 Charm=4;
+    int32 Affinity=5;
+    int32 Concentration=6;
+    int32 Constitution=7;
+    int32 SocialStatus=8;
+    repeated int32 Certificates=9;
+    repeated int32 CertificatesExp=10;
+    int32 VipLevel=11;
+}
+message LoadBagInfo{
+    int64 MaxCellNumber=1;
+    int64 CurUsedCell=2;
+    map<int32, LoadRoleBagInfo> Items=3;
+    map<int32, LoadRoleBagInfo> Furnitrues=4;
+}
+message LoadRoleBagInfo{
+    int64 CurCount=1;
+    int64 OnSpace=2;
+    int64 Id=3;
+    int64 FurnitureId=4;
+    int32 Star=5;
+}
+message LoadCompanyInfo{
+    string Id=1;
+    string Name=2;
+    int32 Level=3;
+    int64 NDExp=4;
+    int64 CurExp=5;
+    int32 CurPersonnelLv=6;
+    int32 CurFinanceLv=7;
+    int32 CurMarketLv=8;
+    int32 CurInvestmentLv=9;
+    int64 CostGold=10;
+    int32 Basicpassenger=11;
+    int32 DepartLvLimit=12;
+    float CompanyAddition=13;
+    int64 SocialStatus=14;
+    int32 CreateTime=15;
+    int32 YesterdayGetMoney=16;
+    repeated int32 TalkGroupId=17;
+}
+message LoadDepartMentInfo{
+    FinanceInfo FinanceInfo=1;
+    PersonnelInfo PersonnelInfo=2;
+    MarketInfo MarketInfo=3;
+    InvestmentInfo InvestmentInfo=4;
+}
+message InvestmentInfo{
+    int32 Level=1;
+    map<int32, int32> CurDirectorCounts=2;
+    int32 CurStaff=3;
+    int32 CurRealestate=4;
+    int32 CurStore=5;
+    int32 CurExtension=6;
+}
+message MarketInfo{
+    int32 Level=1;
+    map<int32, int32> CurDirectorCounts=2;
+    int32 CurStaff=3;
+    float CurStoreAddtion=4;
+    int32 CurPropagandaCounts=5;
+    int32 CurStrategicCounts=6;
+    int32 CurPurchaseCounts=7;
+}
+message PersonnelInfo{
+    int32 Level=1;
+    map<int32, int32> CurDirectorCounts=2;
+    int32 CurStaff=3;
+    int32 CurTalentLv=4;
+}
+message FinanceInfo{
+    int32 Level=1;
+    map<int32, int32> CurDirectorCounts=2;
+    int32 CurStaff=3;
+    int32 MakerCoinCounts=4;
+}
+message LoadFinanceLogInfo{
+    int32 Time=1;
+    string EventName=2;
+    int32 EventType=3;
+    int32 MoneyType=4;
+    int64 Count=5;
+    bool AorD=6;
+}
+message DayCountInfo{
+    map<int32, int64> GoldChangeCount=1;
+}
+message LoadFinanceLogResult{
+    repeated LoadFinanceLogInfo FinanceLog=1;
+}
+message RemoveItemResult{
+    LoadBagInfo BagInfo=1;
+    int64 ShenJia=2;
+}
+message SellItemResult{
+    LoadBagInfo BagInfo=1;
+    int64 ShenJia=2;
+}
+message TCFinanceLogChangedResult{
+    repeated LoadFinanceLogInfo FinanceLogInfo=1;
+}
+message TCLevelUpResult{
+    int32 NewLevel=1;
+    int64 NewExp=2;
+    repeated LoadUserAttr RoleAttr=3;
+}
+message TCRoleBagChangeResult{
+    LoadBagInfo BagInfo=1;
+}
+message TCRoleInfoChangeResult{
+    LoadRoleInfo LoadRoleInfo=1;
+}
+message UpdateAvatarResult{
+    repeated int32 Id=1;
+}
+message UpdateShenjiaResult{
+    int64 SocialStatus=1;
+}
+message UpdateCompanyIncomeResult{
+    int64 SocialStatus=1;
+}
+message UseItemResult{
+    LoadBagInfo BagInfo=1;
+    repeated LoadUserAttr ChangeAttr=2;
+    int32 Shenjia=3;
+    int32 Level=4;
+    int64 Exp=5;
+    map<int32, int64> ItemCount=6;
+}

@@ -1,0 +1,18 @@
+18-04-02 16:13:52:Error at file[/Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php] line[113] message:[Uncaught Swoole\Exception: failed to listen server port[0.0.0.0:9501]. Error: Address already in use[48]. in /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php:113
+Stack trace:
+#0 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php(113): Swoole\Server->__construct('0.0.0.0', 9501, 3, 1)
+#1 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php(60): EasySwoole\Core\Swoole\ServerManager->createMainServer()
+#2 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Core.php(45): EasySwoole\Core\Swoole\ServerManager->start()
+#3 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/bin/easyswoole(304): EasySwoole\Core\Core->run()
+#4 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/bin/easyswoole(22): serverStart(Array)
+#5 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/bin/easyswoole(429): commandHandler()
+#6 /Volumes/data/code/ckzc_server/easyswoole(]
+18-04-02 16:14:22:Error at file[/Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php] line[113] message:[Uncaught Swoole\Exception: failed to listen server port[0.0.0.0:9501]. Error: Address already in use[48]. in /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php:113
+Stack trace:
+#0 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php(113): Swoole\Server->__construct('0.0.0.0', 9501, 3, 1)
+#1 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php(60): EasySwoole\Core\Swoole\ServerManager->createMainServer()
+#2 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/src/Core/Core.php(45): EasySwoole\Core\Swoole\ServerManager->start()
+#3 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/bin/easyswoole(304): EasySwoole\Core\Core->run()
+#4 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/bin/easyswoole(22): serverStart(Array)
+#5 /Volumes/data/code/ckzc_server/vendor/easyswoole/easyswoole/bin/easyswoole(429): commandHandler()
+#6 /Volumes/data/code/ckzc_server/easyswoole(]
