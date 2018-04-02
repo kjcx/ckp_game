@@ -25,6 +25,42 @@ Class EasySwooleEvent implements EventInterface {
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
         // TODO: Implement mainServerCreate() method.
+        $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
+            //为workerId为0的进程添加定时器
+            //请确定有inotify拓展
+            if ($workerId == 0) {
+                // 递归获取所有目录和文件
+                $a = function ($dir) use (&$a) {
+                    $data = array();
+                    if (is_dir($dir)) {
+                        //是目录的话，先增当前目录进去
+                        $data[] = $dir;
+                        $files = array_diff(scandir($dir), array('.', '..'));
+                        foreach ($files as $file) {
+                            $data = array_merge($data, $a($dir . "/" . $file));
+                        }
+                    } else {
+                        $data[] = $dir;
+                    }
+                    return $data;
+                };
+                $list = $a("./Application");
+                var_dump($list);
+                $notify = inotify_init();
+                // 为所有目录和文件添加inotify监视
+                foreach ($list as $item) {
+                    inotify_add_watch($notify, $item, IN_CREATE | IN_DELETE | IN_MODIFY);
+                }
+                // 加入EventLoop
+                swoole_event_add($notify, function () use ($notify) {
+                    $events = inotify_read($notify);
+                    if (!empty($events)) {
+                        //注意更新多个文件的间隔时间处理,防止一次更新了10个文件，重启了10次，懒得做了，反正原理在这里
+                        ServerManager::getInstance()->getServer()->reload();
+                    }
+                });
+            }
+        });
     }
 
     public function onRequest(Request $request,Response $response): void
