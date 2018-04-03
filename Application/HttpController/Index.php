@@ -6,10 +6,11 @@
  * Time: 下午4:18
  */
 namespace App\HttpController;
-
+use EasySwoole\Core\Http\AbstractInterface\Controller;
 class Index extends Controller
 {
     function index(){
         var_dump(1);
+        $this->response()->write(111);
     }
 }
