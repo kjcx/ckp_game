@@ -27,11 +27,6 @@ Class EasySwooleEvent implements EventInterface {
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
         // TODO: Implement mainServerCreate() method.
-<<<<<<< HEAD
-//        if ($) {
-//
-//        }
-=======
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
             //为workerId为0的进程添加定时器
             //请确定有inotify拓展
@@ -81,7 +76,6 @@ Class EasySwooleEvent implements EventInterface {
                 'charset' => 'utf8')
         );
         EventHelper::registerDefaultOnMessage($register,new WebSock());
->>>>>>> fdb1ef92a14658f8710e4ebd2c387b5795045379
     }
 
     public function onRequest(Request $request,Response $response): void
