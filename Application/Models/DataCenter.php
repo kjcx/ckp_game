@@ -10,7 +10,7 @@ namespace App\Models;
 
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 
-class DataCenter
+class DataCenter extends Model
 {
 
     public function __construct()
