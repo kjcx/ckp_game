@@ -8,7 +8,9 @@
 
 namespace EasySwoole;
 
+use App\Websocket\Parser\WebSock;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
+use EasySwoole\Core\Swoole\EventHelper;
 use \EasySwoole\Core\Swoole\ServerManager;
 use \EasySwoole\Core\Swoole\EventRegister;
 use \EasySwoole\Core\Http\Request;
@@ -73,6 +75,7 @@ Class EasySwooleEvent implements EventInterface {
                 'port' => 3306,
                 'charset' => 'utf8')
         );
+        EventHelper::registerDefaultOnMessage($register,new WebSock());
     }
 
     public function onRequest(Request $request,Response $response): void
