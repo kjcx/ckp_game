@@ -13,7 +13,7 @@ use \EasySwoole\Core\Swoole\ServerManager;
 use \EasySwoole\Core\Swoole\EventRegister;
 use \EasySwoole\Core\Http\Request;
 use \EasySwoole\Core\Http\Response;
-
+use EasySwoole\Core\Component\Di;
 Class EasySwooleEvent implements EventInterface {
 
     public function frameInitialize(): void
@@ -45,14 +45,17 @@ Class EasySwooleEvent implements EventInterface {
                     return $data;
                 };
                 $list = $a("./Application");
-                var_dump($list);
+//                var_dump($list);
                 $notify = inotify_init();
+                var_dump($notify);
+
                 // 为所有目录和文件添加inotify监视
                 foreach ($list as $item) {
                     inotify_add_watch($notify, $item, IN_CREATE | IN_DELETE | IN_MODIFY);
                 }
                 // 加入EventLoop
                 swoole_event_add($notify, function () use ($notify) {
+                    var_dump($notify);
                     $events = inotify_read($notify);
                     if (!empty($events)) {
                         //注意更新多个文件的间隔时间处理,防止一次更新了10个文件，重启了10次，懒得做了，反正原理在这里
@@ -61,6 +64,15 @@ Class EasySwooleEvent implements EventInterface {
                 });
             }
         });
+
+        Di::getInstance()->set('MYSQL',\MysqliDb::class,Array (
+                'host' => '139.129.119.229',
+                'username' => 'root',
+                'password' => 'mmDongkaikjcx13579',
+                'db'=> 'ckzc',
+                'port' => 3306,
+                'charset' => 'utf8')
+        );
     }
 
     public function onRequest(Request $request,Response $response): void
