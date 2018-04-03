@@ -19,7 +19,11 @@ class DataCenter
     }
     public function saveClient()
     {
-        $mysql = PoolManager::getInstance()->getPool('App\Utility\MysqlPool');
+
+
+        $mysql = $this->mysqlPool;
         var_dump($mysql->getObj(0.1));
+        $redis = $this->reidsPool;
+        var_dump($redis);
     }
 }

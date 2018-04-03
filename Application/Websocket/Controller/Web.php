@@ -8,7 +8,7 @@
 namespace  App\Websocket\Controller;
 
 use App\Models\DataCenter;
-use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
+use EasySwoole\Core\Socket\WebSocketController;
 
 class Web extends WebSocketController
 {
@@ -25,4 +25,5 @@ class Web extends WebSocketController
         $this->response()->write("123");
 
     }
+
 }

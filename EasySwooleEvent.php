@@ -32,6 +32,8 @@ Class EasySwooleEvent implements EventInterface {
 
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
+            //为workerId为0的进程添加定时器
+            //请确定有inotify拓展
             if ($workerId == 0) {
 
                 MainEventHelper::registerMysqlPool(); //注册mysql连接池

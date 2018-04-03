@@ -11,6 +11,7 @@ class Index extends Controller
 {
     function index(){
         var_dump(1);
-        $this->response()->write(111);
+        new \App\Model\User\Account();
+        $this->response()->write(1113);
     }
 }

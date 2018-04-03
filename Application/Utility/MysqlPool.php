@@ -25,6 +25,7 @@ class MysqlPool extends CoroutinePool
     {
         // TODO: Implement createObject() method.
         $conf = Config::getInstance()->getConf('MYSQL_SERVER');
+        var_dump($conf);
         $db = new Mysql([
             'host' => $conf['host'],
             'username' => $conf['username'],
