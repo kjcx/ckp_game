@@ -10,7 +10,7 @@ namespace App\Models;
 
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 
-class DataCenter extends Model
+class DataCenter
 {
 
     public function __construct()
@@ -19,7 +19,7 @@ class DataCenter extends Model
     }
     public function saveClient()
     {
-        $redis = PoolManager::getInstance()->getPool('App\Utility\RedisPool');
-        var_dump($redis->getObj());
+        $mysql = PoolManager::getInstance()->getPool('App\Utility\MysqlPool');
+        var_dump($mysql->getObj(0.1));
     }
 }

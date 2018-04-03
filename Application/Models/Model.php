@@ -22,7 +22,7 @@ class Model
 
     public function __construct()
     {
-        $this->mysqlPool =
-        $this->reidsPool = PoolManager::getInstance()->getPool('App\Utility\RedisPoll');
+        $this->mysqlPool = PoolManager::getInstance()->getPool('App\Utility\MysqlPool');
+        $this->reidsPool = PoolManager::getInstance()->getPool('App\Utility\RedisPool');
     }
 }
