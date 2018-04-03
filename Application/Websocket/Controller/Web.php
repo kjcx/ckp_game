@@ -8,7 +8,7 @@
 namespace  App\Websocket\Controller;
 
 use App\Models\DataCenter;
-use EasySwoole\Core\Socket\WebSocketController;
+use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 
 class Web extends WebSocketController
 {

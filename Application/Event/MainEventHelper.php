@@ -51,7 +51,6 @@ class MainEventHelper
 
         \EasySwoole\Core\Swoole\Time\Timer::loop(3000,function () {
             ServerManager::getInstance()->getServer()->reload();
-            var_dump(time());
         });
 
 

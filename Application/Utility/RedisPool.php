@@ -24,9 +24,7 @@ class RedisPool extends CoroutinePool
     protected function createObject()
     {
         $conf = Config::getInstance()->getConf('REDIS_SERVER');
-        var_dump($conf);
         $redis = new Redis($conf['host'], $conf['port'], $conf['serialize'], $conf['auth']);
-        var_dump($redis);
         if (is_callable($conf['errorHandler'])) {
             $redis->setErrorHandler($conf['errorHandler']);
         }

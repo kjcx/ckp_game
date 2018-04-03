@@ -21,8 +21,8 @@ class DataCenter extends Model
     {
 
         $mysql = $this->mysqlPool;
-        var_dump($mysql->getObj(0.1));
+        var_dump($mysql->getObj()->get('ckzc_member',10));
         $redis = $this->reidsPool;
-        var_dump($redis);
+        var_dump(PoolManager::getInstance()->getPool('App\Utility\RedisPool'));
     }
 }
