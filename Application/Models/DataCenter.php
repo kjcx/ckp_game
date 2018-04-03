@@ -10,7 +10,7 @@ namespace App\Models;
 
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 
-class DataCenter extends Model
+class DataCenter
 {
 
     public function __construct()
@@ -19,6 +19,7 @@ class DataCenter extends Model
     }
     public function saveClient()
     {
+
 
         $mysql = $this->mysqlPool;
         var_dump($mysql->getObj()->get('ckzc_member',10));
