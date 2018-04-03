@@ -7,7 +7,6 @@
             "App\\": "Application/",
             "AutoMsg\\": "Protobuf/Src/AutoMsg/",
             "GPBMetadata\\" :"Protobuf/Src/GPBMetadata"
-
         }
     }
 }

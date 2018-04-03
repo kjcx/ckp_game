@@ -25,6 +25,9 @@ Class EasySwooleEvent implements EventInterface {
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
         // TODO: Implement mainServerCreate() method.
+//        if ($) {
+//
+//        }
     }
 
     public function onRequest(Request $request,Response $response): void
