@@ -34,7 +34,9 @@ class Account extends Controller
             $rs = $db->getOne('ckzc_member',['member_mobie'=>$member_info['member_mobile']]);
             if($rs){
                 //用户存在 返回用户信息
-                $this->response()->write(\GuzzleHttp\json_encode($member_info));
+
+                $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+                $this->response()->write(json_encode($member_info));
             }else{
                 $data = [
                     'user_name'=>$member_info['user_name'],

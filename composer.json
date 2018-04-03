@@ -1,8 +1,9 @@
 {
     "require": {
         "easyswoole/easyswoole": "2.x-dev",
-        "guzzlehttp/guzzle": "~6.0",
-        "joshcam/mysqli-database-class": "dev-master"
+        "guzzlehttp/guzzle": "^6.3",
+        "joshcam/mysqli-database-class": "dev-master",
+        "guzzlehttp/guzzle":"^6.x"
     },
     "autoload": {
         "psr-4": {

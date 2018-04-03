@@ -19,4 +19,5 @@ class Web extends WebSocketController
         $this->response()->write("123");
 
     }
+
 }
