@@ -4,6 +4,7 @@
 /composer.lock
 /Temp
 .DS_Store
+easyswoole.install
 /Config.php
 /EasySwooleEvent.php
 /Protobuf

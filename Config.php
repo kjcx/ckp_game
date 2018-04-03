@@ -14,7 +14,7 @@ return [
         'SOCK_TYPE'=>SWOOLE_TCP,//该配置项当为SERVER_TYPE值为TYPE_SERVER时有效
         'RUN_MODEL'=>SWOOLE_PROCESS,
         'SETTING'=>[
-            'task_worker_num' => 8, //异步任务进程
+            'task_worker_num' => 3, //异步任务进程
             'task_max_request'=>10,
             'max_request'=>5000,//强烈建议设置此配置项
             'worker_num'=>8
@@ -37,5 +37,35 @@ return [
         'serviceTTL'=>10,
         'serverName'=>'easySwoole',
         'serverId'=>null
+    ],
+    'MYSQL_SERVER' =>[
+        'host' => '139.129.119.229',
+        'username' => 'root',
+        'password' => 'mmDongkaikjcx13579',
+        'dbname'=> 'ckzc',
+        'port' => 3306,
+        'charset' => 'utf8',
+        'pool' => [
+            'max' => 10,//最大连接数
+            'min' => 5, //最小连接数
+        ]
+    ],
+    'REDIS_SERVER' => [
+        'host' => '127.0.0.1', // redis主机地址
+        'port' => 6379, // 端口
+        'serialize' => false, // 是否序列化php变量
+        'auth' => null, // 密码
+        'pool' => [
+            'min' => 5, // 最小连接数
+            'max' => 10 // 最大连接数
+        ],
+        'dbname' => 1,
+        'errorHandler' => function(){
+            return null;
+        } // 如果Redis重连失败，会判断errorHandler是否callable，如果是，则会调用，否则会抛出异常，请自行try
+    ],
+    'SERVER_FONF' => [
+        'server_address' => '192.168.10.10:9501', //当前机器的地址
+        'server_hash' => '1' //当前机器hash
     ]
 ];

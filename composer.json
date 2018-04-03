@@ -2,15 +2,13 @@
     "require": {
         "easyswoole/easyswoole": "2.x-dev",
         "guzzlehttp/guzzle": "^6.3",
-        "joshcam/mysqli-database-class": "dev-master",
-        "guzzlehttp/guzzle":"^6.x"
+        "joshcam/mysqli-database-class": "dev-master"
     },
     "autoload": {
         "psr-4": {
             "App\\": "Application/",
             "AutoMsg\\": "Protobuf/Src/AutoMsg/",
             "GPBMetadata\\" :"Protobuf/Src/GPBMetadata"
-
         }
     }
 }

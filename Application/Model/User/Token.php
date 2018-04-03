@@ -10,5 +10,5 @@ use App\Model\Model;
 
 class Token extends Model
 {
-    
+
 }
