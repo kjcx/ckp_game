@@ -10,5 +10,8 @@
             "AutoMsg\\": "Protobuf/Src/AutoMsg/",
             "GPBMetadata\\" :"Protobuf/Src/GPBMetadata"
         }
+    },
+    "require-dev": {
+        "eaglewu/swoole-ide-helper": "dev-master"
     }
 }

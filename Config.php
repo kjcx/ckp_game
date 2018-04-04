@@ -73,5 +73,10 @@ return [
     'SERVER_FONF' => [
         'server_address' => '192.168.10.10:9501', //当前机器的地址
         'server_hash' => '1' //当前机器hash
+    ],
+    'REDIS_CHANNEL' => [ // 需要监听redis频道
+        'gloable' => [ //全局监听的频道  是必须监听的
+            ['test','']
+        ]
     ]
 ];
