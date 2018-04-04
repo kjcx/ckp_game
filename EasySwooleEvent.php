@@ -8,6 +8,7 @@
 
 namespace EasySwoole;
 
+use App\Event\RedisEventHelper;
 use App\Utility\Mysql;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
@@ -22,6 +23,7 @@ use \EasySwoole\Core\Http\Response;
 use EasySwoole\Core\Component\Di;
 use App\Event\MainEventHelper;
 use EasySwoole\Core\Utility\File;
+use App\Event\RedisEvent;
 
 Class EasySwooleEvent implements EventInterface {
 
@@ -35,6 +37,7 @@ Class EasySwooleEvent implements EventInterface {
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
+        (new RedisEvent())->autoRegister(); //注册监听redis
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
 

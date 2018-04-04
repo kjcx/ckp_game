@@ -9,5 +9,8 @@
 
 return [
     'a' => 'dupeng',
+    'gloable' => [ //全局信息频道
+         'test' => ['test',function ($msg) {App\Event\RedisEventHelper::test($msg);}],
+    ],
     'data_center' => 'datacenter'    //数据中心key
 ];
