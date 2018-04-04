@@ -72,6 +72,7 @@ return [
         'server_address' => '192.168.10.10:9501', //当前机器的地址
         'server_hash' => '1' //当前机器hash
     ],
+
     'APP'=> [
         'member_info' => $APP_SERVER_URL . '/mobile/index.php?act=member_index',
         ]

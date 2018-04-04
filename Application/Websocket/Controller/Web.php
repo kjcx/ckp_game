@@ -8,6 +8,7 @@
 namespace  App\Websocket\Controller;
 
 use App\Models\DataCenter;
+
 use App\Models\User\Account;
 use AutoMsg\ConnectingReq;
 use AutoMsg\ConnectingResult;
@@ -56,6 +57,22 @@ class Web extends WebSocketController
     {
         $this->response()->write("123");
 
+    }
+
+    /**
+     * 向所有人推送的控制器
+     */
+    public function pp()
+    {
+        $dataCenter = new DataCenter();
+        $fds = $dataCenter->getMyFd(); //获取我所有的Fd
+        foreach ($fds as $fd) {
+            $massTemplate = new Mass(['fd' => $fd,'data' => 11,]);
+            TaskManager::async($massTemplate);
+        }
+
+
+//        $this->response()->write();
     }
 
 }

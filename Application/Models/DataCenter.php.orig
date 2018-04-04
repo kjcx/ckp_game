@@ -23,12 +23,20 @@ class DataCenter extends Model
     public function saveClient()
     {
 
+<<<<<<< HEAD
+        $r = $this->mysql->where('id',3)->getOne('ckzc_member');
+        var_dump(serialize($r));
+        $re = $this->redis->info();
+        var_dump(serialize($re));
+=======
         $mysql = $this->mysqlPool;
         var_dump($mysql->getObj()->get('ckzc_member',10));
         $redis = $this->reidsPool;
         var_dump($redis->getObj()->exec("get","token"));
         $redis->getObj()->exec("set","aaa","111");
         var_dump($redis->getObj()->exec("get","aaa"));
+
+>>>>>>> 23766214f940fb9bba62251daac1d064acc1f3e0
     }
 
     /**
