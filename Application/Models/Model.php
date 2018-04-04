@@ -16,23 +16,10 @@ class Model
     public $mysql;
     public $redis;
 
-    function __construct()
+    public function __construct()
     {
         $this->mysql = Mysql::getInstance()->getConnect();
         $this->redis = Redis::getInstance()->getConnect();
-    }
-
-    public function freeMysql($db)
-    {
-        $this->mysqlPool->freeObj($db);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function freeRedis($db)
-    {
-        $this->reidsPool->freeObj($db);
     }
 
 

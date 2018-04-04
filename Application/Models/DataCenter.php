@@ -8,6 +8,7 @@
  */
 namespace App\Models;
 
+use EasySwoole\Config;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 
 class DataCenter extends Model
@@ -21,14 +22,25 @@ class DataCenter extends Model
     }
 
     /**
-     *
      * 设置到数据中心 操作
      * @param $fd
+     * @param $uid
      */
-    public function saveClient($fd)
+    public function saveClient($fd,$uid)
     {
 
-        $this->redis->sIsMember();
+        $key = Config::getInstance()->getConf('rediskeys.data_center');
+        if ( !$this->redis->sIsMember($key,$uid) ) {
+            $this->redis->zAdd($key,$uid);
+            $this
+                ->redis
+                ->set(Config::getInstance()->getConf('SERVER_CONF.server_hash') . ':' . $uid,
+                    serialize($fd));
+        } else {
+            //删除 用户
+            $this->redis->del('*:' . $uid);
+        }
+
     }
 
     /**
@@ -36,22 +48,14 @@ class DataCenter extends Model
      */
     public function getMyFd()
     {
-        //机器号 1下面的所有连接信息
-        $fds = $this->redis->keys('1:*');
+        //机器号 下面的所有连接信息
+        $fds = $this->redis->keys(Config::getInstance()->getConf('SERVER_CONF.server_hash') . ':*');
 
         array_walk($fds,function(&$fd,$key){
             $fds[$key] = unserialize($fd);
         });
 
         return $fds;
-    }
-
-
-     */
-    public function setFdInfo($fd)
-    {
-        //登录判断
-//        $res = $this->redis->sIsMember('',);
     }
 
 

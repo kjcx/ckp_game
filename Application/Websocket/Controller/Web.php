@@ -37,6 +37,8 @@ class Web extends WebSocketController
             //redis查询token是否存在
             $Account = new Account();
             $rs = $Account->getToken($token);
+            $dataCenter = new DataCenter();
+            $dataCenter->saveClient($this->client()->getFd(),$rs);
             if($rs){
                 //登录成功
                 $ConnectingResult = new ConnectingResult();
@@ -68,6 +70,7 @@ class Web extends WebSocketController
     {
         $dataCenter = new DataCenter();
         $fds = $dataCenter->getMyFd(); //获取我所有的Fd
+        var_dump($fds);
         foreach ($fds as $fd) {
             $massTemplate = new Mass(['fd' => $fd,'data' => 11,]);
             TaskManager::async($massTemplate);

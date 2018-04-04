@@ -8,5 +8,6 @@
  */
 
 return [
-    'a' => 'dupeng'
+    'a' => 'dupeng',
+    'data_center' => 'datacenter'    //数据中心key
 ];

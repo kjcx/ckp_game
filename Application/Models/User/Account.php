@@ -81,7 +81,7 @@ class Account extends Model
     {
         $rs = $this->redis->get($token);
         if($rs){
-            return true;
+            return $rs;
         }else{
             return false;
         }
