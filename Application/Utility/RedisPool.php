@@ -25,6 +25,7 @@ class RedisPool extends CoroutinePool
     {
         $conf = Config::getInstance()->getConf('REDIS_SERVER');
         $redis = new Redis($conf['host'], $conf['port'], $conf['serialize'], $conf['auth']);
+
         if (is_callable($conf['errorHandler'])) {
             $redis->setErrorHandler($conf['errorHandler']);
         }

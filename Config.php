@@ -5,7 +5,7 @@
  * Date: 2017/12/30
  * Time: 下午10:59
  */
-
+$APP_SERVER_URL = 'http://www.ckp520.com';
 return [
     'MAIN_SERVER'=>[
         'HOST'=>'0.0.0.0',
@@ -39,9 +39,9 @@ return [
         'serverId'=>null
     ],
     'MYSQL_SERVER' =>[
-        'host' => '139.129.119.229',
+        'host' => '192.168.31.232',
         'username' => 'root',
-        'password' => 'mmDongkaikjcx13579',
+        'password' => '123456',
         'dbname'=> 'ckzc',
         'port' => 3306,
         'charset' => 'utf8',
@@ -67,5 +67,9 @@ return [
     'SERVER_FONF' => [
         'server_address' => '192.168.10.10:9501', //当前机器的地址
         'server_hash' => '1' //当前机器hash
-    ]
+    ],
+    'APP'=> [
+        'member_info' => $APP_SERVER_URL . '/mobile/index.php?act=member_index',
+        ]
+
 ];

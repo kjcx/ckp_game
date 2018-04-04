@@ -25,5 +25,7 @@ class DataCenter extends Model
         var_dump($mysql->getObj()->get('ckzc_member',10));
         $redis = $this->reidsPool;
         var_dump($redis->getObj()->exec("get","token"));
+        $redis->getObj()->exec("set","aaa","111");
+        var_dump($redis->getObj()->exec("get","aaa"));
     }
 }

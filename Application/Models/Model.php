@@ -25,4 +25,17 @@ class Model
         $this->mysqlPool = PoolManager::getInstance()->getPool('App\Utility\MysqlPool');
         $this->reidsPool = PoolManager::getInstance()->getPool('App\Utility\RedisPool');
     }
+    public function freeMysql($db)
+    {
+        $this->mysqlPool->freeObj($db);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function freeRedis($db)
+    {
+        $this->reidsPool->freeObj($db);
+    }
+
 }

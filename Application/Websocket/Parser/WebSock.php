@@ -35,6 +35,9 @@ class WebSock implements ParserInterface
     public function encode(string $raw, $client, $commandBean): ?string
     {
         // TODO: Implement encode() method.
+        if($raw ==''){
+            return null;
+        }
         return $raw;
     }
 }
