@@ -23,7 +23,7 @@ class Mass extends AbstractAsyncTask
     public function run($taskData, $taskId, $fromWorkerId)
     {
         //处理buffer 内容
-        ServerManager::getInstance()->push($taskData['fd'],$taskData['data'],WEBSOCKET_OPCODE_BINARY);
+        ServerManager::getInstance()->getServer()->push($taskData['fd'],$taskData['data'],WEBSOCKET_OPCODE_BINARY);
 
         return '投送成功!';
     }

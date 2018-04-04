@@ -10,11 +10,8 @@ namespace  App\Websocket\Controller;
 use App\Models\DataCenter;
 
 use App\Models\User\Account;
-use App\Models\User\Role;
 use AutoMsg\ConnectingReq;
 use AutoMsg\ConnectingResult;
-use AutoMsg\CreateRoleReq;
-use AutoMsg\CreateRoleResult;
 use AutoMsg\MsgBaseRev;
 use AutoMsg\MsgBaseSend;
 use AutoMsg\RoleLists;
@@ -39,27 +36,24 @@ class Web extends WebSocketController
             $token = $ConnectingReq->getToken();
             //redis查询token是否存在
             $Account = new Account();
-            $uid = $Account->getToken($token);
-            if($uid){
-                $dataCenter = new DataCenter();
-                $dataCenter->saveClient($this->client()->getFd(),$uid);
-                //登录成功
-                $data = new \App\Protobuf\Result\ConnectingResult($uid);
-                $str = new \App\Protobuf\Result\MsgBaseSend(1057,$data);
-                ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
-            }
-        }elseif ($MsgId == 1007){
-            $create_req_data = new \App\Protobuf\Req\CreateRoleReq();
-            $data = ['uid'=>2,'nickname'=>$$create_req_data['Name'],'sex'=>$create_req_data['Sex'],'status'=>1,'create_time'=>time()];
-            $Role = new Role();
-            $rs = $Role->setRole($data);
+            $rs = $Account->getToken($token);
+            $dataCenter = new DataCenter();
+            $dataCenter->saveClient($this->client()->getFd(),$rs);
             if($rs){
-                //角色创建成功
-                $data = new \App\Protobuf\Result\CreateRoleResult();
-                $str  = new \App\Protobuf\Result\MsgBaseSend(1060,$data);
-                ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
-            }else{
-                //角色创建失败
+                //登录成功
+                $ConnectingResult = new ConnectingResult();
+                $role = $ConnectingResult->getRoleLists();
+                $RoleLists = new RoleLists();
+                $role[] = $RoleLists;
+                $ConnectingResult->setRoleLists($role);
+                $str  = $ConnectingResult->serializeToString();
+                $MsgBaseSend = new MsgBaseSend();
+                $MsgBaseSend->setMsgID(1057);
+                $MsgBaseSend->setResult(0);
+                $MsgBaseSend->setData($str);
+//                $MsgBaseSend->serializeToString();
+                var_dump($MsgBaseSend->serializeToString());
+                ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$MsgBaseSend->serializeToString(),WEBSOCKET_OPCODE_BINARY);
             }
         }
     }

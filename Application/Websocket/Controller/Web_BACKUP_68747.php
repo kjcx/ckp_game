@@ -39,10 +39,15 @@ class Web extends WebSocketController
             $token = $ConnectingReq->getToken();
             //redis查询token是否存在
             $Account = new Account();
+<<<<<<< HEAD
             $uid = $Account->getToken($token);
             if($uid){
-                $dataCenter = new DataCenter();
-                $dataCenter->saveClient($this->client()->getFd(),$uid);
+=======
+            $rs = $Account->getToken($token);
+            $dataCenter = new DataCenter();
+            $dataCenter->saveClient($this->client()->getFd(),$rs);
+            if($rs){
+>>>>>>> caba0e980e550961492772452ae372cc05c2b510
                 //登录成功
                 $data = new \App\Protobuf\Result\ConnectingResult($uid);
                 $str = new \App\Protobuf\Result\MsgBaseSend(1057,$data);

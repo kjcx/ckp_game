@@ -6,7 +6,7 @@
  * Time: 下午4:07
  * redis事件
  */
-namespace App\Eventuse;
+namespace App\Event;
 
 use App\Utility\Redis;
 use EasySwoole\Config;
@@ -26,9 +26,11 @@ class RedisEvent
     public function registerListenChannel()
     {
 
-        $gloableChannel = Config::getInstance()->getConf('REDIS_CHANNEL.gloable');
-
-        $this->redis->subscribe(); //监控的频道 和回调
+        $gloableChannel = Config::getInstance()->getConf('rediskeys.gloable');
+        var_dump(array_column($gloableChannel,'0'));
+        $this->redis->subscribe(array_column($gloableChannel,'0'),function ($redis, $chan, $msg) use ($gloableChannel) {
+            $gloableChannel[$chan]['1']($msg);
+        }); //监控的频道 和回调
 
     }
 
@@ -37,6 +39,7 @@ class RedisEvent
      */
     public function autoRegister()
     {
-
+        $this->registerListenChannel();
     }
+
 }
