@@ -13,17 +13,21 @@ use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 class DataCenter extends Model
 {
 
+
     public function __construct()
     {
         parent::__construct();
+
     }
+
     public function saveClient()
     {
 
 
-        $mysql = $this->mysqlPool;
-        var_dump($mysql->getObj()->get('ckzc_member',10));
-        $redis = $this->reidsPool;
-        var_dump($redis->getObj()->exec("get","token"));
+
+        $r = $this->mysql->where('id',3)->getOne('ckzc_member');
+        var_dump(serialize($r));
+        $re = $this->redis->info();
+        var_dump(serialize($re));
     }
 }

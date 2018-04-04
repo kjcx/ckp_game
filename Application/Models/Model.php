@@ -8,21 +8,18 @@
 
 namespace App\Models;
 
-use App\Utility\MysqlPool;
-use App\Utility\RedisPool;
-use EasySwoole\Core\Component\Di;
-use EasySwoole\Core\Swoole\Coroutine\PoolManager;
+use App\Utility\Mysql;
+use App\Utility\Redis;
 
 class Model
 {
+    public $mysql;
+    public $redis;
 
-    public $reidsPool; //带pool的属于连接池
-    public $mysqlPool;
-    public $mongo;
-
-    public function __construct()
+    function __construct()
     {
-        $this->mysqlPool = PoolManager::getInstance()->getPool('App\Utility\MysqlPool');
-        $this->reidsPool = PoolManager::getInstance()->getPool('App\Utility\RedisPool');
+        $this->mysql = Mysql::getInstance()->getConnect();
+        $this->redis = Redis::getInstance()->getConnect();
     }
+
 }

@@ -39,14 +39,20 @@ return [
         'serverId'=>null
     ],
     'MYSQL_SERVER' =>[
-        'host' => '139.129.119.229',
+//        'host' => '127.0.0.1',
+        'host' => '192.168.31.232',
         'username' => 'root',
-        'password' => 'mmDongkaikjcx13579',
+//        'username' => 'homestead',
+//        'password' => 'secret',
+//        'password' => 'mmDongkaikjcx13579',
+        'password' => '123456',
+//        'dbname'=> 'ckzc',
         'dbname'=> 'ckzc',
+//        'port' => 3306,
         'port' => 3306,
         'charset' => 'utf8',
         'pool' => [
-            'max' => 10,//最大连接数
+            'max' => 10,//最大连接数 没用了
             'min' => 5, //最小连接数
         ]
     ],
