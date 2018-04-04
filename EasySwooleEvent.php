@@ -21,6 +21,7 @@ use \EasySwoole\Core\Http\Request;
 use \EasySwoole\Core\Http\Response;
 use EasySwoole\Core\Component\Di;
 use App\Event\MainEventHelper;
+use EasySwoole\Core\Utility\File;
 
 Class EasySwooleEvent implements EventInterface {
 
@@ -28,6 +29,7 @@ Class EasySwooleEvent implements EventInterface {
     {
         // TODO: Implement frameInitialize() method.
         date_default_timezone_set('Asia/Shanghai');
+        $this->loadConf(EASYSWOOLE_ROOT . '/Application/Conf');
     }
 
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
@@ -51,6 +53,19 @@ Class EasySwooleEvent implements EventInterface {
 
     }
 
+    /**
+     * 加载配置文件
+     * @param $ConfPath
+     */
+    public function loadConf($ConfPath)
+    {
+        $Conf  = Config::getInstance();
+        $files = File::scanDir($ConfPath);
+        foreach ($files as $file) {
+            $data = require_once $file;
+            $Conf->setConf(strtolower(basename($file, '.php')), (array)$data);
+        }
+    }
     public function onRequest(Request $request,Response $response): void
     {
         // TODO: Implement onRequest() method.

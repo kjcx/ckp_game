@@ -20,15 +20,15 @@ class DataCenter extends Model
 
     }
 
-    public function saveClient()
+    /**
+     *
+     * 设置到数据中心 操作
+     * @param $fd
+     */
+    public function saveClient($fd)
     {
 
-        $mysql = $this->mysqlPool;
-        var_dump($mysql->getObj()->get('ckzc_member',10));
-        $redis = $this->reidsPool;
-        var_dump($redis->getObj()->exec("get","token"));
-        $redis->getObj()->exec("set","aaa","111");
-        var_dump($redis->getObj()->exec("get","aaa"));
+        $this->redis->sIsMember();
     }
 
     /**
@@ -45,4 +45,14 @@ class DataCenter extends Model
 
         return $fds;
     }
+
+
+     */
+    public function setFdInfo($fd)
+    {
+        //登录判断
+//        $res = $this->redis->sIsMember('',);
+    }
+
+
 }
