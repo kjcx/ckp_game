@@ -5,7 +5,7 @@
  * Date: 2017/12/30
  * Time: 下午10:59
  */
-
+$APP_SERVER_URL = 'http://www.ckp520.com';
 return [
     'MAIN_SERVER'=>[
         'HOST'=>'0.0.0.0',
@@ -46,9 +46,7 @@ return [
 //        'password' => 'secret',
 //        'password' => 'mmDongkaikjcx13579',
         'password' => '123456',
-//        'dbname'=> 'ckzc',
         'dbname'=> 'ckzc',
-//        'port' => 3306,
         'port' => 3306,
         'charset' => 'utf8',
         'pool' => [
@@ -74,9 +72,9 @@ return [
         'server_address' => '192.168.10.10:9501', //当前机器的地址
         'server_hash' => '1' //当前机器hash
     ],
-    'REDIS_CHANNEL' => [ // 需要监听redis频道
-        'gloable' => [ //全局监听的频道  是必须监听的
-            ['test','']
+
+    'APP'=> [
+        'member_info' => $APP_SERVER_URL . '/mobile/index.php?act=member_index',
         ]
-    ]
+
 ];

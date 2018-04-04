@@ -22,4 +22,18 @@ class Model
         $this->redis = Redis::getInstance()->getConnect();
     }
 
+    public function freeMysql($db)
+    {
+        $this->mysqlPool->freeObj($db);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function freeRedis($db)
+    {
+        $this->reidsPool->freeObj($db);
+    }
+
+
 }

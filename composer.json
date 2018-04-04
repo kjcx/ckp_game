@@ -2,7 +2,8 @@
     "require": {
         "easyswoole/easyswoole": "2.x-dev",
         "guzzlehttp/guzzle": "^6.3",
-        "joshcam/mysqli-database-class": "dev-master"
+        "joshcam/mysqli-database-class": "dev-master",
+        "google/protobuf": "^3.5"
     },
     "autoload": {
         "psr-4": {

@@ -36,6 +36,7 @@ class WebSock implements ParserInterface
     {
         // TODO: Implement encode() method.
         if (empty($raw)) {
+
             return null;
         }
         return $raw;
