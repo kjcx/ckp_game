@@ -10,21 +10,10 @@ use App\Models\Model;
 
 class Account extends Model
 {
-    private $db;
-    private $redisdb;
     private $table = 'ckzc_member';
     public function __construct()
     {
         parent::__construct();
-        $this->db = $this->mysqlPool->getObj();
-        $this->redisdb = $this->reidsPool->getObj();
-    }
-
-    public function index()
-    {
-
-        $arr = ['uid'=>2,'sex'=>1,'status'=>1,'create_time'=>time()];
-        $this->db->insert("ckzc_role",$arr);
     }
 
     /**
@@ -34,8 +23,7 @@ class Account extends Model
      */
     function find($where)
     {
-        $arr = $this->db->where($where)->getOne($this->table);
-        $this->freeMysql($this->db);
+        $arr = $this->mysql->where($where)->getOne($this->table);
         return $arr;
     }
 
@@ -46,8 +34,7 @@ class Account extends Model
      */
     function insert($data)
     {
-        $id = $this->db->insert($this->table, $data);
-        $this->freeMysql($this->db);
+        $id = $this->mysql->insert($this->table, $data);
         return $id;
     }
 
@@ -59,11 +46,11 @@ class Account extends Model
      */
     function update($where,$data)
     {
-        $result = $this->db->where($where)->update($this->table,$data);
-        if ($this->db->getLastErrno() === 0)
+        $result = $this->mysql->where($where)->update($this->table,$data);
+        if ($this->mysql->getLastErrno() === 0)
             return true;
         else{
-            echo 'Update failed. Error: '. $this->db->getLastError();
+            echo 'Update failed. Error: '. $this->mysql->getLastError();
             return false;
         }
     }
@@ -77,8 +64,7 @@ class Account extends Model
     {
         $token = md5($uid . rand(10000,99999) . rand(10000,99999). microtime() );
         //插入到
-         $rs = $this->redisdb->exec("set",$token,$uid);
-         $this->freeRedis($this->redisdb);
+         $rs = $this->redis->set($token,$uid);
          if($rs){
              return $token;
          }else{
@@ -93,9 +79,7 @@ class Account extends Model
      */
     public function getToken($token)
     {
-        $rs = $this->redisdb->exec("get",$token);
-        var_dump($rs);
-        $this->freeRedis($this->redisdb);
+        $rs = $this->redis->get($token);
         if($rs){
             return true;
         }else{

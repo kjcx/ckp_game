@@ -44,7 +44,7 @@ class Web extends WebSocketController
                 $str  = $ConnectingResult->serializeToString();
                 $MsgBaseSend = new MsgBaseSend();
                 $MsgBaseSend->setMsgID(1057);
-                $MsgBaseSend->setResult(1);
+                $MsgBaseSend->setResult(0);
                 $MsgBaseSend->setData($str);
 //                $MsgBaseSend->serializeToString();
                 var_dump($MsgBaseSend->serializeToString());
