@@ -8,6 +8,7 @@
 
 namespace EasySwoole;
 
+use App\Utility\Mysql;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
@@ -32,15 +33,12 @@ Class EasySwooleEvent implements EventInterface {
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
-        PoolManager::getInstance()->addPool(MysqlPool::class);
-        PoolManager::getInstance()->addPool(RedisPool::class);
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
+
             //为workerId为0的进程添加定时器
             //请确定有inotify拓展
             if ($workerId == 0) {
-                MainEventHelper::registerMysqlPool(); //注册mysql连接池
-//                MainEventHelper::registerRedisPool(); //注册redis连接池
                 if (Config::getInstance()->getConf('DEBUG')) {
                     MainEventHelper::registerHotLoad();
                 }

@@ -15,6 +15,6 @@ class Broadcast extends WebSocketController
 {
     public function index()
     {
-        var_dump($this->client()->getFd());
+//        var_dump($this->client()->getFd());
     }
 }
