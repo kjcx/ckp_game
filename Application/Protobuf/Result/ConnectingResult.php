@@ -11,14 +11,14 @@ use AutoMsg\RoleLists;
 
 class ConnectingResult
 {
-    public function __construct($uid)
+
+    public static function encode($uid)
     {
         $ConnectingResult = new \AutoMsg\ConnectingResult();
         $role = $ConnectingResult->getRoleLists();
         $RoleLists = new RoleLists();
         $Role = new Role();
         $role_data = $Role->getRole($uid);
-
         if($role_data){
             $RoleLists->setRoleId($role_data['id']);
         }

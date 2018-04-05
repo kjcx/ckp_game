@@ -7,12 +7,29 @@
  */
 namespace App\Protobuf\Result;
 
+/**
+ * 服务端头信息
+ * Class MsgBaseSend
+ * @package App\Protobuf\Result
+ */
 class MsgBaseSend
 {
-    public function __construct($MsgID,$Data,$Result=0){
+    /**
+     * 加密服务端消息头
+     * @param $MsgID
+     * @param $Data
+     * @param int $Result
+     * @param string $ErrorMsg
+     * @return string
+     */
+    public static function encode($MsgID,$Data,$Result=0,$ErrorMsg='')
+    {
         $MsgBaseSend = new \AutoMsg\MsgBaseSend();
         $MsgBaseSend->setMsgID($MsgID);
         $MsgBaseSend->setData($Data);
-        return $MsgBaseSend->serializeToString();
+        $MsgBaseSend->setResult($Result);
+//        $MsgBaseSend->setErrorMsg($ErrorMsg);
+        $str = $MsgBaseSend->serializeToString();
+        return $str;
     }
 }

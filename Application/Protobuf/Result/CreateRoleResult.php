@@ -8,13 +8,17 @@
 namespace App\Protobuf\Result;
 class CreateRoleResult
 {
-    public function __construct($Sex,$RoleId,$Name)
+
+    public static function encode($data)
     {
+        $Sex = $data['Sex'];
+        $RoleId = $data['RoleId'];
+        $Name = $data['Name'];
         $CreateRoleResult = new \AutoMsg\CreateRoleResult();
         $CreateRoleResult->setSex($Sex);
         $CreateRoleResult->setRoleId($RoleId);
         $CreateRoleResult->setName($Name);
-        $data = $CreateRoleResult->serializeToString();
-        return $data;
+        $str = $CreateRoleResult->serializeToString();
+        return $str;
     }
 }
