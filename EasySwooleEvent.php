@@ -24,7 +24,7 @@ use EasySwoole\Core\Component\Di;
 use App\Event\MainEventHelper;
 use EasySwoole\Core\Utility\File;
 use App\Event\RedisEvent;
-
+use think\Db;
 Class EasySwooleEvent implements EventInterface {
 
     public function frameInitialize(): void
@@ -53,9 +53,10 @@ Class EasySwooleEvent implements EventInterface {
         EventHelper::registerDefaultOnMessage($register,new WebSock());
 
         // 获得数据库配置
-//        $dbConf = Config::getInstance()->getConf('MONGO');
-//        // 全局初始化
-//        Db::setConfig($dbConf);
+        $dbConf = Config::getInstance()->getConf('MONGO');
+        // 全局初始化
+        Db::setConfig($dbConf);
+        var_dump(Db);
 
     }
 

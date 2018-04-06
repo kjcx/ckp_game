@@ -11,7 +11,10 @@ use App\Models\DataCenter;
 
 use App\Models\User\Account;
 use App\Models\User\Role;
+use App\Protobuf\Req\DropShopPingReq;
+use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Result\JoinGameResult;
+use App\Protobuf\Result\RefDropShopResult;
 use AutoMsg\ConnectingReq;
 use AutoMsg\ConnectingResult;
 use AutoMsg\CreateRoleReq;
@@ -63,10 +66,22 @@ class Web extends WebSocketController
                 //角色创建失败
             }
         }elseif ($MsgId == 1012){
+            //加入游戏
             $uid = 2;
             $data = JoinGameResult::encode(['uid'=>$uid]);
             $str = \App\Protobuf\Result\MsgBaseSend::encode(1066,$data);
             ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }elseif ($MsgId == 1077){
+            //刷新商品商店
+            $shopType = RefDropShopReq::decode($Data);
+            $str = RefDropShopResult::encode($shopType);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }elseif ($MsgId == 1075){
+            //掉落库商品购买
+            $data_DropShopPingReq = DropShopPingReq::encode($Data);
+            //返回结果
+        }elseif ($MsgId == 1106){
+            //请求加载商店
         }
     }
     function index()

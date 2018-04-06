@@ -70,9 +70,9 @@ return [
     ],
     'MONGO'=>[
 // 数据库类型
-        'type'            => '139.129.119.229',
+        'type'            => 'mongo',
         // 服务器地址
-        'hostname'        => '',
+        'hostname'        => '139.129.119.229',
         // 数据库名
         'database'        => 'ckzc',
         // 用户名
