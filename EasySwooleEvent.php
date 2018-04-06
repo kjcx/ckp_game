@@ -52,7 +52,10 @@ Class EasySwooleEvent implements EventInterface {
 
         EventHelper::registerDefaultOnMessage($register,new WebSock());
 
-
+        // 获得数据库配置
+//        $dbConf = Config::getInstance()->getConf('MONGO');
+//        // 全局初始化
+//        Db::setConfig($dbConf);
 
     }
 

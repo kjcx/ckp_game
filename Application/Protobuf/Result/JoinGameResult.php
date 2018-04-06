@@ -23,7 +23,7 @@ class JoinGameResult
 //        $MissionResult = MissionResult::encode();
 //        $JoinGameResult->setMission($MissionResult);
         //背包信息
-        $LoadBagInfo = LoadBagInfo::encode();
+        $LoadBagInfo = LoadBagInfo::encode($uid);
         $JoinGameResult->setRoleBag($LoadBagInfo);
         $str = $JoinGameResult->serializeToString();
         return $str;

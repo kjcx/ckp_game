@@ -3,7 +3,9 @@
         "easyswoole/easyswoole": "2.x-dev",
         "guzzlehttp/guzzle": "^6.3",
         "joshcam/mysqli-database-class": "dev-master",
-        "google/protobuf": "^3.5"
+        "google/protobuf": "^3.5",
+        "topthink/think-orm": "^1.2",
+        "phpoffice/phpspreadsheet": "^1.2"
     },
     "autoload": {
         "psr-4": {

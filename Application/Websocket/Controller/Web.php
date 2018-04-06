@@ -53,7 +53,7 @@ class Web extends WebSocketController
             $create_req_data = \App\Protobuf\Req\CreateRoleReq::decode($Data);
             $data = ['uid'=>2,'nickname'=>$create_req_data['Name'],'sex'=>$create_req_data['Sex'],'status'=>1,'create_time'=>time()];
             $Role = new Role();
-            $rs = $Role->setRole($data);
+            $rs = $Role->createRole($data);
             if($rs){
                 //角色创建成功
                 $data = \App\Protobuf\Result\CreateRoleResult::encode($create_req_data);
