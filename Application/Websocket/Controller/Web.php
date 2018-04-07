@@ -11,8 +11,11 @@ use App\Models\DataCenter;
 
 use App\Models\User\Account;
 use App\Models\User\Role;
+use App\Models\User\RoleBag;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
+use App\Protobuf\Result\AddItemResult;
+use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\RefDropShopResult;
 use AutoMsg\ConnectingReq;
@@ -22,6 +25,7 @@ use AutoMsg\CreateRoleResult;
 use AutoMsg\MsgBaseRev;
 use AutoMsg\MsgBaseSend;
 use AutoMsg\RoleLists;
+use AutoMsg\ShopAllResult;
 use EasySwoole\Config;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Swoole\ServerManager;
@@ -79,9 +83,28 @@ class Web extends WebSocketController
         }elseif ($MsgId == 1075){
             //掉落库商品购买
             $data_DropShopPingReq = DropShopPingReq::encode($Data);
+            var_dump($data_DropShopPingReq);
+            $ShopTypeId = $data_DropShopPingReq['ShopTypeId'];
+            $ItemId = $data_DropShopPingReq['ItemId'];
+            $DropKuId = $data_DropShopPingReq['DropKuId'];
+            $GridId = $data_DropShopPingReq['GridId'];
+            $RoleBag = new RoleBag();
+            $RoleBag->updateRoleBag(2,['id'=>$ItemId,'Count'=>99]);
+
+            $data = DropShopPingResult::encode($data_DropShopPingReq);
+
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1107,$data);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+            $data = AddItemResult::encode(2);
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1053,$data);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+
             //返回结果
         }elseif ($MsgId == 1106){
             //请求加载商店
+            $data = \App\Protobuf\Result\ShopAllResult::encode();
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1145,$data);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
         }
     }
     function index()

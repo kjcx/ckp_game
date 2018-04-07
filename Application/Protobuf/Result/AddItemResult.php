@@ -13,11 +13,14 @@ namespace App\Protobuf\Result;
  */
 class AddItemResult
 {
-    public static function encode()
+    public static function encode($uid)
     {
         $AddItemResult = new \AutoMsg\AddItemResult();
-        $AddItemResult->setShenJia();
-        $AddItemResult->setBagInfo();
-        $AddItemResult->setChangeAttr();
+        $AddItemResult->setShenJia(10000);
+        $LoadBagInfo = LoadBagInfo::encode($uid);
+        $AddItemResult->setBagInfo($LoadBagInfo);
+//        $AddItemResult->setChangeAttr();
+        $str = $AddItemResult->serializeToString();
+        return $str;
     }
 }

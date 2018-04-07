@@ -25,4 +25,32 @@ class LoadDropData
         return $data;
 
     }
+
+    public static function drop($arr)
+    {
+        foreach ($arr as $item) {
+            foreach ($item as $k =>$v) {
+                $LoadDropData = new \AutoMsg\LoadDropData();
+                $LoadDropData->setId($v['Id']);
+                $LoadDropData->setShopType($v['ShopType']);
+                $LoadDropData->setCount($v['Count']);
+                $LoadDropData->setDiscountedPrice($v['DiscountedPrice']);//打折价格
+                $LoadDropData->setDropKuId($v['DropKuId']);
+                $LoadDropData->setGridId($v['GridId']);
+                $data[] = $LoadDropData;
+            }
+        }
+        var_dump($data);
+        return $data;
+    }
+    public static function result_drop($arr){
+        $LoadDropData = new \AutoMsg\LoadDropData();
+        $LoadDropData->setId($arr['ItemId']);
+        $LoadDropData->setShopType($arr['ShopTypeId']);
+        $LoadDropData->setCount(99);
+//        $LoadDropData->setDiscountedPrice($arr['DiscountedPrice']);//打折价格
+        $LoadDropData->setDropKuId($arr['DropKuId']);
+        $LoadDropData->setGridId($arr['GridId']);
+        return $LoadDropData;
+    }
 }

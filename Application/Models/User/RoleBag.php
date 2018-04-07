@@ -42,21 +42,21 @@ class RoleBag extends Model
             foreach ($arr as $k => $v) {
                 if($v['id'] == $bag_data['id']){
                     //道具id存在 ➕1
-                    if($v['CurCount'] < 999){
-                        $v['CurCount'] += 1;
+                    if($v['CurCount'] < 999){//判断需要重写
+                        $v['CurCount'] += $bag_data['Count'];
                     }else{
                         $v['OnSpace'] += 1;
-                        $v['CurCount'] += 1;
+                        $v['CurCount'] += $bag_data['Count'];
                     }
                 }else{
-                    $v['CurCount'] = 1;
+                    $v['CurCount'] = $bag_data['Count'];
                     $v['OnSpace'] = 1;
                     $v['id'] = $bag_data['id'];
                 }
                 $arr[$bag_data['id']] = $v;
             }
         }else{
-            $arr[$bag_data['id']] = ['id'=>$bag_data['id'],'CurCount'=>1,'OnSpace'=>1];
+            $arr[$bag_data['id']] = ['id'=>$bag_data['id'],'CurCount'=>$bag_data['Count'],'OnSpace'=>1];
         }
         $rs = $this->mysql->where("uid",$uid)->update($this->table,['items'=>json_encode($arr)]);
         if($rs){

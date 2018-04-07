@@ -8,9 +8,10 @@
 namespace App\Protobuf\Req;
 class DropShopPingReq
 {
-    public static function encode()
+    public static function encode($data)
     {
         $DropShopPingReq = new \AutoMsg\DropShopPingReq();
+        $DropShopPingReq->mergeFromString($data);
         $ShopTypeId = $DropShopPingReq->getShopTypeId();
         $ItemId = $DropShopPingReq->getItemId();
         $DropKuId = $DropShopPingReq->getDropKuId();

@@ -13,9 +13,12 @@ namespace App\Protobuf\Result;
  */
 class DropShopPingResult
 {
-    public static function encode()
+    public static function encode($data)
     {
         $DropShopPingResult = new \AutoMsg\DropShopPingResult();
-        $DropShopPingResult->setLoadConsume();
+        $LoadDropData = LoadDropData::result_drop($data);
+        $DropShopPingResult->setLoadConsume($LoadDropData);
+        $str = $DropShopPingResult->serializeToString();
+        return $str;
     }
 }

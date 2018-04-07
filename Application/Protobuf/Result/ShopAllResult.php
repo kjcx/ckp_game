@@ -15,13 +15,19 @@ class ShopAllResult
 {
     public static function encode()
     {
+        $ShopAll = new \App\Models\LoadData\ShopAll();
+        $data = $ShopAll->get();//7种类型商品
+
+        $new_data = LoadDropData::drop($data);
         $ShopAllResult = new \AutoMsg\ShopAllResult();
-        $ShopAllResult->setLoadConsume();
-        $ShopAllResult->setTime();
-        $ShopAllResult->setDate();
-        $ShopAllResult->setHairdressingTime();
-        $ShopAllResult->setMenSWearTime();
-        $ShopAllResult->setOrnamentTime();
-        $ShopAllResult->setWoMenSWearTime();
+        $ShopAllResult->setLoadConsume($new_data);
+        $ShopAllResult->setTime(1);
+        $ShopAllResult->setDate(time()+3600);
+//        $ShopAllResult->setHairdressingTime();
+//        $ShopAllResult->setMenSWearTime();
+//        $ShopAllResult->setOrnamentTime();
+//        $ShopAllResult->setWoMenSWearTime();
+        $str = $ShopAllResult->serializeToString();
+        return $str;
     }
 }
