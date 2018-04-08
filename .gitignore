@@ -8,3 +8,4 @@ easyswoole.install
 /Config.php
 /EasySwooleEvent.php
 /Protobuf
+dump.rdb
