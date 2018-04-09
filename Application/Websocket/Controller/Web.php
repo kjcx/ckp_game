@@ -32,6 +32,12 @@ use EasySwoole\Core\Swoole\ServerManager;
 
 class Web extends WebSocketController
 {
+    public $data;
+
+    public function __construct()
+    {
+        $this->data = $this->request()->getArg('data');
+    }
     function actionNotFound(?string $actionName)
     {
 
@@ -128,6 +134,14 @@ class Web extends WebSocketController
 
 
 //        $this->response()->write();
+    }
+
+    /**
+     *
+     */
+    public function tt()
+    {
+        $data = $this->data;
     }
 
 }
