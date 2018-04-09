@@ -40,7 +40,7 @@ class LoadDropData
                 $data[] = $LoadDropData;
             }
         }
-        var_dump($data);
+//        var_dump($data);
         return $data;
     }
     public static function result_drop($arr){

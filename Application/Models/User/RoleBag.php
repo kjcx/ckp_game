@@ -39,22 +39,30 @@ class RoleBag extends Model
         $data = $this->getRoleBag($uid);
         $arr = json_decode($data['items'],1);
         if(count($arr)>0){
-            foreach ($arr as $k => $v) {
-                if($v['id'] == $bag_data['id']){
-                    //道具id存在 ➕1
-                    if($v['CurCount'] < 999){//判断需要重写
-                        $v['CurCount'] += $bag_data['Count'];
-                    }else{
-                        $v['OnSpace'] += 1;
-                        $v['CurCount'] += $bag_data['Count'];
-                    }
-                }else{
-                    $v['CurCount'] = $bag_data['Count'];
-                    $v['OnSpace'] = 1;
-                    $v['id'] = $bag_data['id'];
-                }
-                $arr[$bag_data['id']] = $v;
+            if($arr[$bag_data['id']]){
+                //判断道具是否存在
+                $arr[$bag_data['id']]['CurCount'] += $bag_data['Count'];
+            }else{
+                $arr[$bag_data['id'] = ['id'=>$bag_data['id'],'OnSpace'=>1,'CurCount'=>$bag_data['CurCount']]];
             }
+//            foreach ($arr as $k => $v) {
+//                if($v['id'] == $bag_data['id']){
+//                    echo '1111111';
+//                    //道具id存在 ➕1
+//                    if($v['CurCount'] < 999){//判断需要重写
+//                        $v['CurCount'] += $bag_data['Count'];
+//                    }else{
+//                        $v['OnSpace'] += 1;
+//                        $v['CurCount'] += $bag_data['Count'];
+//                    }
+//                }else{
+//                    echo '222222';
+//                    $v['CurCount'] = $bag_data['Count'];
+//                    $v['OnSpace'] = 1;
+//                    $v['id'] = $bag_data['id'];
+//                }
+//                $arr[$bag_data['id']] = $v;
+//            }
         }else{
             $arr[$bag_data['id']] = ['id'=>$bag_data['id'],'CurCount'=>$bag_data['Count'],'OnSpace'=>1];
         }

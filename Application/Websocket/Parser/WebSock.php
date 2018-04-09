@@ -32,7 +32,7 @@ class WebSock implements ParserInterface
         $data = $baseMessage->getData();
         $msgId = $baseMessage->getMsgId();
         $command->setAction('msgid_' . $msgId);
-        $command->setArgs(['data' => $data]);
+        $command->setArg('data',$data);
         return $command;
     }
 

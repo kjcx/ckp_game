@@ -24,8 +24,6 @@ class ShopAll
                 $arr = explode(';',$DropLib);
 //                var_dump($arr);
                 $data1 = $this->rand_arr($arr,$new_item,$v['Id']);
-                var_dump('22222222222222');
-                var_dump($data1);
                $new[] = $data1;
         }
         return $new;

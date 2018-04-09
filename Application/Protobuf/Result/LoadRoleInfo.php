@@ -14,7 +14,7 @@ class LoadRoleInfo
     {
         $role = new Role();
         $arr = $role->getRole($uid);
-        var_dump($arr);
+//        var_dump($arr);
         $Name = $arr['nickname'];
         $RoleId = $arr['id'];
         $Sex = $arr['sex'];

@@ -12,9 +12,9 @@ class LoadRoleBagInfo
 {
     public static function encode($items_data)
     {
-
-        $LoadRoleBagInfo = new \AutoMsg\LoadRoleBagInfo();
+        $arr =[];
         foreach ($items_data as $k=>$v) {
+            $LoadRoleBagInfo = new \AutoMsg\LoadRoleBagInfo();
             $LoadRoleBagInfo->setId($v['id']);//家具id
             $LoadRoleBagInfo->setCurCount($v['CurCount']);//当前叠加数量
             $LoadRoleBagInfo->setFurnitureId(0);//家具id

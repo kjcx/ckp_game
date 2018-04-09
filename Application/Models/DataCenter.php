@@ -32,14 +32,14 @@ class DataCenter extends Model
         $key = Config::getInstance()->getConf('rediskeys.data_center');
         if ( !$this->redis->sIsMember($key,$uid) ) {
             $this->redis->zAdd($key,$uid);
-            $this
-                ->redis
-                ->set(Config::getInstance()->getConf('SERVER_CONF.server_hash') . ':' . $uid . ':' . $fd,
-                    serialize($fd));
         } else {
             //删除 用户
             $this->redis->del('*:' . $uid);
         }
+        $this
+            ->redis
+            ->set(Config::getInstance()->getConf('SERVER_CONF.server_hash') . ':' . $uid . ':' . $fd,
+                serialize($fd));
 
     }
 

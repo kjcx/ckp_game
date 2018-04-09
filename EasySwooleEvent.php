@@ -32,12 +32,13 @@ Class EasySwooleEvent implements EventInterface {
         // TODO: Implement frameInitialize() method.
         date_default_timezone_set('Asia/Shanghai');
         $this->loadConf(EASYSWOOLE_ROOT . '/Application/Conf');
+
     }
 
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
-        (new RedisEvent())->autoRegister(); //注册监听redis
+//        (new RedisEvent())->autoRegister(); //注册监听redis
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
 

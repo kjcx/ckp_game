@@ -6,12 +6,14 @@
  * Time: 上午1:11
  */
 namespace App\Protobuf\Result;
+use App\Models\Model;
+
 /**
  * 返回商店信息
  * Class ShopAllResult 1145
  * @package App\Protobuf\Result
  */
-class ShopAllResult
+class ShopAllResult extends Model
 {
     public static function encode()
     {
