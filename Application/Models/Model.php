@@ -10,6 +10,7 @@ namespace App\Models;
 
 use App\Utility\Mysql;
 use App\Utility\Redis;
+use EasySwoole\Config;
 
 class Model
 {
@@ -20,6 +21,10 @@ class Model
     {
         $this->mysql = Mysql::getInstance()->getConnect();
         $this->redis = Redis::getInstance()->getConnect();
+        // 获得数据库配置
+        $dbConf = Config::getInstance()->getConf('MONGO');
+        // 全局初始化
+        Db::setConfig($dbConf);
     }
 
 

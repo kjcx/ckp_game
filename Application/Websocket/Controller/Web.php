@@ -14,6 +14,7 @@ use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
+use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Result\AddItemResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
@@ -105,6 +106,13 @@ class Web extends WebSocketController
             $data = \App\Protobuf\Result\ShopAllResult::encode();
             $str = \App\Protobuf\Result\MsgBaseSend::encode(1145,$data);
             ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }elseif ($MsgId == 1069){
+            //SellItemReq 出售道具
+            $data_SellItemReq = SellItemReq::decode($Data);
+            //计算道具所需价格
+
+
+
         }
     }
     function index()

@@ -13,7 +13,7 @@ namespace App\Protobuf\Req;
  */
 class SellItemReq
 {
-    public function decode($data)
+    public static function decode($data)
     {
         $SellItemReq = new \AutoMsg\SellItemReq();
         $SellItemReq->mergeFromString($data);
