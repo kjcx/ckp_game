@@ -10,6 +10,7 @@ namespace App\Websocket\Parser;
 
 
 use App\Websocket\Controller\web;
+use AutoMsg\MsgBaseRev;
 use EasySwoole\Core\Socket\AbstractInterface\ParserInterface;
 use EasySwoole\Core\Socket\Common\CommandBean;
 
@@ -25,10 +26,13 @@ class WebSock implements ParserInterface
     {
         // TODO: Implement decode() method.
         $command = new CommandBean();
-        $json = json_decode($raw,1);
+        $baseMessage = new MsgBaseRev();
+        $baseMessage->mergeFromString($raw);
         $command->setControllerClass(Web::class);
-        $command->setAction($json['action']);
-        $command->setArg('content',$json['content']);
+        $data = $baseMessage->getData();
+        $msgId = $baseMessage->getMsgId();
+        $command->setAction('msgid_' . $msgId);
+        $command->setArgs(['data' => $data]);
         return $command;
     }
 
