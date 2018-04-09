@@ -56,7 +56,6 @@ Class EasySwooleEvent implements EventInterface {
         $dbConf = Config::getInstance()->getConf('MONGO');
         // 全局初始化
         Db::setConfig($dbConf);
-        var_dump(Db);
 
     }
 
