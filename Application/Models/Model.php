@@ -25,6 +25,7 @@ class Model
         $dbConf = Config::getInstance()->getConf('MONGO');
         // 全局初始化
         Db::setConfig($dbConf);
+
     }
 
 

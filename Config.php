@@ -63,10 +63,10 @@ return [
             'min' => 5, // 最小连接数
             'max' => 10 // 最大连接数
         ],
-        'dbname' => 1,
-        'errorHandler' => function(){
-            return null;
-        } // 如果Redis重连失败，会判断errorHandler是否callable，如果是，则会调用，否则会抛出异常，请自行try
+        'dbname' => 1
+//        'errorHandler' => function(){
+//            return null;
+//        } // 如果Redis重连失败，会判断errorHandler是否callable，如果是，则会调用，否则会抛出异常，请自行try
     ],
     'MONGO'=>[
 // 数据库类型
