@@ -10,7 +10,7 @@ return [
     'MAIN_SERVER'=>[
         'HOST'=>'0.0.0.0',
         'PORT'=>9501,
-        'SERVER_TYPE'=>\EasySwoole\Core\Swoole\ServerManager::TYPE_WEB_SERVER,
+        'SERVER_TYPE'=>\EasySwoole\Core\Swoole\ServerManager::TYPE_WEB_SOCKET_SERVER,
         'SOCK_TYPE'=>SWOOLE_TCP,//该配置项当为SERVER_TYPE值为TYPE_SERVER时有效
         'RUN_MODEL'=>SWOOLE_PROCESS,
         'SETTING'=>[
@@ -63,10 +63,10 @@ return [
             'min' => 5, // 最小连接数
             'max' => 10 // 最大连接数
         ],
-        'dbname' => 1,
-        'errorHandler' => function(){
-            return null;
-        } // 如果Redis重连失败，会判断errorHandler是否callable，如果是，则会调用，否则会抛出异常，请自行try
+        'dbname' => 1
+//        'errorHandler' => function(){
+//            return null;
+//        } // 如果Redis重连失败，会判断errorHandler是否callable，如果是，则会调用，否则会抛出异常，请自行try
     ],
     'MONGO'=>[
 // 数据库类型
