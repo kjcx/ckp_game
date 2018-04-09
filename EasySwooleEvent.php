@@ -37,7 +37,7 @@ Class EasySwooleEvent implements EventInterface {
     public function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
-//        (new RedisEvent())->autoRegister(); //注册监听redis
+        (new RedisEvent())->autoRegister(); //注册监听redis
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
 
@@ -52,11 +52,7 @@ Class EasySwooleEvent implements EventInterface {
 
         EventHelper::registerDefaultOnMessage($register,new WebSock());
 
-        // 获得数据库配置
-        $dbConf = Config::getInstance()->getConf('MONGO');
-        // 全局初始化
-        Db::setConfig($dbConf);
-        var_dump(Db);
+
 
     }
 
