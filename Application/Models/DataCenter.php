@@ -34,7 +34,7 @@ class DataCenter extends Model
             $this->redis->zAdd($key,$uid);
             $this
                 ->redis
-                ->set(Config::getInstance()->getConf('SERVER_CONF.server_hash') . ':' . $uid,
+                ->set(Config::getInstance()->getConf('SERVER_CONF.server_hash') . ':' . $uid . ':' . $fd,
                     serialize($fd));
         } else {
             //删除 用户

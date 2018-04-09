@@ -16,8 +16,14 @@ use AutoMsg\MsgBaseSend;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use think\Db;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+
 class Index extends Controller
 {
+
+    public function tt()
+    {
+        $this->response()->write(12);
+    }
     public function index()
     {
         $Role = new Role();
