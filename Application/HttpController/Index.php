@@ -6,6 +6,7 @@
  * Time: 下午4:18
  */
 namespace App\HttpController;
+use App\Models\DataCenter\DataCenter;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Protobuf\LoadData\ShopAll;
@@ -22,7 +23,11 @@ class Index extends Controller
 
     public function tt()
     {
-        $this->response()->write(12);
+        $dataCenter = new DataCenter();
+//        $dataCenter->saveClient(12,1);;
+        $a = $dataCenter->getUidByFd(12);
+        var_dump($a);
+        $this->writeJson(200,$a,'1');
     }
     public function index()
     {

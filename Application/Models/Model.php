@@ -12,6 +12,7 @@ use App\Utility\Mysql;
 use App\Utility\Redis;
 use EasySwoole\Config;
 use think\Db;
+
 class Model
 {
     public $mysql;
