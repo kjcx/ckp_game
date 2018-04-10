@@ -6,7 +6,7 @@
  * Time: 下午6:04
  * 数据中心模型
  */
-namespace App\DataCenter\Models;
+namespace App\Models\DataCenter;
 
 use EasySwoole\Config;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
@@ -33,7 +33,7 @@ class DataCenter extends Model
     {
         if ( !$this->redis->exists($this->dataCenterKey) )
         {
-            $this->redis->zAdd($this->dataCenterKey,'init');
+            $this->redis->sAdd($this->dataCenterKey,'init');
         }
     }
 
@@ -55,7 +55,7 @@ class DataCenter extends Model
      */
     private function userOnline($uid) : bool
     {
-        return $this->redis->zAdd($this->dataCenterKey,$uid);
+        return $this->redis->sAdd($this->dataCenterKey,$uid);
     }
 
     /**
@@ -65,7 +65,7 @@ class DataCenter extends Model
      */
     private function delUserClientInfo($uid) : bool
     {
-        $this->redis->del($this->redis->keys('*:' . $uid . ':*'));
+        return $this->redis->del($this->redis->keys('*:' . $uid . ':*'));
 
     }
 
@@ -99,7 +99,7 @@ class DataCenter extends Model
     public function getMyFd() : array
     {
         //机器号 下面的所有连接信息
-        $fds = $this->redis->keys($this->dataCenterKey . ':*:*');
+        $fds = $this->redis->keys($this->serverHash . ':*:*');
 
         foreach ($fds as $key => $fd) {
             $fds[$key] = unserialize($this->redis->get($fd));
@@ -110,15 +110,15 @@ class DataCenter extends Model
     /**
      * 获取用户uid  通过Fd
      * @param $fd
-     * @return array ['server_hash','fd','uid'] or false
+     * @return array ['server_hash','fd','uid'] or []
      */
     public function getUidByFd($fd) : array
     {
         $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
-        if (!$keys) {
+        if ($keys) {
             return unserialize($this->redis->get($keys['0']));
         }
-        return false;
+        return [];
     }
 
 }
