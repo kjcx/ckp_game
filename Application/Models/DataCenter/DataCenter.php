@@ -59,13 +59,24 @@ class DataCenter extends Model
     }
 
     /**
+     * 用户下线
+     */
+    private function userOffline($uid)
+    {
+        return $this->redis->sRem($this->dataCenterKey,$uid);
+    }
+    /**
      *删除用户连接信息
      * @param $uid
-     * @return bool
      */
-    private function delUserClientInfo($uid) : bool
+    private function delUserClientInfo($uid)
     {
-        return $this->redis->del($this->redis->keys('*:' . $uid . ':*'));
+
+        $keys = $this->redis->keys('*:' . $uid . ':*');
+        foreach ($keys as $key) {
+            var_dump($this->redis->del($key));
+
+        }
 
     }
 
@@ -94,6 +105,22 @@ class DataCenter extends Model
     }
 
     /**
+     * 用户下线操作 与saveClient相对
+     * @param $fd
+     * @return bool
+     */
+    public function delClient($fd)
+    {
+        $clientInfo = $this->getClientInfoByFd($fd);
+        if (!empty($clientInfo)) {
+
+            $this->userOffline($clientInfo['uid']);
+            $this->delUserClientInfo($clientInfo['uid']);
+            return true;
+        }
+        return false;
+    }
+    /**
      * 获取所有 当前机器的fd信息
      */
     public function getMyFd() : array
@@ -110,9 +137,9 @@ class DataCenter extends Model
     /**
      * 获取用户uid  通过Fd
      * @param $fd
-     * @return array ['server_hash','fd','uid'] or []
+     * @return array ['serverHash','fd','uid'] or []
      */
-    public function getUidByFdInfo($fd) : array
+    public function getClientInfoByFd($fd) : array
     {
         $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
         if ($keys) {
@@ -132,8 +159,6 @@ class DataCenter extends Model
         if ($keys) {
 //            return unserialize($this->redis->get($keys['0']))['uid'];
             $arr =  unserialize($this->redis->get($keys['0']));
-            var_dump($arr['uid']);
-
             return $arr['uid'];
         }
         return [];
