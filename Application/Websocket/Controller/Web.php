@@ -7,9 +7,8 @@
  */
 namespace  App\Websocket\Controller;
 
+use App\DataCenter\Models\DataCenter;
 use App\Models\BagInfo\Item;
-use App\Models\DataCenter;
-
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
@@ -150,7 +149,7 @@ class Web extends WebSocketController
         $Account = new Account();
         $uid = $Account->getToken($token);
         if($uid){
-            $dataCenter = new DataCenter();
+            $dataCenter = new \App\Models\DataCenter\DataCenter();
             $dataCenter->saveClient($this->client()->getFd(),$uid);
             //登录成功
             $data = \App\Protobuf\Result\ConnectingResult::encode($uid);
@@ -169,7 +168,10 @@ class Web extends WebSocketController
     {
         $Data = $this->request()->getArg('data');
         $create_req_data = \App\Protobuf\Req\CreateRoleReq::decode($Data);
-        $data = ['uid'=>2,'nickname'=>$create_req_data['Name'],'sex'=>$create_req_data['Sex'],'status'=>1,'create_time'=>time()];
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+
+        $data = ['uid'=>$uid,'nickname'=>$create_req_data['Name'],'sex'=>$create_req_data['Sex'],'status'=>1,'create_time'=>time()];
         $Role = new Role();
         $rs = $Role->createRole($data);//创建角色
         if($rs){
@@ -188,8 +190,11 @@ class Web extends WebSocketController
      */
     public function msgid_1012()
     {
+        var_dump('msgid_1012');
         //加入游戏
-        $uid = 2;
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        var_dump("=== ====>" .$uid);
         $data = JoinGameResult::encode(['uid'=>$uid]);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1066,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
@@ -220,13 +225,15 @@ class Web extends WebSocketController
         $DropKuId = $data_DropShopPingReq['DropKuId'];
         $GridId = $data_DropShopPingReq['GridId'];
         $RoleBag = new RoleBag();
-        $RoleBag->updateRoleBag(2,['id'=>$ItemId,'Count'=>99]);
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        $RoleBag->updateRoleBag($uid,['id'=>$ItemId,'Count'=>99]);
 
         $data = DropShopPingResult::encode($data_DropShopPingReq);
 
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1107,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
-        $data = AddItemResult::encode(2);
+        $data = AddItemResult::encode($uid);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1053,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
 
@@ -263,9 +270,11 @@ class Web extends WebSocketController
             $update_bag1 = ['id'=>$PriceType['type'],'Count'=>$PriceType['sum']];//金币增加
             $update_bag2 = ['id'=>$data_SellItemReq['ItemId'],'Count'=>(-1)*$data_SellItemReq['Count']];//道具数量减少
             //加事务
-            $RoleBag->updateRoleBag(2,$update_bag1);
-            $RoleBag->updateRoleBag(2,$update_bag2);
-            $data = SellItemResult::encode(2);
+            $dataCenter = new \App\Models\DataCenter\DataCenter();
+            $uid = $dataCenter->getUidByFd($this->client()->getFd());
+            $RoleBag->updateRoleBag($uid,$update_bag1);
+            $RoleBag->updateRoleBag($uid,$update_bag2);
+            $data = SellItemResult::encode($uid);
             $str = \App\Protobuf\Result\MsgBaseSend::encode(1069,$data);
             ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
         }elseif($PriceType['code'] ==1001){

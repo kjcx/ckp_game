@@ -112,11 +112,29 @@ class DataCenter extends Model
      * @param $fd
      * @return array ['server_hash','fd','uid'] or []
      */
-    public function getUidByFd($fd) : array
+    public function getUidByFdInfo($fd) : array
     {
         $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
         if ($keys) {
             return unserialize($this->redis->get($keys['0']));
+        }
+        return [];
+    }
+
+    /**
+     * 获取用户uid  通过Fd
+     * @param $fd
+     * @return int
+     */
+    public function getUidByFd($fd) : int
+    {
+        $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
+        if ($keys) {
+//            return unserialize($this->redis->get($keys['0']))['uid'];
+            $arr =  unserialize($this->redis->get($keys['0']));
+            var_dump($arr['uid']);
+
+            return $arr['uid'];
         }
         return [];
     }
