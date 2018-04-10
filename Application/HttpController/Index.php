@@ -24,9 +24,10 @@ class Index extends Controller
     public function tt()
     {
         $dataCenter = new DataCenter();
-//        $dataCenter->saveClient(12,1);;
-        $a = $dataCenter->getUidByFd(12);
-        var_dump($a);
+        $dataCenter->saveClient(1,12);
+//        $a = $dataCenter->getUidByFd(12);
+        $a = $dataCenter->delClient(1);
+//        var_dump($a);
         $this->writeJson(200,$a,'1');
     }
     public function index()
