@@ -12,6 +12,7 @@ use App\Models\BagInfo\Item;
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
+use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
@@ -19,11 +20,14 @@ use App\Protobuf\Result\AddItemResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\RefDropShopResult;
+use App\Protobuf\Result\ScoreShopRecordResult;
+use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
 use AutoMsg\ConnectingReq;
 use AutoMsg\ConnectingResult;
 use AutoMsg\CreateRoleReq;
 use AutoMsg\CreateRoleResult;
+use AutoMsg\ModelClothesReq;
 use AutoMsg\MsgBaseRev;
 use AutoMsg\MsgBaseSend;
 use AutoMsg\RoleLists;
@@ -281,5 +285,54 @@ class Web extends WebSocketController
             //不可售卖
         }
 
+    }
+
+    /**
+     * 请求积分商店
+     * 消息id 1142
+     */
+    public function msgid_1142()
+    {
+        $data = ScoreShopResult::encode();
+        $str = \App\Protobuf\Result\MsgBaseSend::encode(1193,$data);
+        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+    }
+
+    /**
+     * 改变时装请求
+     * 消息id 1002
+     */
+    public function msgid_1002()
+    {
+        $Data = $this->request()->getArg('data');
+        $ids = ChangeAvatarReq::decode($Data);
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        $time = time();
+        foreach ($ids as $id) {
+            //保存数据库
+        }
+    }
+
+    /**
+     * 购买时装
+     * 消息id 1150
+     */
+    public function msgid_1150()
+    {
+        $Data = $this->request()->getArg('data');
+        $data_ModelClothes = \App\Protobuf\Req\ModelClothesReq::decode($Data);
+        //购买时装操作 计算金额 放入背包
+
+
+
+    }
+
+    /**
+     * 购买种子商店请求
+     */
+    public function mgsid_1076()
+    {
+        
     }
 }

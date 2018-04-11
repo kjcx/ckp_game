@@ -31,6 +31,7 @@ class WebSock implements ParserInterface
         $command->setControllerClass(Web::class);
         $data = $baseMessage->getData();
         $msgId = $baseMessage->getMsgId();
+        var_dump("Req======>".$msgId);
         $command->setAction('msgid_' . $msgId);
         $command->setArg('data',$data);
         return $command;
