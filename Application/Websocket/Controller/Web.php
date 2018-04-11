@@ -7,12 +7,12 @@
  */
 namespace  App\Websocket\Controller;
 
+use App\DataCenter\Models\DataCenter;
 use App\Models\BagInfo\Item;
-use App\Models\DataCenter;
-
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
+use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
@@ -20,11 +20,14 @@ use App\Protobuf\Result\AddItemResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\RefDropShopResult;
+use App\Protobuf\Result\ScoreShopRecordResult;
+use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
 use AutoMsg\ConnectingReq;
 use AutoMsg\ConnectingResult;
 use AutoMsg\CreateRoleReq;
 use AutoMsg\CreateRoleResult;
+use AutoMsg\ModelClothesReq;
 use AutoMsg\MsgBaseRev;
 use AutoMsg\MsgBaseSend;
 use AutoMsg\RoleLists;
@@ -148,10 +151,15 @@ class Web extends WebSocketController
         $uid = $Account->getToken($token);
         var_dump($uid);
         if($uid){
+<<<<<<< HEAD
             $dataCenter = new DataCenter();
             var_dump($dataCenter);
 //            $dataCenter->saveClient($this->client()->getFd(),$uid);
 //            var_dump($dataCenter);
+=======
+            $dataCenter = new \App\Models\DataCenter\DataCenter();
+            $dataCenter->saveClient($this->client()->getFd(),$uid);
+>>>>>>> 70d7a0431bed4e35044049f883d5b1d6f7d4b3ce
             //登录成功
             $data = \App\Protobuf\Result\ConnectingResult::encode($uid);
             $str = \App\Protobuf\Result\MsgBaseSend::encode(1057,$data);
@@ -169,8 +177,14 @@ class Web extends WebSocketController
     {
         $Data = $this->request()->getArg('data');
         $create_req_data = \App\Protobuf\Req\CreateRoleReq::decode($Data);
+<<<<<<< HEAD
         $DataCenter  = new \App\DataCenter\Models\DataCenter();
         $uid = $DataCenter->getUidByFd($this->client()->getFd());
+=======
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+
+>>>>>>> 70d7a0431bed4e35044049f883d5b1d6f7d4b3ce
         $data = ['uid'=>$uid,'nickname'=>$create_req_data['Name'],'sex'=>$create_req_data['Sex'],'status'=>1,'create_time'=>time()];
         $Role = new Role();
         $rs = $Role->createRole($data);//创建角色
@@ -190,9 +204,16 @@ class Web extends WebSocketController
      */
     public function msgid_1012()
     {
+        var_dump('msgid_1012');
         //加入游戏
+<<<<<<< HEAD
         $DataCenter  = new \App\DataCenter\Models\DataCenter();
         $uid = $DataCenter->getUidByFd($this->client()->getFd());
+=======
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        var_dump("=== ====>" .$uid);
+>>>>>>> 70d7a0431bed4e35044049f883d5b1d6f7d4b3ce
         $data = JoinGameResult::encode(['uid'=>$uid]);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1066,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
@@ -223,8 +244,13 @@ class Web extends WebSocketController
         $DropKuId = $data_DropShopPingReq['DropKuId'];
         $GridId = $data_DropShopPingReq['GridId'];
         $RoleBag = new RoleBag();
+<<<<<<< HEAD
         $DataCenter  = new \App\DataCenter\Models\DataCenter();
         $uid = $DataCenter->getUidByFd($this->client()->getFd());
+=======
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+>>>>>>> 70d7a0431bed4e35044049f883d5b1d6f7d4b3ce
         $RoleBag->updateRoleBag($uid,['id'=>$ItemId,'Count'=>99]);
 
         $data = DropShopPingResult::encode($data_DropShopPingReq);
@@ -270,6 +296,11 @@ class Web extends WebSocketController
             $update_bag1 = ['id'=>$PriceType['type'],'Count'=>$PriceType['sum']];//金币增加
             $update_bag2 = ['id'=>$data_SellItemReq['ItemId'],'Count'=>(-1)*$data_SellItemReq['Count']];//道具数量减少
             //加事务
+<<<<<<< HEAD
+=======
+            $dataCenter = new \App\Models\DataCenter\DataCenter();
+            $uid = $dataCenter->getUidByFd($this->client()->getFd());
+>>>>>>> 70d7a0431bed4e35044049f883d5b1d6f7d4b3ce
             $RoleBag->updateRoleBag($uid,$update_bag1);
             $RoleBag->updateRoleBag($uid,$update_bag2);
             $data = SellItemResult::encode($uid);
@@ -281,7 +312,55 @@ class Web extends WebSocketController
 
     }
 
+<<<<<<< HEAD
     public function msgid_()
+=======
+    /**
+     * 请求积分商店
+     * 消息id 1142
+     */
+    public function msgid_1142()
+    {
+        $data = ScoreShopResult::encode();
+        $str = \App\Protobuf\Result\MsgBaseSend::encode(1193,$data);
+        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+    }
+
+    /**
+     * 改变时装请求
+     * 消息id 1002
+     */
+    public function msgid_1002()
+    {
+        $Data = $this->request()->getArg('data');
+        $ids = ChangeAvatarReq::decode($Data);
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        $time = time();
+        foreach ($ids as $id) {
+            //保存数据库
+        }
+    }
+
+    /**
+     * 购买时装
+     * 消息id 1150
+     */
+    public function msgid_1150()
+    {
+        $Data = $this->request()->getArg('data');
+        $data_ModelClothes = \App\Protobuf\Req\ModelClothesReq::decode($Data);
+        //购买时装操作 计算金额 放入背包
+
+
+
+    }
+
+    /**
+     * 购买种子商店请求
+     */
+    public function mgsid_1076()
+>>>>>>> 70d7a0431bed4e35044049f883d5b1d6f7d4b3ce
     {
         
     }

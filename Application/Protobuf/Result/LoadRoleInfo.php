@@ -28,6 +28,8 @@ class LoadRoleInfo
         $LoadRoleInfo->setIcon($Icon);
         $LoadRoleInfo->setExp($Exp);
         $LoadRoleInfo->setLevel($Level);
+        $Avatar = json_decode($arr['avatar'],1);
+        $LoadRoleInfo->setAvatar($Avatar);//装扮属性
 //        $LoadRoleInfo->set
         $str = $LoadRoleInfo->serializeToString();
         return $LoadRoleInfo;

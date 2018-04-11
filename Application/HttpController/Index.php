@@ -6,6 +6,7 @@
  * Time: 下午4:18
  */
 namespace App\HttpController;
+use App\Models\DataCenter\DataCenter;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Protobuf\LoadData\ShopAll;
@@ -22,10 +23,22 @@ class Index extends Controller
 
     public function tt()
     {
-        $this->response()->write(12);
+        $dataCenter = new DataCenter();
+        $dataCenter->saveClient(1,12);
+//        $a = $dataCenter->getUidByFd(12);
+        $a = $dataCenter->delClient(1);
+//        var_dump($a);
+        $this->writeJson(200,$a,'1');
     }
     public function index()
     {
+
+        $date = new \DateTime();
+        echo $date->format('U = Y-m-d H:i:s') . "\n";
+
+        $date->setTimestamp($date->getTimestamp() + 86400*365*100);
+        echo $date->format('U = Y-m-d H:i:s') . "\n";
+
         $Role = new Role();
         $arr = $Role->getRole(2);
         $this->response()->write(json_encode($arr));

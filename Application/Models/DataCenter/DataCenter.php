@@ -6,7 +6,7 @@
  * Time: 下午6:04
  * 数据中心模型
  */
-namespace App\DataCenter\Models;
+namespace App\Models\DataCenter;
 
 use EasySwoole\Config;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
@@ -33,7 +33,7 @@ class DataCenter extends Model
     {
         if ( !$this->redis->exists($this->dataCenterKey) )
         {
-            $this->redis->zAdd($this->dataCenterKey,'init');
+            $this->redis->sAdd($this->dataCenterKey,'init');
         }
     }
 
@@ -55,17 +55,28 @@ class DataCenter extends Model
      */
     private function userOnline($uid) : bool
     {
-        return $this->redis->zAdd($this->dataCenterKey,$uid);
+        return $this->redis->sAdd($this->dataCenterKey,$uid);
     }
 
     /**
+     * 用户下线
+     */
+    private function userOffline($uid)
+    {
+        return $this->redis->sRem($this->dataCenterKey,$uid);
+    }
+    /**
      *删除用户连接信息
      * @param $uid
-     * @return bool
      */
-    private function delUserClientInfo($uid) : bool
+    private function delUserClientInfo($uid)
     {
-        $this->redis->del($this->redis->keys('*:' . $uid . ':*'));
+
+        $keys = $this->redis->keys('*:' . $uid . ':*');
+        foreach ($keys as $key) {
+            var_dump($this->redis->del($key));
+
+        }
 
     }
 
@@ -94,12 +105,28 @@ class DataCenter extends Model
     }
 
     /**
+     * 用户下线操作 与saveClient相对
+     * @param $fd
+     * @return bool
+     */
+    public function delClient($fd)
+    {
+        $clientInfo = $this->getClientInfoByFd($fd);
+        if (!empty($clientInfo)) {
+
+            $this->userOffline($clientInfo['uid']);
+            $this->delUserClientInfo($clientInfo['uid']);
+            return true;
+        }
+        return false;
+    }
+    /**
      * 获取所有 当前机器的fd信息
      */
     public function getMyFd() : array
     {
         //机器号 下面的所有连接信息
-        $fds = $this->redis->keys($this->dataCenterKey . ':*:*');
+        $fds = $this->redis->keys($this->serverHash . ':*:*');
 
         foreach ($fds as $key => $fd) {
             $fds[$key] = unserialize($this->redis->get($fd));
@@ -110,15 +137,31 @@ class DataCenter extends Model
     /**
      * 获取用户uid  通过Fd
      * @param $fd
-     * @return array ['server_hash','fd','uid'] or false
+     * @return array ['serverHash','fd','uid'] or []
      */
-    public function getUidByFd($fd) : array
+    public function getClientInfoByFd($fd) : array
     {
         $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
-        if (!$keys) {
+        if ($keys) {
             return unserialize($this->redis->get($keys['0']));
         }
-        return false;
+        return [];
+    }
+
+    /**
+     * 获取用户uid  通过Fd
+     * @param $fd
+     * @return int
+     */
+    public function getUidByFd($fd) : int
+    {
+        $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
+        if ($keys) {
+//            return unserialize($this->redis->get($keys['0']))['uid'];
+            $arr =  unserialize($this->redis->get($keys['0']));
+            return $arr['uid'];
+        }
+        return [];
     }
 
 }
