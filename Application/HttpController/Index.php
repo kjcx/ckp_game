@@ -6,7 +6,10 @@
  * Time: 下午4:18
  */
 namespace App\HttpController;
+use App\Event\BookEvent;
+use App\Event\BookSubscriber;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Test\Event;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Protobuf\LoadData\ShopAll;
@@ -15,6 +18,7 @@ use App\Protobuf\Result\LoadRoleBagInfo;
 use App\Protobuf\Result\ShopAllResult;
 use AutoMsg\MsgBaseSend;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use think\Db;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -32,12 +36,20 @@ class Index extends Controller
     }
     public function index()
     {
+        $dispatcher = new EventDispatcher();
+//        $subscriber = new BookSubscriber();
+        $event = new Event();
+        $event->t("chinese.name");
+//        $dispatcher->addSubscriber($subscriber);
+//        $dispatcher->dispatch("english.name", new BookEvent());
+//        $dispatcher->dispatch("chinese.name",new BookEvent());
+//        $dispatcher->removeSubscriber($subscriber);
+//        $dispatcher->dispatch("math.name");
 
-        $date = new \DateTime();
-        echo $date->format('U = Y-m-d H:i:s') . "\n";
+        $dispatcher = new EventDispatcher();
 
-        $date->setTimestamp($date->getTimestamp() + 86400*365*100);
-        echo $date->format('U = Y-m-d H:i:s') . "\n";
+        $dispatcher->dispatch("user.name", new \App\Event\UserEvent());
+        $dispatcher->dispatch("user.age", new \App\Event\UserEvent());
 
         $Role = new Role();
         $arr = $Role->getRole(2);
