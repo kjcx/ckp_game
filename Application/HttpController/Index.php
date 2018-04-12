@@ -7,6 +7,7 @@
  */
 namespace App\HttpController;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Execl\GameEnum;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Protobuf\LoadData\ShopAll;
@@ -121,13 +122,39 @@ class Index extends Controller
         }
     }
 
-    public function ShopAll()
+    public function Execl_GameEnum()
     {
-//        $ShopAll = new \App\Models\LoadData\ShopAll();
-//        $data = $ShopAll->get();
-//        var_dump($data);
-        $str = ShopAllResult::encode();
-        $this->response()->write($str);
+
+        $file_temp = 'Execl/_GameEnum.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        var_dump($highestColumn);
+        $num = 0;
+        for($j=1;$j<=$highestRow;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'E'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $this->response()->withHeader("Content-Type", "text/html;charset=utf-8");
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key =='描述') {
+                    $key = 'msg';
+                    $arr[$key] = trim($str, "\\");
+                }elseif ($key =='类型') {
+                    $key = 'type';
+                    $arr[$key] = trim($str, "\\");
+                }elseif ($key =='值') {
+                    $key = 'value';
+                    $arr[$key] = trim($str, "\\");
+                }
+            }
+            $this->response()->write(json_encode($arr));
+            $GameEnum = new GameEnum();
+            $GameEnum->insert($arr);
+
+        }
     }
 
 }

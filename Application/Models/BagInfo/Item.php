@@ -7,6 +7,7 @@
  */
 namespace App\Models\BagInfo;
 use App\Models\Model;
+use App\Models\User\RoleBag;
 use think\Db;
 
 /**
@@ -17,11 +18,25 @@ use think\Db;
 class Item extends Model
 {
 
-
-    public function getItem($arr)
+    /**
+     * 根据id获取道具信息
+     * @param $ItemId
+     * @return array|null|\PDOStatement|string|\think\Model
+     */
+    public function getItemByid($ItemId)
     {
-        $data = Db::table('item')->where(['Id'=>(string)$arr['ItemId']])->find();
-//        var_dump($data);
+        $data = Db::table('item')->where(['Id'=>(string)$ItemId])->find();
+        return $data;
+    }
+
+    /**
+     * 根据ids获取道具信息
+     * @param $ids
+     * @return array|\PDOStatement|string|\think\Collection
+     */
+    public function getItemByIds($ids)
+    {
+        $data = Db::table('item')->where("id","in",$ids)->select();
         return $data;
     }
 
@@ -33,7 +48,8 @@ class Item extends Model
      */
     public function getPriceType($arr,$type=1)
     {
-        $data = $this->getItem($arr);
+        $ItemId = $arr['ItemId'];
+        $data = $this->getItemByid($ItemId);
         if($type == 1){
             $gold_type = $this->goldType($data['Cost']);//0是道具id记价格类型，1具体价格
             $sum =  $gold_type[1] * $arr['Count'];
@@ -53,6 +69,8 @@ class Item extends Model
 
     /**
      * 判断是否可以快速出卖
+     * @param $data
+     * @return bool
      */
     public function sellyn($data)
     {
@@ -72,5 +90,23 @@ class Item extends Model
     {
         $arr = explode(',',$price);
         return $arr;
+    }
+
+    /**
+     * 获取多个道具价格
+     * @param $ids
+     * @return array
+     */
+    public function getPriceByIds($ids)
+    {
+        $data = $this->getItemByIds($ids);
+        var_dump($data);
+        $Cost = 0;
+        foreach ($data as $datum) {
+            $gold_type = $this->goldType($data['Cost']);//0是道具id记价格类型，1具体价格
+            $Cost +=  $gold_type[1];
+            $type = $gold_type[0];
+        }
+        return ['sum'=>$Cost,'type'=>$type];
     }
 }

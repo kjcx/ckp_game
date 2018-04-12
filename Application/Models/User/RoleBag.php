@@ -74,4 +74,18 @@ class RoleBag extends Model
         }
     }
 
+    /**
+     * 获取用户金币
+     * @param $uid 用户id
+     * @param $item_id 道具id
+     * @return mixed
+     */
+    public function getUserGoldByUid($uid,$item_id)
+    {
+        $arr = $this->getRoleBag($uid);
+        $item = $arr['items'];
+        $data = json_decode($item,1);
+        return  $data[$item_id]['CurCount'];
+    }
+
 }

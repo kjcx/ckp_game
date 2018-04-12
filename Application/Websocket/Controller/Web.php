@@ -12,6 +12,7 @@ use App\Models\BagInfo\Item;
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
+use App\Protobuf\BagInfo\ModelClothesResult;
 use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
@@ -35,6 +36,7 @@ use AutoMsg\ShopAllResult;
 use EasySwoole\Config;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Swoole\ServerManager;
+use think\Db;
 
 class Web extends WebSocketController
 {
@@ -321,11 +323,26 @@ class Web extends WebSocketController
     public function msgid_1150()
     {
         $Data = $this->request()->getArg('data');
-        $data_ModelClothes = \App\Protobuf\Req\ModelClothesReq::decode($Data);
+        $item_ids = \App\Protobuf\Req\ModelClothesReq::decode($Data);
         //购买时装操作 计算金额 放入背包
 
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        $item = new Item();
+        var_dump($item_ids);
+        $sum_data  = $item->getPriceByIds($item_ids);
+        //验证用户余额是否够用
+        $RoleBag = new RoleBag();
+        $CurCount = $RoleBag->getUserGoldByUid($uid,$sum_data['type']);
+        if($CurCount >= $sum_data['sum']){
+            //余额充足
 
-
+        }else{
+            //余额不足
+            $res = Db::table('GameEnum')->where(['msg'=>'没有足够的金钱'])->find();
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1203,0,$res['value'],$res['msg']);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }
     }
 
     /**
