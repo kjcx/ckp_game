@@ -17,7 +17,7 @@ use think\Db;
  */
 class Item extends Model
 {
-
+    private $table = 'item';
     /**
      * 根据id获取道具信息
      * @param $ItemId
@@ -25,7 +25,7 @@ class Item extends Model
      */
     public function getItemByid($ItemId)
     {
-        $data = Db::table('item')->where(['Id'=>(string)$ItemId])->find();
+        $data = Db::table($this->table)->where(['Id'=>(int)$ItemId])->find();
         return $data;
     }
 
@@ -36,7 +36,7 @@ class Item extends Model
      */
     public function getItemByIds($ids)
     {
-        $data = Db::table('item')->where("id","in",$ids)->select();
+        $data = Db::table($this->table)->where('Id','in',$ids)->select();
         return $data;
     }
 
@@ -100,10 +100,10 @@ class Item extends Model
     public function getPriceByIds($ids)
     {
         $data = $this->getItemByIds($ids);
-        var_dump($data);
         $Cost = 0;
+        $type = '';
         foreach ($data as $datum) {
-            $gold_type = $this->goldType($data['Cost']);//0是道具id记价格类型，1具体价格
+            $gold_type = $this->goldType($datum['Cost']);//0是道具id记价格类型，1具体价格
             $Cost +=  $gold_type[1];
             $type = $gold_type[0];
         }

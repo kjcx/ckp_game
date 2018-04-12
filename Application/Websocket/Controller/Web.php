@@ -12,14 +12,15 @@ use App\Models\BagInfo\Item;
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
-use App\Protobuf\BagInfo\ModelClothesResult;
 use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Result\AddItemResult;
+use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
+use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\ScoreShopRecordResult;
 use App\Protobuf\Result\ScoreShopResult;
@@ -310,12 +311,19 @@ class Web extends WebSocketController
     {
         $Data = $this->request()->getArg('data');
         $ids = ChangeAvatarReq::decode($Data);
+        var_dump($ids);
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
         $time = time();
         foreach ($ids as $id) {
             //保存数据库
         }
+        $DataCenter  = new \App\DataCenter\Models\DataCenter();
+        $uid = $DataCenter->getUidByFd($this->client()->getFd());
+        $data = ChangeAvatarResult::encode($uid);
+        $str = \App\Protobuf\Result\MsgBaseSend::encode(1055,$data);
+        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+
     }
 
     /**
@@ -331,14 +339,21 @@ class Web extends WebSocketController
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
         $item = new Item();
-        var_dump($item_ids);
         $sum_data  = $item->getPriceByIds($item_ids);
+
         //验证用户余额是否够用
         $RoleBag = new RoleBag();
         $CurCount = $RoleBag->getUserGoldByUid($uid,$sum_data['type']);
+
         if($CurCount >= $sum_data['sum']){
             //余额充足
-
+            //加入背包
+            foreach ($item_ids as $id) {
+                $RoleBag->updateRoleBag($uid,['id'=>$id,'CurCount'=>1]);
+            }
+            $data = ModelClothesResult::encode($item_ids);
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1203,$data);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
         }else{
             //余额不足
             $res = Db::table('GameEnum')->where(['msg'=>'没有足够的金钱'])->find();
