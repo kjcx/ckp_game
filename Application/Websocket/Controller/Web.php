@@ -12,6 +12,7 @@ use App\Models\BagInfo\Item;
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
+use App\Models\User\UserAttr;
 use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
@@ -25,6 +26,8 @@ use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\ScoreShopRecordResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
+use App\Protobuf\Result\UpdateAvatarResult;
+use App\Protobuf\Result\UpdateItemResult;
 use AutoMsg\ConnectingReq;
 use AutoMsg\ConnectingResult;
 use AutoMsg\CreateRoleReq;
@@ -311,19 +314,22 @@ class Web extends WebSocketController
     {
         $Data = $this->request()->getArg('data');
         $ids = ChangeAvatarReq::decode($Data);
-        var_dump($ids);
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
-        $time = time();
-        foreach ($ids as $id) {
-            //保存数据库
-        }
-        $DataCenter  = new \App\DataCenter\Models\DataCenter();
+        //保存数据库
+        $UserAttr = new UserAttr();
+        $UserAttr->setUserAttr($uid,$ids);
+        $DataCenter  = new \App\Models\DataCenter\DataCenter();
         $uid = $DataCenter->getUidByFd($this->client()->getFd());
-        $data = ChangeAvatarResult::encode($uid);
+        $data = ChangeAvatarResult::encode($uid);//改变装扮属性
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1055,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
-
+        $data = UpdateAvatarResult::encode($ids);//更新装扮属性
+        $str = \App\Protobuf\Result\MsgBaseSend::encode(1074,$data);
+        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        $data = UpdateItemResult::encode();//更新道具
+        $str = \App\Protobuf\Result\MsgBaseSend::encode(1022,$data);
+        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
     }
 
     /**

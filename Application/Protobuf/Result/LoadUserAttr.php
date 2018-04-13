@@ -13,12 +13,11 @@ namespace App\Protobuf\Result;
  */
 class LoadUserAttr
 {
-    public static function encode($arr)
+    public static function encode($id)
     {
 
         $LoadUserAttr = new \AutoMsg\LoadUserAttr();
-        $LoadUserAttr->setUserAttrID($arr['UserAttrID']);
-        $LoadUserAttr->setCount($arr['Count']);
+        $LoadUserAttr->setUserAttrID($id);
         return $LoadUserAttr;
     }
 

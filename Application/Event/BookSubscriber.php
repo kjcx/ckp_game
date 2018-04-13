@@ -25,6 +25,7 @@ class BookSubscriber implements EventSubscriberInterface
 
     public function chineseNameShow(Event $event)
     {
+        echo $event->name;
         echo "我是汉语书籍\n";
     }
 

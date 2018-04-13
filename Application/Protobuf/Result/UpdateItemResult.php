@@ -6,11 +6,19 @@
  * Time: 下午6:54
  */
 namespace App\Protobuf\Result;
+/**
+ * 道具更新
+ * Class UpdateItemResult 1022
+ * @package App\Protobuf\Result
+ */
 class UpdateItemResult
 {
     public static function encode()
     {
         $UpdateItemResult = new \AutoMsg\UpdateItemResult();
-        $UpdateItemResult->setItemUpdate();
+        $items[1021] = 0;
+        $UpdateItemResult->setItemUpdate($items);
+        $str = $UpdateItemResult->serializeToString();
+        return $str;
     }
 }

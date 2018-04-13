@@ -6,9 +6,10 @@
  * Time: 下午3:42
  */
 namespace App\Models\LoadData;
+use App\Models\Model;
 use think\Db;
 
-class ShopAll
+class ShopAll extends Model
 {
     public function get()
     {

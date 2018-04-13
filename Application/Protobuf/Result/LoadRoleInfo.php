@@ -7,6 +7,7 @@
  */
 namespace App\Protobuf\Result;
 use App\Models\User\Role;
+use App\Models\User\UserAttr;
 
 class LoadRoleInfo
 {
@@ -28,8 +29,9 @@ class LoadRoleInfo
         $LoadRoleInfo->setIcon($Icon);
         $LoadRoleInfo->setExp($Exp);
         $LoadRoleInfo->setLevel($Level);
-        $Avatar = json_decode($arr['avatar'],1);
-        $LoadRoleInfo->setAvatar($Avatar);//装扮属性
+        $UserAttr = new UserAttr();
+        $user_attr_ids = $UserAttr->getUserAttrId($uid);
+        $LoadRoleInfo->setAvatar($user_attr_ids);//装扮属性
 //        $LoadRoleInfo->set
         $str = $LoadRoleInfo->serializeToString();
         return $LoadRoleInfo;

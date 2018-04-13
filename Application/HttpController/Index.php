@@ -25,7 +25,8 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Index extends Controller
 {
-
+    private $key;
+    private $msg;
     public function tt()
     {
 //        $dataCenter = new DataCenter();
@@ -37,20 +38,15 @@ class Index extends Controller
     }
     public function index()
     {
-//        $dispatcher = new EventDispatcher();
-////        $subscriber = new BookSubscriber();
-//        $event = new Event();
-//        $event->t("chinese.name");
-//        $dispatcher->addSubscriber($subscriber);
+        $dispatcher = new EventDispatcher();
+        $subscriber = new BookSubscriber();
+        $event = new Event();
+        $event->t("chinese.name");
+        $dispatcher->addSubscriber($subscriber);
 //        $dispatcher->dispatch("english.name", new BookEvent());
-//        $dispatcher->dispatch("chinese.name",new BookEvent());
+        $dispatcher->dispatch("chinese.name",new BookEvent(11));
 //        $dispatcher->removeSubscriber($subscriber);
 //        $dispatcher->dispatch("math.name");
-
-        $dispatcher = new EventDispatcher();
-
-        $dispatcher->dispatch("user.name", new \App\Event\UserEvent());
-        $dispatcher->dispatch("user.age", new \App\Event\UserEvent());
 
         $Role = new Role();
         $arr = $Role->getRole(2);
@@ -137,7 +133,7 @@ class Index extends Controller
     public function Execl_GameEnum()
     {
 
-        $file_temp = 'Execl/_GameEnum.xlsx';
+        $file_temp = 'Execl/_GameEnum1.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
@@ -145,28 +141,53 @@ class Index extends Controller
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         var_dump($highestColumn);
         $num = 0;
-        for($j=1;$j<=$highestRow;$j++) {
+        for($j=2;$j<=$highestRow;$j++) {
             $str = '';
             for ($k = 'A'; $k != 'E'; $k++) {
                 $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
                 $this->response()->withHeader("Content-Type", "text/html;charset=utf-8");
-                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
-                if ($key =='描述') {
-                    $key = 'msg';
-                    $arr[$key] = trim($str, "\\");
-                }elseif ($key =='类型') {
-                    $key = 'type';
-                    $arr[$key] = trim($str, "\\");
-                }elseif ($key =='值') {
-                    $key = 'value';
-                    $arr[$key] = trim($str, "\\");
+                $key1 = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                $key  = $spreadsheet->getActiveSheet()->getCell("B$j")->getValue() . '\\';//读取单元格] = $str;
+                $msg  = $spreadsheet->getActiveSheet()->getCell("A$j")->getValue() . '\\';//读取单元格] = $str;
+                $str =   trim($str, "\\");
+                $key =   trim($key, "\\");
+                $msg =   trim($msg, "\\");
+                if($k == 'C'){
+                    if($str == ''){
+                        $this->key = $key;
+                        $this->msg = $msg;
+                    }
                 }
-            }
-            $this->response()->write(json_encode($arr));
-            $GameEnum = new GameEnum();
-            $GameEnum->insert($arr);
+                if ($key1 =='描述') {
+                    $key1 = 'msg';
+                    $arr[$key1] = $str;
+                }elseif ($key1 =='类型') {
+                    $key1 = 'type';
+                    $arr[$key1] = $str;
+                }elseif ($key1 =='值') {
+                    $key1 = 'value';
+                    $arr[$key1] = $str;
+                    if($str ==''){
+                        unset($arr);
+                    }
 
+                }
+
+            }
+            if($this->key){
+                if(count($arr)>0){
+                    $arr1[$this->key]['list'][] = $arr;
+                    $arr1[$this->key]['msg'] = $this->msg;
+                }
+
+            }
+
+//            $arr1[$this->key]['msg']= $this->msg;
+//                $this->response()->write(json_encode($arr1));
         }
+        var_dump($arr1);
+        $GameEnum = new GameEnum();
+        $GameEnum->insert($arr1);
     }
 
 }
