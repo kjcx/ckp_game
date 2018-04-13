@@ -17,8 +17,10 @@ use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Result\AddItemResult;
+use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
+use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\ScoreShopRecordResult;
 use App\Protobuf\Result\ScoreShopResult;
@@ -35,6 +37,7 @@ use AutoMsg\ShopAllResult;
 use EasySwoole\Config;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Swoole\ServerManager;
+use think\Db;
 
 class Web extends WebSocketController
 {
@@ -104,9 +107,6 @@ class Web extends WebSocketController
             //SellItemReq 出售道具
             $data_SellItemReq = SellItemReq::decode($Data);
             //计算道具所需价格
-
-
-
         }
     }
     function index()
@@ -152,6 +152,7 @@ class Web extends WebSocketController
         //redis查询token是否存在
         $Account = new Account();
         $uid = $Account->getToken($token);
+        var_dump($uid);
         if($uid){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $dataCenter->saveClient($this->client()->getFd(),$uid);
@@ -172,6 +173,7 @@ class Web extends WebSocketController
     {
         $Data = $this->request()->getArg('data');
         $create_req_data = \App\Protobuf\Req\CreateRoleReq::decode($Data);
+
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
 
@@ -196,9 +198,9 @@ class Web extends WebSocketController
     {
         var_dump('msgid_1012');
         //加入游戏
+
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
-        var_dump("=== ====>" .$uid);
         $data = JoinGameResult::encode(['uid'=>$uid]);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1066,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
@@ -229,6 +231,7 @@ class Web extends WebSocketController
         $DropKuId = $data_DropShopPingReq['DropKuId'];
         $GridId = $data_DropShopPingReq['GridId'];
         $RoleBag = new RoleBag();
+
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
         $RoleBag->updateRoleBag($uid,['id'=>$ItemId,'Count'=>99]);
@@ -268,12 +271,15 @@ class Web extends WebSocketController
         //计算道具所需价格
         $Item = new Item();
         $PriceType  = $Item->getPriceType($data_SellItemReq,2);
+        $DataCenter  = new \App\DataCenter\Models\DataCenter();
+        $uid = $DataCenter->getUidByFd($this->client()->getFd());
         if($PriceType['code'] == 1000){
             //出售成功
             $RoleBag = new RoleBag();
             $update_bag1 = ['id'=>$PriceType['type'],'Count'=>$PriceType['sum']];//金币增加
             $update_bag2 = ['id'=>$data_SellItemReq['ItemId'],'Count'=>(-1)*$data_SellItemReq['Count']];//道具数量减少
             //加事务
+
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $uid = $dataCenter->getUidByFd($this->client()->getFd());
             $RoleBag->updateRoleBag($uid,$update_bag1);
@@ -286,7 +292,6 @@ class Web extends WebSocketController
         }
 
     }
-
     /**
      * 请求积分商店
      * 消息id 1142
@@ -306,12 +311,19 @@ class Web extends WebSocketController
     {
         $Data = $this->request()->getArg('data');
         $ids = ChangeAvatarReq::decode($Data);
+        var_dump($ids);
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
         $time = time();
         foreach ($ids as $id) {
             //保存数据库
         }
+        $DataCenter  = new \App\DataCenter\Models\DataCenter();
+        $uid = $DataCenter->getUidByFd($this->client()->getFd());
+        $data = ChangeAvatarResult::encode($uid);
+        $str = \App\Protobuf\Result\MsgBaseSend::encode(1055,$data);
+        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+
     }
 
     /**
@@ -321,11 +333,33 @@ class Web extends WebSocketController
     public function msgid_1150()
     {
         $Data = $this->request()->getArg('data');
-        $data_ModelClothes = \App\Protobuf\Req\ModelClothesReq::decode($Data);
+        $item_ids = \App\Protobuf\Req\ModelClothesReq::decode($Data);
         //购买时装操作 计算金额 放入背包
 
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        $item = new Item();
+        $sum_data  = $item->getPriceByIds($item_ids);
 
+        //验证用户余额是否够用
+        $RoleBag = new RoleBag();
+        $CurCount = $RoleBag->getUserGoldByUid($uid,$sum_data['type']);
 
+        if($CurCount >= $sum_data['sum']){
+            //余额充足
+            //加入背包
+            foreach ($item_ids as $id) {
+                $RoleBag->updateRoleBag($uid,['id'=>$id,'CurCount'=>1]);
+            }
+            $data = ModelClothesResult::encode($item_ids);
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1203,$data);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }else{
+            //余额不足
+            $res = Db::table('GameEnum')->where(['msg'=>'没有足够的金钱'])->find();
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1203,0,$res['value'],$res['msg']);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }
     }
 
     /**

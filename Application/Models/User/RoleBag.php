@@ -39,11 +39,11 @@ class RoleBag extends Model
         $data = $this->getRoleBag($uid);
         $arr = json_decode($data['items'],1);
         if(count($arr)>0){
-            if($arr[$bag_data['id']]){
+            if(isset($arr[$bag_data['id']])){
                 //判断道具是否存在
-                $arr[$bag_data['id']]['CurCount'] += $bag_data['Count'];
+                $arr[$bag_data['id']]['CurCount'] += $bag_data['CurCount'];
             }else{
-                $arr[$bag_data['id'] = ['id'=>$bag_data['id'],'OnSpace'=>1,'CurCount'=>$bag_data['CurCount']]];
+                $arr[$bag_data['id']] = ['id'=>$bag_data['id'],'OnSpace'=>1,'CurCount'=>$bag_data['CurCount']];
             }
 //            foreach ($arr as $k => $v) {
 //                if($v['id'] == $bag_data['id']){
@@ -64,7 +64,7 @@ class RoleBag extends Model
 //                $arr[$bag_data['id']] = $v;
 //            }
         }else{
-            $arr[$bag_data['id']] = ['id'=>$bag_data['id'],'CurCount'=>$bag_data['Count'],'OnSpace'=>1];
+            $arr[$bag_data['id']] = ['id'=>$bag_data['id'],'CurCount'=>$bag_data['CurCount'],'OnSpace'=>1];
         }
         $rs = $this->mysql->where("uid",$uid)->update($this->table,['items'=>json_encode($arr)]);
         if($rs){
@@ -72,6 +72,20 @@ class RoleBag extends Model
         }else{
             return false;
         }
+    }
+
+    /**
+     * 获取用户金币
+     * @param $uid 用户id
+     * @param $item_id 道具id
+     * @return mixed
+     */
+    public function getUserGoldByUid($uid,$item_id)
+    {
+        $arr = $this->getRoleBag($uid);
+        $item = $arr['items'];
+        $data = json_decode($item,1);
+        return  $data[$item_id]['CurCount'];
     }
 
 }

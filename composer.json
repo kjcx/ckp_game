@@ -5,7 +5,9 @@
         "joshcam/mysqli-database-class": "dev-master",
         "google/protobuf": "^3.5",
         "phpoffice/phpspreadsheet": "^1.2",
-        "topthink/think-orm": "^1.2"
+        "topthink/think-orm": "^1.2",
+        "symfony/event-dispatcher": "^4.0",
+        "symfony/symfony": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -16,6 +18,6 @@
         }
     },
     "require-dev": {
-        "eaglewu/swoole-ide-helper": "dev-master"
+        "easyswoole/swoole-ide-helper": "^1.02"
     }
 }

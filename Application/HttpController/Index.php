@@ -6,7 +6,11 @@
  * Time: 下午4:18
  */
 namespace App\HttpController;
+use App\Event\BookEvent;
+use App\Event\BookSubscriber;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Test\Event;
+use App\Models\Execl\GameEnum;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Protobuf\LoadData\ShopAll;
@@ -15,6 +19,7 @@ use App\Protobuf\Result\LoadRoleBagInfo;
 use App\Protobuf\Result\ShopAllResult;
 use AutoMsg\MsgBaseSend;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use think\Db;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -23,29 +28,34 @@ class Index extends Controller
 
     public function tt()
     {
-        $dataCenter = new DataCenter();
-        $dataCenter->saveClient(1,12);
-//        $a = $dataCenter->getUidByFd(12);
-        $a = $dataCenter->delClient(1);
-//        var_dump($a);
-        $this->writeJson(200,$a,'1');
+//        $dataCenter = new DataCenter();
+//        $dataCenter->saveClient(1,12);
+////        $a = $dataCenter->getUidByFd(12);
+//        $a = $dataCenter->delClient(1);
+////        var_dump($a);
+//        $this->writeJson(200,$a,'1');
     }
     public function index()
     {
-        ob_start();
-        phpinfo();
-        $a = ob_get_clean();
-        var_dump($a);
-        $this->response()->write();
-//        $date = new \DateTime();
-//        echo $date->format('U = Y-m-d H:i:s') . "\n";
-//
-//        $date->setTimestamp($date->getTimestamp() + 86400*365*100);
-//        echo $date->format('U = Y-m-d H:i:s') . "\n";
-//
-//        $Role = new Role();
-//        $arr = $Role->getRole(2);
-//        $this->response()->write(json_encode($arr));
+
+//        $dispatcher = new EventDispatcher();
+////        $subscriber = new BookSubscriber();
+//        $event = new Event();
+//        $event->t("chinese.name");
+//        $dispatcher->addSubscriber($subscriber);
+//        $dispatcher->dispatch("english.name", new BookEvent());
+//        $dispatcher->dispatch("chinese.name",new BookEvent());
+//        $dispatcher->removeSubscriber($subscriber);
+//        $dispatcher->dispatch("math.name");
+
+        $dispatcher = new EventDispatcher();
+
+        $dispatcher->dispatch("user.name", new \App\Event\UserEvent());
+        $dispatcher->dispatch("user.age", new \App\Event\UserEvent());
+
+        $Role = new Role();
+        $arr = $Role->getRole(2);
+        $this->response()->write(json_encode($arr));
     }
 
     public function setRolebag()
@@ -125,13 +135,39 @@ class Index extends Controller
         }
     }
 
-    public function ShopAll()
+    public function Execl_GameEnum()
     {
-//        $ShopAll = new \App\Models\LoadData\ShopAll();
-//        $data = $ShopAll->get();
-//        var_dump($data);
-        $str = ShopAllResult::encode();
-        $this->response()->write($str);
+
+        $file_temp = 'Execl/_GameEnum.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        var_dump($highestColumn);
+        $num = 0;
+        for($j=1;$j<=$highestRow;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'E'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $this->response()->withHeader("Content-Type", "text/html;charset=utf-8");
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key =='描述') {
+                    $key = 'msg';
+                    $arr[$key] = trim($str, "\\");
+                }elseif ($key =='类型') {
+                    $key = 'type';
+                    $arr[$key] = trim($str, "\\");
+                }elseif ($key =='值') {
+                    $key = 'value';
+                    $arr[$key] = trim($str, "\\");
+                }
+            }
+            $this->response()->write(json_encode($arr));
+            $GameEnum = new GameEnum();
+            $GameEnum->insert($arr);
+
+        }
     }
 
 }

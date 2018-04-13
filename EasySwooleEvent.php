@@ -7,6 +7,9 @@
  */
 
 namespace EasySwoole;
+use App\Event\BookEvent;
+use App\Event\BookSubscriber;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use App\Event\RedisEventHelper;
 use App\Process\Subscribe;
@@ -36,6 +39,7 @@ Class EasySwooleEvent implements EventInterface {
         date_default_timezone_set('Asia/Shanghai');
         ini_set('default_socket_timeout', -1);
         $this->loadConf(EASYSWOOLE_ROOT . '/Application/Conf');
+
 
     }
 
