@@ -9,6 +9,7 @@ namespace  App\Websocket\Controller;
 
 use App\DataCenter\Models\DataCenter;
 use App\Models\BagInfo\Item;
+use App\Models\Trade\Shop;
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
@@ -344,6 +345,11 @@ class Web extends WebSocketController
 
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
+
+        $shop = new Shop();
+        $shop->Buy($uid,$item_ids);
+
+
         $item = new Item();
         $sum_data  = $item->getPriceByIds($item_ids);
 
