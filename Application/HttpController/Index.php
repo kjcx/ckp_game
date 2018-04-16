@@ -38,13 +38,15 @@ class Index extends Controller
     }
     public function index()
     {
-        $dispatcher = new EventDispatcher();
-        $subscriber = new BookSubscriber();
-        $event = new Event();
-        $event->t("chinese.name");
-        $dispatcher->addSubscriber($subscriber);
-//        $dispatcher->dispatch("english.name", new BookEvent());
-        $dispatcher->dispatch("chinese.name",new BookEvent(11));
+        $a = 1;
+        echo $a;
+//        $dispatcher = new EventDispatcher();
+//        $subscriber = new BookSubscriber();
+//        $event = new Event();
+//        $event->t("chinese.name");
+//        $dispatcher->addSubscriber($subscriber);
+////        $dispatcher->dispatch("english.name", new BookEvent());
+//        $dispatcher->dispatch("chinese.name",new BookEvent(11));
 //        $dispatcher->removeSubscriber($subscriber);
 //        $dispatcher->dispatch("math.name");
 
