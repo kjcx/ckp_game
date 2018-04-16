@@ -59,7 +59,7 @@ class Shop
         foreach ($data as $k =>$v) {
             //$k 道具id
             $count = $rolebag->getUserGoldByUid($uid,$k);
-            if($count>=$v){
+            if($count < $v){
                 return false;
             }
         }

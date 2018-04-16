@@ -16,6 +16,7 @@ class UpdateItemResult
     public static function encode()
     {
         $UpdateItemResult = new \AutoMsg\UpdateItemResult();
+        $items[1011] = 0;
         $items[1021] = 0;
         $UpdateItemResult->setItemUpdate($items);
         $str = $UpdateItemResult->serializeToString();

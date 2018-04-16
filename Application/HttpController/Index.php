@@ -8,9 +8,12 @@
 namespace App\HttpController;
 use App\Event\BookEvent;
 use App\Event\BookSubscriber;
+use App\Event\ItemEvent;
+use App\Event\ItemSubscriber;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
+use App\Models\Trade\Shop;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Protobuf\LoadData\ShopAll;
@@ -38,13 +41,17 @@ class Index extends Controller
     }
     public function index()
     {
+
+        //$shop = new Shop();
+        //$shop->Buy(2,[1011,1021]);
         $dispatcher = new EventDispatcher();
-        $subscriber = new BookSubscriber();
-        $event = new Event();
-        $event->t("chinese.name");
+        $subscriber = new ItemSubscriber();
+        //$event = new Event();
+//        $event->t("chinese.name");
         $dispatcher->addSubscriber($subscriber);
 //        $dispatcher->dispatch("english.name", new BookEvent());
-        $dispatcher->dispatch("chinese.name",new BookEvent(11));
+        $dispatcher->dispatch("update",new ItemEvent(1,[1011=>0]));
+
 //        $dispatcher->removeSubscriber($subscriber);
 //        $dispatcher->dispatch("math.name");
 
