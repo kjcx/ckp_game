@@ -8,7 +8,10 @@
 namespace  App\Websocket\Controller;
 
 use App\DataCenter\Models\DataCenter;
+use App\Event\ItemEvent;
+use App\Event\ItemSubscriber;
 use App\Models\BagInfo\Item;
+use App\Models\Trade\Shop;
 use App\Models\User\Account;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
@@ -40,6 +43,7 @@ use AutoMsg\ShopAllResult;
 use EasySwoole\Config;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Swoole\ServerManager;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use think\Db;
 
 class Web extends WebSocketController
@@ -327,6 +331,11 @@ class Web extends WebSocketController
         $data = UpdateAvatarResult::encode($ids);//更新装扮属性
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1074,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        $dispatcher = new EventDispatcher();
+        $subscriber = new ItemSubscriber();
+        $dispatcher->addSubscriber($subscriber);
+       // $dispatcher->dispatch("update",new ItemEvent($this->client()->getFd(),[1011=>0]));
+
         $data = UpdateItemResult::encode();//更新道具
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1022,$data);
         ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
@@ -344,6 +353,11 @@ class Web extends WebSocketController
 
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
+
+        $shop = new Shop();
+        $shop->Buy($uid,$item_ids);
+
+
         $item = new Item();
         $sum_data  = $item->getPriceByIds($item_ids);
 
