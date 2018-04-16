@@ -161,7 +161,22 @@ class DataCenter extends Model
             $arr =  unserialize($this->redis->get($keys['0']));
             return $arr['uid'];
         }
-        return [];
+        return '';
     }
 
+    /**
+     * 通过uid获取fd
+     * @param $uid
+     * @return array
+     */
+    public function getFdByUid($uid)
+    {
+        $keys = $this->redis->keys($this->serverHash . ':' . $uid. ':*');
+        if ($keys) {
+//            return unserialize($this->redis->get($keys['0']))['uid'];
+            $arr =  unserialize($this->redis->get($keys['0']));
+            return $arr['fd'];
+        }
+        return '';
+    }
 }

@@ -13,13 +13,10 @@ namespace App\Protobuf\Result;
  */
 class UpdateItemResult
 {
-    public static function encode()
+    public static function encode($items)
     {
         $UpdateItemResult = new \AutoMsg\UpdateItemResult();
 //        $items = $UpdateItemResult->getItemUpdate();
-        $items[1011] = 0;
-//        $items[1022] = (int)(0);
-        var_dump($items);
         $UpdateItemResult->setItemUpdate($items);
         $str = $UpdateItemResult->serializeToString();
         return $str;

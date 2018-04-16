@@ -13,9 +13,11 @@ namespace App\Protobuf\Result;
  */
 class UpdateShenjiaResult
 {
-    public static function encode()
+    public static function encode($shenjia)
     {
         $UpdateShenjiaResult = new \AutoMsg\UpdateShenjiaResult();
-        $UpdateShenjiaResult->setSocialStatus();
+        $UpdateShenjiaResult->setSocialStatus($shenjia);
+        $str = $UpdateShenjiaResult->serializeToString();
+        return $str;
     }
 }

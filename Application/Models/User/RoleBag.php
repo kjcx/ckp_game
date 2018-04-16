@@ -88,4 +88,5 @@ class RoleBag extends Model
         return  $data[$item_id]['CurCount'];
     }
 
+
 }

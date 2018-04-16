@@ -8,8 +8,10 @@
 namespace App\HttpController;
 use App\Event\BookEvent;
 use App\Event\BookSubscriber;
+use App\Event\ChangeAvatarEvent;
+use App\Event\ChangeAvatarSubscriber;
 use App\Event\ItemEvent;
-use App\Event\ItemSubscriber;
+use App\Event\ItemResultSubscriber;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
@@ -19,7 +21,10 @@ use App\Models\User\RoleBag;
 use App\Protobuf\LoadData\ShopAll;
 use App\Protobuf\Result\LoadBagInfo;
 use App\Protobuf\Result\LoadRoleBagInfo;
+use App\Protobuf\Result\MsgBaseRev;
+use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\ShopAllResult;
+use App\Protobuf\Result\UpdateItemResult;
 use AutoMsg\MsgBaseSend;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -30,22 +35,22 @@ class Index extends Controller
 {
     private $key;
     private $msg;
-    public function tt()
-    {
-//        $dataCenter = new DataCenter();
-//        $dataCenter->saveClient(1,12);
-////        $a = $dataCenter->getUidByFd(12);
-//        $a = $dataCenter->delClient(1);
-////        var_dump($a);
-//        $this->writeJson(200,$a,'1');
-    }
+
     public function index()
     {
-
+        $dispatcher = new EventDispatcher();
+        $ChangeAvatar = new ChangeAvatarSubscriber();
+        $dispatcher->addSubscriber($ChangeAvatar);
+        //调用事件
+        $uid = 2;
+        $ids = [1011,1021];
+        var_dump("========>");
+        $dispatcher->dispatch('changeAvatar',new ChangeAvatarEvent($uid,$ids));
+//        die;
         //$shop = new Shop();
         //$shop->Buy(2,[1011,1021]);
         $dispatcher = new EventDispatcher();
-        $subscriber = new ItemSubscriber();
+        $subscriber = new ItemResultSubscriber();
         //$event = new Event();
 //        $event->t("chinese.name");
         $dispatcher->addSubscriber($subscriber);

@@ -7,10 +7,13 @@
  */
 namespace  App\Websocket\Controller;
 
-use App\DataCenter\Models\DataCenter;
+use App\Event\ChangeAvatarEvent;
+use App\Event\ChangeAvatarSubscriber;
 use App\Event\ItemEvent;
-use App\Event\ItemSubscriber;
-use App\Models\BagInfo\Item;
+use App\Event\ItemResultEvent;
+use App\Event\ItemResultSubscriber;
+use App\Event\SellItemResultEvent;
+use App\Models\Item\Item;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
 use App\Models\User\Role;
@@ -21,26 +24,13 @@ use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Result\AddItemResult;
-use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\RefDropShopResult;
-use App\Protobuf\Result\ScoreShopRecordResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
-use App\Protobuf\Result\UpdateAvatarResult;
-use App\Protobuf\Result\UpdateItemResult;
-use AutoMsg\ConnectingReq;
-use AutoMsg\ConnectingResult;
-use AutoMsg\CreateRoleReq;
-use AutoMsg\CreateRoleResult;
-use AutoMsg\ModelClothesReq;
-use AutoMsg\MsgBaseRev;
-use AutoMsg\MsgBaseSend;
-use AutoMsg\RoleLists;
-use AutoMsg\ShopAllResult;
-use EasySwoole\Config;
+use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -274,26 +264,30 @@ class Web extends WebSocketController
     {
         $Data = $this->request()->getArg('data');
         $data_SellItemReq = SellItemReq::decode($Data);
-//        var_dump($data_SellItemReq);
+        var_dump($data_SellItemReq);
         //计算道具所需价格
         $Item = new Item();
-        $PriceType  = $Item->getPriceType($data_SellItemReq,2);
-        $DataCenter  = new \App\DataCenter\Models\DataCenter();
-        $uid = $DataCenter->getUidByFd($this->client()->getFd());
-        if($PriceType['code'] == 1000){
+        $PriceType  = $Item->getSellItemInfo($data_SellItemReq);
+        //出售道具事件
+        if($PriceType){
             //出售成功
             $RoleBag = new RoleBag();
-            $update_bag1 = ['id'=>$PriceType['type'],'Count'=>$PriceType['sum']];//金币增加
-            $update_bag2 = ['id'=>$data_SellItemReq['ItemId'],'Count'=>(-1)*$data_SellItemReq['Count']];//道具数量减少
-            //加事务
-
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $uid = $dataCenter->getUidByFd($this->client()->getFd());
-            $RoleBag->updateRoleBag($uid,$update_bag1);
-            $RoleBag->updateRoleBag($uid,$update_bag2);
+            foreach ($PriceType as $k => $v) {
+                $update_bag1 = ['id'=>$k,'CurCount'=>$v];//金币增加
+                $update_bag2 = ['id'=>$data_SellItemReq['ItemId'],'CurCount'=>(-1)*$data_SellItemReq['Count']];//道具数量减少
+                $RoleBag->updateRoleBag($uid,$update_bag1);
+                $RoleBag->updateRoleBag($uid,$update_bag2);
+            }
             $data = SellItemResult::encode($uid);
             $str = \App\Protobuf\Result\MsgBaseSend::encode(1069,$data);
             ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+            //调用事件
+            $dispatcher = new EventDispatcher();
+            $subscriber = new ItemResultSubscriber();
+            $dispatcher->addSubscriber($subscriber);
+            $dispatcher->dispatch('SellItem',new SellItemResultEvent($uid,[$data_SellItemReq['ItemId']]));
         }elseif($PriceType['code'] ==1001){
             //不可售卖
         }
@@ -317,28 +311,18 @@ class Web extends WebSocketController
     public function msgid_1002()
     {
         $Data = $this->request()->getArg('data');
+        //1 解析属性id
         $ids = ChangeAvatarReq::decode($Data);
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
-        //保存数据库
+        //2修改用户属性
         $UserAttr = new UserAttr();
         $UserAttr->setUserAttr($uid,$ids);
-        $DataCenter  = new \App\Models\DataCenter\DataCenter();
-        $uid = $DataCenter->getUidByFd($this->client()->getFd());
-        $data = ChangeAvatarResult::encode($uid);//改变装扮属性
-        $str = \App\Protobuf\Result\MsgBaseSend::encode(1055,$data);
-        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
-        $data = UpdateAvatarResult::encode($ids);//更新装扮属性
-        $str = \App\Protobuf\Result\MsgBaseSend::encode(1074,$data);
-        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        //调用事件
         $dispatcher = new EventDispatcher();
-        $subscriber = new ItemSubscriber();
+        $subscriber = new ChangeAvatarSubscriber();
         $dispatcher->addSubscriber($subscriber);
-       // $dispatcher->dispatch("update",new ItemEvent($this->client()->getFd(),[1011=>0]));
-
-        $data = UpdateItemResult::encode();//更新道具
-        $str = \App\Protobuf\Result\MsgBaseSend::encode(1022,$data);
-        ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        $dispatcher->dispatch('changeAvatar',new ChangeAvatarEvent($uid,$ids));
     }
 
     /**
@@ -355,18 +339,9 @@ class Web extends WebSocketController
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
 
         $shop = new Shop();
-        $shop->Buy($uid,$item_ids);
-
-
-        $item = new Item();
-        $sum_data  = $item->getPriceByIds($item_ids);
-
-        //验证用户余额是否够用
+        $bool = $shop->Buy($uid,$item_ids);
         $RoleBag = new RoleBag();
-        $CurCount = $RoleBag->getUserGoldByUid($uid,$sum_data['type']);
-
-        if($CurCount >= $sum_data['sum']){
-            //余额充足
+        if($bool){
             //加入背包
             foreach ($item_ids as $id) {
                 $RoleBag->updateRoleBag($uid,['id'=>$id,'CurCount'=>1]);
@@ -385,8 +360,31 @@ class Web extends WebSocketController
     /**
      * 购买种子商店请求
      */
-    public function mgsid_1076()
+    public function msgid_1076()
     {
         
+    }
+
+    /**
+     * 更改头像
+     */
+    public function msgid_1102()
+    {
+        var_dump("mgsid_1102");
+        $Data = $this->request()->getArg('data');
+        $data_RoleInfoIcon = \App\Protobuf\Req\UpdateRoleInfoIconReq::decode($Data);
+        $dataCenter = new \App\Models\DataCenter\DataCenter();
+        $uid = $dataCenter->getUidByFd($this->client()->getFd());
+        //修改个人头像
+        $role = new Role();
+        $rs = $role->updateIcon($uid,$data_RoleInfoIcon['RoleIcon']);
+        if($rs){
+            //修改成功
+            $data = UpdateRoleInfoIconResult::encode($data_RoleInfoIcon['RoleIcon']);
+            $str = \App\Protobuf\Result\MsgBaseSend::encode(1141,$data);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }else{
+
+        }
     }
 }
