@@ -18,6 +18,7 @@ class LoadBagInfo
         //items
         $items = $data['items'];
         $items_data = json_decode($items,1);
+//        var_dump($items_data);
         $LoadBagInfo = new \AutoMsg\LoadBagInfo();
         $LoadBagInfo->setMaxCellNumber($data['maxsum']);
         $LoadBagInfo->setCurUsedCell($data['usesum']);

@@ -16,7 +16,6 @@ class ModelClothesResult
     public static function encode($ids)
     {
         $ModelClothesResult = new \AutoMsg\ModelClothesResult();
-//        $ModelClothesResult->setId([1021]);
         $ModelClothesResult->setId($ids);
         $str = $ModelClothesResult->serializeToString();
 //        var_dump($str);

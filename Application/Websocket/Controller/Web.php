@@ -11,8 +11,8 @@ use App\Event\ChangeAvatarEvent;
 use App\Event\ChangeAvatarSubscriber;
 use App\Event\ItemEvent;
 use App\Event\ItemResultEvent;
-use App\Event\ItemResultSubscriber;
-use App\Event\SellItemResultEvent;
+use App\Event\ChangeItemSubscriber;
+use App\Event\SellItemEvent;
 use App\Models\Item\Item;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
@@ -84,7 +84,7 @@ class Web extends WebSocketController
             $DropKuId = $data_DropShopPingReq['DropKuId'];
             $GridId = $data_DropShopPingReq['GridId'];
             $RoleBag = new RoleBag();
-            $RoleBag->updateRoleBag(2,['id'=>$ItemId,'Count'=>99]);
+            $RoleBag->updateRoleBag(2,['id'=>$ItemId,'CurCount'=>99]);
 
             $data = DropShopPingResult::encode($data_DropShopPingReq);
 
@@ -231,7 +231,7 @@ class Web extends WebSocketController
 
         $dataCenter = new \App\Models\DataCenter\DataCenter();
         $uid = $dataCenter->getUidByFd($this->client()->getFd());
-        $RoleBag->updateRoleBag($uid,['id'=>$ItemId,'Count'=>99]);
+        $RoleBag->updateRoleBag($uid,['id'=>$ItemId,'CurCount'=>99]);
 
         $data = DropShopPingResult::encode($data_DropShopPingReq);
 
@@ -285,11 +285,12 @@ class Web extends WebSocketController
             ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
             //调用事件
             $dispatcher = new EventDispatcher();
-            $subscriber = new ItemResultSubscriber();
+            $subscriber = new ChangeItemSubscriber();
             $dispatcher->addSubscriber($subscriber);
-            $dispatcher->dispatch('SellItem',new SellItemResultEvent($uid,[$data_SellItemReq['ItemId']]));
-        }elseif($PriceType['code'] ==1001){
-            //不可售卖
+            $ids = [$data_SellItemReq['ItemId']];
+            $dispatcher->dispatch('SellItem',new SellItemEvent($uid,$ids));
+        }else{
+            var_dump("====异常=====");
         }
 
     }
@@ -346,6 +347,8 @@ class Web extends WebSocketController
             foreach ($item_ids as $id) {
                 $RoleBag->updateRoleBag($uid,['id'=>$id,'CurCount'=>1]);
             }
+            var_dump($item_ids);
+
             $data = ModelClothesResult::encode($item_ids);
             $str = \App\Protobuf\Result\MsgBaseSend::encode(1203,$data);
             ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);

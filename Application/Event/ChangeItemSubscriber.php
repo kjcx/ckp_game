@@ -11,7 +11,7 @@ use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-class ItemResultSubscriber implements EventSubscriberInterface
+class ChangeItemSubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
@@ -25,28 +25,29 @@ class ItemResultSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * 更新背包信息
+     * 更新背包道具信息
      * @param Event $event
      */
-    public function UpdateItemResult(Event $event)
+    public function UpdateItemResult(SellItemEvent $event)
     {
-        $ItemResultEvent = new ItemResultEvent($event);
+        $ItemResultEvent = new ItemResultEvent($event->uid,$event->ids);
         $ItemResultEvent->updateItem();
     }
     /**
      * 更新身价
      * @param Event $event
      */
-    public function UpdateShenjiaResult(Event $event)
+    public function UpdateShenjiaResult(SellItemEvent $event)
     {
-        $UserEvent = new \App\Event\UserEvent($event->uid);
+        $UserEvent = new UserEvent($event->uid);
         $UserEvent->UpdateShenjiaResultEvent();
     }
 
     /**
      * 金币变化
+     * @param SellItemEvent $event
      */
-    public function GoldChangedResult(Event $event)
+    public function GoldChangedResult(SellItemEvent $event)
     {
         var_dump("============金币变化=============");
         $UserEvent = new UserEvent($event->uid);

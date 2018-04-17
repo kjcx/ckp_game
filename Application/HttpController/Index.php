@@ -11,7 +11,9 @@ use App\Event\BookSubscriber;
 use App\Event\ChangeAvatarEvent;
 use App\Event\ChangeAvatarSubscriber;
 use App\Event\ItemEvent;
-use App\Event\ItemResultSubscriber;
+use App\Event\ItemResultEvent;
+use App\Event\ChangeItemSubscriber;
+use App\Event\UserEvent;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
@@ -38,36 +40,42 @@ class Index extends Controller
 
     public function index()
     {
-        $dispatcher = new EventDispatcher();
-        $ChangeAvatar = new ChangeAvatarSubscriber();
-        $dispatcher->addSubscriber($ChangeAvatar);
-        //调用事件
-        $uid = 2;
-        $ids = [1011,1021];
-        var_dump("========>");
-        $dispatcher->dispatch('changeAvatar',new ChangeAvatarEvent($uid,$ids));
+        $A = UpdateItemResult::encode([1011=>0]);
+//        $dispatcher = new EventDispatcher();
+//        $ChangeAvatar = new ChangeAvatarSubscriber();
+//        $dispatcher->addSubscriber($ChangeAvatar);
+//        //调用事件
+//        $uid = 2;
+//        $ids = [1011,1021];
+//        var_dump("=====test===>");
+//        $dispatcher->dispatch('test',new ChangeAvatarEvent(2,[1011]));
 //        die;
         //$shop = new Shop();
         //$shop->Buy(2,[1011,1021]);
-        $dispatcher = new EventDispatcher();
-        $subscriber = new ItemResultSubscriber();
+//        $dispatcher = new EventDispatcher();
+//        $subscriber = new ChangeItemSubscriber();
         //$event = new Event();
 //        $event->t("chinese.name");
-        $dispatcher->addSubscriber($subscriber);
-//        $dispatcher->dispatch("english.name", new BookEvent());
-        $dispatcher->dispatch("update",new ItemEvent(1,[1011=>0]));
+//        $dispatcher->addSubscriber($subscriber);
+////        $dispatcher->dispatch("english.name", new BookEvent());
+//        $dispatcher->dispatch("update",new ItemEvent(1,[1011=>0]));
 
 //        $dispatcher->removeSubscriber($subscriber);
 //        $dispatcher->dispatch("math.name");
 
-        $Role = new Role();
-        $arr = $Role->getRole(2);
-        $this->response()->write(json_encode($arr));
+//        $Role = new Role();
+//        $arr = $Role->getRole(2);
+//        $this->response()->write(json_encode($arr));
     }
 
     public function setRolebag()
     {
         //获取背包信息
+        //设置个人掉落库信息
+        ['uid'=>2,'shoplost'=>[
+            ['itemid'=>1011,'Count'=>3],
+            ]
+        ];
         $RoleBag = new RoleBag();
         $RoleBag->updateRoleBag(2,['id'=>1]);
     }

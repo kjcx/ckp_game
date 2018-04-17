@@ -12,7 +12,7 @@ use App\Protobuf\Result\UpdateItemResult;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\Event;
 
-class SellItemResultEvent extends Event
+class SellItemEvent extends Event
 {
     public $name = self::class;
     public $fd;

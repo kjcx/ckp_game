@@ -12,19 +12,21 @@ use App\Protobuf\Result\UpdateItemResult;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\Event;
 
-class ItemResultEvent extends Event
+class ItemResultEvent extends UserEvent
 {
     public $name = self::class;
     public $fd;
     public $uid;
     public $ids;//请求道具的id
-    public function __construct($event)
+    public function __construct($uid,$ids)
     {
-        $this->uid = $event->uid;
+
+        $this->uid = $uid;
+        parent::__construct($this->uid);
         $DataCenter  = new \App\Models\DataCenter\DataCenter();
         $fd = $DataCenter->getFdByUid($this->uid);
         $this->fd = $fd;
-        $this->ids = $event->ids;
+        $this->ids = $ids;
     }
 
     /**
@@ -33,8 +35,9 @@ class ItemResultEvent extends Event
     public function updateItem()
     {
         var_dump("==========更新道具==========");
-        $items[1011] = 6;
-//        $items[1022] = 300;
+        var_dump($this->ids);//返回id对应的数量
+        $role = new RoleBag();
+        $items = $role->getItemByIds($this->uid,$this->ids);
         $data = UpdateItemResult::encode($items);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1022,$data);
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);

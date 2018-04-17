@@ -24,6 +24,7 @@ class ChangeAvatarSubscriber implements EventSubscriberInterface
                     ["UpdateShenjiaResult",97],
 
                 ],
+            "test" =>'test'
         ];
     }
 
@@ -32,17 +33,18 @@ class ChangeAvatarSubscriber implements EventSubscriberInterface
      * @param Event $event
      * @param \App\Event\UserEvent $UserEvent
      */
-    public function ChangeAvatar(Event $event)
+    public function ChangeAvatar(ChangeAvatarEvent $event)
     {
         var_dump("======改变属性事件=========");
         $event->ChangeAvatarResult();
+
     }
 
     /**
      * 更新属性事件
      * @param Event $event
      */
-    public function UpdateAvatar(Event $event)
+    public function UpdateAvatar(ChangeAvatarEvent $event)
     {
         var_dump("======更新属性事件=========");
         $event->UpdateAvatarResult($event->uid);
@@ -62,9 +64,9 @@ class ChangeAvatarSubscriber implements EventSubscriberInterface
      * 返回背包信息
      * @param Event $event
      */
-    public function AddItemResult(Event $event)
+    public function AddItemResult(ChangeAvatarEvent $event)
     {
-        $ItemResultEvent = new ItemResultEvent($event);
+        $ItemResultEvent = new ItemResultEvent($event->uid,$event->ids);
         $ItemResultEvent->addItem();
     }
 
@@ -72,10 +74,9 @@ class ChangeAvatarSubscriber implements EventSubscriberInterface
      * 更新背包信息
      * @param Event $event
      */
-    public function UpdateItemResult(Event $event)
+    public function UpdateItemResult(ChangeAvatarEvent $event)
     {
-        $ItemResultEvent = new ItemResultEvent($event);
+        $ItemResultEvent = new ItemResultEvent($event->uid,$event->ids);
         $ItemResultEvent->updateItem();
     }
-
 }
