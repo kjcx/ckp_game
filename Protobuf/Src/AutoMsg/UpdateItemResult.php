@@ -39,9 +39,10 @@ class UpdateItemResult extends \Google\Protobuf\Internal\Message
      */
     public function setItemUpdate($var)
     {
+
+
         $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::INT64);
         $this->itemUpdate = $arr;
-
         return $this;
     }
 

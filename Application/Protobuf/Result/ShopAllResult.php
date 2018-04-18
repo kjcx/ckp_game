@@ -24,7 +24,7 @@ class ShopAllResult extends Model
         $ShopAllResult = new \AutoMsg\ShopAllResult();
         $ShopAllResult->setLoadConsume($new_data);
         $ShopAllResult->setTime(1);
-        $ShopAllResult->setDate(time()+3600);
+        $ShopAllResult->setDate(time()+100);
 //        $ShopAllResult->setHairdressingTime();
 //        $ShopAllResult->setMenSWearTime();
 //        $ShopAllResult->setOrnamentTime();

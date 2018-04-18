@@ -33,17 +33,17 @@ use think\Db;
 
 Class EasySwooleEvent implements EventInterface {
 
-    public function frameInitialize(): void
+    public static function frameInitialize(): void
     {
         // TODO: Implement frameInitialize() method.
         date_default_timezone_set('Asia/Shanghai');
         ini_set('default_socket_timeout', -1);
-        $this->loadConf(EASYSWOOLE_ROOT . '/Application/Conf');
+        self::loadConf(EASYSWOOLE_ROOT . '/Application/Conf');
 
 
     }
 
-    public function mainServerCreate(ServerManager $server,EventRegister $register): void
+    public static function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
 
@@ -58,7 +58,7 @@ Class EasySwooleEvent implements EventInterface {
             }
         });
 
-        ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
+//        ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
         EventHelper::registerDefaultOnMessage($register,new WebSock());
 
 
@@ -78,12 +78,12 @@ Class EasySwooleEvent implements EventInterface {
             $Conf->setConf(strtolower(basename($file, '.php')), (array)$data);
         }
     }
-    public function onRequest(Request $request,Response $response): void
+    public static function onRequest(Request $request,Response $response): void
     {
         // TODO: Implement onRequest() method.
     }
 
-    public function afterAction(Request $request,Response $response): void
+    public static function afterAction(Request $request,Response $response): void
     {
         // TODO: Implement afterAction() method.
     }

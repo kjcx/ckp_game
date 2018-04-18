@@ -13,9 +13,11 @@ namespace App\Protobuf\Result;
  */
 class GoldChangedResult
 {
-    public static function encode()
+    public static function encode($gold)
     {
         $GoldChangedResult = new \AutoMsg\GoldChangedResult();
-        $GoldChangedResult->setGold();//金币
+        $GoldChangedResult->setGold($gold);//金币
+        $str = $GoldChangedResult->serializeToString();
+        return $str;
     }
 }

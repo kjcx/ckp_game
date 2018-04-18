@@ -88,4 +88,21 @@ class RoleBag extends Model
         return  $data[$item_id]['CurCount'];
     }
 
+    /**
+     * 获取指定道具的数量
+     * @param $uid
+     * @param $ids
+     * @return array
+     */
+    public function getItemByIds($uid,$ids)
+    {
+        $arr = $this->getRoleBag($uid);
+        $item = $arr['items'];
+        $data = json_decode($item,1);
+        $update_item = [];
+        foreach ($ids as $id) {
+            $update_item[$id] = $data[$id]['CurCount'];
+        }
+        return $update_item;
+    }
 }

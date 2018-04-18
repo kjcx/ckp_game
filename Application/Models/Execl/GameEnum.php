@@ -10,7 +10,7 @@ use App\Models\Model;
 use think\Db;
 class GameEnum extends Model
 {
-    private $table = 'GameEnum';
+    private $table = 'GameEnum_1';
     public function insert($arr)
     {
         //插入数据库

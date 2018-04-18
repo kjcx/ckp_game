@@ -22,9 +22,14 @@ class Account extends Controller
         $client = new Client();
         $url = Config::getInstance()->getConf('APP.member_info');
         $key = $this->request()->getQueryParam('key');
+        var_dump("=============开始请求==========".time());
         $res = $client->request('POST',$url,['form_params'=>['key'=>$key]]);
+
         $str = $res->getBody()->getContents();
         $arr = json_decode($str,1);
+        var_dump($arr);
+
+        var_dump("=============结束请求==========".time());
 
         if($arr['code'] == 200){
             $member_info = $arr['datas']['member_info'];
@@ -32,7 +37,7 @@ class Account extends Controller
             $Account = new \App\Models\User\Account();
             $where  = 'member_mobile = ' . $member_info['member_mobile'];
             $rs = $Account->find($where);
-            var_dump($rs);
+//            var_dump($rs);
             if($rs){
                 //用户存在 返回用户信息
                 //生产token 并返回

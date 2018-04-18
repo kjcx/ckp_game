@@ -52,4 +52,20 @@ class Role extends Model
         $rs = $RoleBag->createRoleBag($data);
         return $rs;
     }
+
+    /**
+     * 修改用户头像
+     * @param $uid 用户id
+     * @param $icon 头像id
+     * @return bool
+     */
+    public function updateIcon($uid,$icon)
+    {
+        $rs = $this->mysql->where('uid',$uid)->update($this->table,['icon'=>$icon]);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
