@@ -46,6 +46,7 @@ Class EasySwooleEvent implements EventInterface {
     public static function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
+
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
             //为workerId为0的进程添加定时器

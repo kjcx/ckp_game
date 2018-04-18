@@ -40,6 +40,7 @@ class Index extends Controller
 
     public function index()
     {
+
         $A = UpdateItemResult::encode([1011=>0]);
 //        $dispatcher = new EventDispatcher();
 //        $ChangeAvatar = new ChangeAvatarSubscriber();
