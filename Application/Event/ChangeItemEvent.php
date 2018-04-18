@@ -2,17 +2,15 @@
 /**
  * Created by PhpStorm.
  * User: dongkai
- * Date: 2018/4/11
- * Time: 下午11:35
+ * Date: 2018/4/17
+ * Time: 下午11:22
  */
-namespace App\Event;
-use App\Models\User\RoleBag;
-use App\Protobuf\Result\AddItemResult;
-use App\Protobuf\Result\UpdateItemResult;
-use EasySwoole\Core\Swoole\ServerManager;
-use Symfony\Component\EventDispatcher\Event;
 
-class SellItemEvent extends Event
+namespace App\Event;
+
+use EasySwoole\Core\Component\Event;
+
+class ChangeItemEvent extends Event
 {
     public $name = self::class;
     public $fd;
@@ -26,5 +24,4 @@ class SellItemEvent extends Event
         $this->fd = $fd;
         $this->ids = $ids;
     }
-
 }
