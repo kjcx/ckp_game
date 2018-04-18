@@ -58,7 +58,7 @@ Class EasySwooleEvent implements EventInterface {
             }
         });
 
-//        ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
+        ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
         EventHelper::registerDefaultOnMessage($register,new WebSock());
 
 

@@ -25,6 +25,7 @@ use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Result\AddItemResult;
+use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\ModelClothesResult;
@@ -52,7 +53,7 @@ class Web extends WebSocketController
         $this->fd = $client->getFd();
         $msgid = $request->getAction();
         var_dump($msgid);
-        if($msgid != 'msgid_1004'){
+        if($msgid != 'msgid_1004' ){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $this->uid = $dataCenter->getUidByFd($this->fd);
         }
@@ -78,8 +79,6 @@ class Web extends WebSocketController
             $massTemplate = new Mass(['fd' => $fd,'data' => 11,]);
             TaskManager::async($massTemplate);
         }
-
-
 //        $this->response()->write();
     }
 
@@ -128,16 +127,15 @@ class Web extends WebSocketController
     public function msgid_1007()
     {
         $Data = $this->data;
-        $create_req_data = \App\Protobuf\Req\CreateRoleReq::decode($Data);
-
-        $data = ['uid'=>$this->uid,'nickname'=>$create_req_data['Name'],'sex'=>$create_req_data['Sex'],'status'=>1,'create_time'=>time()];
+        $data_role = \App\Protobuf\Req\CreateRoleReq::decode($Data);
         $Role = new Role();
-        $rs = $Role->createRole($data);//创建角色
+        $rs = $Role->createRole($this->uid,$data_role['Name'],$data_role['Sex']);//创建角色
         if($rs){
             //角色创建成功
-            $data = \App\Protobuf\Result\CreateRoleResult::encode($create_req_data);
-            $this->send(1060,$data,$this->fd);
-
+            $data_role['RoleId'] = $rs;
+            $data = \App\Protobuf\Result\CreateRoleResult::encode($data_role);
+            $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
         }else{
             //角色创建失败
         }
@@ -263,11 +261,13 @@ class Web extends WebSocketController
         //2修改用户属性
         $UserAttr = new UserAttr();
         $UserAttr->setUserAttr($this->uid,$ids);
+        $data = ChangeAvatarResult::encode($this->uid);
+        $this->send(1055,$this->fd,$data);
         //调用事件
         $dispatcher = new EventDispatcher();
         $subscriber = new ChangeAvatarSubscriber();
         $dispatcher->addSubscriber($subscriber);
-        $dispatcher->dispatch('changeAvatar',new ChangeAvatarEvent($uid,$ids));
+        $dispatcher->dispatch('changeAvatar',new ChangeAvatarEvent($this->uid,$ids));
     }
 
     /**
@@ -279,7 +279,6 @@ class Web extends WebSocketController
         $Data = $this->data;
         $item_ids = \App\Protobuf\Req\ModelClothesReq::decode($Data);
         //购买时装操作 计算金额 放入背包
-
         $shop = new Shop();
         $bool = $shop->Buy($this->uid,$item_ids);
         $RoleBag = new RoleBag();
@@ -288,13 +287,11 @@ class Web extends WebSocketController
             foreach ($item_ids as $id) {
                 $RoleBag->updateRoleBag($this->uid,['id'=>$id,'CurCount'=>1]);
             }
-            var_dump($item_ids);
-
             $data = ModelClothesResult::encode($item_ids);
             $this->send(1203,$this->fd,$data);
         }else{
             //余额不足
-            $res = Db::table('GameEnum')->where(['msg'=>'没有足够的金钱'])->find();
+            $res = Db::table('WsResult')->where(['msg'=>'没有足够的金钱'])->find();
             var_dump($res);
             $this->send(1203,$this->fd,0,$res['value'],$res['msg']);
         }

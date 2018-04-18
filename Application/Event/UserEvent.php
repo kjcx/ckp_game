@@ -32,7 +32,7 @@ class UserEvent extends Event
     {
         var_dump("======身价变化通知===========");
         //返回当前人的身价
-        $shenjia = 1000;
+        $shenjia = rand(1000,9999);
         $data = UpdateShenjiaResult::encode($shenjia);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1075,$data);
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);

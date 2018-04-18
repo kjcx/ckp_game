@@ -18,9 +18,9 @@ class ChangeAvatarSubscriber implements EventSubscriberInterface
         return [
             "changeAvatar" => [
                     ["UpdateItemResult",101],
-                    ["ChangeAvatar",100],
+                    ["UpdateAvatar",100],
                     ["UpdateShenjiaResult",99],
-                    ["UpdateAvatar",98],
+                    ["ChangeAvatar",98],
                     ["UpdateShenjiaResult",97],
 
                 ],

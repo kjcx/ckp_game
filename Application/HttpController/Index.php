@@ -15,6 +15,8 @@ use App\Event\ItemResultEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\UserEvent;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Execl\Character;
+use App\Models\Execl\WsResult;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
 use App\Models\Trade\Shop;
@@ -198,7 +200,7 @@ class Index extends Controller
             if($this->key){
                 if(count($arr)>0){
                     $arr1[$this->key]['list'][] = $arr;
-                    $arr1[$this->key]['msg'] = $this->msg;
+                    $arr1[$this->key]['title'] = $this->msg;
                 }
 
             }
@@ -206,9 +208,52 @@ class Index extends Controller
 //            $arr1[$this->key]['msg']= $this->msg;
 //                $this->response()->write(json_encode($arr1));
         }
-        var_dump($arr1);
         $GameEnum = new GameEnum();
-        $GameEnum->insert($arr1);
+        foreach ($arr1 as $k=>$item) {
+            $GameEnum->insert(['title'=>$item['title'],'type'=>$k,'list'=>$item['list']]);
+        }
+
+    }
+//返回码
+    public function WsResult()
+    {
+        $GameEnum = new GameEnum();
+        $WsResult = new WsResult();
+        $data = $GameEnum->find(['type'=>'WsResult']);
+        foreach ($data['list'] as $datum) {
+            $WsResult->insert($datum);
+        }
+    }
+    //角色默认信息
+    public function Execl_Character()
+    {
+        $file_temp = 'Execl/Character.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+//        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+//        var_dump($sheetData);
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        var_dump($highestColumn);
+        $num = 0;
+        $Character = new Character();
+        for($j=3;$j<=15;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'K'; $k++) {
+
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if($key){
+                    $arr[$key] = trim($str,"\\");
+                }
+
+            }
+            $this->response()->write(json_encode($arr));
+            var_dump($arr);
+            $Character->insert($arr);
+
+        }
     }
 
 }

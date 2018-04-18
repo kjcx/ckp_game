@@ -20,20 +20,20 @@ class UserAttr extends Model
     public  function setUserAttr($uid,$ids)
     {
         $data_user_attr_id = $this->getUserAttrId($uid);
-        var_dump($data_user_attr_id);
         //判断道具部位
         $item = new Item();
         $data_item = $item->getItemByIds($ids);
         //根据Parts 判断部位
         foreach ($data_item as $v) {
             $type = $this->Parts($v['Parts']);
-            var_dump($v['Parts'] . '=====>'. $type);
+            var_dump($v['Parts'] . '===' .$v['Id'].'==>'. $type);
             $data_user_attr_id[$type] = $v['Id'];
         }
         var_dump($data_user_attr_id);
         $data['uid'] = $uid;
         $data['user_attr_id'] = json_encode($data_user_attr_id);
-        $data['create_time'] = time();
+//        $data['create_time'] = time();
+        $data['update_time'] = time();
         $data['status'] = 1;
         return $this->mysql->where('uid',$uid)->update($this->table,$data);
     }
