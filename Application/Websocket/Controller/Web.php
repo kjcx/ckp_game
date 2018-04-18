@@ -180,7 +180,7 @@ class Web extends WebSocketController
         $DropKuId = $data_DropShopPingReq['DropKuId'];
         $GridId = $data_DropShopPingReq['GridId'];
         $RoleBag = new RoleBag();
-        $RoleBag->updateRoleBag($this->uid,['id'=>$ItemId,'CurCount'=>99]);
+        $RoleBag->updateRoleBag($this->uid,['id'=>$ItemId,'CurCount'=>9]);
         $data = DropShopPingResult::encode($data_DropShopPingReq);
         $this->send(1107,$this->fd,$data);
 

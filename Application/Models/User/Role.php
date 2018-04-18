@@ -41,10 +41,16 @@ class Role extends Model
             'exp'=>0,//经验值
             'shenjiazhi'=>0,//身价值
             'vip'=>0,//vip
-            'sign'=>'',//签名
+            'sign'=>$sign,//签名
             'icon'=>$icon,//默认头像
             'create_time'=>time()
         ];
+        var_dump($data);
+        $Avatars = explode(',',$Avatar);
+        $UserAttr = new UserAttr();
+        var_dump($Avatars);
+        $UserAttr->setUserAttr($uid,$Avatars);
+        
         //后期事务
         //创建默认角色
         $rs = $this->mysql->insert($this->table,$data);
