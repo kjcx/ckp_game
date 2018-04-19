@@ -6,6 +6,7 @@
  * Time: 下午4:18
  */
 namespace App\HttpController;
+
 use App\Event\BookEvent;
 use App\Event\BookSubscriber;
 use App\Event\ChangeAvatarEvent;

@@ -118,7 +118,7 @@ return [
     ],
     'SERVER_CONF' => [
         'server_address' => '192.168.10.10:9501', //当前机器的地址
-        'server_hash' => '1' //当前机器hash
+        'server_hash' => '1' //当前机器hash 机器编号
     ],
 
     'APP'=> [
