@@ -6,6 +6,7 @@
  * Time: 下午8:53
  */
 namespace App\Models\User;
+use App\Models\Execl\Character;
 use App\Models\Model;
 
 class Role extends Model
@@ -22,9 +23,36 @@ class Role extends Model
      * @param $data
      * @return bool
      */
-    public function createRole($data)
+    public function createRole($uid,$nickname,$sex)
     {
+        $Character = new Character();
+        $data = $Character->getInfoById((string)$sex);
+        var_dump($data);
+        $icon = $data['Icon'];//头像
+        $sign = $data['Desc'];//签名
+        $level = $data['Level'];//等级
+        $Avatar = $data['Avatar'];//装扮属性
+        $data = [
+            'uid'=>$uid,
+            'nickname'=>$nickname,
+            'sex'=>$sex,
+            'status'=>1,
+            'level'=>$level,//等级
+            'exp'=>0,//经验值
+            'shenjiazhi'=>0,//身价值
+            'vip'=>0,//vip
+            'sign'=>$sign,//签名
+            'icon'=>$icon,//默认头像
+            'create_time'=>time()
+        ];
+        var_dump($data);
+        $Avatars = explode(',',$Avatar);
+        $UserAttr = new UserAttr();
+        var_dump($Avatars);
+        $UserAttr->setUserAttr($uid,$Avatars);
+        
         //后期事务
+        //创建默认角色
         $rs = $this->mysql->insert($this->table,$data);
         if($rs){
             $arr['rid'] = $rs;//角色id
@@ -34,7 +62,7 @@ class Role extends Model
             $arr['items'] = json_encode([]);//已获取道具数量
             $res = $this->createRoleBag($arr);
             if($res){
-                return true;
+                return $rs;
             }else{
                 return false;
             }

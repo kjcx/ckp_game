@@ -61,6 +61,7 @@ class Shop
             //$k 道具id
             $count = $rolebag->getUserGoldByUid($uid,$k);
             if($count < $v){
+                var_dump($k. '===='.$v.'==>' . $count);
                 return false;
             }
         }
@@ -75,6 +76,7 @@ class Shop
     public function getItemsPrice(array $items)
     {
         $sum = 0;
+        $arr = [];
         foreach ($items as $item) {
             if(stripos($item['Cost'],',')){
                 $cost = explode(',',$item['Cost']);
@@ -85,6 +87,7 @@ class Shop
                 $arr[$type][] = $sum;
             }
         }
+
         $data = [];
         //计算每个类型的总金额
         foreach ($arr as $k=> $v) {
@@ -100,11 +103,11 @@ class Shop
      */
     public function getDrop(int $uid)
     {
-        return [
-            ['Id'=>1011,'Count'=>4],
-            ['Id'=>1021,'Count'=>5],
-            ['Id'=>1031,'Count'=>6],
-        ];
+        $arr = [];
+        for ($i = 1000;$i<6000;$i++){
+            $arr[] = ['Id'=>$i,'Count'=>1];
+        }
+        return $arr;
     }
 
     /**
@@ -119,7 +122,6 @@ class Shop
         foreach ($items as &$item) {
             foreach ($drop as $v) {
                 $id = $v['Id'];
-                var_dump("===>" .$item['Id'] ."====>" . $v['Id']);
                 if($item['Id'] == $id){
                     $item['Count'] = $v['Count'];
                 }

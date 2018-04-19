@@ -47,7 +47,7 @@ class LoadDropData
         $LoadDropData = new \AutoMsg\LoadDropData();
         $LoadDropData->setId($arr['ItemId']);
         $LoadDropData->setShopType($arr['ShopTypeId']);
-        $LoadDropData->setCount(99);
+        $LoadDropData->setCount(1);
 //        $LoadDropData->setDiscountedPrice($arr['DiscountedPrice']);//打折价格
         $LoadDropData->setDropKuId($arr['DropKuId']);
         $LoadDropData->setGridId($arr['GridId']);

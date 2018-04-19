@@ -6,6 +6,7 @@
  * Time: 上午12:36
  */
 namespace App\Models\User;
+use App\Event\UserEvent;
 use App\Models\Model;
 
 class RoleBag extends Model
@@ -68,6 +69,12 @@ class RoleBag extends Model
         }
         $rs = $this->mysql->where("uid",$uid)->update($this->table,['items'=>json_encode($arr)]);
         if($rs){
+            //测试 $bag_data['id'] == 2
+            if($bag_data['id'] == 2){
+                //通知金币变化
+                $UserEvent = new UserEvent($uid);
+                $UserEvent->GoldChangedResultEvent();
+            }
             return $rs;
         }else{
             return false;
