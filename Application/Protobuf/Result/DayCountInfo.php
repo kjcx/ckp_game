@@ -6,6 +6,8 @@
  * Time: 上午11:32
  */
 namespace App\Protobuf\Result;
+use App\Models\Execl\GameEnum;
+
 /**
  * Class DayCountInfo
  * @package App\Protobuf\Result
@@ -15,7 +17,8 @@ class DayCountInfo
     public static function encode()
     {
         $DayCountInfo = new \AutoMsg\DayCountInfo();
-        $gold[7] = 1000;
+        $GameEnum = new GameEnum();
+        $gold  = $GameEnum->getDataCountType();
         $DayCountInfo->setGoldChangeCount($gold);
         return $DayCountInfo;
     }

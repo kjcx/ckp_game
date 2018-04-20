@@ -11,6 +11,7 @@ use think\Db;
 class GameEnum extends Model
 {
     private $table = 'GameEnum_1';
+    private $DayCountInfo = ['GoldToCoin','CoinToGold','GoldToBill'];
     public function insert($arr)
     {
         //插入数据库
@@ -21,5 +22,21 @@ class GameEnum extends Model
     {
         $data = Db::table($this->table)->where($where)->find();
         return $data;
+    }
+
+    /**
+     * 获取金币 充值限额
+     * @return array
+     */
+    public function getDataCountType()
+    {
+        $data = $this->find(['type'=>'DataCountType']);
+        $arr = [];
+        foreach ($data['list'] as $item) {
+            if(in_array($item['type'],$this->DayCountInfo)){
+                $arr[$item['value']] = 0;
+            }
+        }
+        return $arr;
     }
 }

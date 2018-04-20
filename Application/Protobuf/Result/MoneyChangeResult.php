@@ -21,7 +21,7 @@ class MoneyChangeResult
         $ChangeTo = $data['ChangeTo'];
         $Count = $data['Count'];
         $MoneyChangeResult->setChangeTo(1);
-        $MoneyChangeResult->setCount(1000);
+        $MoneyChangeResult->setCount(10000);//记录今日已经兑换的数量 累加之后返回
         $str = $MoneyChangeResult->serializeToString();
         return $str;
     }
