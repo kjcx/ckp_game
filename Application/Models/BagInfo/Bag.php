@@ -10,11 +10,13 @@
 namespace App\Models\BagInfo;
 
 use App\Models\Model;
+use think\Db;
 
 class Bag extends Model
 {
     private $uid;
     private $bagInfo;
+    private $mongoTable = '';
     private $item; //item类为了验证信息   依赖
 
     private $mysqlTable = 'ckzc_bag'; //
@@ -26,6 +28,7 @@ class Bag extends Model
 
         //依赖进来 但是不需要注入
         $this->item = new Item();
+
     }
 
     /**
@@ -34,6 +37,7 @@ class Bag extends Model
      */
     private function getBag()
     {
+
         $data = $this->mysql->where('uid' , $this->uid)->getOne($this->mysqlTable);
         if (!empty($data)) {
             return $data;
@@ -45,7 +49,14 @@ class Bag extends Model
      */
     public function addLattices()
     {
-        
+
+        $collection = (new \MongoDB\Client())->test->users;
+        $insertOneResult = $collection->insertOne([
+            'username' => 'admin',
+            'email' => 'admin@example.com',
+            'name' => 'Admin User',
+        ]);
+
     }
 
     /**
@@ -64,6 +75,13 @@ class Bag extends Model
         
     }
 
+    /**
+     * 获取背包内容
+     */
+    public function getBagInfo()
+    {
+        
+    }
 
     
 

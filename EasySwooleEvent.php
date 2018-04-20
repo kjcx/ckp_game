@@ -7,29 +7,22 @@
  */
 
 namespace EasySwoole;
-use App\Event\BookEvent;
-use App\Event\BookSubscriber;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
-use App\Event\RedisEventHelper;
 use App\Process\Subscribe;
-use App\Utility\Mysql;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
-use EasySwoole\Core\Swoole\Coroutine\PoolManager;
+use EasySwoole\Core\Component\Di;
 use EasySwoole\Core\Swoole\EventHelper;
 use EasySwoole\Core\Swoole\Process\ProcessManager;
 use \EasySwoole\Core\Swoole\ServerManager;
 use \EasySwoole\Core\Swoole\EventRegister;
 use \EasySwoole\Core\Http\Request;
 use \EasySwoole\Core\Http\Response;
-use EasySwoole\Core\Component\Di;
 use App\Event\MainEventHelper;
 use EasySwoole\Core\Utility\File;
 use App\Event\RedisEvent;
-use think\Db;
 
 Class EasySwooleEvent implements EventInterface {
 
@@ -39,8 +32,7 @@ Class EasySwooleEvent implements EventInterface {
         date_default_timezone_set('Asia/Shanghai');
         ini_set('default_socket_timeout', -1);
         self::loadConf(EASYSWOOLE_ROOT . '/Application/Conf');
-
-
+        
     }
 
     public static function mainServerCreate(ServerManager $server,EventRegister $register): void
