@@ -14,6 +14,7 @@ use App\Event\ItemEvent;
 use App\Event\ItemResultEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\SellItemEvent;
+use App\Models\Execl\Topup;
 use App\Models\Item\Item;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
@@ -21,17 +22,23 @@ use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
 use App\Protobuf\Req\ChangeAvatarReq;
+use App\Protobuf\Req\CKApiReq;
 use App\Protobuf\Req\DropShopPingReq;
+use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
+use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Result\AddItemResult;
 use App\Protobuf\Result\ChangeAvatarResult;
+use App\Protobuf\Result\CkPayResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\ModelClothesResult;
+use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
+use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use EasySwoole\Core\Component\Spl\SplStream;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
@@ -246,7 +253,7 @@ class Web extends WebSocketController
     public function msgid_1142()
     {
         $data = ScoreShopResult::encode();
-        $this->send(1093,$this->fd,$data);
+        $this->send(1193,$this->fd,$data);
     }
 
     /**
@@ -324,5 +331,59 @@ class Web extends WebSocketController
         }else{
 
         }
+    }
+
+    /**
+     * 金币充值
+     */
+    public function msgid_1165()
+    {
+        $data_pay = CKApiReq::decode($this->data);
+        var_dump($data_pay);
+        $Id = $data_pay['PayParams']['Id'];
+        $Pwd = $data_pay['PayParams']['Pwd'];
+        //获取充值的id
+        $Topup = new Topup();
+        $data_Topup = $Topup->findById($Id);
+        //判断app余额是否足够
+        $Account = new Account();
+        $bool = $Account->payByApp($this->uid,0.01,123456,1);
+        if($bool){
+            //充值成功
+            //背包金额增加
+            $rolebag = new RoleBag();
+            $rolebag->updateRoleBag($this->uid,['id'=>2,'CurCount'=>$data_Topup['Gold']]);
+            //返回充值成功
+            $data  = CkPayResult::encode(true);
+            $this->send(1224,$this->fd,$data);
+        }else{
+            //充值失败
+            $data  = CkPayResult::encode(false);
+            $this->send(1224,$this->fd,$data);
+        }
+
+    }
+
+    /**
+     * 金币兑换创客币
+     */
+    public function msgid_1079()
+    {
+        $data = $this->data;
+        $data_MoneyChange = MoneyChangeReq::decode($data);
+        var_dump($data_MoneyChange);
+        $str = MoneyChangeResult::encode($data_MoneyChange);
+        $this->send(1111,$this->fd,$str);
+    }
+
+    /**
+     * 充值请求
+     */
+    public function msgid_1101()
+    {
+        $data = $this->data;
+        $data_TopUpGold = TopUpGoldReq::decode($data);
+        $str = TopUpGoldResult::encode(true);
+        $this->send(1140,$this->fd,$str);
     }
 }

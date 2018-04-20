@@ -44,15 +44,17 @@ class Account extends Controller
                 $uid = $rs['id'];
 //                $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
 //                $this->response()->write(json_encode($member_info));
+                    $Account->update("id=$uid",['app_token'=>$key]);
             }else{
                 $data = [
                     'user_name'=>$member_info['user_name'],
                     'member_mobile'=>$member_info['member_mobile'],
                     'game_level'=>$member_info['game_level'],
                     'game_level_name'=>$member_info['game_level_name'],
-                    'avatar'=>$member_info['avatar'],
+                    'avatar'=>$member_info['avatar'],//app头像
                     'create_time'=>time(),
-                    'update_time'=>time()
+                    'update_time'=>time(),
+                    'app_token'=>$key,
                 ];
                 $uid = $Account->insert($data);
             }

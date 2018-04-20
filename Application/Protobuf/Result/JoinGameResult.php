@@ -25,6 +25,12 @@ class JoinGameResult
         //背包信息
         $LoadBagInfo = LoadBagInfo::encode($uid);
         $JoinGameResult->setRoleBag($LoadBagInfo);
+        //技能列表
+        $SkillResult = SkillResult::encode();
+        $JoinGameResult->setSkillResult($SkillResult);
+        //每日充值限额
+        $DayCountInfo = DayCountInfo::encode();
+        $JoinGameResult->setDayCountInfo($DayCountInfo);
         $str = $JoinGameResult->serializeToString();
         return $str;
     }
