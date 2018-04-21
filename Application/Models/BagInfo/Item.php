@@ -18,6 +18,7 @@ use think\Db;
 class Item extends Model
 {
     private $table = 'item';
+
     /**
      * 根据id获取道具信息
      * @param $ItemId
@@ -25,7 +26,9 @@ class Item extends Model
      */
     public function getItemByid($ItemId)
     {
+        Db::setConfig(['database' => 'ckzc']); //切库
         $data = Db::table($this->table)->where(['Id'=>(int)$ItemId])->find();
+
         return $data;
     }
 

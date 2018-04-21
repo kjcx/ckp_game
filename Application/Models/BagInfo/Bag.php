@@ -10,79 +10,199 @@
 namespace App\Models\BagInfo;
 
 use App\Models\Model;
+use App\Traits\MongoTrait;
 use think\Db;
+use App\Models\BagInfo\Item;
 
 class Bag extends Model
 {
+    use MongoTrait;
+
     private $uid;
     private $bagInfo;
-    private $mongoTable = '';
+    private $mongoTable = 'ckzc_data.user_bag';
     private $item; //item类为了验证信息   依赖
+    private $initData; //初始化信息
 
-    private $mysqlTable = 'ckzc_bag'; //
     public function __construct(int $uid)
     {
         parent::__construct();
         $this->uid = $uid;
-        $this->bagInfo = $this->getBag();
-
         //依赖进来 但是不需要注入
         $this->item = new Item();
-
+        $this->initData = new Init();
+        $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作
     }
 
     /**
-     * 获取背包信息
-     * @return array|bool
+     * 切库
+     * @param $database
      */
-    private function getBag()
+    private function switchDatabase(String $database = 'ckzc_data')
+    {
+        Db::setConfig(['database' => $database]); //切库
+    }
+    /**
+     * 获取背包信息
+     * @return array
+     */
+    public function getBag()
+    {
+        $data = $this->collection->findOne(['uid' => $this->uid]);
+        if (!empty($data)) {
+            return $data['data'];
+        }
+        return [];
+    }
+
+    /**
+     * 初始化背包信息
+     */
+    public function initBag()
     {
 
-        $data = $this->mysql->where('uid' , $this->uid)->getOne($this->mysqlTable);
-        if (!empty($data)) {
-            return $data;
+        if (!empty($this->getBag())) {
+            return false;
+        }
+
+        $initData = $this->initData->getInitData();
+        //生成背包数据
+        //绑金 初始道具  初始创客币 初始金币
+        $initData['goldBind']; //绑金
+        $initData['item']; //初始道具
+        $initData['coin']; //初始创客币
+        $initData['gold']; //初始金币
+
+        $goldBindData = $this->item->getItemByid($initData['goldBind']['id']);
+        $itemData = $this->item->getItemByid($initData['item']['id']);
+        $coinData = $this->item->getItemByid($initData['coin']['id']);
+        $goldData = $this->item->getItemByid($initData['gold']['id']);
+        $bagData = [
+            $goldBindData['Id'] => [
+                'id' => $goldBindData['Id'],
+                'OnSpace' => $this->getOnSpace($goldBindData['Id'],$initData['goldBind']['count']),
+                'CurCount' => $initData['goldBind']['count']
+            ],
+            $itemData['Id'] => [
+                'id' => $itemData['Id'],
+                'OnSpace' => $this->getOnSpace($itemData['Id'],$initData['item']['count']),
+                'CurCount' => $initData['item']['count']
+            ],
+            $coinData['Id'] => [
+                'id' => $coinData['Id'],
+                'OnSpace' => $this->getOnSpace($coinData['Id'],$initData['coin']['count']),
+                'CurCount' => $initData['coin']['count']
+            ],
+            $goldData['Id'] => [
+                'id' => $goldData['Id'],
+                'OnSpace' => $this->getOnSpace($goldData['Id'],$initData['gold']['count']),
+                'CurCount' => $initData['gold']['count']
+            ],
+        ];
+        $bagInfo = [
+            'uid' => $this->uid,
+            'data' => $bagData
+        ];
+
+        $res = $this->collection->insertOne($bagInfo);
+        if ($res->isAcknowledged()) {
+            return true;
         }
         return false;
     }
+
     /**
-     *增加格子数量
+     * 获取背包的单个商品
+     * @param $itemId
+     * @return array
      */
-    public function addLattices()
+    private function getBagByItemId($itemId)
     {
-
-        $collection = (new \MongoDB\Client())->test->users;
-        $insertOneResult = $collection->insertOne([
-            'username' => 'admin',
-            'email' => 'admin@example.com',
-            'name' => 'Admin User',
-        ]);
-
+        $data = $this->collection->findOne(['uid' => $this->uid]);
+        if (isset($data['data'][$itemId])) {
+            return $data['data'][$itemId];
+        }
+        return [];
     }
 
     /**
+     * 验证背包格子数量
+     * @return array
+     */
+    private function checkBagSpace()
+    {
+        $bagData = (array)$this->getBag();
+        $spaceArr = array_column($bagData,'OnSpace');
+        //TODO::验证当前用户背包格子数量 暂时是999 以后改动读配置
+        return array_sum($spaceArr) >= 999 ? false : true;
+    }
+    /**
+     * @param $itemId 商品id
+     * @param $num 商品数量
+     */
+    public function addBag($itemId,$num)
+    {
+
+        if (!$this->checkBagSpace()) {
+            return '背包格子已满';
+        }
+        $itemData = $this->getBagByItemId($itemId);
+        $itemData['CurCount'] = $itemData['CurCount'] ?? 0;
+        $num = empty($itemData) ? $num : ($itemData['CurCount'] + $num);
+//        需要验证可以叠加数量  进行创建新的格子
+        $onSpace = $this->getOnSpace($itemId,$num);
+
+        $data = [
+            'CurCount' => $num,
+            'OnSpace' => $onSpace,
+            'id' => $itemId
+        ];
+        $result = $this->collection->findOneAndUpdate(['uid' => $this->uid],[
+            '$set' => [
+                'data.' . $itemId => $data
+            ]
+        ]);
+        return empty($result) ? false : true;
+    }
+
+    /**
+     * 获取商品占格数量
+     * @param $itemId
+     * @param $num
+     * @return bool|float
+     */
+    private function getOnSpace($itemId,$num)
+    {
+        $itemInfo = $this->item->getItemByid($itemId);
+        if (!empty($itemInfo) && isset($itemInfo['Count'])) {
+            $space = ceil($num / $itemInfo['Count']);
+            return $space == 0 ? 1 : $space;
+        }
+        return false;
+
+    }
+    /**
      * 验证叠加数量
      */
-    public function checkOverlyingNum($itemsId)
+    private function checkOverlyingNum($itemsId,$num)
     {
-        
+        $itemInfo = $this->item->getItemByid($itemsId);
+
+        if (!empty($itemInfo)) {
+            return $itemInfo;
+        }
+        return [];
     }
 
     /**
      * 获取背包数量
+     * @return int
      */
     public function getBagNum()
     {
-        
-    }
-
-    /**
-     * 获取背包内容
-     */
-    public function getBagInfo()
-    {
-        
+        $data = $this->getBag();
+        return count($data['data']);
     }
 
     
-
 }

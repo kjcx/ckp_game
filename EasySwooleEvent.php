@@ -61,7 +61,7 @@ Class EasySwooleEvent implements EventInterface {
      * 加载配置文件
      * @param $ConfPath
      */
-    public function loadConf($ConfPath)
+    public static function loadConf($ConfPath)
     {
         $Conf  = Config::getInstance();
         $files = File::scanDir($ConfPath);
