@@ -17,6 +17,7 @@ use App\Event\ChangeItemSubscriber;
 use App\Event\UserEvent;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Execl\Character;
+use App\Models\Execl\Topup;
 use App\Models\Execl\WsResult;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
@@ -253,6 +254,42 @@ class Index extends Controller
             $this->response()->write(json_encode($arr));
             var_dump($arr);
             $Character->insert($arr);
+
+        }
+    }
+
+    public function Execl_Topup()
+    {
+        $file_temp = 'Execl/Topup.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+//        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+//        var_dump($sheetData);
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        var_dump($highestColumn);
+        $num = 0;
+        $Topup = new Topup();
+        for($j=3;$j<=15;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'E'; $k++) {
+
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if($key){
+                    if($key == 'Id'){
+                        $arr[$key] = (int)trim($str,"\\");
+                    }else{
+                        $arr[$key] = trim($str,"\\");
+                    }
+
+                }
+
+            }
+            $this->response()->write(json_encode($arr));
+            var_dump($arr);
+            $Topup->insert($arr);
 
         }
     }

@@ -123,6 +123,7 @@ return [
 
     'APP'=> [
         'member_info' => $APP_SERVER_URL . '/mobile/index.php?act=member_index',
+        'pay_app'=> $APP_SERVER_URL . '/mobile/index.php?act=member_fund&op=balance_edit',
         ]
 
 ];
