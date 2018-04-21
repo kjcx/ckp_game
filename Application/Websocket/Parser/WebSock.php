@@ -11,6 +11,7 @@ namespace App\Websocket\Parser;
 
 use App\Websocket\Controller\Web;
 use AutoMsg\MsgBaseRev;
+use EasySwoole\Core\Component\Di;
 use EasySwoole\Core\Socket\AbstractInterface\ParserInterface;
 use EasySwoole\Core\Socket\Common\CommandBean;
 
@@ -28,7 +29,6 @@ class WebSock implements ParserInterface
         $command = new CommandBean();
         $baseMessage = new MsgBaseRev();
         $baseMessage->mergeFromString($raw);
-
         $command->setControllerClass(Web::class);
         $data = $baseMessage->getData();
         $msgId = $baseMessage->getMsgId();
