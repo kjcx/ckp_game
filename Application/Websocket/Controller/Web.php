@@ -28,6 +28,7 @@ use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Req\TopUpGoldReq;
+use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Result\AddItemResult;
 use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\CkPayResult;
@@ -40,6 +41,7 @@ use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
+use App\Protobuf\Result\UpdateRoleInfoNameResult;
 use EasySwoole\Core\Component\Spl\SplStream;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Socket\Client\WebSocket;
@@ -385,5 +387,20 @@ class Web extends WebSocketController
         $data_TopUpGold = TopUpGoldReq::decode($data);
         $str = TopUpGoldResult::encode(true);
         $this->send(1140,$this->fd,$str);
+    }
+
+    public function msgid_1103()
+    {
+        $data = $this->data;
+        $data_UpdateRoleInfoName = UpdateRoleInfoNameReq::decode($data);
+        var_dump($data_UpdateRoleInfoName);//
+        //修改角色名字
+        $role = new Role();
+        $rs = $role->updateRoleName($this->uid,$data_UpdateRoleInfoName['RoleName']);
+        if($rs){
+            //昵称修改成功
+            $str = UpdateRoleInfoNameResult::encode($data_UpdateRoleInfoName['RoleName']);
+            $this->send(1142,$this->fd,$str);
+        }
     }
 }

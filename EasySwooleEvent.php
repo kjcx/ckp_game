@@ -8,6 +8,7 @@
 
 namespace EasySwoole;
 
+use App\Event\RedisEventHelper;
 use App\Process\Subscribe;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
@@ -47,11 +48,39 @@ Class EasySwooleEvent implements EventInterface {
                 if (Config::getInstance()->getConf('DEBUG')) {
                     MainEventHelper::registerHotLoad();
                 }
+
+                $start_fd = 0;
+                while(true)
+                {
+                    $conn_list = $server->getClientList($start_fd, 10);
+                    if ($conn_list===false or count($conn_list) === 0)
+                    {
+                        echo "finish\n";
+                        break;
+                    }
+                    $start_fd = end($conn_list);
+                    foreach($conn_list as $fd)
+                    {
+                        $info =  $server->getClientInfo($fd);
+                        if($server->exist($fd)){
+                            var_dump("=========存在" .$fd);
+                        }else{
+                            var_dump("=========不存在" .$fd);
+//                           $server->close($fd);
+                        }
+
+                    }
+                }
             }
         });
 
         ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
+        ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
         EventHelper::registerDefaultOnMessage($register,new WebSock());
+
+        $register->add($register::onClose, function ($ser,$fd) {//离线删除连接
+            RedisEventHelper::remove($fd);
+        });
 
 
 
