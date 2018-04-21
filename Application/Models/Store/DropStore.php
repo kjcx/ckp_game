@@ -17,11 +17,19 @@ class DropStore extends Model
     use MongoTrait;
 
     private $uid;
+    private $dropType = ['MenCloth','WomenCloth','BeautyShop','DepartmentStore','JewelryStore','ManDiscountShop','WomenDiscountShop'];
+    private $shopType = 'ShopCenterType';
 
-    public function __construct()
+    public function __construct(Int $uid)
     {
         parent::__construct();
+        $this->uid = $uid;
     }
 
+
+    private function ()
+    {
+
+    }
 
 }

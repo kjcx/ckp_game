@@ -49,7 +49,7 @@ class Bag extends Model
     public function getBag()
     {
         $data = $this->collection->findOne(['uid' => $this->uid]);
-        if (!empty($data)) {
+        if (!empty($data) && isset($data['data'])) {
             return $data['data'];
         }
         return [];
@@ -137,12 +137,13 @@ class Bag extends Model
         return array_sum($spaceArr) >= 999 ? false : true;
     }
     /**
+     * 背包增加商品
      * @param $itemId 商品id
      * @param $num 商品数量
      */
-    public function addBag($itemId,$num)
+    public function addBag($itemId,Int $num = 1)
     {
-
+        //TODO:: 错误码
         if (!$this->checkBagSpace()) {
             return '背包格子已满';
         }
@@ -165,6 +166,45 @@ class Bag extends Model
         return empty($result) ? false : true;
     }
 
+    /**
+     *背包减少商品
+     * @param $itemId
+     * @param $num
+     */
+    public function delBag($itemId,Int $num = 1)
+    {
+        //TODO::错误码
+        $itemData = $this->getBagByItemId($itemId);
+        if (empty($itemData)) {
+            return false;
+        }
+        $num = $itemData['CurCount'] - $num;
+        if ($num < 0) {
+            return false;
+        }
+        $filter = ['uid' => $this->uid]; //条件
+        $update = [];
+//        需要验证可以叠加数量  进行创建新的格子
+        $onSpace = $this->getOnSpace($itemId,$num);
+        $data = [
+            'CurCount' => $num,
+            'OnSpace' => $onSpace,
+            'id' => $itemId
+        ];
+        if ($num == 0) {
+            $update['$unset'] = [
+                'data.' . $itemId => 1
+            ];
+        } else {
+            $update['$set'] = [
+                'data.' . $itemId => $data
+            ];
+        }
+
+        $result = $this->collection->findOneAndUpdate($filter,$update);
+        return empty($result) ? false : true;
+
+    }
     /**
      * 获取商品占格数量
      * @param $itemId

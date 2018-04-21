@@ -29,7 +29,6 @@ class WebSock implements ParserInterface
         $command = new CommandBean();
         $baseMessage = new MsgBaseRev();
         $baseMessage->mergeFromString($raw);
-        Di::getInstance()->set('uid');
         $command->setControllerClass(Web::class);
         $data = $baseMessage->getData();
         $msgId = $baseMessage->getMsgId();

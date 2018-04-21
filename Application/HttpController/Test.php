@@ -17,7 +17,8 @@ class Test extends Controller
     public function index()
     {
         $test = new Bag(1);
-        var_dump($test->addBag(2,2000));
+//        var_dump($test->addBag(2,2000));
+        var_dump($test->initBag());
         $this->response()->write('1');
     }
 }
