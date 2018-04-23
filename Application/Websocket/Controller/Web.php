@@ -48,6 +48,7 @@ use EasySwoole\Core\Socket\Client\WebSocket;
 use EasySwoole\Core\Socket\Common\CommandBean;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use function Symfony\Component\VarDumper\Tests\Fixtures\bar;
 use think\Db;
 
 class Web extends WebSocketController
@@ -347,10 +348,11 @@ class Web extends WebSocketController
         //获取充值的id
         $Topup = new Topup();
         $data_Topup = $Topup->findById($Id);
+        var_dump($data_Topup);
         //判断app余额是否足够
         $Account = new Account();
-        $bool = $Account->payByApp($this->uid,0.01,123456,1);
-        if($bool){
+        $res = $Account->payByApp($this->uid,$data_Topup['Gold'],$Pwd,'game_recharge');
+        if($res['code'] == 200){
             //充值成功
             //背包金额增加
             $rolebag = new RoleBag();
@@ -385,6 +387,7 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_TopUpGold = TopUpGoldReq::decode($data);
+        var_dump($data_TopUpGold);
         $str = TopUpGoldResult::encode(true);
         $this->send(1140,$this->fd,$str);
     }
