@@ -105,7 +105,7 @@ class Account extends Model
             'money'=>0.01,
             'lg_source_only'=>'45b075123f63a82905062cd72191cceb4126',
             'log_type'=>'game_recharge',
-            'member_paypwd'=>'123456'
+            'member_paypwd'=>$pwd
             ];
         $res = $client->request('POST',$url,['form_params'=>$postdata]);
 

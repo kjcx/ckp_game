@@ -55,7 +55,7 @@ Class EasySwooleEvent implements EventInterface {
                     $conn_list = $server->getClientList($start_fd, 10);
                     if ($conn_list===false or count($conn_list) === 0)
                     {
-                        echo "finish\n";
+//                        echo "finish\n";
                         break;
                     }
                     $start_fd = end($conn_list);
@@ -63,9 +63,9 @@ Class EasySwooleEvent implements EventInterface {
                     {
                         $info =  $server->getClientInfo($fd);
                         if($server->exist($fd)){
-                            var_dump("=========存在" .$fd);
+//                            var_dump("=========存在" .$fd);
                         }else{
-                            var_dump("=========不存在" .$fd);
+//                            var_dump("=========不存在" .$fd);
 //                           $server->close($fd);
                         }
 

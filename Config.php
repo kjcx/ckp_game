@@ -5,7 +5,7 @@
  * Date: 2017/12/30
  * Time: 下午10:59
  */
-$APP_SERVER_URL = 'http://www.ckp520.com';
+$APP_SERVER_URL = 'http://chuangke.jygeili.com:89';
 return [
     'MAIN_SERVER'=>[
         'HOST'=>'0.0.0.0',
@@ -55,7 +55,7 @@ return [
         ]
     ],
     'REDIS_SERVER' => [
-        'host' => '127.0.0.1', // redis主机地址
+        'host' => 'redis.com', // redis主机地址
         'port' => 6379, // 端口
         'serialize' => false, // 是否序列化php变量
         'auth' => null, // 密码
