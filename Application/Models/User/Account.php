@@ -91,27 +91,31 @@ class Account extends Model
 
     /**
      * 通过app充值
+     * @param $uid
+     * @param $money
+     * @param $pwd
+     * @param string $type
      */
-    public function payByApp($uid,$money,$pwd,$type)
+    public function payByApp($uid,$money,$pwd,$type='game_recharge')
     {
         //1 支付密码,2余额，
         $pay_app = Config::getInstance()->getConf('APP.pay_app');
         var_dump($pay_app);
-        $key = '447488aa7838da60508c087ba51157d5';
+        $key = '1';
         $url = $pay_app ;
         $client = new Client();
         $postdata = [
             'key'=>$key,
-            'money'=>0.01,
-            'lg_source_only'=>'45b075123f63a82905062cd72191cceb4126',
-            'log_type'=>'game_recharge',
+            'money'=>$money,
+            'lg_source_only'=>date('YmdHis').rand(0000,9999),
+            'log_type'=>$type,
             'member_paypwd'=>$pwd
             ];
         $res = $client->request('POST',$url,['form_params'=>$postdata]);
 
         $str = $res->getBody()->getContents();
         $arr = json_decode($str,1);
-        return true;
+        return $arr;
 
     }
 

@@ -6,6 +6,7 @@
  * Time: 下午8:53
  */
 namespace App\Models\User;
+use App\Models\BagInfo\Bag;
 use App\Models\Execl\Character;
 use App\Models\Model;
 
@@ -25,9 +26,9 @@ class Role extends Model
      */
     public function createRole($uid,$nickname,$sex)
     {
+        //1获取创建角色默认值
         $Character = new Character();
         $data = $Character->getInfoById((string)$sex);
-        var_dump($data);
         $icon = $data['Icon'];//头像
         $sign = $data['Desc'];//签名
         $level = $data['Level'];//等级
@@ -45,6 +46,7 @@ class Role extends Model
             'icon'=>$icon,//默认头像
             'create_time'=>time()
         ];
+        var_dump("========新创建角色信息=====");
         var_dump($data);
         $Avatars = explode(',',$Avatar);
         $UserAttr = new UserAttr();
@@ -55,12 +57,14 @@ class Role extends Model
         //创建默认角色
         $rs = $this->mysql->insert($this->table,$data);
         if($rs){
-            $arr['rid'] = $rs;//角色id
-            $arr['uid'] = $data['uid'];//用户id
-            $arr['maxsum'] = 999;//背包最大数量
-            $arr['usesum'] = 0;//已使用
-            $arr['items'] = json_encode([]);//已获取道具数量
-            $res = $this->createRoleBag($arr);
+//            $arr['rid'] = $rs;//角色id
+//            $arr['uid'] = $data['uid'];//用户id
+//            $arr['maxsum'] = 999;//背包最大数量
+//            $arr['usesum'] = 0;//已使用
+//            $arr['items'] = json_encode([]);//已获取道具数量
+//            $res = $this->createRoleBag($arr);
+            $Bag = new Bag($uid);
+            $res = $Bag->initBag();
             if($res){
                 return $rs;
             }else{
@@ -111,5 +115,10 @@ class Role extends Model
             $RoleBag->updateRoleBag($uid,['id'=>2,'CurCount'=>-5000]);
         }
         return $rs;
+    }
+
+    public function updateShenjiazhi($uid,$shenjia)
+    {
+        $this->mysql->where('uid',$uid)->update($this->table,['shenjiazhi'=>$this->mysql->inc($shenjia)]);
     }
 }

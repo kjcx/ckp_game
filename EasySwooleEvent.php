@@ -65,7 +65,6 @@ Class EasySwooleEvent implements EventInterface {
                         if($server->exist($fd)){
 //                            var_dump("=========存在" .$fd);
                         }else{
-//                            var_dump("=========不存在" .$fd);
 //                           $server->close($fd);
                         }
 

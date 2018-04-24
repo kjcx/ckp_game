@@ -5,7 +5,10 @@
  * Date: 2017/12/30
  * Time: 下午10:59
  */
-$APP_SERVER_URL = 'http://chuangke.jygeili.com:89';
+
+$APP_SERVER_URL = 'http://www.chuangke.com:81/';
+//$APP_SERVER_URL = 'http://www.ckp520.com';
+
 return [
     'MAIN_SERVER'=>[
         'HOST'=>'0.0.0.0',

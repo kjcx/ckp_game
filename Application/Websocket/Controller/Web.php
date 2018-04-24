@@ -34,6 +34,7 @@ use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\CkPayResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\JoinGameResult;
+use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\RefDropShopResult;
@@ -42,12 +43,15 @@ use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
+use AutoMsg\MissionFirstCompleteReq;
+use AutoMsg\SendMsgToChannelReq;
 use EasySwoole\Core\Component\Spl\SplStream;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Socket\Client\WebSocket;
 use EasySwoole\Core\Socket\Common\CommandBean;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use function Symfony\Component\VarDumper\Tests\Fixtures\bar;
 use think\Db;
 
 class Web extends WebSocketController
@@ -347,10 +351,11 @@ class Web extends WebSocketController
         //获取充值的id
         $Topup = new Topup();
         $data_Topup = $Topup->findById($Id);
+        var_dump($data_Topup);
         //判断app余额是否足够
         $Account = new Account();
-        $bool = $Account->payByApp($this->uid,0.01,123456,1);
-        if($bool){
+        $res = $Account->payByApp($this->uid,$data_Topup['Gold'],$Pwd,'game_recharge');
+        if($res['code'] == 200){
             //充值成功
             //背包金额增加
             $rolebag = new RoleBag();
@@ -368,12 +373,15 @@ class Web extends WebSocketController
 
     /**
      * 金币兑换创客币
+     * 暂时没有了
      */
     public function msgid_1079()
     {
         $data = $this->data;
         $data_MoneyChange = MoneyChangeReq::decode($data);
         var_dump($data_MoneyChange);
+        //处理兑换
+
         $str = MoneyChangeResult::encode($data_MoneyChange);
         $this->send(1111,$this->fd,$str);
     }
@@ -385,6 +393,7 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_TopUpGold = TopUpGoldReq::decode($data);
+        var_dump($data_TopUpGold);
         $str = TopUpGoldResult::encode(true);
         $this->send(1140,$this->fd,$str);
     }
@@ -402,5 +411,29 @@ class Web extends WebSocketController
             $str = UpdateRoleInfoNameResult::encode($data_UpdateRoleInfoName['RoleName']);
             $this->send(1142,$this->fd,$str);
         }
+    }
+
+    /**
+     * 聊天系统
+     */
+    public function msgid_1019()
+    {
+        $data = $this->data;
+        echo '111111';
+        var_dump($data);
+        $data_send_msg = \App\Protobuf\Req\SendMsgToChannelReq::decode($data);
+        var_dump($data_send_msg);
+    }
+
+    /**
+     * 快速完成任务
+     */
+    public function msgid_1149()
+    {
+        $data = $this->data;
+        $data_MissionId = \App\Protobuf\Req\MissionFirstCompleteReq::decode($data);
+        //任务id
+        $str = MissionFirstCompleteResult::encode($data_MissionId);
+        $this->send(1202,$this->fd,$str);
     }
 }

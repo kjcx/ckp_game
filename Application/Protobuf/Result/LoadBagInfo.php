@@ -6,6 +6,7 @@
  * Time: 下午1:26
  */
 namespace App\Protobuf\Result;
+use App\Models\BagInfo\Bag;
 use App\Models\User\RoleBag;
 
 class LoadBagInfo
@@ -15,6 +16,10 @@ class LoadBagInfo
         //查询背包信息
         $RoleBag = new RoleBag();
         $data = $RoleBag->getRoleBag($uid);
+        $Bag = new Bag($uid);
+        $data = $Bag->getBag();
+        var_dump("查询背包信息");
+        var_dump($data);
         //items
         $items = $data['items'];
         $items_data = json_decode($items,1);

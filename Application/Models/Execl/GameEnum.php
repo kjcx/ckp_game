@@ -21,8 +21,6 @@ class GameEnum extends Model
     public function find($where)
     {
         $data = Db::table($this->table)->where($where)->find();
-        var_dump(11111111);
-        var_dump($data);
         return $data;
     }
 
@@ -32,12 +30,7 @@ class GameEnum extends Model
      */
     public function getDataCountType()
     {
-
-        var_dump("============>>>>>>");
-
         $data = $this->find(['type'=>'DataCountType']);
-
-
         $arr = [];
         foreach ($data['list'] as $item) {
             if(in_array($item['type'],$this->DayCountInfo)){

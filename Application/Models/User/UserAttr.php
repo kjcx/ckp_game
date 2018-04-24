@@ -31,21 +31,21 @@ class UserAttr extends Model
         //判断道具部位
         $item = new Item();
         $data_item = $item->getItemByIds($ids);
-        var_dump($data_item);
+        $now_Status = 0;//现在就时装身价值
         //根据Parts 判断部位
         foreach ($data_item as $v) {
             $type = $this->Parts($v['Parts']);
             var_dump($v['Parts'] . '===' .$v['Id'].'==>'. $type);
             $data_user_attr_id[$type] = $v['Id'];
+
         }
-//        var_dump($data_user_attr_id);
         $data['uid'] = $uid;
         $data['user_attr_id'] = json_encode($data_user_attr_id);
-//        $data['create_time'] = time();
         $data['update_time'] = time();
         $data['status'] = 1;
         if($bool){
-            return $this->mysql->where('uid',$uid)->update($this->table,$data);
+            $rs = $this->mysql->where('uid',$uid)->update($this->table,$data);
+            return true;
         }else{
             return $this->mysql->insert($this->table,$data);
         }
@@ -92,4 +92,6 @@ class UserAttr extends Model
             return $arr[$Parts];
         }
     }
+
+
 }
