@@ -18,6 +18,7 @@ class UpdateRoleInfoNameReq
     public static function decode($data)
     {
         $UpdateRoleInfoNameReq  = new \AutoMsg\UpdateRoleInfoNameReq();
+        $UpdateRoleInfoNameReq->mergeFromString($data);
         $RoleName = $UpdateRoleInfoNameReq->getRoleName();
         return ['RoleName'=>$RoleName];
     }

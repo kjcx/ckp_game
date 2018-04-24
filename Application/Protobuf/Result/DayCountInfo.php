@@ -9,6 +9,7 @@ namespace App\Protobuf\Result;
 use App\Models\Execl\GameEnum;
 
 /**
+ * 每日信息
  * Class DayCountInfo
  * @package App\Protobuf\Result
  */

@@ -24,7 +24,7 @@ class Account extends Controller
         $key = $this->request()->getQueryParam('key');
         var_dump("=============开始请求==========".time());
         $res = $client->request('POST',$url,['form_params'=>['key'=>$key]]);
-
+var_dump($res);
         $str = $res->getBody()->getContents();
         $arr = json_decode($str,1);
         var_dump($arr);
@@ -37,14 +37,15 @@ class Account extends Controller
             $Account = new \App\Models\User\Account();
             $where  = 'member_mobile = ' . $member_info['member_mobile'];
             $rs = $Account->find($where);
-//            var_dump($rs);
+            var_dump($rs);
             if($rs){
                 //用户存在 返回用户信息
                 //生产token 并返回
                 $uid = $rs['id'];
 //                $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
 //                $this->response()->write(json_encode($member_info));
-                    $Account->update("id=$uid",['app_token'=>$key]);
+                $res = $Account->update("id=$uid",['app_token'=>$key]);
+                var_dump($res);
             }else{
                 $data = [
                     'user_name'=>$member_info['user_name'],

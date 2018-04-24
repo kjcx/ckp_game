@@ -96,4 +96,20 @@ class Role extends Model
             return false;
         }
     }
+    /**
+     * 修改昵称
+     * @param $uid
+     * @param $nickname
+     * @return bool
+     */
+    public function updateRoleName($uid,$nickname)
+    {
+        $rs = $this->mysql->where('uid',$uid)->update($this->table,['nickname'=>$nickname]);
+        if($rs){
+            //改名扣费
+            $RoleBag = new RoleBag();
+            $RoleBag->updateRoleBag($uid,['id'=>2,'CurCount'=>-5000]);
+        }
+        return $rs;
+    }
 }
