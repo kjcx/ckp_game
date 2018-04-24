@@ -53,7 +53,7 @@ class Bag extends Model
         $data = $this->collection->findOne(['uid' => $this->uid]);
         if (!empty($data) && isset($data['data'])) {
             $data['MaxCellNumber'] = $this->MaxCellNumber;
-            $data['CurUsedCell'] = array_sum(array_column($data['data'],'OnSpace'));
+            $data['CurUsedCell'] = array_sum(array_column((array)$data['data'],'OnSpace'));
             $data['Furnitrues'] = []; //家居 TODO::
             return $data;
         }
@@ -109,6 +109,7 @@ class Bag extends Model
             'data' => $bagData
         ];
 
+        var_dump($bagInfo);
         $res = $this->collection->insertOne($bagInfo);
         if ($res->isAcknowledged()) {
             return true;
