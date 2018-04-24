@@ -5,7 +5,7 @@
         "joshcam/mysqli-database-class": "dev-master",
         "google/protobuf": "^3.5",
         "phpoffice/phpspreadsheet": "^1.2",
-        "topthink/think-orm": "^1.2",
+        "topthink/think-orm": "1.2.4",
         "symfony/event-dispatcher": "^4.0",
         "symfony/symfony": "^4.0",
         "mongodb/mongodb": "^1.3"

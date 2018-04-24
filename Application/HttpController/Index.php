@@ -7,48 +7,25 @@
  */
 namespace App\HttpController;
 
-use App\Event\BookEvent;
-use App\Event\BookSubscriber;
-use App\Event\ChangeAvatarEvent;
-use App\Event\ChangeAvatarSubscriber;
 use App\Event\ItemEvent;
-use App\Event\ItemResultEvent;
-use App\Event\ChangeItemSubscriber;
-use App\Event\UserEvent;
-use App\Models\BagInfo\Bag;
-use App\Models\DataCenter\DataCenter;
-use App\Models\Execl\Character;
-use App\Models\Execl\Mission;
-use App\Models\Execl\Topup;
-use App\Models\Execl\WsResult;
-use App\Models\Test\Event;
-use App\Models\Execl\GameEnum;
-use App\Models\Trade\Shop;
-use App\Models\User\Role;
+use App\Models\Item\Item;
 use App\Models\User\RoleBag;
-use App\Protobuf\LoadData\ShopAll;
 use App\Protobuf\Result\LoadBagInfo;
-use App\Protobuf\Result\LoadRoleBagInfo;
-use App\Protobuf\Result\MsgBaseRev;
-use App\Protobuf\Result\SellItemResult;
-use App\Protobuf\Result\ShopAllResult;
-use App\Protobuf\Result\UpdateItemResult;
-use AutoMsg\MsgBaseSend;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use think\Db;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-
 class Index extends Controller
 {
     private $key;
     private $msg;
 
+    /**
+     *
+     */
     public function index()
     {
 
-        $bag = new Bag(2);
-        $bag->initBag();
+        $a  = new Item();
+        $arr = $a->getItemIds([6,7,8]);
+        var_dump($arr);
     }
 
     public function setRolebag()

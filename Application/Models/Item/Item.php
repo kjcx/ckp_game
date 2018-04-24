@@ -8,7 +8,6 @@
 
 namespace App\Models\Item;
 
-
 use App\Models\Model;
 use think\Db;
 
@@ -23,7 +22,11 @@ class Item extends Model
      */
     public function getItemIds(array $ids)
     {
-        $data = Db::table($this->table)->where('Id','in',$ids)->select();
+        $arr = Db::table($this->table)->find();
+        var_dump($arr);
+        $data = Db::table($this->table)->where(['Id'=>1])->find();
+        var_dump("======data======");
+        var_dump($data);
         return $data ? $data : false;
     }
     /**

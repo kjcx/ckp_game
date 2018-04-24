@@ -80,6 +80,7 @@ class Bag extends Model
 
         var_dump($initData);
         $goldBindData = $this->item->getItemByid($initData['goldBind']['id']);
+        var_dump($goldBindData);
         $itemData = $this->item->getItemByid($initData['item']['id']);
         $coinData = $this->item->getItemByid($initData['coin']['id']);
         $goldData = $this->item->getItemByid($initData['gold']['id']);
@@ -105,12 +106,12 @@ class Bag extends Model
                 'CurCount' => $initData['gold']['count']
             ],
         ];
-        var_dump($bagData);
+
         $bagInfo = [
             'uid' => $this->uid,
             'data' => $bagData
         ];
-var_dump($bagInfo);
+
         $res = $this->collection->insertOne($bagInfo);
         if ($res->isAcknowledged()) {
             return true;

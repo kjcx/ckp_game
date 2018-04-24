@@ -25,8 +25,8 @@ class LoadBagInfo
         $items_data = json_decode($items,1);
         var_dump($items_data);
         $LoadBagInfo = new \AutoMsg\LoadBagInfo();
-        $LoadBagInfo->setMaxCellNumber($data['maxsum']);
-        $LoadBagInfo->setCurUsedCell($data['usesum']);
+        $LoadBagInfo->setMaxCellNumber($data['MaxCellNumber']);
+        $LoadBagInfo->setCurUsedCell($data['CurUsedCell']);
         $LoadBagInfo->setFurnitrues($LoadBagInfo->getFurnitrues());
         $items = LoadRoleBagInfo::encode($items_data);
         $LoadBagInfo->setItems($items);
