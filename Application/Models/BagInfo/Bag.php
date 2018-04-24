@@ -23,6 +23,7 @@ class Bag extends Model
     private $mongoTable = 'ckzc_data.user_bag';
     private $item; //item类为了验证信息   依赖
     private $initData; //初始化信息
+    private $MaxCellNumber;
 
     public function __construct(int $uid)
     {
@@ -31,6 +32,7 @@ class Bag extends Model
         //依赖进来 但是不需要注入
         $this->item = new Item();
         $this->initData = new Init();
+        $this->MaxCellNumber = 999;
         $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作
     }
 
@@ -50,7 +52,10 @@ class Bag extends Model
     {
         $data = $this->collection->findOne(['uid' => $this->uid]);
         if (!empty($data) && isset($data['data'])) {
-            return $data['data'];
+            $data['MaxCellNumber'] = $this->MaxCellNumber;
+            $data['CurUsedCell'] = array_sum(array_column($data['data'],'OnSpace'));
+            $data['Furnitrues'] = []; //家居 TODO::
+            return $data;
         }
         return [];
     }
@@ -136,7 +141,7 @@ var_dump($bagInfo);
         $bagData = (array)$this->getBag();
         $spaceArr = array_column($bagData,'OnSpace');
         //TODO::验证当前用户背包格子数量 暂时是999 以后改动读配置
-        return array_sum($spaceArr) >= 999 ? false : true;
+        return array_sum($spaceArr) >= $this->MaxCellNumber ? false : true;
     }
     /**
      * 背包增加商品
@@ -169,9 +174,10 @@ var_dump($bagInfo);
     }
 
     /**
-     *背包减少商品
+     * 背包减少商品
      * @param $itemId
-     * @param $num
+     * @param Int $num
+     * @return bool
      */
     public function delBag($itemId,Int $num = 1)
     {
@@ -236,15 +242,6 @@ var_dump($bagInfo);
         return [];
     }
 
-    /**
-     * 获取背包数量
-     * @return int
-     */
-    public function getBagNum()
-    {
-        $data = $this->getBag();
-        return count($data['data']);
-    }
 
     
 }

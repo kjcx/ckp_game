@@ -10,15 +10,18 @@
 namespace App\HttpController;
 
 use App\Models\BagInfo\Bag;
+use App\Models\Store\DropStore;
+use App\Models\Store\ShopConfig;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 
 class Test extends Controller
 {
     public function index()
     {
-        $test = new Bag(1);
+//        $test = new ShopConfig(1);
+        $test = new DropStore(1);
 //        var_dump($test->addBag(2,2000));
-        var_dump($test->initBag());
-        $this->response()->write('1');
+        $a = json_encode($test->refreshDropShop());
+        $this->response()->write($a);
     }
 }
