@@ -52,7 +52,7 @@ class DropStore extends Model
     {
         $randArr = [];
         foreach ($dropLib as $k => $v) {
-
+            $v['weight']
         }
     }
     /**

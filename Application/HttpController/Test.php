@@ -18,10 +18,12 @@ class Test extends Controller
 {
     public function index()
     {
-//        $test = new ShopConfig(1);
-        $test = new DropStore(1);
-//        var_dump($test->addBag(2,2000));
-        $a = json_encode($test->refreshDropShop());
-        $this->response()->write($a);
+////        $test = new ShopConfig(1);
+//        $test = new DropStore(1);
+////        var_dump($test->addBag(2,2000));
+//        $a = json_encode($test->refreshDropShop());
+        $bag = new Bag(2);
+        $bag->initBag();
+        $this->response()->write(1);
     }
 }
