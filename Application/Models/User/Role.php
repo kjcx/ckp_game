@@ -47,10 +47,8 @@ class Role extends Model
             'create_time'=>time()
         ];
         var_dump("========新创建角色信息=====");
-        var_dump($data);
         $Avatars = explode(',',$Avatar);
         $UserAttr = new UserAttr();
-        var_dump($Avatars);
         $UserAttr->setUserAttr($uid,$Avatars);
         
         //后期事务
@@ -111,8 +109,8 @@ class Role extends Model
         $rs = $this->mysql->where('uid',$uid)->update($this->table,['nickname'=>$nickname]);
         if($rs){
             //改名扣费
-            $RoleBag = new RoleBag();
-            $RoleBag->updateRoleBag($uid,['id'=>2,'CurCount'=>-5000]);
+            $Bag = new Bag($uid);
+            $Bag->delBag(2,5000);
         }
         return $rs;
     }
@@ -120,5 +118,20 @@ class Role extends Model
     public function updateShenjiazhi($uid,$shenjia)
     {
         $this->mysql->where('uid',$uid)->update($this->table,['shenjiazhi'=>$this->mysql->inc($shenjia)]);
+    }
+
+    /**
+     * 验证角色名称是否存在
+     * @param $nickname
+     * @return bool
+     */
+    public function checkNickName($nickname)
+    {
+        $res = $this->mysql->where('nickname',$nickname)->getOne($this->table);
+        if($res){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
