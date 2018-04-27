@@ -9,6 +9,7 @@
 
 namespace App\Models\Store;
 
+use App\Models\BagInfo\Bag;
 use App\Models\Model;
 use App\Models\Trade\Shop;
 use App\Traits\MongoTrait;
@@ -95,8 +96,8 @@ class DropStore extends Model
         $refreshNum = $refreshInfo[$shopId]['refreshNum'];
         $refreshPrice = isset($refreshInfo[$shopId]['refreshPrice'][$refreshNum]) ? $refreshInfo[$shopId]['refreshPrice'][$refreshNum] : end($refreshInfo[$shopId]['refreshPrice']);
         //扣费
-        $shop = new Shop();
-        $shop->Buy($this->uid,['2']);
+        $bag = new Bag();
+        $bag->delBag(2,$refreshPrice);
         //重新写入
         $refreshInfo[$shopId]['refreshNum'] = $refreshInfo[$shopId]['refreshNum'] + 1;
         $refreshInfo[$shopId]['refreshTime'] = time();
