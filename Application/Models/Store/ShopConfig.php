@@ -122,11 +122,7 @@ class ShopConfig extends Model
 //            $dropGoods[$k]['DropLib']['0'] = 1;
             foreach ($v['DropLib'] as $kk => $vv) {
 //                $dropGoods[$k]['DropLib'][$kk]['0'] =
-                    foreach ($items as $i_k => $i_v) {
-                        if ($i_v['Id'] == $vv['0']) {
-                            $dropGoods[$k]['DropLib'][$kk]['0'] = $i_v;
-                        }
-                    }
+
                 $dropGoods[$k]['DropLib'][$kk]['min'] = $vv['1'];
                 unset($dropGoods[$k]['DropLib'][$kk]['1']);
                 $dropGoods[$k]['DropLib'][$kk]['max'] = $vv['2'];
