@@ -77,10 +77,7 @@ class Bag extends Model
         $initData['item']; //初始道具
         $initData['coin']; //初始创客币
         $initData['gold']; //初始金币
-
-        var_dump($initData);
         $goldBindData = $this->item->getItemByid($initData['goldBind']['id']);
-        var_dump($goldBindData);
         $itemData = $this->item->getItemByid($initData['item']['id']);
         $coinData = $this->item->getItemByid($initData['coin']['id']);
         $goldData = $this->item->getItemByid($initData['gold']['id']);
@@ -112,7 +109,6 @@ class Bag extends Model
             'data' => $bagData
         ];
 
-        var_dump($bagInfo);
         $res = $this->collection->insertOne($bagInfo);
         if ($res->isAcknowledged()) {
             return true;
