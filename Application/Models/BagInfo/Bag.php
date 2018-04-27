@@ -55,7 +55,7 @@ class Bag extends Model
             $data['MaxCellNumber'] = $this->MaxCellNumber;
             $data['CurUsedCell'] = array_sum(array_column((array)$data['data'],'OnSpace'));
             $data['Furnitrues'] = []; //家居 TODO::
-            return $data;
+            return (array)$data;
         }
         return [];
     }
