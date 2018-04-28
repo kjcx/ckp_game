@@ -10,6 +10,7 @@ namespace EasySwoole;
 
 use App\Event\RedisEventHelper;
 use App\Process\Subscribe;
+use App\Process\WebScokExist;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
@@ -24,6 +25,7 @@ use \EasySwoole\Core\Http\Response;
 use App\Event\MainEventHelper;
 use EasySwoole\Core\Utility\File;
 use App\Event\RedisEvent;
+use Swoole\Coroutine\Http\Client;
 
 Class EasySwooleEvent implements EventInterface {
 
@@ -39,16 +41,16 @@ Class EasySwooleEvent implements EventInterface {
     public static function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
-
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
+
             //为workerId为0的进程添加定时器
             //请确定有inotify拓展
             if ($workerId == 0) {
+
                 if (Config::getInstance()->getConf('DEBUG')) {
                     MainEventHelper::registerHotLoad();
                 }
-
                 $start_fd = 0;
                 while(true)
                 {
@@ -74,7 +76,8 @@ Class EasySwooleEvent implements EventInterface {
         });
 
         ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
-        ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
+//        ProcessManager::getInstance()->addProcess('socket_exist',WebScokExist::class); //websocket 心跳检测
+
         EventHelper::registerDefaultOnMessage($register,new WebSock());
 
         $register->add($register::onClose, function ($ser,$fd) {//离线删除连接

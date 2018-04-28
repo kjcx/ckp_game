@@ -21,13 +21,13 @@ class Test extends Controller
     {
 //        $test = new ShopConfig(1);
 //        $test->handle();
-        $test = new DropStore(2);
+//        $test = new DropStore(2);
 //        $a = json_encode($test->refreshDropShop());
 ////        var_dump($test->addBag(2,2000));
 //        $a = json_encode($test->refreshDropShop());
-//        $bag = new Bag(2);
+        $bag = new Bag(1);
+        $a = $bag->test(1,2);
 //        $bag->initBag();
-        $a = $test->manualRefresh(108);
 //        $a = ShopAllResult::encode(1);
         $this->response()->write(json_encode($a));
     }

@@ -10,6 +10,7 @@
 namespace App\Models\BagInfo;
 
 use App\Models\Model;
+use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use think\Db;
 use App\Models\BagInfo\Item;
@@ -148,11 +149,13 @@ class Bag extends Model
      */
     public function addBag($itemId,Int $num = 1)
     {
+
         //TODO:: 错误码
         if (!$this->checkBagSpace()) {
             return '背包格子已满';
         }
         $itemData = $this->getBagByItemId($itemId);
+
         $itemData['CurCount'] = $itemData['CurCount'] ?? 0;
         $num = empty($itemData) ? $num : ($itemData['CurCount'] + $num);
 //        需要验证可以叠加数量  进行创建新的格子
@@ -163,6 +166,11 @@ class Bag extends Model
             'OnSpace' => $onSpace,
             'id' => $itemId
         ];
+        $value = $this->getGoodsStatus($itemData,1,$num);
+        //更新身价
+        if ($value !== false) {
+            $this->updateStatus($value);
+        }
         $result = $this->collection->findOneAndUpdate(['uid' => $this->uid],[
             '$set' => [
                 'data.' . $itemId => $data
@@ -207,6 +215,12 @@ class Bag extends Model
             ];
         }
 
+        $value = $this->getGoodsStatus($itemData,2,$num);
+        //更新身价
+        if ($value !== false) {
+            $this->updateStatus($value);
+        }
+
         $result = $this->collection->findOneAndUpdate($filter,$update);
         return empty($result) ? false : true;
 
@@ -240,6 +254,47 @@ class Bag extends Model
         return [];
     }
 
+    /**
+     * 获取物品身价值
+     * @param array $goodsData
+     * @param Int $type 1添加 2减少
+     * @param $curCount 商品数量
+     */
+    private function getGoodsStatus(Array $goodsData,Int $type = 1,$curCount)
+    {
+        //如果身价值字段 为空 或者为0 直接返回false 不继续算
+        if (empty($goodsData['Status'])) {
+            return false;
+        }
+        if ($type == 1) {
+            //加入的身价值
+            //如果不叠加 并且 数量是1
+            if ($goodsData['Superposition'] != '1' && $curCount == '1') {
+                return (int)$goodsData['Status'];
+            }
+            //如果叠加
+            if ($goodsData['Superposition'] == '1') {
+                return (int)$goodsData['Status'];
+            }
+            return false;
+        } else {
+            //减少时候的身价值
+            if ($goodsData['ReduceStatus'] == 1) {
+                return $goodsData['Status'] * -1;
+            }
+            return false;
+        }
 
+    }
+
+    /**
+     * 更新身价值
+     * @param String $value 身价值
+     */
+    private function updateStatus(String $value)
+    {
+        $role = new Role();
+        $role->updateShenjiazhi($this->uid,$value);
+    }
     
 }

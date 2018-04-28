@@ -27,7 +27,7 @@ class Item extends Model
     public function getItemByid($ItemId)
     {
         //Db::setConfig(['database' => 'ckzc']); //切库
-        $data = Db::table($this->table)->where(['Id'=>(int)$ItemId])->find();
+        $data = Db::table($this->table)->where(['Id' => (int)$ItemId])->find();
         return $data;
     }
 
