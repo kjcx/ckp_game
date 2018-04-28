@@ -23,7 +23,7 @@ class WebSock implements ParserInterface
      * @param $client
      * @return CommandBean
      */
-    public function decode($raw, $client)
+    public static function decode($raw, $client)
     {
         // TODO: Implement decode() method.
         $command = new CommandBean();
@@ -38,7 +38,7 @@ class WebSock implements ParserInterface
         return $command;
     }
 
-    public function encode(string $raw, $client, $commandBean): ?string
+    public static function encode(string $raw, $client, $commandBean): ?string
     {
         // TODO: Implement encode() method.
         if (empty($raw)) {

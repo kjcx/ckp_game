@@ -27,7 +27,7 @@ class MainEventHelper
     public static function registerHotLoad()
     {
 
-        \EasySwoole\Core\Swoole\Time\Timer::loop(3000,function () {
+        \EasySwoole\Core\Swoole\Time\Timer::loop(2000,function () {
             ServerManager::getInstance()->getServer()->reload();
         });
 

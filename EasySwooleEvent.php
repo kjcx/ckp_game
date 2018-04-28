@@ -14,7 +14,6 @@ use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
-use EasySwoole\Core\Component\Di;
 use EasySwoole\Core\Swoole\EventHelper;
 use EasySwoole\Core\Swoole\Process\ProcessManager;
 use \EasySwoole\Core\Swoole\ServerManager;
@@ -24,6 +23,7 @@ use \EasySwoole\Core\Http\Response;
 use App\Event\MainEventHelper;
 use EasySwoole\Core\Utility\File;
 use App\Event\RedisEvent;
+use \EasySwoole\Core\Component\Rpc\Server as RpcServer;
 
 Class EasySwooleEvent implements EventInterface {
 
@@ -75,13 +75,15 @@ Class EasySwooleEvent implements EventInterface {
 
         ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
         ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
-        EventHelper::registerDefaultOnMessage($register,new WebSock());
+        EventHelper::registerDefaultOnMessage($register,WebSock::class);
 
         $register->add($register::onClose, function ($ser,$fd) {//离线删除连接
             RedisEventHelper::remove($fd);
         });
 
-
+        RpcServer::getInstance()->addService('A',9505)
+            ->addService('B',9506,'password123')
+            ->attach();
 
     }
 
