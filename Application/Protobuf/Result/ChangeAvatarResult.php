@@ -17,9 +17,7 @@ class ChangeAvatarResult
         $BagInfo = LoadBagInfo::encode($uid);
         $ChangeAvatarResult->setBagInfo($BagInfo);
 
-        $UserAttr = new UserAttr();
-        $user_attr_ids = $UserAttr->getUserAttrId($uid);
-        $LoadUserAttr = LoadUserAttr::setLoadUserAttr($user_attr_ids);
+        $LoadUserAttr = LoadUserAttr::setLoadUserAttr($uid);
         $ChangeAvatarResult->setChangeAttr($LoadUserAttr);
         $str = $ChangeAvatarResult->serializeToString();
         return $str;

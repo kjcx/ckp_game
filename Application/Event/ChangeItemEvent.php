@@ -8,7 +8,8 @@
 
 namespace App\Event;
 
-use EasySwoole\Core\Component\Event;
+
+use Symfony\Component\EventDispatcher\Event;
 
 class ChangeItemEvent extends Event
 {

@@ -15,15 +15,10 @@ class LoadRoleBagInfo
         $arr =[];
         foreach ($items_data as $k=>$v) {
             $LoadRoleBagInfo = new \AutoMsg\LoadRoleBagInfo();
-            $LoadRoleBagInfo->setId($v['id']);//家具id
-            if($v['CurCount']){
-                $CurCount = $v['CurCount'];
-            }else{
-                continue;
-            }
-            $LoadRoleBagInfo->setCurCount($CurCount);//当前叠加数量
+            $LoadRoleBagInfo->setId((int)$v['id']);//
+            $LoadRoleBagInfo->setCurCount((int)$v['CurCount']);//当前叠加数量
             $LoadRoleBagInfo->setFurnitureId(0);//家具id
-            $LoadRoleBagInfo->setOnSpace($v['OnSpace']);//占用空间 当道具数量超出999时  占用空间+1
+            $LoadRoleBagInfo->setOnSpace((int)$v['OnSpace']);//占用空间 当道具数量超出999时  占用空间+1
             $LoadRoleBagInfo->setStar(0);//家居星级
             $arr[$k] = $LoadRoleBagInfo;
         }

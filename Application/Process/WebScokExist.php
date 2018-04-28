@@ -9,6 +9,7 @@ namespace App\Process;
 
 use App\Utility\Redis;
 use EasySwoole\Core\Swoole\Process\AbstractProcess;
+use Swoole\Coroutine\Http\Client;
 use Swoole\Process;
 use EasySwoole\Config;
 
@@ -21,22 +22,22 @@ class WebScokExist extends AbstractProcess
         $this->redis = Redis::getInstance()->getConnect();
         $gloableChannel = Config::getInstance()->getConf('rediskeys.gloable');
         //遍历所有连接fd
-        $start_fd = 0;
-        while(true)
-        {
-            $conn_list = $serv->getClientList($start_fd, 10);
-            if ($conn_list===false or count($conn_list) === 0)
-            {
-                echo "finish\n";
-                break;
-            }
-            $start_fd = end($conn_list);
-            var_dump($conn_list);
-            foreach($conn_list as $fd)
-            {
-                $serv->send($fd, "broadcast");
-            }
-        }
+        $this->addTick(3000,function (){
+            $url = 'http://192.168.31.232:9501/index/index';
+            $cli = new Client('192.168.31.232','9501');
+            $cli->setHeaders([
+                'Host' => "localhost",
+                "User-Agent" => 'Chrome/49.0.2587.3',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml',
+                'Accept-Encoding' => 'gzip',
+            ]);
+            $cli->set([ 'timeout' => 1]);
+            $cli->get('/index/index');
+            echo $cli->body;
+            $cli->close();
+        });
+
+
     }
 
     public function onShutDown()

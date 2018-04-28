@@ -20,6 +20,16 @@ class Role extends Model
     }
 
     /**
+     * 通过id获取角色信息
+     * @param $id
+     * @return array
+     */
+    public function getRoleById($id)
+    {
+        $arr = $this->mysql->where('id',$id)->getOne($this->table);
+        return $arr;
+    }
+    /**
      * 创建角色
      * @param $data
      * @return bool
@@ -133,5 +143,33 @@ class Role extends Model
         }else{
             return false;
         }
+    }
+
+    /**
+     * 搜索玩家
+     * @param $Name
+     * @return array
+     */
+    public function SearchFriend($data)
+    {
+        $Name = $data['Name'];
+        $Search  = $data['Search'];
+        if($Search){//搜索
+            $data = $this->mysql->where('nickname',"%$Name%",'like')->get($this->table);
+        }else{//推荐
+            $data = $this->mysql->get($this->table,5);
+        }
+        return $data;
+    }
+
+    /** 申请好友
+     * @param $uid 本人id
+     * @param $rid 好友角色id
+     */
+    public function FriendApply($uid,$rid)
+    {
+        //1. 判断是否是好友
+
+        //2. 创建申请好友记录
     }
 }

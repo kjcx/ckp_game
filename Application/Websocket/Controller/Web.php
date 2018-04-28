@@ -11,10 +11,11 @@ use App\Event\ChangeAvatarEvent;
 use App\Event\ChangeAvatarSubscriber;
 use App\Event\ChangeItemEvent;
 use App\Event\ItemEvent;
-use App\Event\ItemResultEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\SellItemEvent;
+use App\Models\BagInfo\Bag;
 use App\Models\Execl\Topup;
+use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
@@ -23,16 +24,23 @@ use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
 use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\CKApiReq;
+use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\DropShopPingReq;
+use App\Protobuf\Req\FriendApplyReq;
+use App\Protobuf\Req\FriendSearchReq;
+use App\Protobuf\Req\GetPraiseRoleIdReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
-use App\Protobuf\Result\AddItemResult;
+use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\CkPayResult;
 use App\Protobuf\Result\DropShopPingResult;
+use App\Protobuf\Result\FriendApplyResult;
+use App\Protobuf\Result\FriendSearchResult;
+use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
@@ -43,15 +51,13 @@ use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
-use AutoMsg\MissionFirstCompleteReq;
-use AutoMsg\SendMsgToChannelReq;
+use App\Protobuf\Result\UseItemResult;
 use EasySwoole\Core\Component\Spl\SplStream;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Socket\Client\WebSocket;
 use EasySwoole\Core\Socket\Common\CommandBean;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use function Symfony\Component\VarDumper\Tests\Fixtures\bar;
 use think\Db;
 
 class Web extends WebSocketController
@@ -142,16 +148,28 @@ class Web extends WebSocketController
         $Data = $this->data;
         $data_role = \App\Protobuf\Req\CreateRoleReq::decode($Data);
         $Role = new Role();
-        $rs = $Role->createRole($this->uid,$data_role['Name'],$data_role['Sex']);//创建角色
-        if($rs){
-            //角色创建成功
-            $data_role['RoleId'] = $rs;
+        //1验证角色名称是否存在
+        if($Role->checkNickName($data_role['Name'])){
             $data = \App\Protobuf\Result\CreateRoleResult::encode($data_role);
-            $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data);
+            $WsResult = new WsResult();
+            $data_ws = $WsResult->getOne('角色名已经存在');
+            $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data,$data_ws['value']);
             ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+            //验证角色名称是否存在   角色名已经存在
         }else{
-            //角色创建失败
+            //2创建角色
+            $rs = $Role->createRole($this->uid,$data_role['Name'],$data_role['Sex']);//创建角色
+            if($rs){
+                //角色创建成功
+                $data_role['RoleId'] = $rs;
+                $data = \App\Protobuf\Result\CreateRoleResult::encode($data_role);
+                $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data);
+                ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+            }else{
+                //角色创建失败
+            }
         }
+
     }
 
     /**
@@ -192,11 +210,14 @@ class Web extends WebSocketController
         $ItemId = $data_DropShopPingReq['ItemId'];
         $DropKuId = $data_DropShopPingReq['DropKuId'];
         $GridId = $data_DropShopPingReq['GridId'];
-        $RoleBag = new RoleBag();
-        $RoleBag->updateRoleBag($this->uid,['id'=>$ItemId,'CurCount'=>9]);
-        $data = DropShopPingResult::encode($data_DropShopPingReq);
-        $this->send(1107,$this->fd,$data);
 
+        $Bag = new Bag($this->uid);
+        $rs = $Bag->addBag($ItemId,1);
+        if($rs){
+            $data = DropShopPingResult::encode($data_DropShopPingReq);
+            $this->send(1107,$this->fd,$data);
+        }
+//        $RoleBag->updateRoleBag($this->uid,['id'=>$ItemId,'CurCount'=>9]);
         //返回结果
         //调用事件
         $dispatcher = new EventDispatcher();
@@ -258,7 +279,9 @@ class Web extends WebSocketController
      */
     public function msgid_1142()
     {
-        $data = ScoreShopResult::encode();
+        $data = $this->data;
+        $data_ScoreShop = ScoreShopResult::encode();
+        //var_dump($data_ScoreShop);
         $this->send(1193,$this->fd,$data);
     }
 
@@ -295,10 +318,13 @@ class Web extends WebSocketController
         $shop = new Shop();
         $bool = $shop->Buy($this->uid,$item_ids);
         $RoleBag = new RoleBag();
+
         if($bool){
             //加入背包
+            $Bag = new Bag($this->uid);
             foreach ($item_ids as $id) {
-                $RoleBag->updateRoleBag($this->uid,['id'=>$id,'CurCount'=>1]);
+                $bool = $Bag->addBag($id,1);
+//                $RoleBag->updateRoleBag($this->uid,['id'=>$id,'CurCount'=>1]);
             }
             $data = ModelClothesResult::encode($item_ids);
             $this->send(1203,$this->fd,$data);
@@ -359,7 +385,8 @@ class Web extends WebSocketController
             //充值成功
             //背包金额增加
             $rolebag = new RoleBag();
-            $rolebag->updateRoleBag($this->uid,['id'=>2,'CurCount'=>$data_Topup['Gold']]);
+            $Bag = new Bag($this->uid);
+            $Bag->delBag(2,$data_Topup['Gold']);
             //返回充值成功
             $data  = CkPayResult::encode(true);
             $this->send(1224,$this->fd,$data);
@@ -398,19 +425,32 @@ class Web extends WebSocketController
         $this->send(1140,$this->fd,$str);
     }
 
+    /**
+     * 修改角色名称
+     */
     public function msgid_1103()
     {
         $data = $this->data;
         $data_UpdateRoleInfoName = UpdateRoleInfoNameReq::decode($data);
         var_dump($data_UpdateRoleInfoName);//
+
         //修改角色名字
         $role = new Role();
-        $rs = $role->updateRoleName($this->uid,$data_UpdateRoleInfoName['RoleName']);
-        if($rs){
-            //昵称修改成功
-            $str = UpdateRoleInfoNameResult::encode($data_UpdateRoleInfoName['RoleName']);
-            $this->send(1142,$this->fd,$str);
+        if( $role->checkNickName($data_UpdateRoleInfoName['RoleName']) ){
+            $data = \App\Protobuf\Result\CreateRoleResult::encode($data_UpdateRoleInfoName['RoleName']);
+            $WsResult = new WsResult();
+            $data_ws = $WsResult->getOne('角色名已经存在');
+            $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data,$data_ws['value']);
+            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+        }else{
+            $rs = $role->updateRoleName($this->uid,$data_UpdateRoleInfoName['RoleName']);
+            if($rs){
+                //昵称修改成功
+                $str = UpdateRoleInfoNameResult::encode($data_UpdateRoleInfoName['RoleName']);
+                $this->send(1142,$this->fd,$str);
+            }
         }
+
     }
 
     /**
@@ -432,8 +472,88 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_MissionId = \App\Protobuf\Req\MissionFirstCompleteReq::decode($data);
+        var_dump($data_MissionId);
         //任务id
         $str = MissionFirstCompleteResult::encode($data_MissionId);
         $this->send(1202,$this->fd,$str);
+    }
+
+    /**
+     * 使用新手礼包
+     */
+    public function msgid_1015()
+    {
+        $data = $this->data;
+        $data_UseItem = UseItemReq::decode($data);
+        var_dump($data_UseItem);
+        //1 获取礼包规则
+        $Item = new Item();
+        $data_item = $Item->getItemUseEffetById($data_UseItem);
+        //2 使用礼包
+        $Bag = new Bag($this->uid);
+        $bool = false;
+        foreach ($data_item as $v) {
+            $bool = $Bag->addBag($v['Id'],$v['CurCount']);
+        }
+        if($bool){
+            //使用成功 扣除礼包
+            $rs = $Bag->delBag($data_UseItem['ItemId'],$data_UseItem['Count']);
+            if($rs){
+                //
+                $str = UseItemResult::encode($this->uid);
+                $this->send(1078,$this->fd,$str);
+            }
+        }
+
+    }
+
+    /**
+     * 创建公司
+     */
+    public function msgid_1006()
+    {
+        $data = $this->data;
+        $data_Create = CreateCompanyReq::decode($data);
+        var_dump($data_Create);
+    }
+
+    /**
+     * 显示点赞数
+     */
+    public function msgid_1111()
+    {
+        $data = $this->data;
+        $data_info = GetPraiseRoleIdReq::decode($data);
+        $uid = $data_info;
+        $str = GetPraiseRoleIdResult::encode($uid);
+        $this->send(1150,$this->fd,$str);
+    }
+
+    /**
+     * 搜索&推荐玩家
+     */
+    public function msgid_1024()
+    {
+        $data = $this->data;
+        $data_FriendSearch = FriendSearchReq::decode($data);
+        var_dump($data_FriendSearch);
+        //查找玩家
+        $role = new Role();
+        $arr = $role->SearchFriend($data_FriendSearch);
+        var_dump($arr);
+        $str = FriendSearchResult::encode($arr);
+        $this->send(1016,$this->fd,$str);
+    }
+
+    /**
+     * 申请加好友
+     */
+    public function msgid_1021()
+    {
+        $data = $this->data;
+        $data_FriendApply = FriendApplyReq::decode($data);
+        var_dump($data_FriendApply);
+        $str = FriendApplyResult::encode($data_FriendApply,$this->uid);
+        $this->send(1011,$this->fd,$str);
     }
 }

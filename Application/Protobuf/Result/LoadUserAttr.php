@@ -6,6 +6,8 @@
  * Time: 下午3:06
  */
 namespace App\Protobuf\Result;
+use App\Models\User\UserAttr;
+
 /**
  * 加载用户属性
  * Class LoadUserAttr
@@ -23,13 +25,15 @@ class LoadUserAttr
 
     /**
      * 设置用户属性
-     * @param $data
+     * @param $uid
      * @return array
      */
-    public static function setLoadUserAttr($data)
+    public static function setLoadUserAttr($uid)
     {
+        $UserAttr = new UserAttr();
+        $user_attr_ids = $UserAttr->getUserAttrId($uid);
         $arr = [];
-        foreach ($data as $v) {
+        foreach ($user_attr_ids as $v) {
             $arr[] = LoadUserAttr::encode($v);
         }
         return $arr;

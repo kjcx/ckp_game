@@ -7,6 +7,8 @@
  */
 namespace App\Protobuf\Result;
 
+use App\Models\User\FriendApply;
+
 class JoinGameResult
 {
     public static function encode($arr)
@@ -34,6 +36,13 @@ class JoinGameResult
         //每日充值限额
         $DayCountInfo = DayCountInfo::encode();
         $JoinGameResult->setDayCountInfo($DayCountInfo);
+        //好友
+        $FriendApply = new FriendApply();
+        $data_Friends = $FriendApply->getFriends($uid);
+        var_dump("haoyou00");
+        var_dump($data_Friends);
+        $Friend = FriendListResult::encode($data_Friends);
+        $JoinGameResult->setFriend($Friend);
         $str = $JoinGameResult->serializeToString();
         return $str;
     }
