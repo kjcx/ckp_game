@@ -19,6 +19,7 @@ use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
+use App\Models\User\FriendApply;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
@@ -26,6 +27,7 @@ use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\CKApiReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\DropShopPingReq;
+use App\Protobuf\Req\FriendAddReq;
 use App\Protobuf\Req\FriendApplyReq;
 use App\Protobuf\Req\FriendSearchReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
@@ -38,6 +40,7 @@ use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\CkPayResult;
 use App\Protobuf\Result\DropShopPingResult;
+use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
@@ -234,7 +237,7 @@ class Web extends WebSocketController
     public function msgid_1106()
     {
         //请求加载商店
-        $data = \App\Protobuf\Result\ShopAllResult::encode();
+        $data = \App\Protobuf\Result\ShopAllResult::encode($this->uid);
         $this->send(1145,$this->fd,$data);
     }
 
@@ -253,12 +256,11 @@ class Web extends WebSocketController
         //出售道具事件
         if($PriceType){
             //出售成功
-            $RoleBag = new RoleBag();
+            $Bag = new Bag($this->uid);
+            $Bag->delBag($data_SellItemReq['ItemId'],$data_SellItemReq['Count']);
             foreach ($PriceType as $k => $v) {
                 $update_bag1 = ['id'=>$k,'CurCount'=>$v];//金币增加
-                $update_bag2 = ['id'=>$data_SellItemReq['ItemId'],'CurCount'=>(-1)*$data_SellItemReq['Count']];//道具数量减少
-                $RoleBag->updateRoleBag($this->uid,$update_bag1);
-                $RoleBag->updateRoleBag($this->uid,$update_bag2);
+                $Bag->addBag($k,$v);
             }
             $data = SellItemResult::encode($this->uid);
             $this->send(1069,$this->fd,$data);
@@ -436,20 +438,29 @@ class Web extends WebSocketController
 
         //修改角色名字
         $role = new Role();
-        if( $role->checkNickName($data_UpdateRoleInfoName['RoleName']) ){
-            $data = \App\Protobuf\Result\CreateRoleResult::encode($data_UpdateRoleInfoName['RoleName']);
-            $WsResult = new WsResult();
-            $data_ws = $WsResult->getOne('角色名已经存在');
-            $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data,$data_ws['value']);
-            ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
-        }else{
-            $rs = $role->updateRoleName($this->uid,$data_UpdateRoleInfoName['RoleName']);
-            if($rs){
-                //昵称修改成功
-                $str = UpdateRoleInfoNameResult::encode($data_UpdateRoleInfoName['RoleName']);
-                $this->send(1142,$this->fd,$str);
+        $user_gold = $role->getGold($this->uid);
+        if($user_gold >=5000){
+            if( $role->checkNickName($data_UpdateRoleInfoName['RoleName']) ){
+                $data = \App\Protobuf\Result\CreateRoleResult::encode($data_UpdateRoleInfoName['RoleName']);
+                $WsResult = new WsResult();
+                $data_ws = $WsResult->getOne('角色名已经存在');
+                $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data,$data_ws['value']);
+                ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
+            }else{
+                $rs = $role->updateRoleName($this->uid,$data_UpdateRoleInfoName['RoleName']);
+                if($rs){
+                    //昵称修改成功
+                    $str = UpdateRoleInfoNameResult::encode($data_UpdateRoleInfoName['RoleName']);
+                    $this->send(1142,$this->fd,$str);
+                }
             }
+        }else{
+            //没有足够的金钱
+            $WsResult = new WsResult();
+            $data_ws = $WsResult->getOne('没有足够的金钱');
+            $this->send(1142,$this->fd,'',$data_ws['value']);
         }
+
 
     }
 
@@ -486,23 +497,52 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_UseItem = UseItemReq::decode($data);
         var_dump($data_UseItem);
-        //1 获取礼包规则
-        $Item = new Item();
-        $data_item = $Item->getItemUseEffetById($data_UseItem);
-        //2 使用礼包
         $Bag = new Bag($this->uid);
-        $bool = false;
-        foreach ($data_item as $v) {
-            $bool = $Bag->addBag($v['Id'],$v['CurCount']);
-        }
-        if($bool){
-            //使用成功 扣除礼包
-            $rs = $Bag->delBag($data_UseItem['ItemId'],$data_UseItem['Count']);
-            if($rs){
-                //
-                $str = UseItemResult::encode($this->uid);
-                $this->send(1078,$this->fd,$str);
+        //0.验证是否有此道具
+        $data_bag = $Bag->checkBagHasItemById($data_UseItem['ItemId']);
+        $data_bag['CurCount'] = 10;
+        if($data_bag){
+            if ($data_bag['CurCount'] >= $data_UseItem['Count']){
+                //1 获取礼包规则
+                $Item = new Item();
+                $data_item = $Item->getItemUseEffetById($data_UseItem);
+                //2 使用礼包
+
+                $bool = false;
+                $ids[] = $data_UseItem['ItemId'];
+                foreach ($data_item as $v) {
+                    $item_count[$v['Id']] = $v['CurCount'];
+                    $bool = $Bag->addBag($v['Id'],$v['CurCount']);
+                    $ids[] =  $v['Id'];
+                }
+                var_dump('使用礼包');
+                var_dump($bool);
+                if($bool){
+                    //使用成功 扣除礼包
+                    $rs = $Bag->delBag($data_UseItem['ItemId'],$data_UseItem['Count']);
+                    var_dump('使用成功 扣除礼包');
+                    var_dump($ids);
+                    if($rs){
+                        $ids[] =  $data_UseItem['ItemId'];
+                        $str = UseItemResult::encode($this->uid,$item_count);
+                        $this->send(1078,$this->fd,$str);
+                        $dispatcher = new EventDispatcher();
+                        $subscriber = new ChangeItemSubscriber();
+                        $dispatcher->addSubscriber($subscriber);
+                        $dispatcher->dispatch('UseItem',new ChangeItemEvent($this->uid,$ids));
+                    }
+                }
+            }else{
+                //道具数量不足
+                $WsResult = new WsResult();
+                $data_ws = $WsResult->getOne('道具数量不足');
+                $this->send(1078,$this->fd,'',$data_ws['value']);
             }
+        }else{
+            //道具不存在
+            $WsResult = new WsResult();
+            $data_ws = $WsResult->getOne('背包中没有该道具');
+            $this->send(1078,$this->fd,'',$data_ws['value']);
         }
 
     }
@@ -539,7 +579,7 @@ class Web extends WebSocketController
         var_dump($data_FriendSearch);
         //查找玩家
         $role = new Role();
-        $arr = $role->SearchFriend($data_FriendSearch);
+        $arr = $role->SearchFriend($this->uid,$data_FriendSearch);
         var_dump($arr);
         $str = FriendSearchResult::encode($arr);
         $this->send(1016,$this->fd,$str);
@@ -555,5 +595,25 @@ class Web extends WebSocketController
         var_dump($data_FriendApply);
         $str = FriendApplyResult::encode($data_FriendApply,$this->uid);
         $this->send(1011,$this->fd,$str);
+    }
+
+    /**
+     * 通过好友申请
+     */
+    public function msgid_1022()
+    {
+        $data = $this->data;
+        $data_FriendAdd = FriendAddReq::decode($data);//通过申请集合
+        //修改状态
+        var_dump($data_FriendAdd);
+        $FriendApply = new FriendApply();
+        $bool = $FriendApply->passFriendApply($this->uid,$data_FriendAdd);
+        if($bool){
+            $str = FriendAddResult::encode($bool);
+            $this->send(1013,$this->fd,$str);
+        }else{
+
+        }
+
     }
 }

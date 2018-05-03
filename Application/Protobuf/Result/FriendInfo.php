@@ -26,8 +26,8 @@ class FriendInfo
                 $Level = $data['level'];
                 $SocialStatus = $data['shenjiazhi'];
                 $Status = $data['status'];
-                $AddTime = time();
-                $ApplyTime = time();
+                $AddTime = $data['add_time'];
+                $ApplyTime = $data['apply_time'];
                 $Icon = $data['icon'];
                 $RoleId = $data['id'];
                 $ShopId = 1;// 打工店铺

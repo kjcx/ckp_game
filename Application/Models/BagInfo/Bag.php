@@ -122,7 +122,7 @@ class Bag extends Model
      * @param $itemId
      * @return array
      */
-    private function getBagByItemId($itemId)
+    public function getBagByItemId($itemId)
     {
         $data = $this->collection->findOne(['uid' => $this->uid]);
         if (isset($data['data'][$itemId])) {
@@ -131,6 +131,38 @@ class Bag extends Model
         return [];
     }
 
+    public  function getBagByItemIds($itemIds)
+    {
+        $data = $this->getBag();
+        $items = $data['data'];
+        var_dump($items);
+        if($items){
+            $arr = [];
+            foreach ($itemIds as $id) {
+                if(isset($items[$id]['CurCount'])){
+                    $arr[$id] = $items[$id]['CurCount'];
+                }else{
+                    $arr[$id] = 0;
+                }
+            }
+            return $arr;
+        }
+    }
+
+    /**
+     * 验证背包是否有某个道具 并且数量满足
+     * @param $id 道具id
+     * @return bool
+     */
+    public function checkBagHasItemById($id)
+    {
+        $data = $this->getBagByItemId($id);
+        if(!empty($data)){
+            return $data;
+        }else{
+            return false;
+        }
+    }
     /**
      * 验证背包格子数量
      * @return array
@@ -166,7 +198,7 @@ class Bag extends Model
             'OnSpace' => $onSpace,
             'id' => $itemId
         ];
-        $value = $this->getGoodsStatus($itemData,1,$num);
+        $value = $this->getGoodsStatus((array)$itemData,1,$num);
         //更新身价
         if ($value !== false) {
             $this->updateStatus($value);
@@ -187,6 +219,8 @@ class Bag extends Model
      */
     public function delBag($itemId,Int $num = 1)
     {
+        var_dump($itemId);
+        var_dump($num);
         //TODO::错误码
         $itemData = $this->getBagByItemId($itemId);
         if (empty($itemData)) {
@@ -215,7 +249,7 @@ class Bag extends Model
             ];
         }
 
-        $value = $this->getGoodsStatus($itemData,2,$num);
+        $value = $this->getGoodsStatus((array)$itemData,2,$num);
         //更新身价
         if ($value !== false) {
             $this->updateStatus($value);

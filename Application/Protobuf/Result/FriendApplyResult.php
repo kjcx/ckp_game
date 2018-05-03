@@ -30,6 +30,10 @@ class FriendApplyResult
         $FriendApplyResult->setApplyed($apply_id);//申请id
         $role = new Role();
         $userInfo = $role->getRole($uid);
+        //增加申请时间和添加时间
+        $userInfo['apply_time'] = time();
+        $userInfo['add_time'] = 0;
+        $userInfo['status'] = 2;
         $Info = FriendInfo::encode($userInfo);
         $FriendApplyResult->setInfo($Info);//申请人信息
         $FriendApplyResult->setTo(true);//是否是自己发出的添加

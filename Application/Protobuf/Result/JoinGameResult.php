@@ -38,9 +38,8 @@ class JoinGameResult
         $JoinGameResult->setDayCountInfo($DayCountInfo);
         //好友
         $FriendApply = new FriendApply();
-        $data_Friends = $FriendApply->getFriends($uid);
-        var_dump("haoyou00");
-        var_dump($data_Friends);
+        $data_Friends = $FriendApply->getFriendApply($uid);
+        //申请中
         $Friend = FriendListResult::encode($data_Friends);
         $JoinGameResult->setFriend($Friend);
         $str = $JoinGameResult->serializeToString();

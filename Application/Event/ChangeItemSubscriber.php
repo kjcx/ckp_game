@@ -25,6 +25,11 @@ class ChangeItemSubscriber implements EventSubscriberInterface
                 ["AddItem",100],
                 ["UpdateShenjiaResult",99],
                 ["GoldChangedResult",98],
+            ],
+            "UseItem"=>[
+                ["UpdateItemResult",100],
+                ["UpdateShenjiaResult",99],
+                ["GoldChangedResult",98],
             ]
         ];
     }

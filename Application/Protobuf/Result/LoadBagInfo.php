@@ -14,8 +14,6 @@ class LoadBagInfo
     public static function encode($uid)
     {
         //查询背包信息
-        $RoleBag = new RoleBag();
-        $data = $RoleBag->getRoleBag($uid);
         $Bag = new Bag($uid);
         $data = $Bag->getBag();
         var_dump($data);

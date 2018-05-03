@@ -22,7 +22,8 @@ class Item extends Model
      */
     public function getItemIds(array $ids)
     {
-        $data = Db::table($this->table)->where(['Id'=>$ids])->find();
+        $data = Db::table($this->table)->where('Id','in',$ids)->select();
+
         return $data ? $data : false;
     }
 
@@ -70,6 +71,7 @@ class Item extends Model
      */
     public function getSellItemsPrice(array $items)
     {
+        var_dump($items);
         $sum = 0;
         foreach ($items as $item) {
             if(stripos($item['Sell'],',')){
@@ -96,6 +98,7 @@ class Item extends Model
      */
     public function getSellItemInfo(array $data)
     {
+        var_dump($data);
         //1出售道具详细信息
         $data_item = $this->getItemIds([$data['ItemId']]);
         //2出售道具数量

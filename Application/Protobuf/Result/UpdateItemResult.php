@@ -19,7 +19,6 @@ class UpdateItemResult
 //        $items = $UpdateItemResult->getItemUpdate();
         var_dump(22222222222);
         var_dump($items);
-
         $UpdateItemResult->setItemUpdate($items);
         $str = $UpdateItemResult->serializeToString();
         return $str;

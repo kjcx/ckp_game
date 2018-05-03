@@ -7,6 +7,7 @@
  */
 namespace App\Models\User;
 use App\Event\UserEvent;
+use App\Models\BagInfo\Bag;
 use App\Models\Model;
 
 class RoleBag extends Model
@@ -103,10 +104,8 @@ class RoleBag extends Model
      */
     public function getItemByIds($uid,$ids)
     {
-        $arr = $this->getRoleBag($uid);
-        $item = $arr['items'];
-        $data = json_decode($item,1);
-        $update_item = [];
+        $Bag = new Bag($uid);
+        $Bag->getBag();
         foreach ($ids as $id) {
             $update_item[$id] = $data[$id]['CurCount'];
         }

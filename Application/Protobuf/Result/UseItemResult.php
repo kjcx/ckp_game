@@ -18,7 +18,7 @@ use App\Models\User\Role;
  */
 class UseItemResult
 {
-    public static function encode($uid)
+    public static function encode($uid,$item_count)
     {
         $UseItemResult = new \AutoMsg\UseItemResult();
         $BagInfo = LoadBagInfo::encode($uid);
@@ -31,6 +31,7 @@ class UseItemResult
 //        $UseItemResult->setItemCount();//使用道具数量（？）
         $UseItemResult->setShenjia($data_role['shenjiazhi']);
         $UseItemResult->setLevel($data_role['level']);
+        $UseItemResult->setItemCount($item_count);
         $str = $UseItemResult->serializeToString();
         return $str;
     }

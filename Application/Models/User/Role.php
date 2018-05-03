@@ -150,26 +150,27 @@ class Role extends Model
      * @param $Name
      * @return array
      */
-    public function SearchFriend($data)
+    public function SearchFriend($uid,$data)
     {
         $Name = $data['Name'];
         $Search  = $data['Search'];
         if($Search){//搜索
-            $data = $this->mysql->where('nickname',"%$Name%",'like')->get($this->table);
+            $data = $this->mysql->where('uid',$uid,'<>')->where('nickname',"%$Name%",'like')->get($this->table);
         }else{//推荐
-            $data = $this->mysql->get($this->table,5);
+            $data = $this->mysql->where('uid',$uid,'<>')->get($this->table,5);
         }
         return $data;
     }
 
-    /** 申请好友
-     * @param $uid 本人id
-     * @param $rid 好友角色id
+    /**
+     * 获得金币
+     * @param $uid
+     * @return mixed
      */
-    public function FriendApply($uid,$rid)
+    public  function getGold($uid)
     {
-        //1. 判断是否是好友
-
-        //2. 创建申请好友记录
+        $Bag = new Bag();
+        $data = $Bag->getBagByItemId(2);
+        return $data['CurCount'];
     }
 }
