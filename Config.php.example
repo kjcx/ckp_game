@@ -58,7 +58,7 @@ return [
         ]
     ],
     'REDIS_SERVER' => [
-        'host' => '127.0.0.1', // redis主机地址
+        'host' => 'redis.com', // redis主机地址
         'port' => 6379, // 端口
         'serialize' => false, // 是否序列化php变量
         'auth' => null, // 密码
