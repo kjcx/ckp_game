@@ -24,24 +24,32 @@ use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
 use App\Protobuf\Req\ChangeAvatarReq;
+use App\Protobuf\Req\ChatToChatReq;
 use App\Protobuf\Req\CKApiReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\FriendAddReq;
+use App\Protobuf\Req\FriendApplyClearReq;
 use App\Protobuf\Req\FriendApplyReq;
+use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\RefDropShopReq;
+use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseItemReq;
+use App\Protobuf\Req\UserSalesReq;
 use App\Protobuf\Result\ChangeAvatarResult;
+use App\Protobuf\Result\ChatToChatResult;
 use App\Protobuf\Result\CkPayResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\FriendAddResult;
+use App\Protobuf\Result\FriendApplyClearResult;
 use App\Protobuf\Result\FriendApplyResult;
+use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\JoinGameResult;
@@ -49,12 +57,14 @@ use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\RefDropShopResult;
+use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
 use App\Protobuf\Result\UseItemResult;
+use App\Protobuf\Result\UserSalesResult;
 use EasySwoole\Core\Component\Spl\SplStream;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Socket\Client\WebSocket;
@@ -549,6 +559,7 @@ class Web extends WebSocketController
 
     /**
      * 创建公司
+     * 1000
      */
     public function msgid_1006()
     {
@@ -615,5 +626,67 @@ class Web extends WebSocketController
 
         }
 
+    }
+
+    /**
+     * 拒绝用户申请
+     */
+    public function msgid_1025()
+    {
+        $data = $this->data;
+        $data_FriendApplyClear = FriendApplyClearReq::decode($data);
+        $str = FriendApplyClearResult::encode($data);
+        $this->send(1017,$this->fd,$str);
+    }
+
+    /**
+     * 删除好友
+     */
+    public function msgid_1023()
+    {
+        $data = $this->data;
+        $data_FriendRemove = FriendRemoveReq::decode($data);
+        var_dump($data_FriendRemove);
+        $str = FriendRemoveResult::encode($data_FriendRemove);
+        $this->send(1012,$this->fd,$str);
+    }
+
+    /**
+     * 玩家私聊
+     * result 1009
+     */
+    public  function msgid_1020()
+    {
+        $data = $this->data;
+        $data_ChatToChat = ChatToChatReq::decode($data);
+        var_dump($data_ChatToChat);
+        $str = ChatToChatResult::encode();
+        $this->send(1009,$this->fd,$str);
+    }
+
+    /**
+     * 用户寄卖请求
+     * result 1080
+     */
+    public function msgid_1051()
+    {
+        $data = $this->data;
+        $data_UserSales = UserSalesReq::decode($data);
+        var_dump($data_UserSales);
+        $str = UserSalesResult::encode(1);
+        $this->send(1080,$this->fd,$str);
+    }
+
+    /**
+     * 存款请求
+     * return 1047
+     */
+    public  function msgid_1047()
+    {
+        $data = $this->data;
+        $data_SavingGold = SavingGoldReq::decode($data);
+        var_dump($data_SavingGold);
+        $str = SavingGoldResult::encode(1);
+        $this->send(1047,$this->fd,$str);
     }
 }

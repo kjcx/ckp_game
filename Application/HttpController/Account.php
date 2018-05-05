@@ -11,7 +11,6 @@ namespace App\HttpController;
 use EasySwoole\Config;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use GuzzleHttp\Client;
-use EasySwoole\Core\Component\Di;
 class Account extends Controller
 {
     /**
