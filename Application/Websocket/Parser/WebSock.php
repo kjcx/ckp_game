@@ -11,7 +11,6 @@ namespace App\Websocket\Parser;
 
 use App\Websocket\Controller\Web;
 use AutoMsg\MsgBaseRev;
-use EasySwoole\Core\Component\Di;
 use EasySwoole\Core\Socket\AbstractInterface\ParserInterface;
 use EasySwoole\Core\Socket\Common\CommandBean;
 

@@ -18,9 +18,9 @@ return [
         'RUN_MODEL'=>SWOOLE_PROCESS,
         'SETTING'=>[
             'task_worker_num' => 8, //异步任务进程
-            'task_max_request'=>10,
+            'task_max_request'=>100,
             'max_request'=>5000,//强烈建议设置此配置项
-            'worker_num'=>8
+            'worker_num'=>20
         ],
     ],
     'DEBUG'=>true,
@@ -75,6 +75,7 @@ return [
 // 数据库类型
         'type'            => 'mongo',
         // 服务器地址
+//        'hostname'        => '192.168.10.10',
         'hostname'        => '139.129.119.229',
         // 数据库名
         'database'        => 'ckzc',

@@ -18,4 +18,15 @@ class WsResult extends Model
         //插入数据库
         Db::table($this->table)->insert($arr);
     }
+
+    /**
+     * 获取错误码
+     * @param $msg
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getOne($msg)
+    {
+        $data = Db::table($this->table)->where(['msg'=>$msg])->find();
+        return $data;
+    }
 }

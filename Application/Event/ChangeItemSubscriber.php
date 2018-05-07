@@ -25,6 +25,11 @@ class ChangeItemSubscriber implements EventSubscriberInterface
                 ["AddItem",100],
                 ["UpdateShenjiaResult",99],
                 ["GoldChangedResult",98],
+            ],
+            "UseItem"=>[
+                ["UpdateItemResult",100],
+                ["UpdateShenjiaResult",99],
+                ["GoldChangedResult",98],
             ]
         ];
     }
@@ -66,7 +71,7 @@ class ChangeItemSubscriber implements EventSubscriberInterface
     public function AddItem(ChangeItemEvent $event)
     {
         var_dump("=========购买道具=======");
-        $Item  = new ItemResultEvent($event->uid);
+        $Item  = new ItemResultEvent($event->uid,$event->ids);
         $Item->addItem();
     }
 }

@@ -11,5 +11,12 @@ namespace App\Protobuf\Result;
 
 class CreateCompanyResult
 {
-
+    public static function encode()
+    {
+        $CreateCompanyResult = new \AutoMsg\CreateCompanyResult();
+        $CreateCompanyResult->setCompanyInfo();
+        $CreateCompanyResult->setDepartmentInfo();
+        $str = $CreateCompanyResult->serializeToString();
+        return $str;
+    }
 }

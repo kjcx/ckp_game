@@ -17,6 +17,7 @@ use EasySwoole\Config;
 use EasySwoole\Core\Component\Event;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use EasySwoole\Core\Swoole\ServerManager;
+use Swoole\Coroutine\Http\Client;
 
 class MainEventHelper
 {

@@ -22,12 +22,47 @@ class Item extends Model
      */
     public function getItemIds(array $ids)
     {
-        $arr = Db::table($this->table)->find();
-        var_dump($arr);
-        $data = Db::table($this->table)->where(['Id'=>1])->find();
-        var_dump("======data======");
-        var_dump($data);
+        $data = Db::table($this->table)->where('Id','in',$ids)->select();
+
         return $data ? $data : false;
+    }
+
+    /**
+     * 按id获取道具
+     * @param $id
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getItemById($id)
+    {
+        $data = Db::table($this->table)->where(['Id'=>$id])->find();
+        return $data;
+    }
+
+    /**
+     * 获取道具使用效果
+     * @param $id
+     * @param $count
+     * @return array
+     */
+    public function getItemUseEffetById($items)
+    {
+        $id = $items['ItemId'];
+        $Count = $items['Count'];
+        $data = $this->getItemById($id);
+        $UseEffet =  $data['UseEffet'];
+        $UseEffets = explode(';',$UseEffet);
+        $arr = [];
+        var_dump($UseEffets);
+
+        foreach ($UseEffets as $item) {
+            $items = explode(',',$item);
+            $arr[]  = [
+                'Id'=>$items[1],'CurCount'=>$items[2]
+            ];
+
+        }
+        var_dump($arr);
+        return $arr;
     }
     /**
      * 获取出售道具价格
@@ -36,6 +71,7 @@ class Item extends Model
      */
     public function getSellItemsPrice(array $items)
     {
+        var_dump($items);
         $sum = 0;
         foreach ($items as $item) {
             if(stripos($item['Sell'],',')){
@@ -62,6 +98,7 @@ class Item extends Model
      */
     public function getSellItemInfo(array $data)
     {
+        var_dump($data);
         //1出售道具详细信息
         $data_item = $this->getItemIds([$data['ItemId']]);
         //2出售道具数量

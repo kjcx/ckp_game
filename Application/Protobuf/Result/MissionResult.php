@@ -17,7 +17,7 @@ class MissionResult
         $VitalityStatus[0] = true;
         $Mission = new Mission();
         $data = $Mission->getMissionByLevel(0);
-        var_dump($data);
+//        var_dump($data);
         $arr = [];
         foreach ($data as $datum) {
 //            $Complete = 1;//完成状态

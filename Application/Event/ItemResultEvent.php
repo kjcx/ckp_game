@@ -6,6 +6,7 @@
  * Time: 下午11:35
  */
 namespace App\Event;
+use App\Models\BagInfo\Bag;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\AddItemResult;
 use App\Protobuf\Result\UpdateItemResult;
@@ -36,8 +37,8 @@ class ItemResultEvent extends UserEvent
     {
         var_dump("==========更新道具==========");
         var_dump($this->ids);//返回id对应的数量
-        $role = new RoleBag();
-        $items = $role->getItemByIds($this->uid,$this->ids);
+        $Bag = new Bag($this->uid);
+        $items = $Bag->getBagByItemIds($this->ids);
         $data = UpdateItemResult::encode($items);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1022,$data);
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);

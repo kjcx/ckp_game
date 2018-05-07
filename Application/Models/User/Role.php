@@ -20,6 +20,16 @@ class Role extends Model
     }
 
     /**
+     * 通过id获取角色信息
+     * @param $id
+     * @return array
+     */
+    public function getRoleById($id)
+    {
+        $arr = $this->mysql->where('id',$id)->getOne($this->table);
+        return $arr;
+    }
+    /**
      * 创建角色
      * @param $data
      * @return bool
@@ -133,5 +143,34 @@ class Role extends Model
         }else{
             return false;
         }
+    }
+
+    /**
+     * 搜索玩家
+     * @param $Name
+     * @return array
+     */
+    public function SearchFriend($uid,$data)
+    {
+        $Name = $data['Name'];
+        $Search  = $data['Search'];
+        if($Search){//搜索
+            $data = $this->mysql->where('uid',$uid,'<>')->where('nickname',"%$Name%",'like')->get($this->table);
+        }else{//推荐
+            $data = $this->mysql->where('uid',$uid,'<>')->get($this->table,5);
+        }
+        return $data;
+    }
+
+    /**
+     * 获得金币
+     * @param $uid
+     * @return mixed
+     */
+    public  function getGold($uid)
+    {
+        $Bag = new Bag();
+        $data = $Bag->getBagByItemId(2);
+        return $data['CurCount'];
     }
 }

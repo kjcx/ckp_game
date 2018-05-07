@@ -7,6 +7,7 @@
  */
 namespace App\Event;
 
+use App\Models\BagInfo\Bag;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\GoldChangedResult;
 use App\Protobuf\Result\UpdateShenjiaResult;
@@ -43,9 +44,9 @@ class UserEvent extends Event
      */
     public function GoldChangedResultEvent()
     {
-        $role = new RoleBag();
-        $gold = $role->getUserGoldByUid($this->uid,2);
-        $data = GoldChangedResult::encode([2=>$gold]);
+        $Bag = new Bag($this->uid);
+        $data_Item = $Bag->getBagByItemId(2);
+        $data = GoldChangedResult::encode([2=>$data_Item['CurCount']]);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1065,$data);
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);
     }
