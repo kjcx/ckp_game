@@ -56,6 +56,7 @@ class Test extends Controller
         "u",
         "F",
     ];
+
     public function index()
     {
 //        $test = new ShopConfig(1);
@@ -65,7 +66,7 @@ class Test extends Controller
 ////        var_dump($test->addBag(2,2000));
 //        $a = json_encode($test->refreshDropShop());
         $bag = new Bag(1);
-        $a = $bag->test(1,2);
+        $a = $bag->test(1, 2);
 //        $bag->initBag();
 //        $a = ShopAllResult::encode(1);
         $this->response()->write(json_encode($a));
@@ -73,9 +74,12 @@ class Test extends Controller
 
     public function aa()
     {
-        $num = 'TTRQPQ0QFXJ3FT';
-        $num = base_convert($num,36,10);
-        $this->response()->write($num);
+//        $ShopAll = new \App\Models\LoadData\ShopAll();
+//        $data = $ShopAll->get();//7种类型商品
+
+        $dropShop = new DropStore('1');
+        $data = $dropShop->refreshDropShop();
+        $this->response()->write(json_encode($data));
 
     }
 

@@ -34,6 +34,7 @@ class ShopAllResult extends Model
 //        $ShopAllResult->setOrnamentTime();
 //        $ShopAllResult->setWoMenSWearTime();
         $str = $ShopAllResult->serializeToString();
-        return $data;
+
+        return $str;
     }
 }

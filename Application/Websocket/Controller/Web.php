@@ -213,7 +213,7 @@ class Web extends WebSocketController
     public function msgid_1106()
     {
         //请求加载商店
-        $data = \App\Protobuf\Result\ShopAllResult::encode();
+        $data = \App\Protobuf\Result\ShopAllResult::encode($this->uid);
         $this->send(1145,$this->fd,$data);
     }
 

@@ -27,6 +27,7 @@ class DropStore extends Model
     private $dropShopData;
     private $shopIds = ['11','12','13','14','15','107','108'];
     private $discount;
+    private $goods = []; //随机的商品信息 为了不重复使用的
 
     public function __construct(Int $uid)
     {
@@ -46,14 +47,17 @@ class DropStore extends Model
      */
     public function refreshDropShop()
     {
+
         $dropShops = $this->collection->find(['Id' => ['$in' => $this->shopIds]])->toArray();
         $goods = [];
         foreach ($dropShops as $dropKey => $dropShop) {
+            $shops = [];
             foreach ($dropShop['Goods'] as $d_k => $shop) {
                 $discounte = in_array($dropShop['Id'],['107','108']) ? $this->getDiscount() : 1; //获取折扣
-                $goods[] = array_merge($this->randGoods($shop['DropLib']),
+                $shops[] = array_merge($this->randGoods($shop['DropLib']),
                     ['DiscountedPrice' => $discounte,'ShopType' => $dropShop['ShopType'],'GridId' => $d_k,'DropKuId' => $shop['Id']]);
             }
+            $goods[] = $shops;
         }
         return $goods;
     }
@@ -72,9 +76,11 @@ class DropStore extends Model
         $dropShop = $this->collection->findOne(['Id' => $shopId]);
         $goods = [];
         foreach ($dropShop['Goods'] as $d_k => $shop) {
+            $shops = [];
             $discounte = in_array($shopId,['107','108']) ? $this->getDiscount() : 1; //获取折扣
-            $goods[] = array_merge($this->randGoods($shop['DropLib']),
+            $shops[] = array_merge($this->randGoods($shop['DropLib']),
                 ['DiscountedPrice' => $discounte,'ShopType' => $dropShop['ShopType'],'GridId' => $d_k,'DropKuId' => $shop['Id']]);
+            $goods[] = $shops;
         }
         return $goods;
     }
@@ -157,20 +163,28 @@ class DropStore extends Model
     private function randGoods($dropLib)
     {
         $randArr = [];
+        $dropLibHandle = array_diff(array_column((array)$dropLib,'0'),$this->goods);
+        var_dump($dropLibHandle);
+        $dropLibs = [];
         foreach ($dropLib as $k => $v) {
+            if (in_array($v['0'],$dropLibHandle)) {
+                $dropLibs[] = (array)$v;
+            }
+        }
+        foreach ($dropLibs as $k => $v) {
             for ($i = 0; $i < $v['weight']; $i++) {
                 $randArr[] = $v;
             }
         }
+        $key = array_rand($randArr);
+        $this->goods[] = $randArr[$key]['0'];
         return [
-            'Id' => $randArr[array_rand($randArr)]['0'],
-            'Count' => rand($randArr[array_rand($randArr)]['min'],
-                $randArr[array_rand($randArr)]['max'])
+            'Id' => $randArr[$key]['0'],
+            'Count' => rand($randArr[$key]['min'],
+                $randArr[$key]['max'])
         ];
 
     }
-
-    
 
     /**
      * 缓存掉落库
