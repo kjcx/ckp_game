@@ -97,6 +97,25 @@ class RoleBag extends Model
     }
 
     /**
+     * 检查用户金币数量 _chy
+     * @param $uid 用户id
+     * @param $item_id 道具id
+     * @param $item_count 道具数量
+     * @return bool 足够或者不够
+     */
+    public function checkUserGoldCount(int $uid,int $item_id,int $item_count){
+        if($item_id<=0 || $uid<=0 || $item_count<=0)
+        return false;
+
+        $count=$this->getUserGoldByUid($uid,$item_id);
+        if($count>=$item_count){
+            return true;
+        }return false;
+    }
+
+
+
+    /**
      * 获取指定道具的数量
      * @param $uid
      * @param $ids
