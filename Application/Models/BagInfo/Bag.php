@@ -117,7 +117,8 @@ class Bag extends Model
         return false;
     }
 
-    /**
+
+     /**
      * 获取背包的单个商品
      * @param $itemId
      * @return array
