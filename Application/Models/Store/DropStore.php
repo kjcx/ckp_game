@@ -164,7 +164,6 @@ class DropStore extends Model
     {
         $randArr = [];
         $dropLibHandle = array_diff(array_column((array)$dropLib,'0'),$this->goods);
-        var_dump($dropLibHandle);
         $dropLibs = [];
         foreach ($dropLib as $k => $v) {
             if (in_array($v['0'],$dropLibHandle)) {
@@ -183,7 +182,6 @@ class DropStore extends Model
             'Count' => rand($randArr[$key]['min'],
                 $randArr[$key]['max'])
         ];
-
     }
 
     /**
