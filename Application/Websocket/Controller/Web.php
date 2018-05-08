@@ -125,7 +125,10 @@ class Web extends WebSocketController
     public function send($MsgId,$fd,$data,$Result=0,$ErrorMsg='')
     {
         $str  = \App\Protobuf\Result\MsgBaseSend::encode($MsgId,$data,$Result,$ErrorMsg);
+        var_dump(1111111);
+        var_dump(ServerManager::getInstance()->getServer()->connection_list());
         ServerManager::getInstance()->getServer()->push($fd,$str,WEBSOCKET_OPCODE_BINARY);
+//        ServerManager::getInstance()->getServer()->send($fd,$str,WEBSOCKET_OPCODE_BINARY);
 
     }
     /**
