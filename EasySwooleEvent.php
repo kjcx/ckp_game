@@ -82,9 +82,11 @@ Class EasySwooleEvent implements EventInterface {
             RedisEventHelper::remove($fd);
         });
 
+
 //        RpcServer::getInstance()->addService('A',9505)
 //            ->addService('B',9506,'password123')
 //            ->attach();
+
 
     }
 

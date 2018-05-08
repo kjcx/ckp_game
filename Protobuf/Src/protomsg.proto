@@ -13,6 +13,37 @@ message MsgBaseSend {
     bytes Data=3;
 	string ErrorMsg=4;
 }
+//新消息 2000
+message NewMsgResult{
+    repeated NewMsg NewMsgList=1;//新消息列表
+}
+//消息结构体
+message NewMsg{
+    int64 Uid = 1;//用户id
+    string MsgId = 2;//消息id
+    int64 Fuid = 3;//发消息人id
+    int64 Status = 4;//状态1 成功 0 失败
+    string Content = 5;//消息内容
+    int64 time = 6;//发送时间
+}
+//已读消息请求 2001
+message ReadMsgReq{
+    string Fuid = 1;//已读取发送人的消息
+}
+//已读消息返回 2002
+message ReadMsgResult{
+    int64 Status = 1;//1成功0 失败
+}
+//银行取款请求 2003
+message BankDepositReq{
+    int64 Id = 1;//取款记录id
+}
+
+//银行取款返回 2004
+message BankDepositResult{
+    int64 Id = 1;//取款记录id
+    int64 Status = 2;//1成功0失败
+}
 message AddItemReq{
     map<int32, int64> Item=1;
 }
@@ -1277,6 +1308,7 @@ message SavingGoldReq{
     int64 GoldCount=2;
     int32 SaveType=3;
     int32 TimeLimit=4;
+    int64 TimeLimitId=5;//存款时间id
 }
 message SavingGoldResult{
     SavingInfo SavingInfo=1;

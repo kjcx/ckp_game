@@ -32,8 +32,8 @@ class LoadDropData
             foreach ($item as $k =>$v) {
                 $LoadDropData = new \AutoMsg\LoadDropData();
                 $LoadDropData->setId($v['Id']);
-                $LoadDropData->setShopType($v['ShopType']);
-                $LoadDropData->setCount($v['Count']);
+                $LoadDropData->setShopType((int)$v['ShopType']);
+                $LoadDropData->setCount((string)$v['Count']);
                 $LoadDropData->setDiscountedPrice($v['DiscountedPrice']);//打折价格
                 $LoadDropData->setDropKuId($v['DropKuId']);
                 $LoadDropData->setGridId($v['GridId']);
