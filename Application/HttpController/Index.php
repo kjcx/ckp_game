@@ -48,9 +48,7 @@ class Index extends Controller
 //                var_dump($res_str);
                 $len = stripos($res_str,'<span class="dc">');
                 $code = substr($res_str,$len +17,12);
-                var_dump($code);
                 if($code!='错误数据'){
-                    var_dump("中奖了:" . $new_str);
                     file_put_contents('log.txt',$new_str."\r\n",FILE_APPEND);
                 }else{
                     file_put_contents('log1.txt',$code.'=>'.$new_str."\r\n",FILE_APPEND);

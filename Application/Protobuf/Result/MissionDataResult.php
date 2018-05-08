@@ -28,7 +28,6 @@ class MissionDataResult
 //            $MissionDataResult->setGetReward($GetReward);
             $MissionDataResult->setMissId($MissId);
 //            $MissionDataResult->setProgress($Progress);
-            var_dump($datum);
             $arr[$MissId] = $MissionDataResult;
         }
         return $arr;

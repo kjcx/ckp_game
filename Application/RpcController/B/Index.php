@@ -17,7 +17,6 @@ class Index extends AbstractRpcService
     function index()
     {
         // TODO: Implement index() method.
-        var_dump('hit');
         $this->response()->setResult('this is b index');
     }
 }

@@ -21,12 +21,10 @@ class Account extends Controller
         $client = new Client();
         $url = Config::getInstance()->getConf('APP.member_info');
         $key = $this->request()->getQueryParam('key');
-        var_dump("=============开始请求==========".time());
         $res = $client->request('POST',$url,['form_params'=>['key'=>$key]]);
 
         $str = $res->getBody()->getContents();
         $arr = json_decode($str,1);
-        var_dump("=============结束请求==========".time());
 
         if($arr['code'] == 200){
             $member_info = $arr['datas']['member_info'];
@@ -43,7 +41,6 @@ class Account extends Controller
 //                $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
 //                $this->response()->write(json_encode($member_info));
                 $res = $Account->update("id=$uid",['app_token'=>$key]);
-                var_dump($res);
             }else{
                 $data = [
                     'user_name'=>$member_info['user_name'],
