@@ -78,7 +78,6 @@ Class EasySwooleEvent implements EventInterface {
         ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
         EventHelper::registerDefaultOnMessage($register,WebSock::class);
 
-
         $register->add($register::onClose, function ($ser,$fd) {//离线删除连接
             RedisEventHelper::remove($fd);
         });

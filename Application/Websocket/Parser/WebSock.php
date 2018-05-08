@@ -10,6 +10,7 @@ namespace App\Websocket\Parser;
 
 
 use App\Websocket\Controller\Web;
+use AutoMsg\ConnectingReq;
 use AutoMsg\MsgBaseRev;
 use EasySwoole\Core\Socket\AbstractInterface\ParserInterface;
 use EasySwoole\Core\Socket\Common\CommandBean;
@@ -24,20 +25,24 @@ class WebSock implements ParserInterface
      */
     public static function decode($raw, $client)
     {
+        var_dump("websocket:" . time());
         // TODO: Implement decode() method.
         $command = new CommandBean();
         $baseMessage = new MsgBaseRev();
         $baseMessage->mergeFromString($raw);
+
         $command->setControllerClass(Web::class);
         $data = $baseMessage->getData();
         $msgId = $baseMessage->getMsgId();
+        var_dump($data);
+        var_dump($msgId);
         var_dump("Req======>".$msgId);
         $command->setAction('msgid_' . $msgId);
         $command->setArg('data',$data);
         return $command;
     }
 
-    public static function encode(string $raw, $client, $commandBean): ?string
+    public static function encode(string $raw, $client,$command): ?string
     {
         // TODO: Implement encode() method.
         if (empty($raw)) {
@@ -47,3 +52,5 @@ class WebSock implements ParserInterface
         return $raw;
     }
 }
+
+

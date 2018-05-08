@@ -39,7 +39,6 @@ class DropStore extends Model
 
 
 
-
     /**
      * 刷新所有掉落库
      * 自动刷新掉落库
@@ -54,8 +53,13 @@ class DropStore extends Model
             $shops = [];
             foreach ($dropShop['Goods'] as $d_k => $shop) {
                 $discounte = in_array($dropShop['Id'],['107','108']) ? $this->getDiscount() : 1; //获取折扣
-                $shops[] = array_merge($this->randGoods($shop['DropLib']),
+                $goodsId = $this->randGoods($shop['DropLib']);
+                if ($goodsId == false) {
+                    continue;
+                }
+                $shops[] = array_merge($goodsId,
                     ['DiscountedPrice' => $discounte,'ShopType' => $dropShop['ShopType'],'GridId' => $d_k,'DropKuId' => $shop['Id']]);
+
             }
             $goods[] = $shops;
         }
@@ -77,10 +81,15 @@ class DropStore extends Model
         $goods = [];
         foreach ($dropShop['Goods'] as $d_k => $shop) {
             $shops = [];
-            $discounte = in_array($shopId,['107','108']) ? $this->getDiscount() : 1; //获取折扣
-            $shops[] = array_merge($this->randGoods($shop['DropLib']),
-                ['DiscountedPrice' => $discounte,'ShopType' => $dropShop['ShopType'],'GridId' => $d_k,'DropKuId' => $shop['Id']]);
-            $goods[] = $shops;
+                $discounte = in_array($shopId,['107','108']) ? $this->getDiscount() : 1; //获取折扣
+                $goodsId = $this->randGoods($shop['DropLib']);
+                if ($goodsId == false) {
+                    continue;
+                }
+                $shops[] = array_merge($goodsId,
+                    ['DiscountedPrice' => $discounte,'ShopType' => $dropShop['ShopType'],'GridId' => $d_k,'DropKuId' => $shop['Id']]);
+                $goods[] = $shops;
+
         }
         return $goods;
     }
@@ -174,6 +183,9 @@ class DropStore extends Model
             for ($i = 0; $i < $v['weight']; $i++) {
                 $randArr[] = $v;
             }
+        }
+        if (empty($randArr)) {
+            return false;
         }
         $key = array_rand($randArr);
         $this->goods[] = $randArr[$key]['0'];

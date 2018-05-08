@@ -51,9 +51,7 @@ class Execl extends Controller
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
 //        var_dump($sheetData);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-        var_dump($highestColumn);
         $num = 0;
         for($j=3;$j<=$highestRow;$j++) {
             $str = '';
@@ -80,9 +78,7 @@ class Execl extends Controller
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-        var_dump($highestColumn);
         $num = 0;
         for($j=2;$j<=$highestRow;$j++) {
             $str = '';
@@ -153,9 +149,7 @@ class Execl extends Controller
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
 //        var_dump($sheetData);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-        var_dump($highestColumn);
         $num = 0;
         $Character = new Character();
         for($j=3;$j<=15;$j++) {
@@ -170,7 +164,6 @@ class Execl extends Controller
 
             }
             $this->response()->write(json_encode($arr));
-            var_dump($arr);
             $Character->insert($arr);
 
         }
@@ -184,9 +177,7 @@ class Execl extends Controller
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
 //        var_dump($sheetData);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-        var_dump($highestColumn);
         $num = 0;
         $Topup = new Topup();
         for($j=3;$j<=15;$j++) {
@@ -206,7 +197,6 @@ class Execl extends Controller
 
             }
             $this->response()->write(json_encode($arr));
-            var_dump($arr);
             $Topup->insert($arr);
 
         }
@@ -224,7 +214,6 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-        var_dump($highestRow);
         die;
         $num = 0;
         $Mission = new Mission();

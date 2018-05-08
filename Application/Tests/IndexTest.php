@@ -62,9 +62,7 @@ class IndexTest extends TestCase
     public function testGuestbook()
     {
         $dataSet = $this->getConnection()->createDataSet();
-        var_dump($dataSet->getTableMetaData('ckzc_role')->getColumns());//获取字段
         $dataSet = $this->getConnection()->getRowCount('ckzc_role');
-        var_dump($dataSet);
         $this->assertEquals(1,$dataSet);
         // ...
     }
