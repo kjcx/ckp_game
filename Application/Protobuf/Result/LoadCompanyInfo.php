@@ -18,13 +18,24 @@ class LoadCompanyInfo
     public static function encode($data)
     {
         $LoadCompanyInfo = new \AutoMsg\LoadCompanyInfo();
-        $Id = $data['Id'];
+        var_dump($data);
         $Name = $data['Name'];
-        $SocialStatus = $data['SocialStatus'];
-        $CreateTime = time();//时间戳
-        $LoadCompanyInfo->setId();//公司id
-        $LoadCompanyInfo->setName($Name);//公司名称
-        $LoadCompanyInfo->setSocialStatus($SocialStatus);//公司身价
+        $Desc = $data['Desc'];
+        $Icon = $data['Icon'];
+        $Level = $data['Level'];
+        $ClientValue = $data['ClientValue'];
+        $ShopNumber = $data['ShopNumber'];
+        $StaffNumber = $data['StaffNumber'];
+        $CompanyValue = $data['CompanyValue'];
+        $CreateTime = $data['CreateTime'];//时间戳
+        $LoadCompanyInfo->setName($Name);
+        $LoadCompanyInfo->setDesc($Desc);//公司描述
+//        $LoadCompanyInfo->setIcon($Icon);//公司图标
+////        $LoadCompanyInfo->setLevel($Level);//公司级别
+        $LoadCompanyInfo->setClientValue($ClientValue);//客流量
+        $LoadCompanyInfo->setShopNumber($ShopNumber);// 店铺数量
+        $LoadCompanyInfo->setStaffNumber($StaffNumber);//当前员工数量
+        $LoadCompanyInfo->setCompanyValue($CompanyValue);//公司身价
         $LoadCompanyInfo->setCreateTime($CreateTime);//创建时间
         return $LoadCompanyInfo;
     }

@@ -2026,23 +2026,14 @@ message LoadRoleBagInfo{
     int32 Star=5;
 }
 message LoadCompanyInfo{
-    string Id=1;
-    string Name=2;
-    int32 Level=3;
-    int64 NDExp=4;
-    int64 CurExp=5;
-    int32 CurPersonnelLv=6;
-    int32 CurFinanceLv=7;
-    int32 CurMarketLv=8;
-    int32 CurInvestmentLv=9;
-    int64 CostGold=10;
-    int32 Basicpassenger=11;
-    int32 DepartLvLimit=12;
-    float CompanyAddition=13;
-    int64 SocialStatus=14;
-    int32 CreateTime=15;
-    int32 YesterdayGetMoney=16;
-    repeated int32 TalkGroupId=17;
+    string Name=1;
+    string Desc=2;
+    string Icon=3;
+    int64 CreateTime=4;
+    int64 ClientValue=5;
+    int32 StaffNumber=6;
+    int32 ShopNumber=7;
+    int64 CompanyValue=8;
 }
 message LoadDepartMentInfo{
     FinanceInfo FinanceInfo=1;

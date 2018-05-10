@@ -14,6 +14,9 @@ use App\Event\ItemEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\SellItemEvent;
 use App\Models\BagInfo\Bag;
+use App\Models\Company\Company;
+use App\Models\Company\ConsumeResult;
+use App\Models\Company\CreateBuild;
 use App\Models\Execl\Topup;
 use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
@@ -26,6 +29,8 @@ use App\Models\User\UserAttr;
 use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\ChatToChatReq;
 use App\Protobuf\Req\CKApiReq;
+use App\Protobuf\Req\ConsumeReq;
+use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\FriendAddReq;
@@ -45,6 +50,8 @@ use App\Protobuf\Req\UserSalesReq;
 use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\ChatToChatResult;
 use App\Protobuf\Result\CkPayResult;
+use App\Protobuf\Result\CreateBuildResult;
+use App\Protobuf\Result\CreateCompanyResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyClearResult;
@@ -126,7 +133,7 @@ class Web extends WebSocketController
     public function send($MsgId,$fd,$data,$Result=0,$ErrorMsg='')
     {
         $str  = \App\Protobuf\Result\MsgBaseSend::encode($MsgId,$data,$Result,$ErrorMsg);
-        var_dump(1111111);
+//        var_dump(1111111);
         var_dump(ServerManager::getInstance()->getServer()->connection_list());
         ServerManager::getInstance()->getServer()->push($fd,$str,WEBSOCKET_OPCODE_BINARY);
 //        ServerManager::getInstance()->getServer()->send($fd,$str,WEBSOCKET_OPCODE_BINARY);
@@ -333,8 +340,6 @@ class Web extends WebSocketController
         //购买时装操作 计算金额 放入背包
         $shop = new Shop();
         $bool = $shop->Buy($this->uid,$item_ids);
-        $RoleBag = new RoleBag();
-
         if($bool){
             //加入背包
             $Bag = new Bag($this->uid);
@@ -402,14 +407,20 @@ class Web extends WebSocketController
             //背包金额增加
             $rolebag = new RoleBag();
             $Bag = new Bag($this->uid);
-            $Bag->delBag(2,$data_Topup['Gold']);
+            $Bag->addBag(2,$data_Topup['Gold']);
             //返回充值成功
             $data  = CkPayResult::encode(true);
             $this->send(1224,$this->fd,$data);
         }else{
             //充值失败
             $data  = CkPayResult::encode(false);
-            $this->send(1224,$this->fd,$data);
+            $WsResult = new WsResult();
+            if($res['datas']['error'] == '您输入的密码有误'){
+                $data_ws = $WsResult->getOne('APP支付密码不对');
+            }elseif ($res['datas']['error'] == '余额不足！！！'){
+                $data_ws = $WsResult->getOne('APP余额不足');
+            }
+            $this->send(1224,$this->fd,$data,$data_ws['value']);
         }
 
     }
@@ -424,7 +435,8 @@ class Web extends WebSocketController
         $data_MoneyChange = MoneyChangeReq::decode($data);
         var_dump($data_MoneyChange);
         //处理兑换
-
+        $Account = new Account();
+        $Account->Change_Ckb_Gold($this->uid,$data_MoneyChange);
         $str = MoneyChangeResult::encode($data_MoneyChange);
         $this->send(1111,$this->fd,$str);
     }
@@ -569,7 +581,36 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_Create = CreateCompanyReq::decode($data);
+        //创建公司
+        //1.验证公司名字
+        $Company = new Company();
+        $rs = $Company->checkCompanyName($data_Create['Name']);
         var_dump($data_Create);
+        if($rs){
+            $WsResult= new WsResult();
+            $ws_data = $WsResult->getOne('重名');
+            $str = CreateCompanyResult::encode();
+            $this->send(1059,$this->fd,$ws_data['value']);
+        }else{
+            //判断是否已创建过
+            $rs = $Company->getCompany($this->uid);
+            if($rs){
+                var_dump("玩家已经有公司");
+                $WsResult = new WsResult();
+                $ws_data = $WsResult->getOne('玩家已经有公司');
+                $this->send(1059,$this->fd,$ws_data['value']);
+            }else{
+                var_dump("公司创建成功");
+                $data_Create['Uid'] = $this->uid;
+                $data = $Company->CreateCompany($data_Create);
+                if($data){
+                    //创建成功
+                    $str = CreateCompanyResult::encode($this->uid);
+                    $this->send(1059,$this->fd,$str);
+                }
+            }
+
+        }
     }
 
     /**
@@ -692,5 +733,60 @@ class Web extends WebSocketController
         var_dump($data_SavingGold);
         $str = SavingGoldResult::encode(1);
         $this->send(1047,$this->fd,$str);
+    }
+
+    /**
+     * 建造店铺
+     * return 1058
+     */
+    public function msgid_1005()
+    {
+        $data = $this->data;
+        $data_CreateBuild = CreateBuildReq::decode($data);
+        var_dump($data_CreateBuild);
+        //1. 验证级别
+        $CreateBuild = new CreateBuild();
+        $rs = $CreateBuild->CheckLevel($this->uid,$data_CreateBuild['ShopType']);
+        var_dump($rs);
+        if(!$rs){
+            var_dump("级别不够");
+            $WsResult = new WsResult();
+            $ws_data = $WsResult->getOne('级别不够');
+            var_dump($ws_data);
+            $this->send(1058,$this->fd,'',$ws_data['value']);
+            return;
+        }
+        //2.验证金币是否满足
+        $rs = $CreateBuild->CheckMoney($this->uid,$data_CreateBuild['ShopType']);
+        if(!$rs){
+            var_dump("没有足够的金钱");
+            $WsResult = new WsResult();
+            $ws_data = $WsResult->getOne('没有足够的金钱');
+            $str = '';
+            $this->send(1058,$this->fd,$str,$ws_data['value']);
+            return;
+        }
+        $rs = $CreateBuild->create($this->uid,$data_CreateBuild);
+        var_dump($rs);
+        if($rs){
+            $str = CreateBuildResult::encode($this->uid,$data_CreateBuild['ShopType']);
+            var_dump($str);
+            $this->send(1058,$this->fd,$str);
+        }
+
+    }
+
+    /**
+     * return 1040
+     */
+    public function msgid_1040()
+    {
+        $data = $this->data;
+        $data_Consume = ConsumeReq::decode($data);
+        var_dump($data_Consume);
+        $ConsumeResult = new ConsumeResult();
+        $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid);
+        $str = \App\Protobuf\Result\ConsumeResult::encode($data_ConsumeResult);
+        $this->send(1040,$this->fd,$str);
     }
 }

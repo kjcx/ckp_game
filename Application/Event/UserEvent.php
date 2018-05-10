@@ -44,6 +44,7 @@ class UserEvent extends Event
      */
     public function GoldChangedResultEvent()
     {
+        var_dump("金币变化通知");
         $Bag = new Bag($this->uid);
         $data_Item = $Bag->getBagByItemId(2);
         $data = GoldChangedResult::encode([2=>$data_Item['CurCount']]);

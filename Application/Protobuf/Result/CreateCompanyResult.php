@@ -9,13 +9,18 @@
 namespace App\Protobuf\Result;
 
 
+use App\Models\Company\Company;
+
 class CreateCompanyResult
 {
-    public static function encode()
+    public static function encode($uid)
     {
         $CreateCompanyResult = new \AutoMsg\CreateCompanyResult();
-        $CreateCompanyResult->setCompanyInfo();
-        $CreateCompanyResult->setDepartmentInfo();
+        $Company = new Company();
+        $data = $Company->getCompany($uid);
+        $CompanyInfo = LoadCompanyInfo::encode($data);
+        $CreateCompanyResult->setCompanyInfo($CompanyInfo);
+//        $CreateCompanyResult->setDepartmentInfo();
         $str = $CreateCompanyResult->serializeToString();
         return $str;
     }

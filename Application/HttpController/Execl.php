@@ -16,6 +16,7 @@ use App\Event\ItemResultEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\UserEvent;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Execl\Building;
 use App\Models\Execl\Character;
 use App\Models\Execl\Mission;
 use App\Models\Execl\Topup;
@@ -74,7 +75,7 @@ class Execl extends Controller
     public function Execl_GameEnum()
     {
 
-        $file_temp = 'Execl/_GameEnum1.xlsx';
+        $file_temp = 'Execl/_GameEnum.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
@@ -235,6 +236,37 @@ class Execl extends Controller
             $this->response()->write(json_encode($arr));
 //            $Mission->insert($arr);
 
+        }
+    }
+
+    public function Execl_Building()
+    {
+        $file_temp = 'Execl/Building.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $Building = new Building();
+        for($j=4;$j<=8;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'J'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key) {
+                    if ($key == 'Id') {
+                        $arr[$key] = (int)trim($str, "\\");
+                    } elseif($key == 'Type'){
+                        $arr[$key] = (int)trim($str, "\\");
+                    }
+                    else {
+                        $arr[$key] = trim($str, "\\");
+                    }
+                }
+            }
+            $Building->insert($arr);
+            $this->response()->write(json_encode($arr));
         }
     }
 }

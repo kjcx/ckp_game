@@ -9,6 +9,7 @@
 
 namespace App\Models\Trade;
 
+use App\Models\BagInfo\Bag;
 use App\Models\Item\Item;
 use App\Models\User\Account;
 use App\Models\User\RoleBag;
@@ -40,6 +41,10 @@ class Shop
         $bool = $this->IsAllowedBuy($uid,$data_type_price);
         if($bool){
             //足够 扣掉背包数据
+            $Bag = new Bag($uid);
+            foreach ($data_type_price as $itemid =>$count) {
+                $Bag->delBag($itemid,$count);
+            }
             return true;
         }else{
             //金币不足
@@ -56,10 +61,12 @@ class Shop
     public function IsAllowedBuy(int $uid, array $data)
     { 
         //1.获取用户背包信息
-        $rolebag = new RoleBag();
+        $Bag = new Bag($uid);
         foreach ($data as $k =>$v) {
             //$k 道具id
-            $count = $rolebag->getUserGoldByUid($uid,$k);
+            $count = $Bag->getCountByItemId($k);
+            var_dump('当前用户非绑金数量:');
+            var_dump($count);
             if($count < $v){
                 var_dump($k. '===='.$v.'==>' . $count);
                 return false;

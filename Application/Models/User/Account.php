@@ -6,6 +6,8 @@
  * Time: 上午11:08
  */
 namespace App\Models\User;
+use App\Models\BagInfo\Bag;
+use App\Models\Log\Pay;
 use App\Models\Model;
 use EasySwoole\Config;
 use GuzzleHttp\Client;
@@ -101,7 +103,7 @@ class Account extends Model
         //1 支付密码,2余额，
         $pay_app = Config::getInstance()->getConf('APP.pay_app');
         var_dump($pay_app);
-        $key = '1';
+        $key = $this->getAppTokenByUid($uid);
         $url = $pay_app ;
         $client = new Client();
         $postdata = [
@@ -112,11 +114,61 @@ class Account extends Model
             'member_paypwd'=>$pwd
             ];
         $res = $client->request('POST',$url,['form_params'=>$postdata]);
-
+        $Pay = new Pay();
+        $postdata['Status'] = 0;
+        $postdata['CreateTime'] = date('Y-m-d H:i:s',time());
+        $postdata['Uid'] = $uid;
+        $Pay->create($postdata);
         $str = $res->getBody()->getContents();
         $arr = json_decode($str,1);
+        var_dump($arr);
+        if($arr['code'] == 200){
+            //充值成功更改充值订单状态
+            $UpdateTime = date('Y-m-d H:i:s',time());
+            $Pay->changeOrderStatus($postdata['lg_source_only'],['Status'=>1,'UpdateTime'=>$UpdateTime]);
+        }
         return $arr;
 
+    }
+
+    /**
+     * 通过uid 获取用户apptoken
+     * @param $uid
+     * @return bool
+     */
+    public function getAppTokenByUid($uid)
+    {
+        $data = $this->mysql->where('id',$uid)->getOne($this->table);
+        if($data['app_token']){
+            return $data['app_token'];
+        }else{
+            return false;
+        }
+    }
+
+    public function Change_Ckb_Gold($uid,$data)
+    {
+        //1. 兑换类型判断
+        if($data['ChangeTo'] == 1){
+            //金币兑换创客币
+            $itmeid = 2;
+        }elseif ($data['ChangeTo'] == 2){
+            //创客派兑换金币
+            $itmeid = 3;
+        }else{
+            $itmeid = '';
+        }
+        //2.兑换数量验证
+        $count = $data['Count'];
+        $Bag = new Bag($uid);
+        $user_count = $Bag->getCountByItemId($itmeid);
+        if($user_count >= $count){
+            //执行兑换
+            $Bag = new Bag($uid);
+
+        }else{
+            //数量不足兑换不了
+        }
     }
 
 }

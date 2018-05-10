@@ -169,8 +169,19 @@ class Role extends Model
      */
     public  function getGold($uid)
     {
-        $Bag = new Bag();
+        $Bag = new Bag($uid);
         $data = $Bag->getBagByItemId(2);
         return $data['CurCount'];
+    }
+
+    /**
+     * 获取用户等级
+     * @param $uid 用户id
+     * @return array
+     */
+    public function getLevel($uid)
+    {
+        $data = $this->mysql->where('uid',$uid)->getOne($this->table,'level');
+        return $data;
     }
 }

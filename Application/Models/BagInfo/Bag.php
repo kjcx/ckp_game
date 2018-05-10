@@ -9,6 +9,7 @@
 
 namespace App\Models\BagInfo;
 
+use App\Event\UserEvent;
 use App\Models\Model;
 use App\Models\User\Role;
 use App\Traits\MongoTrait;
@@ -25,6 +26,7 @@ class Bag extends Model
     private $item; //item类为了验证信息   依赖
     private $initData; //初始化信息
     private $MaxCellNumber;
+    private $GoldType = [2,6];//金币变化通知
 
     public function __construct(int $uid)
     {
@@ -204,6 +206,10 @@ class Bag extends Model
         if ($value !== false) {
             $this->updateStatus($value);
         }
+        if(in_array($itemId,$this->GoldType)){
+            $UserEvent = new UserEvent($this->uid);
+            $UserEvent->GoldChangedResultEvent();
+        }
         $result = $this->collection->findOneAndUpdate(['uid' => $this->uid],[
             '$set' => [
                 'data.' . $itemId => $data
@@ -255,7 +261,10 @@ class Bag extends Model
         if ($value !== false) {
             $this->updateStatus($value);
         }
-
+        if(in_array($itemId,$this->GoldType)){
+            $UserEvent = new UserEvent($this->uid);
+            $UserEvent->GoldChangedResultEvent();
+        }
         $result = $this->collection->findOneAndUpdate($filter,$update);
         return empty($result) ? false : true;
 
@@ -330,6 +339,22 @@ class Bag extends Model
     {
         $role = new Role();
         $role->updateShenjiazhi($this->uid,$value);
+    }
+
+    /**
+     * 获取用户背包道具的数量
+     * @param $itemid 道具id
+     * @return int|mixed
+     */
+    public function getCountByItemId($itemid)
+    {
+        $data = $this->getBagByItemId($itemid);
+        if($data){
+            $Count = $data['CurCount'];
+        }else{
+            $Count = 0;
+        }
+        return $Count;
     }
     
 }

@@ -14,73 +14,37 @@ use Google\Protobuf\Internal\GPBUtil;
 class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>string Id = 1;</code>
-     */
-    private $Id = '';
-    /**
-     * Generated from protobuf field <code>string Name = 2;</code>
+     * Generated from protobuf field <code>string Name = 1;</code>
      */
     private $Name = '';
     /**
-     * Generated from protobuf field <code>int32 Level = 3;</code>
+     * Generated from protobuf field <code>string Desc = 2;</code>
      */
-    private $Level = 0;
+    private $Desc = '';
     /**
-     * Generated from protobuf field <code>int64 NDExp = 4;</code>
+     * Generated from protobuf field <code>string Icon = 3;</code>
      */
-    private $NDExp = 0;
+    private $Icon = '';
     /**
-     * Generated from protobuf field <code>int64 CurExp = 5;</code>
-     */
-    private $CurExp = 0;
-    /**
-     * Generated from protobuf field <code>int32 CurPersonnelLv = 6;</code>
-     */
-    private $CurPersonnelLv = 0;
-    /**
-     * Generated from protobuf field <code>int32 CurFinanceLv = 7;</code>
-     */
-    private $CurFinanceLv = 0;
-    /**
-     * Generated from protobuf field <code>int32 CurMarketLv = 8;</code>
-     */
-    private $CurMarketLv = 0;
-    /**
-     * Generated from protobuf field <code>int32 CurInvestmentLv = 9;</code>
-     */
-    private $CurInvestmentLv = 0;
-    /**
-     * Generated from protobuf field <code>int64 CostGold = 10;</code>
-     */
-    private $CostGold = 0;
-    /**
-     * Generated from protobuf field <code>int32 Basicpassenger = 11;</code>
-     */
-    private $Basicpassenger = 0;
-    /**
-     * Generated from protobuf field <code>int32 DepartLvLimit = 12;</code>
-     */
-    private $DepartLvLimit = 0;
-    /**
-     * Generated from protobuf field <code>float CompanyAddition = 13;</code>
-     */
-    private $CompanyAddition = 0.0;
-    /**
-     * Generated from protobuf field <code>int64 SocialStatus = 14;</code>
-     */
-    private $SocialStatus = 0;
-    /**
-     * Generated from protobuf field <code>int32 CreateTime = 15;</code>
+     * Generated from protobuf field <code>int64 CreateTime = 4;</code>
      */
     private $CreateTime = 0;
     /**
-     * Generated from protobuf field <code>int32 YesterdayGetMoney = 16;</code>
+     * Generated from protobuf field <code>int64 ClientValue = 5;</code>
      */
-    private $YesterdayGetMoney = 0;
+    private $ClientValue = 0;
     /**
-     * Generated from protobuf field <code>repeated int32 TalkGroupId = 17;</code>
+     * Generated from protobuf field <code>int32 StaffNumber = 6;</code>
      */
-    private $TalkGroupId;
+    private $StaffNumber = 0;
+    /**
+     * Generated from protobuf field <code>int32 ShopNumber = 7;</code>
+     */
+    private $ShopNumber = 0;
+    /**
+     * Generated from protobuf field <code>int64 CompanyValue = 8;</code>
+     */
+    private $CompanyValue = 0;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -88,29 +52,7 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string Id = 1;</code>
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->Id;
-    }
-
-    /**
-     * Generated from protobuf field <code>string Id = 1;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setId($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->Id = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string Name = 2;</code>
+     * Generated from protobuf field <code>string Name = 1;</code>
      * @return string
      */
     public function getName()
@@ -119,7 +61,7 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string Name = 2;</code>
+     * Generated from protobuf field <code>string Name = 1;</code>
      * @param string $var
      * @return $this
      */
@@ -132,272 +74,52 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Level = 3;</code>
-     * @return int
+     * Generated from protobuf field <code>string Desc = 2;</code>
+     * @return string
      */
-    public function getLevel()
+    public function getDesc()
     {
-        return $this->Level;
+        return $this->Desc;
     }
 
     /**
-     * Generated from protobuf field <code>int32 Level = 3;</code>
-     * @param int $var
+     * Generated from protobuf field <code>string Desc = 2;</code>
+     * @param string $var
      * @return $this
      */
-    public function setLevel($var)
+    public function setDesc($var)
     {
-        GPBUtil::checkInt32($var);
-        $this->Level = $var;
+        GPBUtil::checkString($var, True);
+        $this->Desc = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>int64 NDExp = 4;</code>
+     * Generated from protobuf field <code>string Icon = 3;</code>
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->Icon;
+    }
+
+    /**
+     * Generated from protobuf field <code>string Icon = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setIcon($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->Icon = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>int64 CreateTime = 4;</code>
      * @return int|string
-     */
-    public function getNDExp()
-    {
-        return $this->NDExp;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 NDExp = 4;</code>
-     * @param int|string $var
-     * @return $this
-     */
-    public function setNDExp($var)
-    {
-        GPBUtil::checkInt64($var);
-        $this->NDExp = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 CurExp = 5;</code>
-     * @return int|string
-     */
-    public function getCurExp()
-    {
-        return $this->CurExp;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 CurExp = 5;</code>
-     * @param int|string $var
-     * @return $this
-     */
-    public function setCurExp($var)
-    {
-        GPBUtil::checkInt64($var);
-        $this->CurExp = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurPersonnelLv = 6;</code>
-     * @return int
-     */
-    public function getCurPersonnelLv()
-    {
-        return $this->CurPersonnelLv;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurPersonnelLv = 6;</code>
-     * @param int $var
-     * @return $this
-     */
-    public function setCurPersonnelLv($var)
-    {
-        GPBUtil::checkInt32($var);
-        $this->CurPersonnelLv = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurFinanceLv = 7;</code>
-     * @return int
-     */
-    public function getCurFinanceLv()
-    {
-        return $this->CurFinanceLv;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurFinanceLv = 7;</code>
-     * @param int $var
-     * @return $this
-     */
-    public function setCurFinanceLv($var)
-    {
-        GPBUtil::checkInt32($var);
-        $this->CurFinanceLv = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurMarketLv = 8;</code>
-     * @return int
-     */
-    public function getCurMarketLv()
-    {
-        return $this->CurMarketLv;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurMarketLv = 8;</code>
-     * @param int $var
-     * @return $this
-     */
-    public function setCurMarketLv($var)
-    {
-        GPBUtil::checkInt32($var);
-        $this->CurMarketLv = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurInvestmentLv = 9;</code>
-     * @return int
-     */
-    public function getCurInvestmentLv()
-    {
-        return $this->CurInvestmentLv;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CurInvestmentLv = 9;</code>
-     * @param int $var
-     * @return $this
-     */
-    public function setCurInvestmentLv($var)
-    {
-        GPBUtil::checkInt32($var);
-        $this->CurInvestmentLv = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 CostGold = 10;</code>
-     * @return int|string
-     */
-    public function getCostGold()
-    {
-        return $this->CostGold;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 CostGold = 10;</code>
-     * @param int|string $var
-     * @return $this
-     */
-    public function setCostGold($var)
-    {
-        GPBUtil::checkInt64($var);
-        $this->CostGold = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 Basicpassenger = 11;</code>
-     * @return int
-     */
-    public function getBasicpassenger()
-    {
-        return $this->Basicpassenger;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 Basicpassenger = 11;</code>
-     * @param int $var
-     * @return $this
-     */
-    public function setBasicpassenger($var)
-    {
-        GPBUtil::checkInt32($var);
-        $this->Basicpassenger = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 DepartLvLimit = 12;</code>
-     * @return int
-     */
-    public function getDepartLvLimit()
-    {
-        return $this->DepartLvLimit;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 DepartLvLimit = 12;</code>
-     * @param int $var
-     * @return $this
-     */
-    public function setDepartLvLimit($var)
-    {
-        GPBUtil::checkInt32($var);
-        $this->DepartLvLimit = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>float CompanyAddition = 13;</code>
-     * @return float
-     */
-    public function getCompanyAddition()
-    {
-        return $this->CompanyAddition;
-    }
-
-    /**
-     * Generated from protobuf field <code>float CompanyAddition = 13;</code>
-     * @param float $var
-     * @return $this
-     */
-    public function setCompanyAddition($var)
-    {
-        GPBUtil::checkFloat($var);
-        $this->CompanyAddition = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 SocialStatus = 14;</code>
-     * @return int|string
-     */
-    public function getSocialStatus()
-    {
-        return $this->SocialStatus;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 SocialStatus = 14;</code>
-     * @param int|string $var
-     * @return $this
-     */
-    public function setSocialStatus($var)
-    {
-        GPBUtil::checkInt64($var);
-        $this->SocialStatus = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 CreateTime = 15;</code>
-     * @return int
      */
     public function getCreateTime()
     {
@@ -405,58 +127,102 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 CreateTime = 15;</code>
-     * @param int $var
+     * Generated from protobuf field <code>int64 CreateTime = 4;</code>
+     * @param int|string $var
      * @return $this
      */
     public function setCreateTime($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->CreateTime = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>int32 YesterdayGetMoney = 16;</code>
-     * @return int
+     * Generated from protobuf field <code>int64 ClientValue = 5;</code>
+     * @return int|string
      */
-    public function getYesterdayGetMoney()
+    public function getClientValue()
     {
-        return $this->YesterdayGetMoney;
+        return $this->ClientValue;
     }
 
     /**
-     * Generated from protobuf field <code>int32 YesterdayGetMoney = 16;</code>
-     * @param int $var
+     * Generated from protobuf field <code>int64 ClientValue = 5;</code>
+     * @param int|string $var
      * @return $this
      */
-    public function setYesterdayGetMoney($var)
+    public function setClientValue($var)
     {
-        GPBUtil::checkInt32($var);
-        $this->YesterdayGetMoney = $var;
+        GPBUtil::checkInt64($var);
+        $this->ClientValue = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 TalkGroupId = 17;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * Generated from protobuf field <code>int32 StaffNumber = 6;</code>
+     * @return int
      */
-    public function getTalkGroupId()
+    public function getStaffNumber()
     {
-        return $this->TalkGroupId;
+        return $this->StaffNumber;
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 TalkGroupId = 17;</code>
-     * @param int[]|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>int32 StaffNumber = 6;</code>
+     * @param int $var
      * @return $this
      */
-    public function setTalkGroupId($var)
+    public function setStaffNumber($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::INT32);
-        $this->TalkGroupId = $arr;
+        GPBUtil::checkInt32($var);
+        $this->StaffNumber = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>int32 ShopNumber = 7;</code>
+     * @return int
+     */
+    public function getShopNumber()
+    {
+        return $this->ShopNumber;
+    }
+
+    /**
+     * Generated from protobuf field <code>int32 ShopNumber = 7;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setShopNumber($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->ShopNumber = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>int64 CompanyValue = 8;</code>
+     * @return int|string
+     */
+    public function getCompanyValue()
+    {
+        return $this->CompanyValue;
+    }
+
+    /**
+     * Generated from protobuf field <code>int64 CompanyValue = 8;</code>
+     * @param int|string $var
+     * @return $this
+     */
+    public function setCompanyValue($var)
+    {
+        GPBUtil::checkInt64($var);
+        $this->CompanyValue = $var;
 
         return $this;
     }

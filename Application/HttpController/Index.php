@@ -29,7 +29,7 @@ class Index extends Controller
      */
     public function index()
     {
-        echo 123;
+        var_dump(is_string(''));
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

@@ -126,9 +126,9 @@ class RoleBag extends Model
         $Bag = new Bag($uid);
         $Bag->getBag();
         foreach ($ids as $id) {
-            $update_item[$id] = $data[$id]['CurCount'];
+//            $update_item[$id] = $data[$id]['CurCount'];
         }
-        return $update_item;
+//        return $update_item;
     }
 
 

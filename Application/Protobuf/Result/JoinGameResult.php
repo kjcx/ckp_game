@@ -7,6 +7,7 @@
  */
 namespace App\Protobuf\Result;
 
+use App\Models\Company\Company;
 use App\Models\User\FriendApply;
 
 class JoinGameResult
@@ -42,6 +43,15 @@ class JoinGameResult
         //申请中
         $Friend = FriendListResult::encode($data_Friends);
         $JoinGameResult->setFriend($Friend);
+        //公司
+        $Company = new Company();
+        $data_Company = $Company->getCompany($uid);
+        $CompanyInfo = LoadCompanyInfo::encode($data_Company);
+        $JoinGameResult->setCompanyInfo($CompanyInfo);
+        //店铺
+        $MapInfo = GetMapResult::encode($uid);
+        $JoinGameResult->setMapInfo($MapInfo);
+
         $str = $JoinGameResult->serializeToString();
         return $str;
     }
