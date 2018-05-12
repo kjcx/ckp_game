@@ -9,7 +9,7 @@
 namespace App\Protobuf\Result;
 
 
-use App\Models\Company\CreateBuild;
+use App\Models\Company\Shop;
 
 /**
  * 创建公司返回
@@ -21,7 +21,7 @@ class CreateBuildResult
     public static function encode($uid,$ShopType)
     {
         $CreateBuildResult = new \AutoMsg\CreateBuildResult();
-        $CreateBuild = new CreateBuild();
+        $CreateBuild = new Shop();
         $data = $CreateBuild->getShop($uid,$ShopType);
         $LandBuildInfo = LoadBuildInfo::encode($data);
         $CreateBuildResult->setLandBuildInfo($LandBuildInfo);

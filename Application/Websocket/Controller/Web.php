@@ -16,19 +16,25 @@ use App\Event\SellItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Company;
 use App\Models\Company\ConsumeResult;
-use App\Models\Company\CreateBuild;
+use App\Models\Company\Shop as CompanyShop;
+use App\Models\Execl\BuildingLevel;
+use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
 use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
+use App\Models\Staff\LottoLog;
+use App\Models\Staff\Staff;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
 use App\Models\User\FriendApply;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
+use App\Protobuf\Req\BuildLvUpReq;
 use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\ChatToChatReq;
 use App\Protobuf\Req\CKApiReq;
+use App\Protobuf\Req\ComeOutEmployeeReq;
 use App\Protobuf\Req\ConsumeReq;
 use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
@@ -40,16 +46,20 @@ use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
 use App\Protobuf\Req\MoneyChangeReq;
+use App\Protobuf\Req\RaffleFruitsReq;
 use App\Protobuf\Req\RefDropShopReq;
+use App\Protobuf\Req\RefStaffReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserSalesReq;
+use App\Protobuf\Result\BuildLvUpResult;
 use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\ChatToChatResult;
 use App\Protobuf\Result\CkPayResult;
+use App\Protobuf\Result\ComeOutEmployeeResult;
 use App\Protobuf\Result\CreateBuildResult;
 use App\Protobuf\Result\CreateCompanyResult;
 use App\Protobuf\Result\DropShopPingResult;
@@ -60,10 +70,13 @@ use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\JoinGameResult;
+use App\Protobuf\Result\LoadStaffResult;
 use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
+use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RefDropShopResult;
+use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
@@ -338,7 +351,7 @@ class Web extends WebSocketController
         $Data = $this->data;
         $item_ids = \App\Protobuf\Req\ModelClothesReq::decode($Data);
         //购买时装操作 计算金额 放入背包
-        $shop = new Shop();
+        $shop = new CompanyShop();
         $bool = $shop->Buy($this->uid,$item_ids);
         if($bool){
             //加入背包
@@ -745,8 +758,8 @@ class Web extends WebSocketController
         $data_CreateBuild = CreateBuildReq::decode($data);
         var_dump($data_CreateBuild);
         //1. 验证级别
-        $CreateBuild = new CreateBuild();
-        $rs = $CreateBuild->CheckLevel($this->uid,$data_CreateBuild['ShopType']);
+        $Shop = new CompanyShop();
+        $rs = $Shop->CheckLevel($this->uid,$data_CreateBuild['ShopType']);
         var_dump($rs);
         if(!$rs){
             var_dump("级别不够");
@@ -757,7 +770,7 @@ class Web extends WebSocketController
             return;
         }
         //2.验证金币是否满足
-        $rs = $CreateBuild->CheckMoney($this->uid,$data_CreateBuild['ShopType']);
+        $rs = $Shop->CheckMoney($this->uid,$data_CreateBuild['ShopType']);
         if(!$rs){
             var_dump("没有足够的金钱");
             $WsResult = new WsResult();
@@ -766,7 +779,7 @@ class Web extends WebSocketController
             $this->send(1058,$this->fd,$str,$ws_data['value']);
             return;
         }
-        $rs = $CreateBuild->create($this->uid,$data_CreateBuild);
+        $rs = $Shop->create($this->uid,$data_CreateBuild);
         var_dump($rs);
         if($rs){
             $str = CreateBuildResult::encode($this->uid,$data_CreateBuild['ShopType']);
@@ -788,5 +801,119 @@ class Web extends WebSocketController
         $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid);
         $str = \App\Protobuf\Result\ConsumeResult::encode($data_ConsumeResult);
         $this->send(1040,$this->fd,$str);
+    }
+
+    /**
+     * return 1118
+     */
+    public function msgid_1083()
+    {
+        $data = $this->data;
+        $str = LoadStaffResult::encode($this->uid);
+        var_dump($str);
+        $this->send(1118,$this->fd,$str);
+    }
+
+    /**
+     * 招聘抽奖
+     * return 1035
+     */
+    public function msgid_1082()
+    {
+        $data = $this->data;
+        $data_RaffleFruits = RefStaffReq::decode($data);
+        var_dump($data_RaffleFruits);
+        $LottoLog = new LottoLog();
+        $Lotto = new Lotto();
+        $Time = $Lotto->getTime($data_RaffleFruits['TypeId']);
+        //处理招聘抽奖
+        //1抽奖时间是否符合
+        $LastTime = $LottoLog->getLastTimeByType($this->uid,$data_RaffleFruits['TypeId']);
+        $TodayTime = strtotime(date('Y-m-d'));//今天0点时间戳 $TodayTime > $LastTime 第二天抽奖
+        if(time()- $LastTime > $Time || ($TodayTime > $LastTime) ){
+            var_dump("免费抽奖");
+            $IsFree = false;
+        }else{
+            var_dump("花钱抽奖");
+            $IsFree = true;
+        }
+        //2是否有免费抽奖次数
+        $num = $LottoLog->getNumByUid($this->uid,$data_RaffleFruits['TypeId']);
+
+        $freenum = $Lotto->getDayFreeNum($data_RaffleFruits['TypeId']);
+        if($freenum <= $num ){
+            var_dump("招聘抽奖扣除金币");
+            $IsFree = true;
+        }
+        //3随机员工
+        $Staff = new Staff();
+        $data_Staff = $Staff->createStaff($this->uid,$data_RaffleFruits['TypeId'],$IsFree);
+        $str = RefStaffResult::encode($data_Staff);
+        $this->send(1117,$this->fd,$str);
+    }
+
+    /**
+     * 获取前台传来的铺id和人数是调入(0)还是调出(1)
+     * retutn 1126
+     */
+    public function msgid_1091()
+    {
+        $data = $this->data;
+        $data_ComeOutEmployee = ComeOutEmployeeReq::decode($data);
+        var_dump($data_ComeOutEmployee);
+        $Shop = new CompanyShop();
+        $data_shop = $Shop->getInfoById($data_ComeOutEmployee['ShopId']);
+        //设置对应员工id 对应的店铺id
+        $Staff = new Staff();
+        $rs = $Staff->setStaffShop($this->uid,$data_ComeOutEmployee);
+        var_dump($rs);
+        $str = ComeOutEmployeeResult::encode($data_ComeOutEmployee);
+        $this->send(1126,$this->fd,$str);
+    }
+
+    /**
+     * 获取人才市场列表
+     * return 1176 GetTalentListResult
+     */
+    public function msgid_1130()
+    {
+//        GetTalentListReq
+    }
+
+    /**
+     * 升级店铺
+     * return 1004
+     */
+    public function msgid_1018()
+    {
+        $data = $this->data;
+        $data_BuildLvUp = BuildLvUpReq::decode($data);
+        var_dump($data_BuildLvUp);
+        $Shop = new CompanyShop();
+        foreach ($data_BuildLvUp as $Id) {
+            $data_Shop = $Shop->getInfoById($Id);
+            $Level = $data_Shop['Level'];
+            //1 验证金币是否满足
+            $BuildingLevel = new BuildingLevel();
+            $UpdateLevel = $Level + 1;
+            $data_BuildingLevel = $BuildingLevel->getInfoByLevel($UpdateLevel);
+            $UpgradeCost = $data_BuildingLevel['UpgradeCost'];
+            $data_UpgradeCost = explode(',',$UpgradeCost);
+            $Bag = new Bag($this->uid);
+            $Count = $Bag->getCountByItemId($data_UpgradeCost[0]);
+            if($Count>= $data_UpgradeCost[1]){
+                //金币足够 执行升级动作
+                $rs = $Shop->UpdateLevel($Id,$data_BuildingLevel);
+                if($rs){
+                    $str = BuildLvUpResult::encode($this->uid);
+                    $this->send(1004,$this->fd,$str);
+                }
+            }else{
+                $WsResult = new WsResult();
+                $ws_data = $WsResult->getOne('没有足够的金钱');
+                $this->send(1004,$this->fd,'',$ws_data['value']);
+            }
+        }
+
     }
 }

@@ -11,12 +11,13 @@ namespace App\Models\Company;
 
 use App\Models\BagInfo\Bag;
 use App\Models\Execl\Building;
+use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\GameEnum;
 use App\Models\Model;
 use App\Models\User\Role;
 use think\Db;
 
-class CreateBuild extends Model
+class Shop extends Model
 {
     public $table = 'Shop';
 
@@ -52,7 +53,17 @@ class CreateBuild extends Model
         $dataCompany['Income'] = $data_Building['Income'];//身价
         $dataCompany['OutputItem'] = $data_Building['OutputItem'];//可能掉落的道具
         $dataCompany['CreateTime'] = time();//可能掉落的道具
-        $dataCompany['EmployeeLimit'] = 0;//员工上线
+        //员工上线人数
+        $BuildingLevel = new BuildingLevel();
+        $data_BuildingLevel = $BuildingLevel->getInfoByLevel(1);
+        var_dump($data_BuildingLevel);
+        $dataCompany['EmployeeLimit'] = $data_BuildingLevel['ClerkNums'];//员工上线
+        $dataCompany['GoldStock'] = $data_BuildingLevel['GoldStock'];//金币库存上线
+        $dataCompany['ItemStock'] = $data_BuildingLevel['ItemStock'];//道具库存上线
+        $dataCompany['DirectorNums'] = $data_BuildingLevel['DirectorNums'];//经理上线
+        $dataCompany['CustomerAddtion'] = $data_BuildingLevel['CustomerAddtion'];//基础客流量
+//        $dataCompany['DismantleCost'] = $data_BuildingLevel['DismantleCost'];//差拆费用
+//        $dataCompany['UpgradeCost'] = $data_BuildingLevel['UpgradeCost'];//升级需要金币
         $dataCompany['LeaderId'] = 0;//经理id
         $dataCompany['LeaderTime'] = 0;//雇佣开始时间
         $dataCompany['CurExtendLv'] = 0;//扩展等级
@@ -146,6 +157,44 @@ class CreateBuild extends Model
         $role = new Role();
         $data_level = $role->getLevel($uid);
         if($data_level['level'] >= $level){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 通过id获取信息
+     * @param $Uid
+     * @param $Id
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getInfoById($Id,$Uid=0)
+    {
+        $data = Db::table($this->table)->where(['_id'=>$Id])->find();
+        return $data;
+    }
+
+    /**
+     * 升级店铺
+     * @param $Id
+     * @param $UpdateLevel
+     * @param $data_BuildingLevel
+     * @return bool
+     */
+    public function UpdateLevel($Id,$data_BuildingLevel)
+    {
+        $update['Level'] = $data_BuildingLevel['Id'];//等级
+        $update['EmployeeLimit'] = $data_BuildingLevel['ClerkNums'];//员工上线
+        $update['GoldStock'] = $data_BuildingLevel['GoldStock'];//金币库存上线
+        $update['ItemStock'] = $data_BuildingLevel['ItemStock'];//道具库存上线
+        $update['DirectorNums'] = $data_BuildingLevel['DirectorNums'];//经理上线
+        $update['CustomerAddtion'] = $data_BuildingLevel['CustomerAddtion'];//基础客流量
+        $update['Income'] = $data_BuildingLevel['Income'];//身价
+//        $update['OutputItem'] = $data_BuildingLevel['OutputItem'];//可能掉落的道具
+
+        $rs = Db::table($this->table)->where(['_id'=>$Id])->update($update);
+        if($rs){
             return true;
         }else{
             return false;

@@ -51,7 +51,9 @@ class JoinGameResult
         //店铺
         $MapInfo = GetMapResult::encode($uid);
         $JoinGameResult->setMapInfo($MapInfo);
-
+        //招聘抽奖
+        $TypeCountStaff = TypeCountStaffResult::encode($uid);
+        $JoinGameResult->setTypeCountStaff($TypeCountStaff);
         $str = $JoinGameResult->serializeToString();
         return $str;
     }

@@ -40,7 +40,7 @@ class Account extends Controller
                 $uid = $rs['id'];
 //                $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
 //                $this->response()->write(json_encode($member_info));
-                $res = $Account->update("id=$uid",['app_token'=>$key]);
+//                $res = $Account->update("id=$uid",['app_token'=>$key]);
             }else{
                 $data = [
                     'user_name'=>$member_info['user_name'],
@@ -59,6 +59,7 @@ class Account extends Controller
                 $token = $Account->crateToken($uid);
                 if($token){
                     $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+                    $this->response()->withHeader("Access-Control-Allow-Origin", "*");
                     $return['data']['token'] = $token;
                     $return['msg']  = 'success';
                     $this->response()->write(json_encode($return));

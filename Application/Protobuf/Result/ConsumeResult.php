@@ -8,7 +8,11 @@
 
 namespace App\Protobuf\Result;
 
-
+/**
+ * 收益记录
+ * Class ConsumeResult
+ * @package App\Protobuf\Result
+ */
 class ConsumeResult
 {
     public static function encode($data)
@@ -20,6 +24,7 @@ class ConsumeResult
             $LoadConsume[] = LoadConsumeData::encode($item);
         }
         $ConsumeResult->setLoadConsume($LoadConsume);
-
+        $str = $ConsumeResult->serializeToString();
+        return $str;
     }
 }

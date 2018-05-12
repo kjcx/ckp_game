@@ -14,6 +14,8 @@ use App\Models\BagInfo\Bag;
 use App\Models\Item\Item;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\LoadBagInfo;
+use App\Protobuf\Result\LoadStaffResult;
+use AutoMsg\LoadRefStaff;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use GuzzleHttp\Client;
 use Symfony\Component\EventDispatcher\Event;
@@ -29,7 +31,16 @@ class Index extends Controller
      */
     public function index()
     {
-        var_dump(is_string(''));
+        $str = LoadStaffResult::encode(37);
+        $LoadStaffResult = new \AutoMsg\LoadStaffResult();
+        $LoadStaffResult->mergeFromString($str);
+        $data = $LoadStaffResult->getLoadRefStaffList()->getIterator();
+        $LoadRefStaff = new LoadRefStaff();
+        foreach ($data as $datum) {
+            var_dump($datum->getId());
+            var_dump($datum->getName());
+            var_dump($datum->getAppointed());
+        }
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

@@ -17,7 +17,9 @@ use App\Event\ChangeItemSubscriber;
 use App\Event\UserEvent;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Execl\Building;
+use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\Character;
+use App\Models\Execl\Lotto;
 use App\Models\Execl\Mission;
 use App\Models\Execl\Topup;
 use App\Models\Execl\WsResult;
@@ -239,6 +241,9 @@ class Execl extends Controller
         }
     }
 
+    /**
+    * 店铺表
+     */
     public function Execl_Building()
     {
         $file_temp = 'Execl/Building.xlsx';
@@ -266,6 +271,75 @@ class Execl extends Controller
                 }
             }
             $Building->insert($arr);
+            $this->response()->write(json_encode($arr));
+        }
+    }
+
+    /**
+     * 等级对照表
+     */
+    public function Execl_BuildingLevel()
+    {
+        $file_temp = 'Execl/BuildingLevel.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $BuildingLevel = new BuildingLevel();
+        for($j=4;$j<=103;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'K'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key) {
+                    if ($key == 'Id') {
+                        $arr[$key] = (int)trim($str, "\\");
+                    } elseif($key == 'Type'){
+                        $arr[$key] = (int)trim($str, "\\");
+                    }
+                    else {
+                        $arr[$key] = trim($str, "\\");
+                    }
+                }
+            }
+            $BuildingLevel->insert($arr);
+            $this->response()->write(json_encode($arr));
+        }
+    }
+
+    /**
+     * 等级对照表
+     */
+    public function Execl_Lotto()
+    {
+        $file_temp = 'Execl/Lotto.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $Lotto = new Lotto();
+        for($j=4;$j<=6;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'K'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key) {
+                    if ($key == 'Id') {
+                        $arr[$key] = (int)trim($str, "\\");
+                    } elseif($key == 'Type'){
+                        $arr[$key] = (int)trim($str, "\\");
+                    }
+                    else {
+                        $arr[$key] = trim($str, "\\");
+                    }
+                }
+            }
+            $Lotto->insert($arr);
             $this->response()->write(json_encode($arr));
         }
     }

@@ -26,15 +26,15 @@ class ConsumeResult extends Model
      */
     public function getConsumeResult($Uid)
     {
-        $this->create([]);
         $data = Db::table($this->table)->where(['Uid'=>$Uid])->select();
-        return $data;
         var_dump($data);
+        return $data;
     }
 
     /**
      * 创建收益
      * @param $data
+     * @return int|string
      */
     public function create($data)
     {

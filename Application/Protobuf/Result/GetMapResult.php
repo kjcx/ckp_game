@@ -9,7 +9,8 @@
 namespace App\Protobuf\Result;
 
 
-use App\Models\Company\CreateBuild;
+use App\Models\Company\Shop;
+use App\Models\LoadData\LandBuildInfo;
 
 /**
  * 获得店铺信息
@@ -21,17 +22,8 @@ class GetMapResult
     public static function encode($uid)
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
-        $CreateBuild = new CreateBuild();
-        $data = $CreateBuild->getAllShop($uid);
-        $arr = [];
-        if($data){
-            foreach ($data as $datum) {
-                var_dump($datum);
-                $arr[] = LoadBuildInfo::encode($datum);
-            }
-        }
-
-        $GetMapResult->setLoadBuildInfo($arr);
+        $LandBuildInfo = LandBuildInfo::encode($uid);
+        $GetMapResult->setLoadBuildInfo($LandBuildInfo);
 //        $str = $GetMapResult->serializeToString();
         return $GetMapResult;
     }

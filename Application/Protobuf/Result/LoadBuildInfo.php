@@ -9,6 +9,12 @@
 namespace App\Protobuf\Result;
 
 use AutoMsg\LoadBuildInfo as LoadBuildInfos;
+
+/**
+ * 店铺信息
+ * Class LoadBuildInfo
+ * @package App\Protobuf\Result
+ */
 class LoadBuildInfo
 {
     public static function encode($data)
@@ -27,6 +33,8 @@ class LoadBuildInfo
         $LeaderTime= $data['LeaderTime'];//
         $Area= $data['AreaId'];//
         $CurExtendLv= $data['CurExtendLv'];//
+        $Income= $data['Income'];//
+//        $CustomerAddtion= $data['CustomerAddtion'];//
 
         $LoadBuildInfo->setBuildId($BuildId);//店铺id
         $LoadBuildInfo->setPos($Pos);//店铺坐标
@@ -41,6 +49,8 @@ class LoadBuildInfo
         $LoadBuildInfo->setLeaderTime($LeaderTime);//店长雇佣开始时间
         $LoadBuildInfo->setArea($Area);//代表是公有的还是私有的或者其他
         $LoadBuildInfo->setCurExtendLv($CurExtendLv);//当前扩建等级
+        $LoadBuildInfo->setIncome($Income);//店铺身价
+//        $LoadBuildInfo->setCustomerAddtion($CustomerAddtion);//客流量
         return $LoadBuildInfo;
     }
 }
