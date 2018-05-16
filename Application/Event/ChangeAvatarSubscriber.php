@@ -22,7 +22,6 @@ class ChangeAvatarSubscriber implements EventSubscriberInterface
                     ["UpdateShenjiaResult",99],
                     ["ChangeAvatar",98],
                     ["UpdateShenjiaResult",97],
-
                 ],
             "test" =>'test'
         ];

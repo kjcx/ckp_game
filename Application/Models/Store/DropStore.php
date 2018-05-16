@@ -59,7 +59,6 @@ class DropStore extends Model
                 }
                 $shops[] = array_merge($goodsId,
                     ['DiscountedPrice' => $discounte,'ShopType' => $dropShop['ShopType'],'GridId' => $d_k,'DropKuId' => $shop['Id']]);
-
             }
             $goods[] = $shops;
         }
