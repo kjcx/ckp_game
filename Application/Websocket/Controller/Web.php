@@ -17,6 +17,7 @@ use App\Models\BagInfo\Bag;
 use App\Models\Company\Company;
 use App\Models\Company\ConsumeResult;
 use App\Models\Company\Shop as CompanyShop;
+use App\Models\Company\TalentMarketInfo;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
@@ -38,6 +39,7 @@ use App\Protobuf\Req\ComeOutEmployeeReq;
 use App\Protobuf\Req\ConsumeReq;
 use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
+use App\Protobuf\Req\DestoryBuildReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\FriendAddReq;
 use App\Protobuf\Req\FriendApplyClearReq;
@@ -51,6 +53,8 @@ use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefStaffReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SellItemReq;
+use App\Protobuf\Req\TalentFireReq;
+use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseItemReq;
@@ -62,6 +66,7 @@ use App\Protobuf\Result\CkPayResult;
 use App\Protobuf\Result\ComeOutEmployeeResult;
 use App\Protobuf\Result\CreateBuildResult;
 use App\Protobuf\Result\CreateCompanyResult;
+use App\Protobuf\Result\DestoryBuildResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyClearResult;
@@ -69,6 +74,7 @@ use App\Protobuf\Result\FriendApplyResult;
 use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
+use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\LoadStaffResult;
 use App\Protobuf\Result\MissionFirstCompleteResult;
@@ -80,6 +86,10 @@ use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
+use App\Protobuf\Result\TalentFireResult;
+use App\Protobuf\Result\TalentHireResult;
+use App\Protobuf\Result\TalentInfo;
+use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
@@ -790,6 +800,7 @@ class Web extends WebSocketController
     }
 
     /**
+     * 获取客户端需要消耗的店铺id
      * return 1040
      */
     public function msgid_1040()
@@ -804,6 +815,7 @@ class Web extends WebSocketController
     }
 
     /**
+     * 加载所有员工
      * return 1118
      */
     public function msgid_1083()
@@ -878,6 +890,8 @@ class Web extends WebSocketController
     public function msgid_1130()
     {
 //        GetTalentListReq
+        $str = GetTalentListResult::encode($this->uid);
+        $this->send(1176,$this->fd,$str);
     }
 
     /**
@@ -912,6 +926,150 @@ class Web extends WebSocketController
                 $WsResult = new WsResult();
                 $ws_data = $WsResult->getOne('没有足够的金钱');
                 $this->send(1004,$this->fd,'',$ws_data['value']);
+            }
+        }
+
+    }
+
+    /**
+     * 出售店铺
+     * return DestoryBuildResult 1063
+     */
+    public function msgid_1010()
+    {
+        $data = $this->data;
+        $DestoryBuildReq = DestoryBuildReq::decode($data);
+        var_dump($DestoryBuildReq);
+        //1. 查出店铺信息
+        $Shop = new CompanyShop();
+        $data_Shop = $Shop->getInfoById($DestoryBuildReq['Id']);
+        if($data_Shop){
+            //2 根据等级查询buildingLevel对应的数据
+            $BuildingLevel = new BuildingLevel();
+            $data_BuildingLevel = $BuildingLevel->getInfoByLevel($data_Shop['Level']);
+            //3 返回金币 道具 扣除身价值
+            $UpgradeCost = $data_BuildingLevel['UpgradeCost'];
+            $res = explode(',',$UpgradeCost);
+            $Bag = new Bag($this->uid);
+            $Bag->addBag($res[0],$res[1]);//增加金币
+            $NeedItems = $data_BuildingLevel['NeedItems'];//返回道具
+            //扣除拆除费用
+            $DismantleCost = $data_BuildingLevel['DismantleCost'];
+            $res = explode(',',$DismantleCost);
+            $Bag->delBag($res[0],$res[1]);//扣除拆除费用
+            //删除店铺 ShopId 对应的Uid置空
+            $rs = $Shop->ShopDismantle($DestoryBuildReq['Id'],$this->uid);
+            if($rs){
+                $str = DestoryBuildResult::encode($DestoryBuildReq['Id']);
+                $this->send(1063,$this->fd,$str);
+            }
+        }else{
+            //店铺不存在
+        }
+    }
+
+    /**
+     * 雇佣经理
+     * return TalentHireResult 1177
+     */
+    public function msgid_1131()
+    {
+        $data = $this->data;
+        $data_TalentHire = TalentHireReq::decode($data);
+        var_dump($data_TalentHire);
+        $Shop = new CompanyShop();
+        //1计算雇佣费用
+        $data_Money = $Shop->getMoneyToMaster($data_TalentHire['Uid']);
+        //2判断金币是否足够
+        $Bag = new Bag($this->uid);
+        $count = $Bag->getCountByItemId(6);
+        var_dump("gold===>" . $count);
+        if($count >= $data_Money){
+            $rs = $Shop->SetMaster($data_TalentHire['ShopId'],$data_TalentHire['Uid']);
+            if($rs){
+                var_dump("主管设置成功");
+                //3扣除金币
+                $Bag->delBag(6,$data_Money);
+                //4 计算被雇佣奖励=>邮件发给用户
+                $EmploymentAward = $Shop->EmploymentAward($data_Money);
+                //执行发送邮件
+            }
+            $data_TalentHireResult['RoleId'] = $data_TalentHire['Uid'];
+            $data_TalentHireResult['ShopId'] = $data_TalentHire['ShopId'];
+
+            $data_TalentHireResult['Complete'] = true;//雇佣状态
+            $str = TalentHireResult::encode($data_TalentHireResult);
+            $this->send(1177,$this->fd,$str);
+        }else{
+            $WsResult = new WsResult();
+            $data_ws = $WsResult->getOne('没有足够的金钱');
+            $this->send(1177,$this->fd,'',$data_ws['value']);
+        }
+
+    }
+
+    /**
+     * 刷新人才市场 TalentRefreshReq
+     * return TalentRefreshResult 1182
+     */
+    public function msgid_1135()
+    {
+//        TalentRefreshReq
+        $TalentMarketInfo = new TalentMarketInfo();
+        $data_TalentMarketInfo = $TalentMarketInfo->getInfoByUid($this->uid);
+        var_dump($data_TalentMarketInfo);
+        if($data_TalentMarketInfo){
+            //判断是免费刷新
+            $data_TalentMarketTime = $TalentMarketInfo->getTalentMarketTime();
+            $time = $data_TalentMarketTime['value'] * 60;
+
+            if(time()-$data_TalentMarketInfo['LastTime'] > $time){
+                //超过刷新时间免费
+                $TalentMarketInfo->UpdateNum($data_TalentMarketInfo,true);
+            }else{
+                //扣费刷新 获取本次刷新价格
+                $TalentMarketInfo->UpdateNum($data_TalentMarketInfo,false);
+            }
+
+        }else{
+            $TalentMarketInfo->Create($this->uid);
+        }
+        var_dump('11111111111');
+        $str = TalentRefreshResult::encode($this->uid);
+        $this->send(1182,$this->fd,$str);
+    }
+
+    /**
+     * 请求庄园
+     */
+    public function msgid_1053()
+    {
+        
+    }
+
+    /**
+     * 解雇经理
+     * return TalentFireResult 1178
+     */
+    public function msgid_1132()
+    {
+        $data = $this->data;
+        $data_TalentFire = TalentFireReq::decode($data);
+        var_dump($data_TalentFire);
+        //1通过用户id查询被雇佣公司id 删除对应公司下的经理
+        $Role = new Role();
+        $data_role = $Role->getRole($data_TalentFire['RoleId']);
+        $ShopId = $data_role['shopid'];
+        //解雇操作
+        $Shop = new CompanyShop();
+        $rs = $Shop->FireMatser($ShopId);
+        if($rs){
+            $rs = $Role->setShopid($data_TalentFire['RoleId'],"");//设置用户被雇佣的店铺id为空
+            if($rs){
+                $str = TalentFireResult::encode($data_TalentFire['RoleId']);
+                $this->send(1178,$this->fd,$str);
+            }else{
+                var_dump("解雇失败");
             }
         }
 

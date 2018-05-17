@@ -29,8 +29,8 @@ class LoadBuildInfo
         $GetMoney= $data['GetMoney'];//
         $CompanyName= $data['CompanyName'];//
         $EmployeeLimit= $data['EmployeeLimit'];//
-        $LeaderId= $data['LeaderId'];//
-        $LeaderTime= $data['LeaderTime'];//
+        $LeaderId= $data['LeaderId']?:37;//
+        $LeaderTime= $data['LeaderTime']?:time();//
         $Area= $data['AreaId'];//
         $CurExtendLv= $data['CurExtendLv'];//
         $Income= $data['Income'];//
@@ -50,6 +50,18 @@ class LoadBuildInfo
         $LoadBuildInfo->setArea($Area);//代表是公有的还是私有的或者其他
         $LoadBuildInfo->setCurExtendLv($CurExtendLv);//当前扩建等级
         $LoadBuildInfo->setIncome($Income);//店铺身价
+        if(is_array($data['Master'])){
+            $Master = $data['Master'];
+        }else{
+            $Master = [];
+        }
+
+        $LoadBuildInfo->setMaster($Master);//店铺主管列表
+        $LoadBuildInfo->setItemOutput([1=>2]);//店铺主管列表
+        $PurchaseItmeDate = 0;
+        $LoadBuildInfo->setPurchaseItmeDate($PurchaseItmeDate);//店铺产出的道具的时间
+        $LoadBuildInfo->setOutputGoldDate(0);//收获金币的时间
+
 //        $LoadBuildInfo->setCustomerAddtion($CustomerAddtion);//客流量
         return $LoadBuildInfo;
     }

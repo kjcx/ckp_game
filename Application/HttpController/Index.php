@@ -11,6 +11,7 @@ use App\Event\ChangeItemEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
+use App\Models\Company\Shop;
 use App\Models\Item\Item;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\LoadBagInfo;
@@ -20,6 +21,8 @@ use EasySwoole\Core\Http\AbstractInterface\Controller;
 use GuzzleHttp\Client;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use think\Config;
+use think\Db;
 
 class Index extends Controller
 {
@@ -31,16 +34,21 @@ class Index extends Controller
      */
     public function index()
     {
-        $str = LoadStaffResult::encode(37);
-        $LoadStaffResult = new \AutoMsg\LoadStaffResult();
-        $LoadStaffResult->mergeFromString($str);
-        $data = $LoadStaffResult->getLoadRefStaffList()->getIterator();
-        $LoadRefStaff = new LoadRefStaff();
-        foreach ($data as $datum) {
-            var_dump($datum->getId());
-            var_dump($datum->getName());
-            var_dump($datum->getAppointed());
-        }
+        //处理雇佣
+        $filter = [
+            'DirectorNums' => '1',
+        ];
+
+        $options = [];
+
+        $query = new \MongoDB\Driver\Query($filter, $options);
+        // 获得数据库配置
+        $dbConf = \EasySwoole\Config::getInstance()->getConf('MONGO');
+        // 全局初始化
+        Db::setConfig($dbConf);
+        $rs = Db::query('ckzc.Shop', $query);
+
+        var_dump($rs);
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

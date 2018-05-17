@@ -28,6 +28,7 @@ class LoadDropData
 
     public static function drop($arr)
     {
+        $data = [];
         foreach ($arr as $item) {
             foreach ($item as $k =>$v) {
                 $LoadDropData = new \AutoMsg\LoadDropData();
@@ -43,7 +44,7 @@ class LoadDropData
 
             }
         }
-        return $data || [];
+        return $data;
     }
     public static function result_drop($arr){
         $LoadDropData = new \AutoMsg\LoadDropData();
