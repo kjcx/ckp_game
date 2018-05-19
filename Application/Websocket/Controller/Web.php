@@ -19,8 +19,10 @@ use App\Models\Company\ConsumeResult;
 use App\Models\Company\Shop as CompanyShop;
 use App\Models\Company\TalentMarketInfo;
 use App\Models\Execl\BuildingLevel;
+use App\Models\Execl\GameConfig;
 use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
+use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
 use App\Models\Staff\LottoLog;
@@ -39,6 +41,7 @@ use App\Protobuf\Req\ComeOutEmployeeReq;
 use App\Protobuf\Req\ConsumeReq;
 use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
+use App\Protobuf\Req\CultivateEmployeeReq;
 use App\Protobuf\Req\DestoryBuildReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\FriendAddReq;
@@ -361,7 +364,7 @@ class Web extends WebSocketController
         $Data = $this->data;
         $item_ids = \App\Protobuf\Req\ModelClothesReq::decode($Data);
         //购买时装操作 计算金额 放入背包
-        $shop = new CompanyShop();
+        $shop = new Shop();
         $bool = $shop->Buy($this->uid,$item_ids);
         if($bool){
             //加入背包
@@ -375,7 +378,6 @@ class Web extends WebSocketController
         }else{
             //余额不足
             $res = Db::table('WsResult')->where(['msg'=>'没有足够的金钱'])->find();
-            var_dump($res);
             $this->send(1203,$this->fd,0,$res['value'],$res['msg']);
         }
     }
@@ -770,12 +772,10 @@ class Web extends WebSocketController
         //1. 验证级别
         $Shop = new CompanyShop();
         $rs = $Shop->CheckLevel($this->uid,$data_CreateBuild['ShopType']);
-        var_dump($rs);
         if(!$rs){
             var_dump("级别不够");
             $WsResult = new WsResult();
             $ws_data = $WsResult->getOne('级别不够');
-            var_dump($ws_data);
             $this->send(1058,$this->fd,'',$ws_data['value']);
             return;
         }
@@ -789,13 +789,17 @@ class Web extends WebSocketController
             $this->send(1058,$this->fd,$str,$ws_data['value']);
             return;
         }
-        $rs = $Shop->create($this->uid,$data_CreateBuild);
-        var_dump($rs);
-        if($rs){
-            $str = CreateBuildResult::encode($this->uid,$data_CreateBuild['ShopType']);
-            var_dump($str);
-            $this->send(1058,$this->fd,$str);
+        $data_shop = $Shop->getShop($this->uid,$data_CreateBuild);
+        if($data_shop){
+            var_dump("店铺位置已经存在店铺");
+        }else{
+            $rs = $Shop->create($this->uid,$data_CreateBuild);
+            if($rs){
+                $str = CreateBuildResult::encode($this->uid,$data_CreateBuild);
+                $this->send(1058,$this->fd,$str);
+            }
         }
+
 
     }
 
@@ -837,17 +841,24 @@ class Web extends WebSocketController
         var_dump($data_RaffleFruits);
         $LottoLog = new LottoLog();
         $Lotto = new Lotto();
-        $Time = $Lotto->getTime($data_RaffleFruits['TypeId']);
+        $Time = $Lotto->getTime($data_RaffleFruits['TypeId']) * 60;
         //处理招聘抽奖
         //1抽奖时间是否符合
         $LastTime = $LottoLog->getLastTimeByType($this->uid,$data_RaffleFruits['TypeId']);
+        var_dump("上次抽奖时间：");
+        var_dump(date('Y-m-d H:i:s',$LastTime));
+        var_dump("当前时间" . date('Y-m-d H:i:s'));
+        var_dump("间隔时间"  . $Time);
         $TodayTime = strtotime(date('Y-m-d'));//今天0点时间戳 $TodayTime > $LastTime 第二天抽奖
         if(time()- $LastTime > $Time || ($TodayTime > $LastTime) ){
             var_dump("免费抽奖");
-            $IsFree = false;
+            $data_LottoLog['Uid'] = $this->uid;
+            $data_LottoLog['Type'] = $data_RaffleFruits['TypeId'];
+            $LottoLog->create($data_LottoLog);
+            $IsFree = true;
         }else{
             var_dump("花钱抽奖");
-            $IsFree = true;
+            $IsFree = false;
         }
         //2是否有免费抽奖次数
         $num = $LottoLog->getNumByUid($this->uid,$data_RaffleFruits['TypeId']);
@@ -855,13 +866,34 @@ class Web extends WebSocketController
         $freenum = $Lotto->getDayFreeNum($data_RaffleFruits['TypeId']);
         if($freenum <= $num ){
             var_dump("招聘抽奖扣除金币");
-            $IsFree = true;
+            $IsFree = false;
         }
-        //3随机员工
-        $Staff = new Staff();
-        $data_Staff = $Staff->createStaff($this->uid,$data_RaffleFruits['TypeId'],$IsFree);
-        $str = RefStaffResult::encode($data_Staff);
-        $this->send(1117,$this->fd,$str);
+        if(!$IsFree){
+            $data_money = $Lotto->getMoney($data_RaffleFruits['TypeId']);
+            $Bag = new Bag($this->uid);
+            $bag_count = $Bag->getCountByItemId($data_money['Type']);
+            if($bag_count >= $data_money['Count']){
+                $Bag->delBag($data_money['Type'],$data_money['Count']);
+                //3随机员工
+                $Staff = new Staff();
+                $data_Staff = $Staff->createStaff($this->uid,$data_RaffleFruits['TypeId'],$IsFree);
+                $str = RefStaffResult::encode($data_Staff);
+                $this->send(1117,$this->fd,$str);
+            }else{
+                //没有足够的金钱
+                $WsResult = new WsResult();
+                $data_ws = $WsResult->getOne('没有足够的金钱');
+                $this->send(1142,$this->fd,'',$data_ws['value']);
+                return;
+            }
+        }else{
+            //3随机员工
+            $Staff = new Staff();
+            $data_Staff = $Staff->createStaff($this->uid,$data_RaffleFruits['TypeId'],$IsFree);
+            $str = RefStaffResult::encode($data_Staff);
+            $this->send(1117,$this->fd,$str);
+        }
+
     }
 
     /**
@@ -1072,6 +1104,76 @@ class Web extends WebSocketController
                 var_dump("解雇失败");
             }
         }
+    }
+
+    /**
+     * 培训 培训员工
+     * return CultivateEmployeeResult 1121
+     */
+    public function msgid_1086()
+    {
+        $data = $this->data;
+        $data_CultivateEmployee = CultivateEmployeeReq::decode($data);
+        var_dump($data_CultivateEmployee);
+        //1 循环查询每个员工今日培训次数是多少 并判断是否已满
+        $Staff = new Staff();
+        $data_Staff = $Staff->getInfoByIds($data_CultivateEmployee);
+        //配置每日限制次数
+        $GameConfig = new GameConfig();
+        $config = $GameConfig->getInfoByField('MaxTrainTime');//员工每天最大培训次数
+        $MaxTrainTime = $config['value'];
+        $Execl_Staff = new \App\Models\Execl\Staff();
+        $arr = [];
+        foreach ($data_Staff as $staff) {
+            $data_Execl_Staff = $Execl_Staff->getInfoById($staff['NpcId']);
+            $Comprehension = $data_Execl_Staff['Comprehension'];//最大培训次数
+            $TrainNum = $staff['TrainNum'];//培训次数
+            $Quality = $staff['Quality'];//品质
+            $TodayTrainNum = $staff['TodayTrainNum'];
+            if($TrainNum >= $Comprehension ){
+                var_dump("最大次数已达到不可培训");
+                continue;
+            }
+            if($TodayTrainNum >= $MaxTrainTime ){
+                var_dump("今日培训培训次数已达到");
+                continue;
+            }
+            //2 根据次数判断花费 和对应身值
+            $Train = new Train();
+            $InfoByTrainNum = $Train->getInfoByTrainNum($TrainNum);
+            $key = $TrainNum . '-' . $Quality;
+            $data_money = $InfoByTrainNum[$key];
+            $data_money['Type'];//类型
+            $data_money['Count'];//数量
+
+            //3计算总钱数是否满足
+            $arr[$data_money['Type']][] = $data_money['Count'];
+            //AttributeUp
+            $AttributeUp = $data_Execl_Staff['AttributeUp'];
+            $AttributeUps = explode(';',$AttributeUp);
+            foreach ($AttributeUps as $item) {
+                $res = explode(',',$item);
+                $res[0];//属性id
+                $res[1];//min
+                $res[2];//max
+                mt_srand();
+                $rand = mt_rand($res[1],$res[2]);
+                $shuxing[$res[0]] = $rand;
+            }
+        }
+        $Bag = new Bag($this->uid);
+        foreach ($arr as $Type => $item) {
+            $sum = array_sum($item);
+            $count = $Bag->getCountByItemId($Type);
+            if( $count >= $sum ){
+                //4.执行培训
+
+            }else{
+                var_dump("金钱不足"  .$Type . "数量:" . $count . "需要" . $sum);
+            }
+        }
+
+
 
     }
 }

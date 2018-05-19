@@ -47,6 +47,7 @@ class UserEvent extends Event
         var_dump("金币变化通知");
         $Bag = new Bag($this->uid);
         $data_Item = $Bag->getBagByItemId(2);
+        var_dump($data_Item);
         $data = GoldChangedResult::encode([2=>$data_Item['CurCount']]);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1065,$data);
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);

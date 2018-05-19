@@ -93,12 +93,14 @@ class Shop extends Model
     /**
      * 获取店铺
      * @param $uid
-     * @param $ShopType
+     * @param $data 类型和位置
      * @return array|false|null|\PDOStatement|string|\think\Model
      */
-    public function getShop($uid,$ShopType)
+    public function getShop($uid,$data)
     {
-        $data= Db::table($this->table)->where(['Uid'=>$uid,'ShopType'=>$ShopType])->find();
+        $ShopType = $data['ShopType'];
+        $Pos = $data['Pos'];
+        $data= Db::table($this->table)->where(['Uid'=>$uid,'ShopType'=>$ShopType,'Pos'=>$Pos])->find();
         return $data;
     }
 

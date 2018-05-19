@@ -9,6 +9,7 @@ namespace App\Protobuf\Result;
 
 use App\Models\Company\Company;
 use App\Models\Company\Shop;
+use App\Models\Staff\LottoLog;
 use App\Models\User\FriendApply;
 use App\Models\User\Role;
 

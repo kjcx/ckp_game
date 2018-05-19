@@ -20,8 +20,7 @@ class LoadRefStaff
         $LoadRefStaff = new \AutoMsg\LoadRefStaff();
         if($data){
             $ShopId = $data['ShopId'];
-            var_dump($ShopId);
-            $Id = $data['Id'];
+            $Id = (string)$data['_id'];
             $Name = $data['Name'];
             $Pos = $data['Pos'];
             $NpcId = $data['NpcId'];
@@ -36,7 +35,7 @@ class LoadRefStaff
             $LoadRefStaff->setPos($Pos);//任职岗位
             $LoadRefStaff->setNpcId($NpcId);
             $LoadRefStaff->setEmployersDate($EmployersDate);//雇佣日期
-            $LoadRefStaff->setComprehensionTime($ComprehensionTime);//可培训次数
+            $LoadRefStaff->setComprehensionTime(15);//可培训次数
             $LoadRefStaff->setAppointed($Appointed);//是否已任职
             $LoadRefStaff->setBasicProperties($BasicProperties);//基础属性：
             $LoadRefStaff->setLevelUpTime($LevelUpTime);//升级次数

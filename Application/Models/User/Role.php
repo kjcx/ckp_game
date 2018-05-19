@@ -207,12 +207,17 @@ class Role extends Model
      */
     public function getRoleByUids($uids)
     {
-        $data = $this->mysql->where('uid',$uids,'in')->get($this->table);
-        if($data){
-            return $data;
-        }else{
+        if(empty($uids)){
             return false;
+        }else{
+            $data = $this->mysql->where('uid',$uids,'in')->get($this->table);
+            if($data){
+                return $data;
+            }else{
+                return false;
+            }
         }
+
     }
 
     /**

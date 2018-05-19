@@ -19,6 +19,7 @@ class LoadBuildInfo
 {
     public static function encode($data)
     {
+        var_dump("LoadBuildInfo");
         $LoadBuildInfo = new LoadBuildInfos();
         $BuildId = (string)$data['_id'];//
         $Pos = $data['Pos'];//
@@ -29,7 +30,7 @@ class LoadBuildInfo
         $GetMoney= $data['GetMoney'];//
         $CompanyName= $data['CompanyName'];//
         $EmployeeLimit= $data['EmployeeLimit'];//
-        $LeaderId= $data['LeaderId']?:37;//
+        $LeaderId= $data['LeaderId'];//
         $LeaderTime= $data['LeaderTime']?:time();//
         $Area= $data['AreaId'];//
         $CurExtendLv= $data['CurExtendLv'];//

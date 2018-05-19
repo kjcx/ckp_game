@@ -16,26 +16,14 @@ class TypeCountStaffResult
 {
     public static function encode($uid)
     {
-        $TypeCountStaffResult = new \AutoMsg\TypeCountStaffResult();
-        $TrainTime = time() + 3600;
-        //返回当前人每个类型剩余次数
-        $Lotto = new Lotto();
         $LottoLog = new LottoLog();
-        $data = $Lotto->getAll();
+        $data_TypeCountStaff = $LottoLog->getTypeCountStaff($uid);
         $TypeCountStaff = [];
-
-        foreach ($data as  $datum) {
-            $Type = $datum['Id'];
-            $num = $LottoLog->getNumByUid($uid,$Type);
-            $Count = $datum['Round'] - $num;//剩余次数
-            $Time = $datum['Time'];//时间间隔
-            $arr = ['Count'=>$Count,'Time'=>$Time];
-            $TypeCountStaff[$Type] = TypeCountStaff::encode($arr);
+        foreach ($data_TypeCountStaff as $k=> $datum) {
+            $TypeCountStaff[$k] = TypeCountStaff::encode($datum);
         }
-
-        $TypeCountStaffResult->setTrainTime($TrainTime);
+        $TypeCountStaffResult = new \AutoMsg\TypeCountStaffResult();
         $TypeCountStaffResult->setTypeCountStaff($TypeCountStaff);
-//        $str = $TypeCountStaffResult->serializeToString();
         return $TypeCountStaffResult;
     }
 }

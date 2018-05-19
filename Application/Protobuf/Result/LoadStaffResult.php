@@ -23,7 +23,6 @@ class LoadStaffResult
         $Staff = new Staff();
         $data = $Staff->getAllByUid($uid);
         var_dump("返回员工");
-        var_dump($data);
         if($data){
             $LoadRefStaffList = [];
             foreach ($data as $datum) {

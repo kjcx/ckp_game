@@ -18,8 +18,8 @@ class TypeCountStaff
     public static function encode($data)
     {
         $TypeCountStaff = new \AutoMsg\TypeCountStaff();
-        $Count = $data['Count'];
-        $Date = $data['Time'];
+        $Count = (int)$data['Count'];
+        $Date = (int)$data['Date'];
         $TypeCountStaff->setCount($Count);
         $TypeCountStaff->setDate($Date);
         return  $TypeCountStaff;

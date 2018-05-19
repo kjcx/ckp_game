@@ -13,6 +13,8 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\Item\Item;
+use App\Models\Staff\Staff;
+use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\LoadBagInfo;
 use App\Protobuf\Result\LoadStaffResult;
@@ -34,21 +36,31 @@ class Index extends Controller
      */
     public function index()
     {
-        //处理雇佣
-        $filter = [
-            'DirectorNums' => '1',
-        ];
-
-        $options = [];
-
-        $query = new \MongoDB\Driver\Query($filter, $options);
-        // 获得数据库配置
-        $dbConf = \EasySwoole\Config::getInstance()->getConf('MONGO');
-        // 全局初始化
-        Db::setConfig($dbConf);
-        $rs = Db::query('ckzc.Shop', $query);
-
-        var_dump($rs);
+        mt_srand();
+        echo mt_rand(0, 100).PHP_EOL;
+        $DropStaff = new DropStaff();
+        $data = $DropStaff->getLottoFreeDropLib(1);
+        var_dump($data);
+        $arr = $DropStaff->mt_rand($data);
+        var_dump($arr);
+        $arr = $DropStaff->getDropLib($arr);
+        $arr = $DropStaff->getRadnDropLib($arr);
+        $DropStaff->getStaffInfo($arr);
+//        for ($j=0;$j<200;$j++){
+//            var_dump(yield $j);
+//            for($i = 0 ;$i<300;$i++){
+//                $arr[] = 300;
+//            }
+//            for($i = 0 ;$i<2000;$i++){
+//                $arr[] = 2000;
+//            }
+//            for($i = 0 ;$i<10000;$i++){
+//                $arr[] = 10000;
+//            }
+//        }
+//        echo array_rand($arr);
+//        echo count($arr);
+//        echo "time2:" .time();
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

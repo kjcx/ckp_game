@@ -14,9 +14,11 @@ use Google\Protobuf\Internal\GPBUtil;
 class LoadRefStaff extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
+     *原来int 修改string
+     *
+     * Generated from protobuf field <code>string Id = 1;</code>
      */
-    private $Id = 0;
+    private $Id = '';
     /**
      * Generated from protobuf field <code>int32 EmployersDate = 2;</code>
      */
@@ -53,6 +55,18 @@ class LoadRefStaff extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>int32 Pos = 10;</code>
      */
     private $Pos = 0;
+    /**
+     *培训总次数
+     *
+     * Generated from protobuf field <code>int32 TrainNum = 11;</code>
+     */
+    private $TrainNum = 0;
+    /**
+     *今日培训次数
+     *
+     * Generated from protobuf field <code>int32 TodayTrainNum = 12;</code>
+     */
+    private $TodayTrainNum = 0;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -60,8 +74,10 @@ class LoadRefStaff extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
-     * @return int
+     *原来int 修改string
+     *
+     * Generated from protobuf field <code>string Id = 1;</code>
+     * @return string
      */
     public function getId()
     {
@@ -69,13 +85,15 @@ class LoadRefStaff extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
-     * @param int $var
+     *原来int 修改string
+     *
+     * Generated from protobuf field <code>string Id = 1;</code>
+     * @param string $var
      * @return $this
      */
     public function setId($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkString($var, True);
         $this->Id = $var;
 
         return $this;
@@ -275,6 +293,58 @@ class LoadRefStaff extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt32($var);
         $this->Pos = $var;
+
+        return $this;
+    }
+
+    /**
+     *培训总次数
+     *
+     * Generated from protobuf field <code>int32 TrainNum = 11;</code>
+     * @return int
+     */
+    public function getTrainNum()
+    {
+        return $this->TrainNum;
+    }
+
+    /**
+     *培训总次数
+     *
+     * Generated from protobuf field <code>int32 TrainNum = 11;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setTrainNum($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->TrainNum = $var;
+
+        return $this;
+    }
+
+    /**
+     *今日培训次数
+     *
+     * Generated from protobuf field <code>int32 TodayTrainNum = 12;</code>
+     * @return int
+     */
+    public function getTodayTrainNum()
+    {
+        return $this->TodayTrainNum;
+    }
+
+    /**
+     *今日培训次数
+     *
+     * Generated from protobuf field <code>int32 TodayTrainNum = 12;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setTodayTrainNum($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->TodayTrainNum = $var;
 
         return $this;
     }

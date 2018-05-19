@@ -22,7 +22,9 @@ class ComeOutEmployeeReq extends \Google\Protobuf\Internal\Message
      */
     private $ComeOutInEmployee = 0;
     /**
-     * Generated from protobuf field <code>repeated int32 NpcCardId = 3;</code>
+     *原int32改成string
+     *
+     * Generated from protobuf field <code>repeated string NpcCardId = 3;</code>
      */
     private $NpcCardId;
 
@@ -76,7 +78,9 @@ class ComeOutEmployeeReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 NpcCardId = 3;</code>
+     *原int32改成string
+     *
+     * Generated from protobuf field <code>repeated string NpcCardId = 3;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getNpcCardId()
@@ -85,13 +89,15 @@ class ComeOutEmployeeReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 NpcCardId = 3;</code>
-     * @param int[]|\Google\Protobuf\Internal\RepeatedField $var
+     *原int32改成string
+     *
+     * Generated from protobuf field <code>repeated string NpcCardId = 3;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setNpcCardId($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::INT32);
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
         $this->NpcCardId = $arr;
 
         return $this;

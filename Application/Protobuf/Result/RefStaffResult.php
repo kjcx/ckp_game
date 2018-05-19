@@ -8,6 +8,8 @@
 
 namespace App\Protobuf\Result;
 
+use App\Models\Staff\LottoLog;
+
 /**
  * 招聘抽奖
  * Class RefStaffResult
@@ -18,28 +20,16 @@ class RefStaffResult
     public static function encode($data_Staff)
     {
         $RefStaffResult = new \AutoMsg\RefStaffResult();
-//        $ShopId = 1;
-//        $Id = 1;
-//        $Name = 'kjcx';
-//        $Pos = 0;
-//        $NpcId = 1;
-//        $EmployersDate = time();
-//        $ComprehensionTime = 100;
-//        $Appointed = 0;
-//        $BasicProperties = [1=>1];
-//        $LevelUpTime = 1;
-//        $data['ShopId'] = 1;
-//        $data['Id'] = 1;
-//        $data['Pos'] = $Pos;
-//        $data['Name'] = $Name;
-//        $data['NpcId'] = $NpcId;
-//        $data['EmployersDate'] = $EmployersDate;
-//        $data['ComprehensionTime'] = $ComprehensionTime;
-//        $data['Appointed'] = $Appointed;
-//        $data['BasicProperties'] = $BasicProperties;
-//        $data['LevelUpTime'] = $LevelUpTime;
         $LoadRefStaff[] = LoadRefStaff::encode($data_Staff);
         $RefStaffResult->setLoadRefStaffList($LoadRefStaff);
+
+        $LottoLog = new LottoLog();
+        $data = $LottoLog->getTypeCountStaff($data_Staff['Uid']);//查询免费抽奖次数和数据
+        $TypeCountStaff = [];
+        foreach ($data as $k =>$datum) {
+            $TypeCountStaff[$k] = TypeCountStaff::encode($datum);
+        }
+        $RefStaffResult->setTypeCountStaff($TypeCountStaff);
         $str = $RefStaffResult->serializeToString();
         return $str;
     }

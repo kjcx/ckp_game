@@ -39,4 +39,30 @@ class GameEnum extends Model
         }
         return $arr;
     }
+
+    /**
+     * 员工品质
+     */
+    public function getStaffQuality()
+    {
+        $data = $this->find(['type'=>'StaffQuality']);
+        if($data['list']){
+            return $data['list'];
+        }else{
+            var_dump("getStaffQuality出错");
+        }
+    }
+
+    /**
+     * 员工属性
+     */
+    public function getStaffAttr()
+    {
+        $data = $this->find(['type'=>'StaffAttr']);
+        if($data['list']){
+            return $data['list'];
+        }else{
+            var_dump("getStaffAttr出错");
+        }
+    }
 }

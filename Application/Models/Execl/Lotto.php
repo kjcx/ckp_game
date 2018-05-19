@@ -49,7 +49,7 @@ class Lotto extends Model
     {
         $data = Db::table($this->table)->field('Money')->where(['Id'=>$Type])->find();
         if($data){
-            $res = explode(',',$data);
+            $res = explode(',',$data['Money']);
             return ['Type'=>$res[0],'Count'=>$res[1]];
         }else{
             return false;
