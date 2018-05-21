@@ -41,14 +41,19 @@ class Train extends Model
      */
     public function getInfoByTrainNum($Time)
     {
-        $data = Db::table($this->table)->where('Time',$Time)->find();
+        if(!$Time){
+            $Time = 1;
+        }
+        $data = Db::table($this->table)->where('Time',(string)$Time)->find();
+//        var_dump($Time);
         $Cost = $data['Cost'];
         $Costs = explode(';',$Cost);
         $arr = [];
         foreach ($Costs as $cost) {
             $res = explode(',',$cost);
-            $arr[$Time.'-' .$res[0] ] = ['Type'=>$res[1],'Count'=>$res[2]];//1货币类型2 货币数量
+            $arr[$Time.'-' .$res[0]] = ['Type'=>$res[1],'Count'=>$res[2]];//1货币类型2 货币数量 (几次+品质)
         }
+        var_dump($arr);
         return $arr;
     }
 

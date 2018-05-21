@@ -68,6 +68,7 @@ class Account extends Model
     {
         $token = md5($uid . rand(10000,99999) . rand(10000,99999). microtime() );
         //插入到
+        var_dump($this->redis);
          $rs = $this->redis->set($token,$uid);
          if($rs){
              return $token;

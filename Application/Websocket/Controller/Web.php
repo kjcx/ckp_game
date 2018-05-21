@@ -69,6 +69,7 @@ use App\Protobuf\Result\CkPayResult;
 use App\Protobuf\Result\ComeOutEmployeeResult;
 use App\Protobuf\Result\CreateBuildResult;
 use App\Protobuf\Result\CreateCompanyResult;
+use App\Protobuf\Result\CultivateEmployeeResult;
 use App\Protobuf\Result\DestoryBuildResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\FriendAddResult;
@@ -158,12 +159,15 @@ class Web extends WebSocketController
      */
     public function send($MsgId,$fd,$data,$Result=0,$ErrorMsg='')
     {
-        $str  = \App\Protobuf\Result\MsgBaseSend::encode($MsgId,$data,$Result,$ErrorMsg);
-//        var_dump(1111111);
-        var_dump(ServerManager::getInstance()->getServer()->connection_list());
+        if($Result){
+            $WsResult = new WsResult();
+            $data_ws = $WsResult->getOne($Result);
+            $value = $data_ws['value'];
+        }else{
+            $value = 0;
+        }
+        $str  = \App\Protobuf\Result\MsgBaseSend::encode($MsgId,$data,$value,$ErrorMsg);
         ServerManager::getInstance()->getServer()->push($fd,$str,WEBSOCKET_OPCODE_BINARY);
-//        ServerManager::getInstance()->getServer()->send($fd,$str,WEBSOCKET_OPCODE_BINARY);
-
     }
     /**
      * 登录websocket服务器
@@ -171,6 +175,7 @@ class Web extends WebSocketController
      */
     public function msgid_1004()
     {
+
         var_dump('msgid_1004');
         $Data = $this->data;
         $token = \App\Protobuf\Req\ConnectingReq::decode($Data);
@@ -187,6 +192,7 @@ class Web extends WebSocketController
         }else{
             var_dump("用户不存在");
         }
+
     }
 
     /**
@@ -228,11 +234,14 @@ class Web extends WebSocketController
      */
     public function msgid_1012()
     {
+        var_dump("joingame_start:" . microtime(true));
+
         var_dump('msgid_1012');
         //加入游戏
         var_dump($this->uid);
         $data = JoinGameResult::encode(['uid'=>$this->uid]);
         $this->send(1066,$this->fd,$data);
+        var_dump("joingame_end:" . microtime(true));
 
     }
 
@@ -377,8 +386,8 @@ class Web extends WebSocketController
             $this->send(1203,$this->fd,$data);
         }else{
             //余额不足
-            $res = Db::table('WsResult')->where(['msg'=>'没有足够的金钱'])->find();
-            $this->send(1203,$this->fd,0,$res['value'],$res['msg']);
+//            $res = Db::table('WsResult')->where(['msg'=>''])->find();
+            $this->send(1203,$this->fd,0,'没有足够的金钱');
         }
     }
 
@@ -441,11 +450,12 @@ class Web extends WebSocketController
             $data  = CkPayResult::encode(false);
             $WsResult = new WsResult();
             if($res['datas']['error'] == '您输入的密码有误'){
-                $data_ws = $WsResult->getOne('APP支付密码不对');
+//                $data_ws = $WsResult->getOne('APP支付密码不对');
+                $this->send(1224,$this->fd,$data,'APP支付密码不对');
             }elseif ($res['datas']['error'] == '余额不足！！！'){
-                $data_ws = $WsResult->getOne('APP余额不足');
+//                $data_ws = $WsResult->getOne('APP余额不足');
+                $this->send(1224,$this->fd,$data,'APP余额不足');
             }
-            $this->send(1224,$this->fd,$data,$data_ws['value']);
         }
 
     }
@@ -493,9 +503,9 @@ class Web extends WebSocketController
         if($user_gold >=5000){
             if( $role->checkNickName($data_UpdateRoleInfoName['RoleName']) ){
                 $data = \App\Protobuf\Result\CreateRoleResult::encode($data_UpdateRoleInfoName['RoleName']);
-                $WsResult = new WsResult();
-                $data_ws = $WsResult->getOne('角色名已经存在');
-                $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data,$data_ws['value']);
+//                $WsResult = new WsResult();
+//                $data_ws = $WsResult->getOne('角色名已经存在');
+                $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data,'角色名已经存在');
                 ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
             }else{
                 $rs = $role->updateRoleName($this->uid,$data_UpdateRoleInfoName['RoleName']);
@@ -507,9 +517,8 @@ class Web extends WebSocketController
             }
         }else{
             //没有足够的金钱
-            $WsResult = new WsResult();
-            $data_ws = $WsResult->getOne('没有足够的金钱');
-            $this->send(1142,$this->fd,'',$data_ws['value']);
+
+            $this->send(1142,$this->fd,'','没有足够的金钱');
         }
 
 
@@ -585,15 +594,11 @@ class Web extends WebSocketController
                 }
             }else{
                 //道具数量不足
-                $WsResult = new WsResult();
-                $data_ws = $WsResult->getOne('道具数量不足');
-                $this->send(1078,$this->fd,'',$data_ws['value']);
+                $this->send(1078,$this->fd,'','道具数量不足');
             }
         }else{
             //道具不存在
-            $WsResult = new WsResult();
-            $data_ws = $WsResult->getOne('背包中没有该道具');
-            $this->send(1078,$this->fd,'',$data_ws['value']);
+            $this->send(1078,$this->fd,'','背包中没有该道具');
         }
 
     }
@@ -612,18 +617,14 @@ class Web extends WebSocketController
         $rs = $Company->checkCompanyName($data_Create['Name']);
         var_dump($data_Create);
         if($rs){
-            $WsResult= new WsResult();
-            $ws_data = $WsResult->getOne('重名');
             $str = CreateCompanyResult::encode();
-            $this->send(1059,$this->fd,$ws_data['value']);
+            $this->send(1059,$this->fd,'重名');
         }else{
             //判断是否已创建过
             $rs = $Company->getCompany($this->uid);
             if($rs){
                 var_dump("玩家已经有公司");
-                $WsResult = new WsResult();
-                $ws_data = $WsResult->getOne('玩家已经有公司');
-                $this->send(1059,$this->fd,$ws_data['value']);
+                $this->send(1059,$this->fd,'玩家已经有公司');
             }else{
                 var_dump("公司创建成功");
                 $data_Create['Uid'] = $this->uid;
@@ -774,19 +775,14 @@ class Web extends WebSocketController
         $rs = $Shop->CheckLevel($this->uid,$data_CreateBuild['ShopType']);
         if(!$rs){
             var_dump("级别不够");
-            $WsResult = new WsResult();
-            $ws_data = $WsResult->getOne('级别不够');
-            $this->send(1058,$this->fd,'',$ws_data['value']);
+            $this->send(1058,$this->fd,'','级别不够');
             return;
         }
         //2.验证金币是否满足
         $rs = $Shop->CheckMoney($this->uid,$data_CreateBuild['ShopType']);
         if(!$rs){
             var_dump("没有足够的金钱");
-            $WsResult = new WsResult();
-            $ws_data = $WsResult->getOne('没有足够的金钱');
-            $str = '';
-            $this->send(1058,$this->fd,$str,$ws_data['value']);
+            $this->send(1058,$this->fd,'','没有足够的金钱');
             return;
         }
         $data_shop = $Shop->getShop($this->uid,$data_CreateBuild);
@@ -881,9 +877,7 @@ class Web extends WebSocketController
                 $this->send(1117,$this->fd,$str);
             }else{
                 //没有足够的金钱
-                $WsResult = new WsResult();
-                $data_ws = $WsResult->getOne('没有足够的金钱');
-                $this->send(1142,$this->fd,'',$data_ws['value']);
+                $this->send(1142,$this->fd,'','没有足够的金钱');
                 return;
             }
         }else{
@@ -955,9 +949,7 @@ class Web extends WebSocketController
                     $this->send(1004,$this->fd,$str);
                 }
             }else{
-                $WsResult = new WsResult();
-                $ws_data = $WsResult->getOne('没有足够的金钱');
-                $this->send(1004,$this->fd,'',$ws_data['value']);
+                $this->send(1004,$this->fd,'','没有足够的金钱');
             }
         }
 
@@ -1033,9 +1025,7 @@ class Web extends WebSocketController
             $str = TalentHireResult::encode($data_TalentHireResult);
             $this->send(1177,$this->fd,$str);
         }else{
-            $WsResult = new WsResult();
-            $data_ws = $WsResult->getOne('没有足够的金钱');
-            $this->send(1177,$this->fd,'',$data_ws['value']);
+            $this->send(1177,$this->fd,'','没有足够的金钱');
         }
 
     }
@@ -1124,18 +1114,25 @@ class Web extends WebSocketController
         $MaxTrainTime = $config['value'];
         $Execl_Staff = new \App\Models\Execl\Staff();
         $arr = [];
+        $Bag = new Bag($this->uid);
+        $isTrue = true;
+        $Train_sum = [];//培训需要钱的集合
         foreach ($data_Staff as $staff) {
             $data_Execl_Staff = $Execl_Staff->getInfoById($staff['NpcId']);
             $Comprehension = $data_Execl_Staff['Comprehension'];//最大培训次数
-            $TrainNum = $staff['TrainNum'];//培训次数
+            $TrainNum = $staff['TrainNum']?:1;//培训次数
             $Quality = $staff['Quality'];//品质
             $TodayTrainNum = $staff['TodayTrainNum'];
             if($TrainNum >= $Comprehension ){
                 var_dump("最大次数已达到不可培训");
+                $this->send(1121,$this->fd,'','最大次数已达到不可培训');
+                return;
                 continue;
             }
             if($TodayTrainNum >= $MaxTrainTime ){
-                var_dump("今日培训培训次数已达到");
+                var_dump("今日的培训次数到达上限");
+                $this->send(1121,$this->fd,'','今日的培训次数到达上限');
+                return;
                 continue;
             }
             //2 根据次数判断花费 和对应身值
@@ -1146,34 +1143,47 @@ class Web extends WebSocketController
             $data_money['Type'];//类型
             $data_money['Count'];//数量
 
-            //3计算总钱数是否满足
-            $arr[$data_money['Type']][] = $data_money['Count'];
+
             //AttributeUp
             $AttributeUp = $data_Execl_Staff['AttributeUp'];
             $AttributeUps = explode(';',$AttributeUp);
+
             foreach ($AttributeUps as $item) {
+                var_dump("AttributeUps");
+                var_dump($item);
                 $res = explode(',',$item);
                 $res[0];//属性id
                 $res[1];//min
                 $res[2];//max
                 mt_srand();
+
                 $rand = mt_rand($res[1],$res[2]);
-                $shuxing[$res[0]] = $rand;
+                $shuxing[$res[0]] = $rand;//属性值
             }
-        }
-        $Bag = new Bag($this->uid);
-        foreach ($arr as $Type => $item) {
-            $sum = array_sum($item);
-            $count = $Bag->getCountByItemId($Type);
-            if( $count >= $sum ){
+            var_dump("培训属性");
+            var_dump($shuxing);
+            //3计算总钱数是否满足
+            $Train_sum[$data_money['Type']][] = $data_money['Count'];
+            $count = $Bag->getCountByItemId($data_money['Type']);
+            if( $count >= $data_money['Count'] ){
                 //4.执行培训
-
+                $rs = $Staff->setAttribute($staff,$shuxing);
+                if(!$rs){
+                    $isTrue = false;
+                }else{
+                    $Bag->delBag($data_money['Type'],$data_money['Count']);
+                }
             }else{
-                var_dump("金钱不足"  .$Type . "数量:" . $count . "需要" . $sum);
+                var_dump("金钱不足"  .$data_money['Type'] . "数量:" . $count . "需要" .  $data_money['Count']);
             }
+
         }
+        if($isTrue){
+            //培训成功
+            $str = CultivateEmployeeResult::encode($data_CultivateEmployee);
+            $this->send(1121,$this->fd,$str);
+        }else{
 
-
-
+        }
     }
 }

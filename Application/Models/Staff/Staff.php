@@ -174,4 +174,27 @@ class Staff extends Model
         $data = Db::table($this->table)->where('_id','in',$ids)->select();
         return $data;
     }
+
+    /**
+     * 设置员工培训属性
+     * @param $staff
+     * @param $shuxing
+     * @return bool
+     */
+    public function setAttribute($staff,$shuxing)
+    {
+        $BasicProperties = $staff['BasicProperties'];
+        $BasicProperties[1] = $BasicProperties[1] + $shuxing[1];
+        $BasicProperties[2] = $BasicProperties[2] + $shuxing[2];
+        $BasicProperties[3] = $BasicProperties[3] + $shuxing[3];
+        $BasicProperties[4] = $BasicProperties[4] + $shuxing[4];
+        $rs = Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->update(['BasicProperties'=>$BasicProperties]);
+        if($rs){
+            Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->setInc('TrainNum',1);
+            Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->setInc('TodayTrainNum',1);
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
