@@ -23,6 +23,5 @@
         "easyswoole/swoole-ide-helper": "^1.02",
         "phpunit/phpunit": "^7",
         "duncan3dc/blade": "^4.2"
-
     }
 }
