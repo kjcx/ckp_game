@@ -184,4 +184,55 @@ class Role extends Model
         $data = $this->mysql->where('uid',$uid)->getOne($this->table,'level');
         return $data;
     }
+
+    /**
+     * 随机获取用户
+     * $param $IsFree 是否免费
+     */
+    public function getListByRand($IsFree)
+    {
+        if($IsFree){
+            $data = $this->mysql->orderBy("RAND()")->get($this->table,5);
+        }else{
+            //获取之前生成的
+            $data = $this->mysql->orderBy("RAND()")->get($this->table,5);
+        }
+        return $data;
+    }
+
+    /**
+     * 通过id数组获取用户
+     * @param $uids
+     * @return bool
+     */
+    public function getRoleByUids($uids)
+    {
+        if(empty($uids)){
+            return false;
+        }else{
+            $data = $this->mysql->where('uid',$uids,'in')->get($this->table);
+            if($data){
+                return $data;
+            }else{
+                return false;
+            }
+        }
+
+    }
+
+    /**
+     * 设置用户被雇佣店铺id
+     * @param $MasterUiD
+     * @param $Id
+     * @return bool
+     */
+    public function setShopid($MasterUiD,$Id)
+    {
+        $rs = $this->mysql->where('uid',$MasterUiD)->update($this->table,['shopid'=>$Id]);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

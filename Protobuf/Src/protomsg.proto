@@ -1139,11 +1139,12 @@ message LevelUpEmployeeResult{
     repeated LoadRefStaff LevelUpStaffList=1;
 }
 message CultivateEmployeeReq{
-    repeated int32 ListId=1;
+    repeated string ListId=1;//原int32 改成string
 }
 message CultivateEmployeeResult{
     repeated LoadRefStaff CultivateStaffList=1;
-    int32 TrainTime=2;
+    map<int32, int32> TrainTime=2;//员工id 每天培训次数
+    //int32 TrainTime=2;
 }
 message DismissalEmployeeReq{
     repeated int32 ListId=1;
@@ -1154,7 +1155,7 @@ message DismissalEmployeeResult{
 message ComeOutEmployeeReq{
     string ShopId=1;
     int32 ComeOutInEmployee=2;
-    repeated int32 NpcCardId=3;
+    repeated string NpcCardId=3;//原int32改成string
 }
 message ComeOutEmployeeResult{
     string BuildShopId=1;
@@ -1166,7 +1167,7 @@ message TypeCountStaff{
     int32 Date=2;
 }
 message LoadRefStaff{
-    int32 Id=1;
+    string Id=1;//原来int 修改string
     int32 EmployersDate=2;
     string Name=3;
     map<int32, int32> BasicProperties=4;
@@ -1176,6 +1177,8 @@ message LoadRefStaff{
     int32 ComprehensionTime=8;
     bool Appointed=9;
     int32 Pos=10;
+    int32 TrainNum=11;//培训总次数
+    int32 TodayTrainNum=12;//今日培训次数
 }
 message RequestGoodsDownReq{
     string DealId=1;

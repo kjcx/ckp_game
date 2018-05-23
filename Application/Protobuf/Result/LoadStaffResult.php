@@ -23,10 +23,14 @@ class LoadStaffResult
         $Staff = new Staff();
         $data = $Staff->getAllByUid($uid);
         var_dump("返回员工");
-        var_dump($data);
-        $LoadRefStaffList = [];
-        foreach ($data as $datum) {
-            $LoadRefStaffList[] = LoadRefStaff::encode($datum);
+        if($data){
+            $LoadRefStaffList = [];
+            foreach ($data as $datum) {
+                $LoadRefStaffList[] = LoadRefStaff::encode($datum);
+            }
+
+        }else{
+            $LoadRefStaffList = [];
         }
         $LoadStaffResult->setLoadRefStaffList($LoadRefStaffList);
         $str = $LoadStaffResult->serializeToString();

@@ -12,15 +12,26 @@ namespace App\Models\Company;
 use App\Models\BagInfo\Bag;
 use App\Models\Execl\Building;
 use App\Models\Execl\BuildingLevel;
+use App\Models\Execl\GameConfig;
 use App\Models\Execl\GameEnum;
 use App\Models\Model;
 use App\Models\User\Role;
+use App\Protobuf\Result\TalentInfo;
+use App\Traits\MongoTrait;
+use MongoDB\BSON\ObjectId;
 use think\Db;
 
 class Shop extends Model
 {
+    use MongoTrait;
     public $table = 'Shop';
+    public $mongoTable = 'ckzc.Shop';
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->collection = $this->getMongoClient();
+    }
     public function getShopType()
     {
         $GameEnum = new GameEnum();
@@ -38,7 +49,6 @@ class Shop extends Model
         //获取公司名称
         $Company = new Company();
         $CompanyName = $Company->getCompanyName($uid);
-        var_dump($data);
         $dataCompany['Employee'] = 0;//员工数
         $dataCompany['GetMoney'] = 0;//今日产出
         $dataCompany['Level'] = 1;//等级
@@ -65,11 +75,15 @@ class Shop extends Model
 //        $dataCompany['DismantleCost'] = $data_BuildingLevel['DismantleCost'];//差拆费用
 //        $dataCompany['UpgradeCost'] = $data_BuildingLevel['UpgradeCost'];//升级需要金币
         $dataCompany['LeaderId'] = 0;//经理id
+        $dataCompany['Master'] = [];//初始化经理
         $dataCompany['LeaderTime'] = 0;//雇佣开始时间
         $dataCompany['CurExtendLv'] = 0;//扩展等级
         $rs = Db::table($this->table)->insert($dataCompany);
         if($rs){
             //创建成功 扣除金币
+            $data_ShopTypeMoney = $this->getShopTypeMoney($data['ShopType']);
+            $Bag = new Bag($uid);
+            $Bag->delBag($data_ShopTypeMoney['Type'],$data_ShopTypeMoney['Count']);
             return true;
         }else{
             return false;
@@ -79,12 +93,14 @@ class Shop extends Model
     /**
      * 获取店铺
      * @param $uid
-     * @param $ShopType
+     * @param $data 类型和位置
      * @return array|false|null|\PDOStatement|string|\think\Model
      */
-    public function getShop($uid,$ShopType)
+    public function getShop($uid,$data)
     {
-        $data= Db::table($this->table)->where(['Uid'=>$uid,'ShopType'=>$ShopType])->find();
+        $ShopType = $data['ShopType'];
+        $Pos = $data['Pos'];
+        $data= Db::table($this->table)->where(['Uid'=>$uid,'ShopType'=>$ShopType,'Pos'=>$Pos])->find();
         return $data;
     }
 
@@ -130,6 +146,7 @@ class Shop extends Model
         if($res){
             var_dump($res['Type'] . "=>" .$res['Count']);
             $count = $Bag->getCountByItemId($res['Type']);
+            var_dump("定期用户余额" .$count );
             if($count >= $res['Count']){
                 //允许创建
                 return true;
@@ -194,6 +211,157 @@ class Shop extends Model
 //        $update['OutputItem'] = $data_BuildingLevel['OutputItem'];//可能掉落的道具
 
         $rs = Db::table($this->table)->where(['_id'=>$Id])->update($update);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 店铺拆除
+     * @param $Id 店铺id
+     * @param $Uid 用户id
+     * @return bool
+     */
+    public function ShopDismantle($Id,$Uid)
+    {
+        $rs = Db::table($this->table)->where(['_id'=>$Id,'Uid'=>$Uid])->update(['Uid'=>0]);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 设置主管
+     * @param $Id 店铺id
+     * @param $MasterUiD 雇佣主管id
+     * @return bool
+     */
+    public function SetMaster($Id,$MasterUiD)
+    {
+        $where['_id'] = new ObjectId($Id);
+        $update = ['$set' =>['Master'=>[$MasterUiD],'LeaderTime'=>time()]];
+        $rs = $this->collection->updateOne($where,$update);
+        if($rs){
+            $Role = new Role();
+            $rs = $Role->setShopid($MasterUiD,$Id);
+        }
+        return true;
+    }
+
+    /**
+     * 验证店铺主管数量
+     * @param $ShopId
+     * @return bool
+     */
+    public function CheckMasterNum($ShopId)
+    {
+        $data = $this->getInfoById($ShopId);
+        if($data){
+            $count = count($data['Master']);//店铺主管数量
+            $DirectorNums = $this->getMasterNum($ShopId);//店铺最大主管数量
+            if($count <  $DirectorNums){
+                //可以雇佣
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+    /**
+     * 获取店铺主管数量
+     * @param $ShopId
+     * @return mixed
+     */
+    public function getMasterNum($ShopId)
+    {
+        $data = $this->getInfoById($ShopId);
+        return $data['DirectorNums'];
+    }
+
+    /**
+     * 获取雇佣经理 客流
+     * @param $MasterUid
+     * @return float|int
+     */
+    public function getCustomerAddtionByUid($MasterUid)
+    {
+        $shenjiazhi = 1000;
+        $res= 10000 * (( 1 + sqrt($shenjiazhi) + $shenjiazhi)/8000);
+        var_dump("获取雇佣经理客流" . $res);
+        if(!$res){
+            $res = 1;
+        }
+        return $res;
+    }
+
+    /**
+     * 获取当前用户所有主管
+     * @param $Uid
+     * @return array
+     */
+    public function getMasterByUid($Uid)
+    {
+        $data = Db::table($this->table)->field('Master')->where('Uid',$Uid)->select();
+        $MasterId = [];
+        if($data){
+            foreach ($data as $datum) {
+                $MasterId[] = $datum['Master'][0];
+            }
+        }
+        $Role = new Role();
+        $data_role = $Role->getRoleByUids($MasterId);
+        $TalentDatas = [];
+        if($data_role){
+            foreach ($data_role as $item) {
+                $TalentDatas[] = TalentInfo::encode($item);
+            }
+            return $TalentDatas;
+        }else{
+            return $TalentDatas;
+        }
+    }
+
+    /**
+     * 计算雇佣消耗
+     * @param $MasterId
+     * @return float|int
+     */
+    public function getMoneyToMaster($MasterId)
+    {
+        $data = $this->getCustomerAddtionByUid($MasterId);
+        $res  = floor(($data * 3 / 5));
+        if(!$res || $res <1){
+            $res = 1;
+        }
+        var_dump("计算雇佣消耗". $res);
+        return $res;
+    }
+
+    /**
+     * 雇佣奖励
+     * @param $money
+     * @return float
+     */
+    public function EmploymentAward($money)
+    {
+        $GameConfig = new GameConfig();
+        $data = $GameConfig->getConfig('HireRewardRate');
+        $EmploymentAward = floor($money * (1 - $data['value']));
+        return $EmploymentAward;
+    }
+    /**
+     * 解雇店铺经理
+     * @param $ShopId
+     * @return bool
+     */
+    public function FireMatser($ShopId)
+    {
+        $rs = $this->collection->findOneAndUpdate(['_id'=>new ObjectId($ShopId)],['$set'=>['Master'=>[]]]);
         if($rs){
             return true;
         }else{

@@ -11,7 +11,10 @@ use App\Event\ChangeItemEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
+use App\Models\Company\Shop;
 use App\Models\Item\Item;
+use App\Models\Staff\Staff;
+use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\LoadBagInfo;
 use App\Protobuf\Result\LoadStaffResult;
@@ -20,6 +23,8 @@ use EasySwoole\Core\Http\AbstractInterface\Controller;
 use GuzzleHttp\Client;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use think\Config;
+use think\Db;
 
 class Index extends Controller
 {
@@ -31,16 +36,31 @@ class Index extends Controller
      */
     public function index()
     {
-        $str = LoadStaffResult::encode(37);
-        $LoadStaffResult = new \AutoMsg\LoadStaffResult();
-        $LoadStaffResult->mergeFromString($str);
-        $data = $LoadStaffResult->getLoadRefStaffList()->getIterator();
-        $LoadRefStaff = new LoadRefStaff();
-        foreach ($data as $datum) {
-            var_dump($datum->getId());
-            var_dump($datum->getName());
-            var_dump($datum->getAppointed());
-        }
+        mt_srand();
+        echo mt_rand(0, 100).PHP_EOL;
+        $DropStaff = new DropStaff();
+        $data = $DropStaff->getLottoFreeDropLib(1);
+        var_dump($data);
+        $arr = $DropStaff->mt_rand($data);
+        var_dump($arr);
+        $arr = $DropStaff->getDropLib($arr);
+        $arr = $DropStaff->getRadnDropLib($arr);
+        $DropStaff->getStaffInfo($arr);
+//        for ($j=0;$j<200;$j++){
+//            var_dump(yield $j);
+//            for($i = 0 ;$i<300;$i++){
+//                $arr[] = 300;
+//            }
+//            for($i = 0 ;$i<2000;$i++){
+//                $arr[] = 2000;
+//            }
+//            for($i = 0 ;$i<10000;$i++){
+//                $arr[] = 10000;
+//            }
+//        }
+//        echo array_rand($arr);
+//        echo count($arr);
+//        echo "time2:" .time();
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

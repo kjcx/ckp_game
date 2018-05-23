@@ -20,4 +20,20 @@ class GameConfig extends Model
         $data = Db::table($this->table)->where(['_id'=>$name])->find();
         return $data;
     }
+
+    public function insert($data)
+    {
+        Db::table($this->table)->insert($data);
+    }
+
+    /**
+     * 通过Field 获取配置信息
+     * @param $Field
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getInfoByField($Field)
+    {
+        $data = Db::table($this->table)->where(['Field'=>$Field])->find();
+        return $data;
+    }
 }

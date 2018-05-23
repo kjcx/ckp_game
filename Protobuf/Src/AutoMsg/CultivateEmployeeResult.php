@@ -18,9 +18,11 @@ class CultivateEmployeeResult extends \Google\Protobuf\Internal\Message
      */
     private $CultivateStaffList;
     /**
-     * Generated from protobuf field <code>int32 TrainTime = 2;</code>
+     *员工id 每天培训次数
+     *
+     * Generated from protobuf field <code>map<int32, int32> TrainTime = 2;</code>
      */
-    private $TrainTime = 0;
+    private $TrainTime;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -50,8 +52,10 @@ class CultivateEmployeeResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 TrainTime = 2;</code>
-     * @return int
+     *员工id 每天培训次数
+     *
+     * Generated from protobuf field <code>map<int32, int32> TrainTime = 2;</code>
+     * @return \Google\Protobuf\Internal\MapField
      */
     public function getTrainTime()
     {
@@ -59,14 +63,16 @@ class CultivateEmployeeResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 TrainTime = 2;</code>
-     * @param int $var
+     *员工id 每天培训次数
+     *
+     * Generated from protobuf field <code>map<int32, int32> TrainTime = 2;</code>
+     * @param array|\Google\Protobuf\Internal\MapField $var
      * @return $this
      */
     public function setTrainTime($var)
     {
-        GPBUtil::checkInt32($var);
-        $this->TrainTime = $var;
+        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::INT32);
+        $this->TrainTime = $arr;
 
         return $this;
     }

@@ -18,11 +18,11 @@ use App\Models\Company\Shop;
  */
 class CreateBuildResult
 {
-    public static function encode($uid,$ShopType)
+    public static function encode($uid,$data)
     {
         $CreateBuildResult = new \AutoMsg\CreateBuildResult();
         $CreateBuild = new Shop();
-        $data = $CreateBuild->getShop($uid,$ShopType);
+        $data = $CreateBuild->getShop($uid,$data);
         $LandBuildInfo = LoadBuildInfo::encode($data);
         $CreateBuildResult->setLandBuildInfo($LandBuildInfo);
         $str = $CreateBuildResult->serializeToString();

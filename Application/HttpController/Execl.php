@@ -19,9 +19,13 @@ use App\Models\DataCenter\DataCenter;
 use App\Models\Execl\Building;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\Character;
+use App\Models\Execl\GameConfig;
 use App\Models\Execl\Lotto;
 use App\Models\Execl\Mission;
+use App\Models\Execl\Randomname;
+use App\Models\Execl\Staff;
 use App\Models\Execl\Topup;
+use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
@@ -343,4 +347,115 @@ class Execl extends Controller
             $this->response()->write(json_encode($arr));
         }
     }
+
+    /**
+     * 配置
+     */
+    public function Execl_GameConfig()
+    {
+        $file_temp = 'Execl/_GameConfig.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $GameConfig = new GameConfig();
+        for($j=3;$j<=$highestRow;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'K'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key) {
+                    if ($key == 'Id') {
+                        $arr[$key] = (int)trim($str, "\\");
+                    } elseif($key == 'Type'){
+                        $arr[$key] = (int)trim($str, "\\");
+                    }
+                    else {
+                        $arr[$key] = trim($str, "\\");
+                    }
+                }
+            }
+            $GameConfig->insert($arr);
+            $this->response()->write(json_encode($arr));
+        }
+    }
+    /**
+     * 配置
+     */
+    public function Execl_Staff()
+    {
+        $file_temp = 'Execl/Staff.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $Staff = new Staff();
+        for($j=4;$j<=$highestRow;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'I'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key) {
+                    if ($key == 'Id') {
+                        $arr[$key] = (int)trim($str, "\\");
+                    } elseif($key == 'Type'){
+                        $arr[$key] = (int)trim($str, "\\");
+                    }
+                    else {
+                        $arr[$key] = trim($str, "\\");
+                    }
+                }
+            }
+            $Staff->insert($arr);
+            $this->response()->write(json_encode($arr));
+        }
+    }
+
+    /**
+     * 姓名
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     */
+    public function Execl_Train()
+    {
+        $file_temp = 'Execl/Train.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        var_dump($highestRow);
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $Train = new Train();
+        for($j=4;$j<$highestRow;$j++) {
+            $str = '';
+            for ($k = 'A'; $k != 'D'; $k++) {
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key) {
+                    if ($key == 'Id') {
+                        $arr[$key] = (int)trim($str, "\\");
+                    } elseif($key == 'Type'){
+                        $arr[$key] = (int)trim($str, "\\");
+                    }
+                    else {
+                        $arr[$key] = trim($str, "\\");
+                    }
+                }
+            }
+            $Train->insert($arr);
+
+            $this->response()->write(json_encode($arr));
+
+        }
+
+
+    }
+
 }

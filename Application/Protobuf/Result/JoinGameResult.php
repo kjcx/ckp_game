@@ -8,7 +8,10 @@
 namespace App\Protobuf\Result;
 
 use App\Models\Company\Company;
+use App\Models\Company\Shop;
+use App\Models\Staff\LottoLog;
 use App\Models\User\FriendApply;
+use App\Models\User\Role;
 
 class JoinGameResult
 {
@@ -51,6 +54,11 @@ class JoinGameResult
         //店铺
         $MapInfo = GetMapResult::encode($uid);
         $JoinGameResult->setMapInfo($MapInfo);
+        //店铺主管信息
+
+        $Shop = new Shop();
+        $TalentDatas = $Shop->getMasterByUid($uid);
+        $JoinGameResult->setTalentDatas($TalentDatas);
         //招聘抽奖
         $TypeCountStaff = TypeCountStaffResult::encode($uid);
         $JoinGameResult->setTypeCountStaff($TypeCountStaff);

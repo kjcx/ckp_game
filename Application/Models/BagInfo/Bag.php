@@ -226,8 +226,6 @@ class Bag extends Model
      */
     public function delBag($itemId,Int $num = 1)
     {
-        var_dump($itemId);
-        var_dump($num);
         //TODO::错误码
         $itemData = $this->getBagByItemId($itemId);
         if (empty($itemData)) {
@@ -257,6 +255,8 @@ class Bag extends Model
         }
 
         $value = $this->getGoodsStatus((array)$itemData,2,$num);
+
+        $result = $this->collection->findOneAndUpdate($filter,$update);
         //更新身价
         if ($value !== false) {
             $this->updateStatus($value);
@@ -265,7 +265,6 @@ class Bag extends Model
             $UserEvent = new UserEvent($this->uid);
             $UserEvent->GoldChangedResultEvent();
         }
-        $result = $this->collection->findOneAndUpdate($filter,$update);
         return empty($result) ? false : true;
 
     }

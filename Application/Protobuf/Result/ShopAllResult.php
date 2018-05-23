@@ -25,6 +25,8 @@ class ShopAllResult extends Model
         $data = $dropShop->refreshDropShop();
 
         $new_data = LoadDropData::drop($data);
+        var_dump('ShopAllResult=>LoadDropData');
+//        var_dump($new_data);
         $ShopAllResult = new \AutoMsg\ShopAllResult();
         $ShopAllResult->setLoadConsume($new_data);
         $ShopAllResult->setTime(1);
