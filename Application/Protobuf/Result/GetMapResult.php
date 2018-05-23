@@ -19,12 +19,22 @@ use App\Models\LoadData\LandBuildInfo;
  */
 class GetMapResult
 {
-    public static function encode($uid)
+    /**
+     * @param $uid
+     * @param $type 1店铺2开发区
+     * @return \AutoMsg\GetMapResult
+     */
+    public static function encode($uid,$type=1)
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
         $LandBuildInfo = LandBuildInfo::encode($uid);
         $GetMapResult->setLoadBuildInfo($LandBuildInfo);
-//        $str = $GetMapResult->serializeToString();
-        return $GetMapResult;
+        if($type == 1){
+            return $GetMapResult;
+        }else{
+            $str = $GetMapResult->serializeToString();
+            return $str;
+        }
+
     }
 }

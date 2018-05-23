@@ -362,7 +362,7 @@ class Execl extends Controller
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $GameConfig = new GameConfig();
-        for($j=3;$j<=$highestRow;$j++) {
+        for($j=4;$j<=$highestRow;$j++) {
             $str = '';
             for ($k = 'A'; $k != 'K'; $k++) {
                 $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格

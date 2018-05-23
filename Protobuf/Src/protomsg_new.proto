@@ -1,0 +1,154 @@
+syntax = "proto3";
+package AutoMsgNew;
+message MsgBaseRev {
+	int32 MsgId=1;
+    bytes Data=2;
+}
+message MsgBaseSend {
+	int32 MsgID=1;
+    bytes Data=2;
+    int32 Code=3;
+
+}
+
+message CKApiReq{
+    string Key=1;
+    int32 Type=2;
+    PayParams PayParams=3;
+    PayLogParams PayLogParams=4;
+    TeamParams TeamParams=5;
+    GetRmbParams GetRmbParams=6;
+}
+message GetRmbParams{
+    int32 Gold=1;
+    string Pwd=2;
+}
+message CKErrResult{
+    string Error=1;
+}
+message CkTeamResult{
+    bool HasMore=1;
+    string Total=2;
+    repeated CkTeamsInfo Teams=3;
+}
+message CkTeamsInfo{
+    string MemberId=1;
+    string MemberName=2;
+    string MemberNickname=3;
+    string MemberMobile=4;
+    string InviteNum=5;
+    string InviteMoney=6;
+}
+message CkGetRmbResult{
+    bool Status=1;
+}
+message CkPayResult{
+    bool Status=1;
+}
+message CKRichResult{
+    string Point=1;
+    string Predepoit=2;
+    string Voucher=3;
+    string Credit=4;
+    string Team=5;
+    string Invite=6;
+    string Chuangke_invite=7;
+}
+message CKPayLogResult{
+    string LgId=1;
+    string LgMemberId=2;
+    string LgMemberName=3;
+    string LgAdminName=4;
+    string LgType=5;
+    string LgAvAmount=6;
+    string LgFreezeAmount=7;
+    string LgAddTime=8;
+    string LgDesc=9;
+    string LgInviteMemberId=10;
+    string LgAdminMemo=11;
+    string LgSourceOnly=12;
+}
+message CKApiResult{
+
+}
+message PayParams{
+    int32 Id=1;
+    string Pwd=2;
+}
+message PayLogParams{
+    string OrderId=1;
+}
+message TeamParams{
+    string Page=1;
+    string Curpage=2;
+    string Sex=3;
+    string Invite=4;
+}
+message CreateCompanyReq{
+    string Name=1;
+}
+message CreateCompanyResult{
+    string Name=1;
+    string Desc=2;
+    string Icon=3;
+    int32 Level=4;
+    int64 CreateTime=5;
+    int64 ClientValue=6;
+    int32 StaffNumber=7;
+    int32 ShopNumber=8;
+    int64 CompanyValue=9;
+}
+message ConnectReq{
+
+}
+message ConnectResult{
+    string Id=1;
+}
+message CreateRoleReq{
+    string RoleName=1;
+    int32 Sex=2;
+}
+message RoleInfo{
+    string RoleName=1;
+    int32 Sex=2;
+    int32 Vip=3;
+    string Desc=4;
+    string Avatar=5;
+    int64 Exp=6;
+    int32 Level=7;
+    int64 BodyValue=8;
+    int64 Star=9;
+}
+message UpdateItemReq{
+    map<int32, int64> Item=1;
+    int32 Type=2;
+}
+message UpdateItemResult{
+    map<int32, int64> Item=1;
+    int32 Type=2;
+}
+message JoinGameReq{
+    string Id=1;
+}
+message JoinGameResult{
+    RoleInfo RoleInfo=1;
+    CreateCompanyResult CompanyInfo=2;
+}
+message JoinGateReq{
+
+}
+message LoadStatusReq{
+    string ServerIp=1;
+}
+message LoadStatusResult{
+    string ServerIp=2;
+    int32 Count=1;
+}
+message UserTokenReq{
+    string UserName=1;
+    string Token=2;
+}
+message UserTokenResult{
+    int32 Status=1;
+    string UserName=2;
+}
