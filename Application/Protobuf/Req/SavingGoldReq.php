@@ -18,6 +18,7 @@ class SavingGoldReq
     public static function decode($data)
     {
         $SavingGoldReq = new \AutoMsg\SavingGoldReq();
+        $SavingGoldReq->mergeFromString($data);
         $GoldType = $SavingGoldReq->getGoldType();
         $GoldCount = $SavingGoldReq->getGoldCount();
         $SaveType = $SavingGoldReq->getSaveType();

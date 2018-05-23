@@ -49,8 +49,10 @@ use App\Protobuf\Req\FriendApplyClearReq;
 use App\Protobuf\Req\FriendApplyReq;
 use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
+use App\Protobuf\Req\GetMapReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
 use App\Protobuf\Req\MoneyChangeReq;
+use App\Protobuf\Req\NoBodyShopReq;
 use App\Protobuf\Req\RaffleFruitsReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefStaffReq;
@@ -77,6 +79,7 @@ use App\Protobuf\Result\FriendApplyClearResult;
 use App\Protobuf\Result\FriendApplyResult;
 use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
+use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\JoinGameResult;
@@ -84,6 +87,7 @@ use App\Protobuf\Result\LoadStaffResult;
 use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
+use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefStaffResult;
@@ -160,9 +164,10 @@ class Web extends WebSocketController
     public function send($MsgId,$fd,$data,$Result=0,$ErrorMsg='')
     {
         if($Result){
+            var_dump($Result);
             $WsResult = new WsResult();
             $data_ws = $WsResult->getOne($Result);
-            $value = $data_ws['value'];
+            $value = (int)$data_ws['value'];
         }else{
             $value = 0;
         }
@@ -757,6 +762,10 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_SavingGold = SavingGoldReq::decode($data);
         var_dump($data_SavingGold);
+        $GameConfig = new GameConfig();
+        $data_GameConfig = $GameConfig->getInfoByField('Interest');
+        var_dump($data_GameConfig['value']);
+        explode(';',$data_GameConfig['value']);
         $str = SavingGoldResult::encode(1);
         $this->send(1047,$this->fd,$str);
     }
@@ -1185,5 +1194,32 @@ class Web extends WebSocketController
         }else{
 
         }
+    }
+
+    /**
+     * GetMapReq
+     * return GetMapResult 1064
+     */
+    public function msgid_1011()
+    {
+        $data = $this->data;
+        $data_GetMap = GetMapReq::decode($data);
+        var_dump($data_GetMap);
+        $str = GetMapResult::encode($this->uid,2);//开发区
+        $this->send(1064,$this->fd,$str);
+    }
+
+    /**
+     * 获取所有无主店铺
+     * NoBodyShopReq 1158,
+     * return  NoBodyShopResult 1211
+     */
+    public function msgid_1158()
+    {
+        $data = $this->data;
+        $data_NoBodyShop = NoBodyShopReq::decode($data);
+        var_dump($data_NoBodyShop);
+        $str = NoBodyShopResult::encode();
+        $this->send(1211,$this->fd,$str);
     }
 }

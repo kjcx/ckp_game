@@ -20,6 +20,7 @@ class LoadBuildInfo
     public static function encode($data)
     {
         var_dump("LoadBuildInfo");
+        var_dump($data);
         $LoadBuildInfo = new LoadBuildInfos();
         $BuildId = (string)$data['_id'];//
         $Pos = $data['Pos'];//

@@ -30,7 +30,7 @@ class TalentInfo
         $RoleId = $data['uid'];//角色id
         $SocialStatus = $data['shenjiazhi'];//身价值
         $Status = isset($data['Status'])?:false;//受雇状态
-        $ShopId = $data['ShopId'];//
+        $ShopId = $data['ShopId']?:'';//
         $TalentInfo->setIcon($Icon);
         $TalentInfo->setCompany($Company);
         $TalentInfo->setCompanyUserName($CompanyUserName);
