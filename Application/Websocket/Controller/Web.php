@@ -181,7 +181,9 @@ class Web extends WebSocketController
         $token = \App\Protobuf\Req\ConnectingReq::decode($Data);
         //redis查询token是否存在
         $Account = new Account();
+        var_dump($token);
         $uid = $Account->getToken($token);
+
         var_dump($uid);
         if($uid){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
