@@ -36,4 +36,35 @@ class GameConfig extends Model
         $data = Db::table($this->table)->where(['Field'=>$Field])->find();
         return $data;
     }
+
+    /**
+     * 存款配置返回
+     * @return array
+     */
+    public function getInterest()
+    {
+        $data_GameConfig = $this->getInfoByField('Interest');
+        $Interests = explode(';',$data_GameConfig['value']);
+        $arr = [];
+        foreach ($Interests as $interest) {
+            $res = explode(',',$interest);
+            $arr[$res[0]] = $res[1];
+        }
+        return $arr;
+    }
+    /**
+     * 贷款配置返回
+     * @return array
+     */
+    public function getPenaltyGold()
+    {
+        $data_GameConfig = $this->getInfoByField('PenaltyGold');
+        $Interests = explode(';',$data_GameConfig['value']);
+        $arr = [];
+        foreach ($Interests as $interest) {
+            $res = explode(',',$interest);
+            $arr[$res[0]] = $res[1];
+        }
+        return $arr;
+    }
 }

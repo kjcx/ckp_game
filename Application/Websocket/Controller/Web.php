@@ -14,6 +14,8 @@ use App\Event\ItemEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\SellItemEvent;
 use App\Models\BagInfo\Bag;
+use App\Models\Bank\LoansInfo;
+use App\Models\Bank\SavingGold;
 use App\Models\Company\Company;
 use App\Models\Company\ConsumeResult;
 use App\Models\Company\Shop as CompanyShop;
@@ -25,6 +27,7 @@ use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
+use App\Models\LandInfo\MyLandInfo;
 use App\Models\Staff\LottoLog;
 use App\Models\Staff\Staff;
 use App\Models\Trade\Shop;
@@ -33,6 +36,7 @@ use App\Models\User\FriendApply;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
+use App\Protobuf\Req\AuctionLandReq;
 use App\Protobuf\Req\BuildLvUpReq;
 use App\Protobuf\Req\ChangeAvatarReq;
 use App\Protobuf\Req\ChatToChatReq;
@@ -49,8 +53,10 @@ use App\Protobuf\Req\FriendApplyClearReq;
 use App\Protobuf\Req\FriendApplyReq;
 use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
+use App\Protobuf\Req\GetAuctionLandReq;
 use App\Protobuf\Req\GetMapReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
+use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
 use App\Protobuf\Req\RaffleFruitsReq;
@@ -64,6 +70,7 @@ use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserSalesReq;
+use App\Protobuf\Result\AuctionLandResult;
 use App\Protobuf\Result\BuildLvUpResult;
 use App\Protobuf\Result\ChangeAvatarResult;
 use App\Protobuf\Result\ChatToChatResult;
@@ -79,18 +86,22 @@ use App\Protobuf\Result\FriendApplyClearResult;
 use App\Protobuf\Result\FriendApplyResult;
 use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
+use App\Protobuf\Result\GetAuctionLandResult;
 use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\LoadStaffResult;
+use App\Protobuf\Result\LoansResult;
 use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
+use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefStaffResult;
+use App\Protobuf\Result\RoleAuctionShopResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SellItemResult;
@@ -196,6 +207,8 @@ class Web extends WebSocketController
            $this->send(1057,$this->fd,$data);
         }else{
             var_dump("用户不存在");
+            $data = \App\Protobuf\Result\ConnectingResult::encode(36);
+            $this->send(1057,$this->fd,$data);
         }
 
     }
@@ -754,20 +767,41 @@ class Web extends WebSocketController
     }
 
     /**
-     * 存款请求
-     * return 1047
+     * 存款请求 1047
+     * return SavingGoldResult 1047
      */
     public  function msgid_1047()
     {
         $data = $this->data;
         $data_SavingGold = SavingGoldReq::decode($data);
         var_dump($data_SavingGold);
+        //1 获取配置
         $GameConfig = new GameConfig();
-        $data_GameConfig = $GameConfig->getInfoByField('Interest');
-        var_dump($data_GameConfig['value']);
-        explode(';',$data_GameConfig['value']);
-        $str = SavingGoldResult::encode(1);
-        $this->send(1047,$this->fd,$str);
+        $arr_Interest = $GameConfig->getInterest();
+        //2.判断用户背包数据是否足够
+        $Bag = new Bag($this->uid);
+        $count = $Bag->getCountByItemId($data_SavingGold['GoldType']);
+        if($count >= $data_SavingGold['GoldCount']){
+            //扣掉金币
+            $rs = $Bag->delBag($data_SavingGold['GoldType'],$data_SavingGold['GoldCount']);
+            if($rs){
+                //存款输入数据
+                $SavingGold = new SavingGold();
+                $data_SavingGold['Uid'] = $this->uid;
+                $data_SavingGold['SavingInst'] = $arr_Interest[$data_SavingGold['TimeLimit']];//利息
+                $rs_id = $SavingGold->create($data_SavingGold);
+                if($rs_id){
+                    $str = SavingGoldResult::encode($rs_id);
+                    $this->send(1047,$this->fd,$str);
+                }else{
+                    $this->send(1047,$this->fd,'','存款失败');
+                }
+            }
+        }else{
+            //金币不足
+            $this->send(1047,$this->fd,'','没有足够的金钱');
+        }
+
     }
 
     /**
@@ -778,9 +812,17 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_CreateBuild = CreateBuildReq::decode($data);
-        var_dump($data_CreateBuild);
-        //1. 验证级别
         $Shop = new CompanyShop();
+        var_dump($data_CreateBuild);
+        //*判断是否有公司
+        $rs = $Shop->getAllShop($this->uid);
+        var_dump($rs);
+        if(!$rs){
+            $this->send(1058,$this->fd,'','请先创建公司');
+            return;
+        }
+        //1. 验证级别
+
         $rs = $Shop->CheckLevel($this->uid,$data_CreateBuild['ShopType']);
         if(!$rs){
             var_dump("级别不够");
@@ -1075,7 +1117,7 @@ class Web extends WebSocketController
      */
     public function msgid_1053()
     {
-        
+        $this->send(1082,$this->fd,'');
     }
 
     /**
@@ -1221,5 +1263,105 @@ class Web extends WebSocketController
         var_dump($data_NoBodyShop);
         $str = NoBodyShopResult::encode();
         $this->send(1211,$this->fd,$str);
+    }
+
+    /**
+     * 贷款 LoansReq
+     * return LoansResult 1205
+     */
+    public function msgid_1152()
+    {
+        $data = $this->data;
+        $data_Loans = LoansReq::decde($data);
+        var_dump($data_Loans);
+
+        $LoansInfo = new LoansInfo();
+        //0.验证是否有未还贷款
+        $data_loans = $LoansInfo->getLoanByUid($this->uid);
+        if($data_loans){
+            $this->send(1205,$this->fd,'贷款中不能在申请贷款');
+            return;
+        }
+        $GameConfig = new GameConfig();
+        $data_PenaltyGold  = $GameConfig->getPenaltyGold();//贷款配置
+        //1.验证是否可以贷款这么多钱
+        $Role = new Role();
+        $shenjiazhi = $Role->getShenjiazhi($this->uid);
+        $Count = $shenjiazhi / 2 ;
+        var_dump($shenjiazhi);
+        if($Count >= 1000 && $Count >= $data_Loans['GoldCount']){
+
+            $rs_id = $LoansInfo->create($data_Loans);
+            if($rs_id){
+                $str = LoansResult::encode($rs_id);
+                $this->send(1205,$this->fd,$str);
+            }
+        }else{
+            //不符合贷款要求
+            $this->send(1205,$this->fd,'','身价值不足');
+        }
+    }
+
+    /**
+     * RoleAuctionShopReq 1140
+     * return RoleAuctionShopResult 1189
+     */
+    public function msgid_1140()
+    {
+        $data = [];
+        RoleAuctionShopResult::ecode($data);
+    }
+
+    /**
+     * 今日土地竞拍请求 GetAuctionLandReq 2005
+     * return GetAuctionLandResult 2006
+     */
+    public function msgid_2005()
+    {
+        $str = GetAuctionLandResult::encode();
+        $this->send(2006,$this->fd,$str);
+    }
+
+    /**
+     * 竞拍土地请求 AuctionLandReq 2007
+     * return AuctionLandResult 2008
+     */
+    public function msgid_2007()
+    {
+        $data = $this->data;
+        $data_GetAuctionLand = AuctionLandReq::decode($data);
+        var_dump($data_GetAuctionLand);
+        //处理竞拍请求
+        //1验证金币是否足够
+        $Bag = new Bag($this->uid);
+        $count = $Bag->getCountByItemId(6);
+        if($count>=600){
+            $LandInfo = new MyLandInfo();
+            $create_data['Uid'] = $this->uid;
+            $Role = new Role();
+            $data_role = $Role->getRole($this->uid);
+            $create_data['Name'] = $data_role['nickname'];
+            $create_data['Pos'] = $data_GetAuctionLand['Pos'];
+            $rs = $LandInfo->updateAuctionRole($create_data);
+            if($rs){
+                $str = AuctionLandResult::encode($data_GetAuctionLand['Pos']);
+                $this->send(2008,$this->fd,$str);
+            }else{
+                var_dump("竞拍失败");
+            }
+
+        }else{
+            $this->send(2008,$this->fd,'','没有足够的金钱');
+        }
+
+    }
+
+    /**
+     * 已参与竞拍
+     */
+    public function msgid_2009()
+    {
+        $data = MyLandInfoResult::encode($this->uid);
+        $this->send(2010,$this->fd,$data);
     }
 }

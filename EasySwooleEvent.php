@@ -52,7 +52,12 @@ Class EasySwooleEvent implements EventInterface {
                 $start_fd = 0;
                 while(true)
                 {
-                    $conn_list = $server->getClientList($start_fd, 10);
+                    $conn_list = $server->getClientList($start_fd, 100);
+//                    var_dump('当前连接数');
+//                    if(is_array($conn_list)){
+//                        var_dump(count($conn_list));
+//                    }
+
                     if ($conn_list===false or count($conn_list) === 0)
                     {
 //                        echo "finish\n";

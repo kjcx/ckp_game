@@ -8,6 +8,8 @@
 
 namespace App\Protobuf\Result;
 
+use App\Models\Bank\SavingGold;
+
 /**
  * 存款返回
  * Class SavingGoldResult 1047
@@ -15,10 +17,13 @@ namespace App\Protobuf\Result;
  */
 class SavingGoldResult
 {
-    public static function encode($data)
+    public static function encode($Id)
     {
         $SavingGoldResult = new \AutoMsg\SavingGoldResult();
-        $SavingGoldResult->setSavingInfo($data);
+        $SavingGold = new SavingGold();
+        $data = $SavingGold->getInofById($Id);
+        $SavingInfo = SavingInfo::ecode($data);
+        $SavingGoldResult->setSavingInfo($SavingInfo);
         $str = $SavingGoldResult->serializeToString();
         return $str;
     }

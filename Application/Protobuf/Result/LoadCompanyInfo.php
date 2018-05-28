@@ -18,7 +18,6 @@ class LoadCompanyInfo
     public static function encode($data)
     {
         $LoadCompanyInfo = new \AutoMsg\LoadCompanyInfo();
-        var_dump($data);
         if($data){
             $Name = $data['Name'];
             $Desc = $data['Desc'];

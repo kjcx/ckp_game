@@ -18,16 +18,24 @@ class SavingInfo
     public static function ecode($data)
     {
         $SavingInfo = new \AutoMsg\SavingInfo();
-        $SavingInfo->setId();
-        $SavingInfo->setGoldType();
-        $SavingInfo->setEarnings();
-        $SavingInfo->setGoldCount();
-        $SavingInfo->setLoadingTime();
-        $SavingInfo->setSavingInst();
-        $SavingInfo->setSavingTime();
-        $SavingInfo->setSavingType();
-        $SavingInfo->setTimeLimit();
-        $str = $SavingInfo->serializeToString();
-        return $str;
+        $Id = (string)$data['_id'];
+        $GoldType = $data['GoldType'];
+        $Earnings = $data['Earnings'];
+        $GoldCount = $data['GoldCount'];
+        $LoadingTime = $data['LoadingTime'];
+        $SavingInst = $data['SavingInst'];
+        $SavingTime = $data['SavingTime'];
+        $SavingType = $data['SavingType'];
+        $TimeLimit = $data['TimeLimit'];
+        $SavingInfo->setId($Id);
+        $SavingInfo->setGoldType($GoldType);
+        $SavingInfo->setEarnings($Earnings);
+        $SavingInfo->setGoldCount($GoldCount);
+        $SavingInfo->setLoadingTime($LoadingTime);
+        $SavingInfo->setSavingInst($SavingInst);
+        $SavingInfo->setSavingTime($SavingTime);
+        $SavingInfo->setSavingType($SavingType);
+        $SavingInfo->setTimeLimit($TimeLimit);
+        return $SavingInfo;
     }
 }
