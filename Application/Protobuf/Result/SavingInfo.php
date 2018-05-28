@@ -23,7 +23,7 @@ class SavingInfo
         $Earnings = $data['Earnings'];
         $GoldCount = $data['GoldCount'];
         $LoadingTime = $data['LoadingTime'];
-        $SavingInst = $data['SavingInst'];
+        $SavingInst = (double)$data['SavingInst'];
         $SavingTime = $data['SavingTime'];
         $SavingType = $data['SavingType'];
         $TimeLimit = $data['TimeLimit'];
