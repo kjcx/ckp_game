@@ -13,7 +13,7 @@ use think\Db;
 
 class Drop extends Model
 {
-    private $table = 'Drop';
+    private $table = 'ckzc.Drop';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

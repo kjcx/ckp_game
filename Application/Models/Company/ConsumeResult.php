@@ -19,7 +19,7 @@ use think\Db;
  */
 class ConsumeResult extends Model
 {
-    public $table  = 'ConsumeResult';
+    public $table  = 'ckzc.ConsumeResult';
 
     /**
      * 获取收益

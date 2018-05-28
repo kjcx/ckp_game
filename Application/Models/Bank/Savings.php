@@ -19,7 +19,7 @@ use think\Db;
 
 class Savings extends Model
 {
-    private $table = '_GameConfig';
+    private $table = 'ckzc._GameConfig';
     /**
      * 存款功能
      * @param  $uid  用户id

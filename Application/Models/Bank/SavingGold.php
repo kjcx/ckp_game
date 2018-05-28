@@ -16,7 +16,7 @@ use think\Db;
  */
 class SavingGold
 {
-    public $table = 'SavingGold';
+    public $table = 'ckzc.SavingGold';
     public function create($data)
     {
         $data['SavingTime'] = time();

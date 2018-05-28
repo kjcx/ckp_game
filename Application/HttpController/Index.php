@@ -37,8 +37,9 @@ class Index extends Controller
      */
     public function index()
     {
-        $LandIfno = new MyLandInfo();
-        $LandIfno->getDay();
+        $aa = new Shop();
+        $data = $aa->getAllShop(37);
+        var_dump($data);
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

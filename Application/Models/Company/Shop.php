@@ -24,7 +24,7 @@ use think\Db;
 class Shop extends Model
 {
     use MongoTrait;
-    public $table = 'Shop';
+    public $table = 'ckzc.Shop';
     public $mongoTable = 'ckzc.Shop';
 
     public function __construct()

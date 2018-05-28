@@ -14,7 +14,7 @@ use think\Db;
 
 class MyLandInfo extends Model
 {
-    public $table = 'LandInfo';
+    public $table = 'ckzc.LandInfo';
 
     /**
      * 创建记录

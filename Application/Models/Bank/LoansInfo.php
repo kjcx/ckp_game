@@ -18,7 +18,7 @@ use think\Db;
  */
 class LoansInfo
 {
-    public $table = 'LoansInfo';
+    public $table = 'ckzc.LoansInfo';
     public function create($data)
     {
 //        贷款状态	LoansStatus

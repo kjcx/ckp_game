@@ -2158,3 +2158,56 @@ message MyLandInfoResult{
 	repeated AuctionLandInfo MyLandInfoList=1;
 }
 
+message ChatMsgBaseRev{
+	int32 MsgId=2;
+    bytes Data=4;
+}
+message ChatMsgBaseSend{
+	int32 MsgId=1;
+    bytes Data=3;
+	string ErrorMsg=4;
+}
+message ChatConnectingReq{
+    string Token=1;
+}
+message ChatConnectingResult{
+	int32 Status=1;
+}
+message ChatSendMsgToChannelReq{
+    string Msg=1;
+    string ChannelId=2;
+}
+message ChatSendMsgToChannelResult{
+    int32 Status=1;
+}
+message ChatMsgFromChannelResult{
+    string Msg=1;
+    string RoleId=2;
+    string ChannelId=3;
+    string Name=4;
+    int32 Time=5;
+    string Icon=6;
+}
+message ChatTCRecMsgHorseResult{
+    string Msg=1;
+}
+message ChatTCRecSystemMsgResult{
+    string Msg=1;
+    string SystemHead=2;
+    string SystemName=3;
+}
+message ChatOneToOneResult{
+    string RoleId=1;
+    string MsgId=2;
+    string Msg=3;
+    string Name=4;
+    string Head=5;
+}
+message ChatOneToOneReq{
+    string ToRoleId=1;
+    string Msg=2;
+}
+message ChatMesaageReadReq{
+    string RoleId=1;
+    string MsgId=2;
+}

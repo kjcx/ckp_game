@@ -13,7 +13,7 @@ use think\Db;
 
 class Lotto extends Model
 {
-    private $table = 'Lotto';
+    private $table = 'ckzc.Lotto';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

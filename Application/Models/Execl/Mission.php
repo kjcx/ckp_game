@@ -17,7 +17,7 @@ use think\Db;
  */
 class Mission extends Model
 {
-    private $table = 'Mission';
+    private $table = 'ckzc.Mission';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);
