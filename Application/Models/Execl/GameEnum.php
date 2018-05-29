@@ -10,7 +10,7 @@ use App\Models\Model;
 use think\Db;
 class GameEnum extends Model
 {
-    private $table = 'GameEnum';
+    private $table = 'ckzc.GameEnum';
     private $DayCountInfo = ['GoldToCoin','CoinToGold','GoldToBill'];
     public function insert($arr)
     {

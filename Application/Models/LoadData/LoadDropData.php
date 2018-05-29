@@ -13,7 +13,7 @@ use Think\Db;
  */
 class LoadDropData
 {
-    private $table = 'item';
+    private $table = 'ckzc.item';
 
     /**
      * getShopType 道具类型

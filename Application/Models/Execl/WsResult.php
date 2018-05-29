@@ -12,7 +12,7 @@ use App\Models\Model;
 use think\Db;
 class WsResult extends Model
 {
-    private $table = 'WsResult';
+    private $table = 'ckzc.WsResult';
     public function insert($arr)
     {
         //插入数据库

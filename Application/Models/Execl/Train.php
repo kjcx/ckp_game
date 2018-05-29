@@ -13,7 +13,7 @@ use think\Db;
 
 class Train extends Model
 {
-    private $table = 'Execl_Train';
+    private $table = 'ckzc.Execl_Train';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

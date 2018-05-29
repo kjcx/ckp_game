@@ -17,7 +17,7 @@ use think\Db;
  */
 class Topup extends Model
 {
-    public $table = 'Topup';
+    public $table = 'ckzc.Topup';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

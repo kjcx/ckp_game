@@ -13,7 +13,7 @@ use think\Db;
 
 class Randomname extends Model
 {
-    private $table = 'Execl_Randomname';
+    private $table = 'ckzc.Execl_Randomname';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

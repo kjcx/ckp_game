@@ -14,7 +14,7 @@ use think\Db;
 
 class Company extends Model
 {
-    public $table = 'Company';
+    public $table = 'ckzc.Company';
 
     /**创建公司
      * @param $data

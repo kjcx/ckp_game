@@ -71,6 +71,7 @@ class Account extends Controller
             }
         }else{
             $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+            $this->response()->withHeader("Access-Control-Allow-Origin", "*");
             $this->response()->withStatus(500);
             $this->response()->write(json_encode(['msg'=>'token失效']));
         }

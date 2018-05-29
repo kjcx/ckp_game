@@ -24,7 +24,7 @@ class FriendApplyResult
         $FriendApply = new FriendApply();
         //1 通过角色id获取用户id
         $Role = new Role();
-        $userinfo = $Role->getRoleById($RoleId);
+        $userinfo = $Role->getRole($RoleId);//
         $apply_id = $FriendApply->addFriendApply($uid,$userinfo['uid']);
         $FriendApplyResult->setApplyed($apply_id);//申请id
         $role = new Role();

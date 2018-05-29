@@ -17,7 +17,7 @@ class LoadRoleInfo
         $arr = $role->getRole($uid);
 //        var_dump($arr);
         $Name = $arr['nickname'];
-        $RoleId = $arr['id'];
+        $RoleId = $arr['uid'];
         $Sex = $arr['sex'];
         $Icon = $arr['icon'];
         $Exp = $arr['exp'];
@@ -29,6 +29,7 @@ class LoadRoleInfo
         $LoadRoleInfo->setIcon($Icon);
         $LoadRoleInfo->setExp($Exp);
         $LoadRoleInfo->setLevel($Level);
+        $LoadRoleInfo->setSocialStatus(20000);
         $UserAttr = new UserAttr();
         $user_attr_ids = $UserAttr->getUserAttrId($uid);
         $LoadRoleInfo->setAvatar($user_attr_ids);//装扮属性

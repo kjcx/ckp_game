@@ -11,9 +11,10 @@ use think\Db;
 
 class ShopAll extends Model
 {
+
     public function get()
     {
-        $data = Db::table('Drop')->where('Id','in',['1000','1001','1002','1003','1004','4102','4103'])->select();
+        $data = Db::table('ckzc.Drop')->where('Id','in',['1000','1001','1002','1003','1004','4102','4103'])->select();
 //        var_dump($data);
         $item = Db::table('item')->select();
         foreach ($item as $v) {

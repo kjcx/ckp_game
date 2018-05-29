@@ -19,7 +19,7 @@ use think\Db;
  */
 class MailMsg extends Model
 {
-    public $table = 'Mail';
+    public $table = 'ckzc.Mail';
 
     /**
      * 获取邮件列表

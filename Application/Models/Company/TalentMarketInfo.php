@@ -20,7 +20,7 @@ use think\Db;
  */
 class TalentMarketInfo extends Model
 {
-    public $table = 'TalentMarketInfo';
+    public $table = 'ckzc.TalentMarketInfo';
 
     /**
      * 通过用户id 获取用户刷新信息

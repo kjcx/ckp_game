@@ -13,7 +13,7 @@ use think\Db;
 
 class Staff extends Model
 {
-    private $table = 'Execl_Staff';
+    private $table = 'ckzc.Execl_Staff';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

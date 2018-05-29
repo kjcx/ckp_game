@@ -13,7 +13,7 @@ use think\Db;
 
 class Building extends Model
 {
-    private $table = 'Building';
+    private $table = 'ckzc.Building';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

@@ -29,7 +29,7 @@ class FriendInfo
                 $AddTime = $data['add_time'];
                 $ApplyTime = $data['apply_time'];
                 $Icon = $data['icon'];
-                $RoleId = $data['id'];
+                $RoleId = $data['uid'];
                 $ShopId = 1;// 打工店铺
                 $VIP = $data['vip'];
                 $WorkCompany = 'KJCX';//打工公司

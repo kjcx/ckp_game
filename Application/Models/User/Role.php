@@ -235,4 +235,15 @@ class Role extends Model
             return false;
         }
     }
+
+    /**
+     * 获取身价值
+     * @param $uid
+     * @return mixed
+     */
+    public function getShenjiazhi($uid)
+    {
+        $info = $this->getRole($uid);
+        return $info['shenjiazhi'];
+    }
 }

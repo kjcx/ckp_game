@@ -7,6 +7,7 @@
  */
 namespace App\Protobuf\Result;
 
+use App\Models\Bank\SavingGold;
 use App\Models\Company\Company;
 use App\Models\Company\Shop;
 use App\Models\Staff\LottoLog;
@@ -62,6 +63,14 @@ class JoinGameResult
         //招聘抽奖
         $TypeCountStaff = TypeCountStaffResult::encode($uid);
         $JoinGameResult->setTypeCountStaff($TypeCountStaff);
+        //银行
+        $Save = new SavingGold();
+        $data_SavingInfo = $Save->getListByUid($uid);
+        $LoadingGoldResult =[];
+        foreach ($data_SavingInfo as $item) {
+            $LoadingGoldResult[] = SavingInfo::ecode($item);
+        }
+        $JoinGameResult->setLoadingGoldResult($LoadingGoldResult);
         $str = $JoinGameResult->serializeToString();
         return $str;
     }

@@ -13,7 +13,7 @@ use think\Db;
 
 class Item extends Model
 {
-    private $table = 'item';
+    private $table = 'ckzc.item';
 
     /**
      * 根据id获取数据

@@ -13,6 +13,7 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\Item\Item;
+use App\Models\LandInfo\MyLandInfo;
 use App\Models\Staff\Staff;
 use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
@@ -36,31 +37,9 @@ class Index extends Controller
      */
     public function index()
     {
-        mt_srand();
-        echo mt_rand(0, 100).PHP_EOL;
-        $DropStaff = new DropStaff();
-        $data = $DropStaff->getLottoFreeDropLib(1);
+        $aa = new Shop();
+        $data = $aa->getAllShop(37);
         var_dump($data);
-        $arr = $DropStaff->mt_rand($data);
-        var_dump($arr);
-        $arr = $DropStaff->getDropLib($arr);
-        $arr = $DropStaff->getRadnDropLib($arr);
-        $DropStaff->getStaffInfo($arr);
-//        for ($j=0;$j<200;$j++){
-//            var_dump(yield $j);
-//            for($i = 0 ;$i<300;$i++){
-//                $arr[] = 300;
-//            }
-//            for($i = 0 ;$i<2000;$i++){
-//                $arr[] = 2000;
-//            }
-//            for($i = 0 ;$i<10000;$i++){
-//                $arr[] = 10000;
-//            }
-//        }
-//        echo array_rand($arr);
-//        echo count($arr);
-//        echo "time2:" .time();
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

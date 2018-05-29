@@ -2126,3 +2126,88 @@ message UseItemResult{
     int64 Exp=5;
     map<int32, int64> ItemCount=6;
 }
+//获取竞拍今日竞拍土地信息
+message GetAuctionLandReq{
+    string Zone=1;//地块1
+}
+//返回今日竞拍信息
+message GetAuctionLandResult{
+    repeated AuctionLandInfo AuctionLandList=1;
+}
+//竞拍请求
+message AuctionLandReq{
+    int32 Pos=1;
+}
+//竞拍返回
+message AuctionLandResult{
+    AuctionLandInfo AuctionLandInfo=1;
+}
+//竞拍土地信息
+message AuctionLandInfo{
+    int32 Pos=1;
+    map<string, string> AuctionRole=2;//角色id,角色名字
+    int32 Gold=3;
+    int32 CreateTime=4;//时间
+}
+//请求已获得土地信息
+message GetMyLandInfoReq{
+
+}
+//已获得土地信息
+message MyLandInfoResult{
+	repeated AuctionLandInfo MyLandInfoList=1;
+}
+
+message ChatMsgBaseRev{
+	int32 MsgId=2;
+    bytes Data=4;
+}
+message ChatMsgBaseSend{
+	int32 MsgId=1;
+    bytes Data=3;
+	string ErrorMsg=4;
+}
+message ChatConnectingReq{
+    string Token=1;
+}
+message ChatConnectingResult{
+	int32 Status=1;
+}
+message ChatSendMsgToChannelReq{
+    string Msg=1;
+    string ChannelId=2;
+}
+message ChatSendMsgToChannelResult{
+    int32 Status=1;
+}
+message ChatMsgFromChannelResult{
+    string Msg=1;
+    string RoleId=2;
+    string ChannelId=3;
+    string Name=4;
+    int32 Time=5;
+    string Icon=6;
+}
+message ChatTCRecMsgHorseResult{
+    string Msg=1;
+}
+message ChatTCRecSystemMsgResult{
+    string Msg=1;
+    string SystemHead=2;
+    string SystemName=3;
+}
+message ChatOneToOneResult{
+    string RoleId=1;
+    string MsgId=2;
+    string Msg=3;
+    string Name=4;
+    string Head=5;
+}
+message ChatOneToOneReq{
+    string ToRoleId=1;
+    string Msg=2;
+}
+message ChatMesaageReadReq{
+    string RoleId=1;
+    string MsgId=2;
+}

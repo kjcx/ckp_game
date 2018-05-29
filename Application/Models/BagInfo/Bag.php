@@ -210,6 +210,7 @@ class Bag extends Model
             $UserEvent = new UserEvent($this->uid);
             $UserEvent->GoldChangedResultEvent();
         }
+
         $result = $this->collection->findOneAndUpdate(['uid' => $this->uid],[
             '$set' => [
                 'data.' . $itemId => $data

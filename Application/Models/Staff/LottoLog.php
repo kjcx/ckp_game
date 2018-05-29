@@ -15,7 +15,7 @@ use think\Db;
 
 class LottoLog extends Model
 {
-    public $table = 'LottoLog';
+    public $table = 'ckzc.LottoLog';
 
     /**
      * 创建记录

@@ -21,7 +21,7 @@ use think\Db;
  */
 class Staff extends Model
 {
-    public $table = 'Staff';
+    public $table = 'ckzc.Staff';
 
     /**
      * 创建员工

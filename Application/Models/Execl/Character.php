@@ -19,7 +19,7 @@ use think\Db;
  */
 class Character extends Model
 {
-    private $table = 'Character';
+    private $table = 'ckzc.Character';
     public function insert($arr)
     {
        Db::table($this->table)->insert($arr);
