@@ -8,6 +8,7 @@
 
 namespace App\Protobuf\Result;
 
+
 class RequestManorResult
 {
 
@@ -18,14 +19,21 @@ class RequestManorResult
 
     /**
      * 编码
-     * $data['uid','time','name']
+     * $data['uid','time','name','manor' => []]
+     *
      */
     public static function encode($data)
     {
         $obj = new \AutoMsg\RequestManorResult();
         $obj->setRoleId($data['uid']);
         $obj->setTime($data['time']);
-        $obj->setLoadManor();
+        $manors = [];
+        if (!empty($data['manor'])) {
+            foreach ($data['manor'] as $value) {
+                $manors[] = \App\Protobuf\Result\LoadManorData::encode($value);
+            }
+        }
+        $obj->setLoadManor($manors);
         $obj->setUserName($data['name']);
         return $obj->serializeToString();
     }

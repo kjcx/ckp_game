@@ -9,6 +9,7 @@ namespace App\Models\Manor;
 
 use App\Models\BagInfo\Bag;
 use App\Models\Model;
+use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use App\Traits\UserTrait;
 
@@ -16,7 +17,10 @@ class Land extends Model
 {
     use MongoTrait,UserTrait;
 
-    public $mongoTable = 'ckzc_data.land';
+    const SoilNotExploit = 0;//庄园 土地未开发
+    const SoilAlreadyExploit = 1;//土地已开发
+
+    public $mongoTable = 'ckzc_data.manor';
 
     public function __construct($uid)
     {
@@ -26,26 +30,52 @@ class Land extends Model
     }
 
     /**
-     * 初始化地块
+     * 初始化地块 也是初始化庄园信息
      */
     public function initLand()
     {
         $uid = $this->getUid();
         $landInfo = $this->collection->findOne(['uid' => $uid]);
+        $role = new Role();
+        $roleInfo = $role->getRole($uid);
         if ($landInfo) {
             //当前有地块信息
             return false;
         }
         $landData = [];
-        for ($i = 0; $i < 4; $i++) {
-            $landItem = $this->createLandItem();
-            $landItem['locking'] = false;
-            $landData[] = $landItem;
+        $landData['uid'] = $uid;
+        $landData['time'] = time();
+        $landData['name'] = $roleInfo['nickname'];
+        $landData['manor'] = [];
+        for ($i = 1; $i < 17; $i++) {
+            $landItem = $this->createLandItem($i);
+            $landItem['SoilState'] = $i < 5 ? self::SoilAlreadyExploit : self::SoilNotExploit;
+            $landData['manor'][] = $landItem;
         }
-        $this->collection->insertOne($landData);
-
+        $result = $this->collection->insertOne($landData);
+        if ($result->isAcknowledged()) {
+            return true;
+        }
+        return false;
     }
 
+    /**+
+     * 获取土地 可以获取当前用户的土地  也可以获取任意用户的土地
+     * @param bool $uid
+     * @return array|null|object
+     */
+    public function getLand($uid = false)
+    {
+        $uid = $uid == false ? $this->getUid() : $uid;
+        $role = new Role();
+        $roleInfo = $role->getRole($uid);
+        $landInfo = $this->collection->findOne(['uid' => $uid]);
+        foreach ($landInfo['manor'] as $key => $value) {
+            $landInfo['manor'][$key]['UserName'] = $roleInfo['nickname'];
+        }
+        $landInfo['name'] = $roleInfo['nickname'];
+        return $landInfo;
+    }
     /**
      * 解锁土地
      */
@@ -65,26 +95,22 @@ class Land extends Model
     }
 
     /**
-     * 获取地块信息
+     *初始化一个地块
      */
-    private function getLand()
+    private function createLandItem($id)
     {
-        $landData = $this->collection->findOne(['uid' => $this->getUid()]);
-        return $landData;
-    }
-    /**
-     *创建一个地块的数据
-     */
-    private function createLandItem()
-    {
+
         $landItem = [
-            'locking' => true,//锁定  默认锁定
-            'level' => 1,//地块等级
-            'create_at' => time(),
-            'update_at' => '',
-            'crop' => [],
-            'icon' => '',
-            'log' => [] //土地操作日志
+                'Id' => $id,
+                'PlantDate' => 0,
+                'SemenId' => 0,//查表
+                'StatusTime' => 0,
+                'Status' => 0,
+                'PhasesStatus' => 0,
+                'StealTime' => 0,
+                'SoilState' => 0,
+//                'UserName' => '傅乐心',
+                'SoilLevel' => 1
         ];
         return $landItem;
     }

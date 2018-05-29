@@ -29,12 +29,13 @@ class WebSock implements ParserInterface
         $command = new CommandBean();
         $baseMessage = new MsgBaseRev();
         $baseMessage->mergeFromString($raw);
-        
+
         $command->setControllerClass(Web::class);
         $data = $baseMessage->getData();
         $msgId = $baseMessage->getMsgId();
         $command->setAction('msgid_' . $msgId);
         $command->setArg('data',$data);
+
         return $command;
     }
 

@@ -12,6 +12,7 @@ use App\Event\ChangeAvatarSubscriber;
 use App\Event\ChangeItemEvent;
 use App\Event\ItemEvent;
 use App\Event\ChangeItemSubscriber;
+use App\Event\RoleCreateEvent;
 use App\Event\SellItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Company;
@@ -25,8 +26,10 @@ use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
+use App\Models\Manor\Land;
 use App\Models\Staff\LottoLog;
 use App\Models\Staff\Staff;
+use App\Models\Store\Seed;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
 use App\Models\User\FriendApply;
@@ -56,7 +59,9 @@ use App\Protobuf\Req\NoBodyShopReq;
 use App\Protobuf\Req\RaffleFruitsReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefStaffReq;
+use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\SavingGoldReq;
+use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
@@ -84,6 +89,7 @@ use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\LoadStaffResult;
+use App\Protobuf\Result\ManorVisitInfoResult;
 use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
@@ -91,8 +97,10 @@ use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefStaffResult;
+use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
+use App\Protobuf\Result\SeedShopPingResult;
 use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
@@ -164,9 +172,12 @@ class Web extends WebSocketController
     public function send($MsgId,$fd,$data,$Result=0,$ErrorMsg='')
     {
         if($Result){
-            var_dump($Result);
             $WsResult = new WsResult();
-            $data_ws = $WsResult->getOne($Result);
+            if (empty($ErrorMsg)) {
+                $data_ws = $WsResult->getOne($Result);
+            } else {
+                $data_ws = $WsResult->getErrorValue($Result);
+            }
             $value = (int)$data_ws['value'];
         }else{
             $value = 0;
@@ -181,15 +192,13 @@ class Web extends WebSocketController
     public function msgid_1004()
     {
 
-        var_dump('msgid_1004');
         $Data = $this->data;
         $token = \App\Protobuf\Req\ConnectingReq::decode($Data);
+
         //redis查询token是否存在
         $Account = new Account();
-        var_dump($token);
         $uid = $Account->getToken($token);
 
-        var_dump($uid);
         if($uid){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $dataCenter->saveClient($this->fd,$uid);
@@ -227,6 +236,7 @@ class Web extends WebSocketController
                 $data_role['RoleId'] = $rs;
                 $data = \App\Protobuf\Result\CreateRoleResult::encode($data_role);
                 $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data);
+                event(RoleCreateEvent::class,$this->uid);
                 ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
             }else{
                 //角色创建失败
@@ -398,13 +408,7 @@ class Web extends WebSocketController
         }
     }
 
-    /**
-     * 购买种子商店请求
-     */
-    public function msgid_1076()
-    {
 
-    }
 
     /**
      * 更改头像
@@ -1073,13 +1077,48 @@ class Web extends WebSocketController
     }
 
     /**
+     *
      * 请求庄园
      */
     public function msgid_1053()
     {
-        
+        $data = RequestManorReq::decode($this->data);
+        $land = new Land($this->uid);
+        $landInfo = $land->getLand();
+        $string = RequestManorResult::encode($landInfo);
+        $this->send(1082,$this->fd,$string);
     }
 
+    /**
+     * 拜访记录
+     * TODO::init
+     * ManorVisitInfoResult
+     */
+    public function msgid_1148()
+    {
+        $data = [];
+        $string = ManorVisitInfoResult::encode();
+        $this->send(1201,$this->fd,$string);
+
+    }
+
+    /**
+     * 购买种子商店
+     */
+    public function msgid_1076()
+    {
+        $data = SeedShopPingReq::decode($this->data);
+        var_dump($data);
+        $seed = new Seed($this->uid);
+        $seedRes = $seed->buy($data['ItemId'],$data['ItemCount']);
+        var_dump($seedRes);
+        if (!isset($seedRes['error'])) {
+            $string = SeedShopPingResult::encode($seedRes);
+            $this->send(1108,$this->fd,$string);
+        } else {
+            $this->send(1108,$this->fd,'',$seedRes['msg'],12);
+        }
+    }
     /**
      * 解雇经理
      * return TalentFireResult 1178
@@ -1224,4 +1263,5 @@ class Web extends WebSocketController
         $str = NoBodyShopResult::encode();
         $this->send(1211,$this->fd,$str);
     }
+
 }

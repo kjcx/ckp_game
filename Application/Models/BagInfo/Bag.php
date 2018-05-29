@@ -187,7 +187,7 @@ class Bag extends Model
 
         //TODO:: 错误码
         if (!$this->checkBagSpace()) {
-            return '背包格子已满';
+            return 'NotEnoughBagSpace';
         }
         $itemData = $this->getBagByItemId($itemId);
 

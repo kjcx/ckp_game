@@ -39,6 +39,14 @@ class Item extends Model
     }
 
     /**
+     * @param $id
+     */
+    public function getItemAttrById($id)
+    {
+        $item = $this->getItemById($id);
+
+    }
+    /**
      * 获取道具使用效果
      * @param $id
      * @param $count

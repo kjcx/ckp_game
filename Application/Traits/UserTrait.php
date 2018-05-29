@@ -8,10 +8,14 @@
 
 namespace App\Traits;
 
+use App\Models\BagInfo\Bag;
+use App\Models\User\Role;
+
 trait UserTrait
 {
     public $uid;
-
+    public $roleInfo;
+    private $bagObj;
     /**
      * @return mixed
      */
@@ -28,4 +32,16 @@ trait UserTrait
         $this->uid = $uid;
     }
 
+    public function setRoleInfo()
+    {
+        $this->roleInfo = (new Role())->getRole($this->getUid());
+    }
+
+    public function getBag()
+    {
+        if (!is_object($this->bagObj)) {
+            $this->bagObj = new Bag($this->getUid());
+        }
+        return $this->bagObj;
+    }
 }

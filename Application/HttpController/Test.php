@@ -9,8 +9,12 @@
 
 namespace App\HttpController;
 
+use App\Event\RoleCreateEvent;
 use App\Models\BagInfo\Bag;
+use App\Models\Execl\WsResult;
+use App\Models\Item\Item;
 use App\Models\Store\DropStore;
+use App\Models\Store\Seed;
 use App\Models\Store\ShopConfig;
 use App\Protobuf\Result\ShopAllResult;
 use App\Utility\Redis;
@@ -57,6 +61,13 @@ class Test extends Controller
         "F",
     ];
 
+    public function aab()
+    {
+        event(RoleCreateEvent::class,36);
+//        $a = new Item();
+//        $b = $a->getOne('人际交往');
+//        $this->response()->write(json_encode($b));
+    }
     public function index()
     {
 //        $test = new ShopConfig(1);

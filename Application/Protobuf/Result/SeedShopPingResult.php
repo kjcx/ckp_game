@@ -13,13 +13,12 @@ namespace App\Protobuf\Result;
  */
 class SeedShopPingResult
 {
-    public function decode($data)
+    public static function encode($data)
     {
         $SeedShopPingResult = new \AutoMsg\SeedShopPingResult();
-        $SeedShopPingResult->mergeFromString($data);
-        $SeedShopPingResult->setItemId();
-        $SeedShopPingResult->setItemCount();
-        $SeedShopPingResult->setPrice();
+        $SeedShopPingResult->setItemId($data['itemId']);
+        $SeedShopPingResult->setItemCount($data['itemCount']);
+        $SeedShopPingResult->setPrice($data['price']);
         $str = $SeedShopPingResult->serializeToString();
         return $str;
     }
