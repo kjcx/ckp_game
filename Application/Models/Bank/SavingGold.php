@@ -22,7 +22,7 @@ class SavingGold
         $data['SavingTime'] = time();
         $data['Earnings'] = 0;//收益
         $data['SavingType'] = 2;//定期
-        $data['LoadingTime'] = $data['TimeLimit'] * 86400 + $data['SavingTime'];
+        $data['LoadingTime'] = 0;//取款时间
         $rs = Db::table($this->table)->insert($data);
         if($rs){
             return  Db::getLastInsID();
