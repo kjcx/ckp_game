@@ -16,7 +16,7 @@ class LoadRefStaff
 {
     public static function encode($data)
     {
-        var_dump("======加载用户的数据信息======");
+//        var_dump("======加载用户的数据信息======");
         $LoadRefStaff = new \AutoMsg\LoadRefStaff();
         if($data){
             $ShopId = $data['ShopId'];

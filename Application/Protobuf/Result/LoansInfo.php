@@ -17,7 +17,6 @@ class LoansInfo
 {
     public static function encode($data)
     {
-        var_dump($data);
         $LoansInfo = new \AutoMsg\LoansInfo();
         $Id = (string)$data['_id'];
         $Day = $data['Day'];

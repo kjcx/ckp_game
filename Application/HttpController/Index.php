@@ -39,7 +39,6 @@ class Index extends Controller
     {
         $aa = new Shop();
         $data = $aa->getAllShop(37);
-        var_dump($data);
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){
@@ -79,7 +78,6 @@ class Index extends Controller
         for($j=0;$j<5;$j++){
             $new_str .=  $str[rand(0,35)];
         }
-        var_dump(strtoupper($new_str));
         return strtoupper($new_str);
     }
     public function index2()
@@ -103,7 +101,6 @@ class Index extends Controller
     public function LoadRoleBagInfo()
     {
         $arr = LoadBagInfo::encode(2);
-        var_dump($arr);
     }
     public function   test($a,$b)
     {

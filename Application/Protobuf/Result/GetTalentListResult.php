@@ -39,7 +39,7 @@ class GetTalentListResult
             $RefreshTime =  time();
             $IsFree = true;
             $TalentMarketInfo = new \App\Models\Company\TalentMarketInfo();
-            var_dump("更新上一次刷新时间");
+//            var_dump("更新上一次刷新时间");
             $update_LastTime = $TalentMarketInfo->setLastTime($uid);
         }else{
             $RefreshTime = $data_TalentMarketInfo['LastTime'];

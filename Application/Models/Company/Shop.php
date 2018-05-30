@@ -66,7 +66,7 @@ class Shop extends Model
         //员工上线人数
         $BuildingLevel = new BuildingLevel();
         $data_BuildingLevel = $BuildingLevel->getInfoByLevel(1);
-        var_dump($data_BuildingLevel);
+//        var_dump($data_BuildingLevel);
         $dataCompany['EmployeeLimit'] = $data_BuildingLevel['ClerkNums'];//员工上线
         $dataCompany['GoldStock'] = $data_BuildingLevel['GoldStock'];//金币库存上线
         $dataCompany['ItemStock'] = $data_BuildingLevel['ItemStock'];//道具库存上线
@@ -122,7 +122,7 @@ class Shop extends Model
      */
     public function getShopTypeMoney($ShopType)
     {
-        var_dump("获取店铺类型对应的价格" . $ShopType);
+//        var_dump("获取店铺类型对应的价格" . $ShopType);
         $Building = new Building();
         $data = $Building->getBuildingCost($ShopType);
         if($data){
@@ -144,9 +144,9 @@ class Shop extends Model
         $res = $this->getShopTypeMoney($ShopType);
         $Bag = new Bag($uid);
         if($res){
-            var_dump($res['Type'] . "=>" .$res['Count']);
+//            var_dump($res['Type'] . "=>" .$res['Count']);
             $count = $Bag->getCountByItemId($res['Type']);
-            var_dump("定期用户余额" .$count );
+//            var_dump("定期用户余额" .$count );
             if($count >= $res['Count']){
                 //允许创建
                 return true;
@@ -167,7 +167,7 @@ class Shop extends Model
     {
         $Building = new Building();
         $level = $Building->getNeedLv($ShopType);
-        var_dump("level:" . $level);
+//        var_dump("level:" . $level);
         if(!$level){
             return false;
         }
@@ -292,7 +292,7 @@ class Shop extends Model
     {
         $shenjiazhi = 1000;
         $res= 10000 * (( 1 + sqrt($shenjiazhi) + $shenjiazhi)/8000);
-        var_dump("获取雇佣经理客流" . $res);
+//        var_dump("获取雇佣经理客流" . $res);
         if(!$res){
             $res = 1;
         }
@@ -338,7 +338,7 @@ class Shop extends Model
         if(!$res || $res <1){
             $res = 1;
         }
-        var_dump("计算雇佣消耗". $res);
+//        var_dump("计算雇佣消耗". $res);
         return $res;
     }
 

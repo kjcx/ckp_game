@@ -26,8 +26,6 @@ class TalentHireResult
         $Role = new Role();
         $data_role = $Role->getRole($data['RoleId']);
         $data_role['ShopId'] = $ShopId;
-        var_dump("data_roledata_roledata_role");
-        var_dump($data_role);
         $Info = TalentInfo::encode($data_role);
 
         $TalentHireResult = new \AutoMsg\TalentHireResult();

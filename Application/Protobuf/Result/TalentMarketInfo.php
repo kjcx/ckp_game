@@ -20,8 +20,6 @@ class TalentMarketInfo
         $TalentMarketInfo = new \AutoMsg\TalentMarketInfo();
         $Info = new \App\Models\Company\TalentMarketInfo();
         $data_TalentMarketInfo = $Info->getInfoByUid($uid);
-        var_dump("TalentMarketInfo" . $uid);
-        var_dump($data_TalentMarketInfo);
         if($data_TalentMarketInfo){
             $DigCount = 0;//被挖次数
             $RefreshCount = $data_TalentMarketInfo['Num'];

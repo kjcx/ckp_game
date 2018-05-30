@@ -104,7 +104,7 @@ class Staff extends Model
             if($data_Shop['EmployeeLimit'] >= ($count + $new_count)){
                 $rs =  Db::table($this->table)->where('Uid',$Uid)->where('_id','in',$NpcCardIds)->update(['ShopId'=>$ShopId]);
             }else{
-                var_dump("员工数量超出");
+//                var_dump("员工数量超出");
                 return false;
             }
 

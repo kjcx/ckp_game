@@ -22,7 +22,6 @@ class LoadStaffResult
         //通过uid查询用户店铺的员工
         $Staff = new Staff();
         $data = $Staff->getAllByUid($uid);
-        var_dump("返回员工");
         if($data){
             $LoadRefStaffList = [];
             foreach ($data as $datum) {

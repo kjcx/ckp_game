@@ -323,7 +323,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $Lotto = new Lotto();
@@ -358,7 +358,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $GameConfig = new GameConfig();
@@ -392,7 +392,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $Staff = new Staff();
@@ -429,7 +429,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $Train = new Train();

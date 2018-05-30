@@ -21,8 +21,8 @@ class JoinGameResult
         $uid = $arr['uid'];
         $JoinGameResult = new \AutoMsg\JoinGameResult();
         //设置角色信息
-        var_dump("设置角色信息");
-        var_dump($uid);
+//        var_dump("设置角色信息");
+//        var_dump($uid);
         $str_role = LoadRoleInfo::encode($uid);
         $JoinGameResult->setLoadRoleInfo($str_role);
         //设置服务器时间

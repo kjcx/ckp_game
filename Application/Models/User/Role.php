@@ -56,7 +56,6 @@ class Role extends Model
             'icon'=>$icon,//默认头像
             'create_time'=>time()
         ];
-        var_dump("========新创建角色信息=====");
         $Avatars = explode(',',$Avatar);
         $UserAttr = new UserAttr();
         $UserAttr->setUserAttr($uid,$Avatars);

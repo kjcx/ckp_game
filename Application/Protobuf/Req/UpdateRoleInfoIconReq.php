@@ -18,7 +18,7 @@ class UpdateRoleInfoIconReq
         $UpdateRoleInfoIconReq = new \AutoMsg\UpdateRoleInfoIconReq();
         $UpdateRoleInfoIconReq->mergeFromString($data);
         $RoleIcon = $UpdateRoleInfoIconReq->getRoleIcon();
-        var_dump($RoleIcon);
+//        var_dump($RoleIcon);
         return ['RoleIcon'=>$RoleIcon];
     }
 }

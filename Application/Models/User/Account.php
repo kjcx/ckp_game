@@ -102,7 +102,6 @@ class Account extends Model
     {
         //1 支付密码,2余额，
         $pay_app = Config::getInstance()->getConf('APP.pay_app');
-        var_dump($pay_app);
         $key = $this->getAppTokenByUid($uid);
         $url = $pay_app ;
         $client = new Client();
@@ -121,7 +120,6 @@ class Account extends Model
         $Pay->create($postdata);
         $str = $res->getBody()->getContents();
         $arr = json_decode($str,1);
-        var_dump($arr);
         if($arr['code'] == 200){
             //充值成功更改充值订单状态
             $UpdateTime = date('Y-m-d H:i:s',time());
