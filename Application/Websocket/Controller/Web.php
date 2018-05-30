@@ -192,7 +192,6 @@ class Web extends WebSocketController
     public function msgid_1004()
     {
 
-        var_dump('msgid_1004');
         $Data = $this->data;
         $token = \App\Protobuf\Req\ConnectingReq::decode($Data);
         //redis查询token是否存在
@@ -407,14 +406,6 @@ class Web extends WebSocketController
 //            $res = Db::table('WsResult')->where(['msg'=>''])->find();
             $this->send(1203,$this->fd,0,'没有足够的金钱');
         }
-    }
-
-    /**
-     * 购买种子商店请求
-     */
-    public function msgid_1076()
-    {
-
     }
 
     /**

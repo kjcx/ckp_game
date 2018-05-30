@@ -50,14 +50,18 @@ class MyLandInfo extends Model
      */
     public function getDay()
     {
-        $day_time = $this->redis->get('LandauctionDay');
+        $num = $this->redis->get('LandauctionDay');
+        $day_time = $this->redis->ttl('LandauctionDay');
         if(time()-$day_time > 86400){
             //第二天
-            $this->redis->set('LandauctionDay',1,time());
+            $num = $num + 1;
+            $this->redis->set('LandauctionDay',$num,time());
         }else{
             $this->redis->sAdd('LandauctionDay',1,time());
+            //生产20*20土地
+
         }
-        return $day_time;
+        return $num;
     }
 
     /**
@@ -66,7 +70,7 @@ class MyLandInfo extends Model
      */
     public function getLandInfoByDay()
     {
-        $day = $this->getDay();
+        $num = $this->getDay();
         $data = [];
 //        for ($i=0;$i<20;$i++){
 //            $data[] = ['Pos'=>($day * 1000 + $i),'Gold'=>300,'AuctionRole'=>[],'CreateTime'=>0];
@@ -105,4 +109,6 @@ class MyLandInfo extends Model
         $data = Db::table($this->table)->where('Pos',$Pos)->find();
         return $data;
     }
+
+
 }

@@ -12,6 +12,7 @@ use App\Event\ChangeItemSubscriber;
 use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
+use App\Models\Execl\LandInfo;
 use App\Models\Item\Item;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Staff\Staff;
@@ -37,39 +38,11 @@ class Index extends Controller
      */
     public function index()
     {
-        $aa = new Shop();
-        $data = $aa->getAllShop(37);
-        var_dump($data);
-        return;
-        $client = new Client();
-        for ($i=0;$i<5;$i++){
-//            $data_ip = $this->index2();
-//            foreach ($data_ip as $item) {
-//                $ip = trim($item);
-                $new_str = $this->rand_str();
-                $url = 'http://redbull.hxrdcode.com/template/verify/verify.html?codeString='. $new_str . '&flag=1';
-//                $content = $client->request('get', $url,['proxy'=>[
-//                    'http'=>'http://127.0.0.1',
-//////                    'https'=>'http://221.229.166.87:10128',
-//                ]] );
-                $content = $client->request('get', $url);
-                usleep(1000);
-                $res_str = $content->getBody()->getContents();
-//                var_dump($res_str);
-                $len = stripos($res_str,'<span class="dc">');
-                $code = substr($res_str,$len +17,12);
-                if($code!='错误数据'){
-                    file_put_contents('log.txt',$new_str."\r\n",FILE_APPEND);
-                }else{
-                    file_put_contents('log1.txt',$code.'=>'.$new_str."\r\n",FILE_APPEND);
-                }
-//            }
-
-        }
-
+      $this->response()->write(123);
     }
     public function rand_str()
     {
+
         $str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $str1 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $new_str =  substr(str_shuffle($str1),0,1);
