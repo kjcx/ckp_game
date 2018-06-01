@@ -90,7 +90,9 @@ Class EasySwooleEvent implements EventInterface {
         $register->add($register::onClose, function ($ser,$fd) {//离线删除连接
             RedisEventHelper::remove($fd);
         });
-
+        $register->add($register::onConnect, function ($ser,$fd) {//离线删除连接
+            var_dump('fd'.'-'.$fd);
+        });
 
 //        RpcServer::getInstance()->addService('A',9505)
 //            ->addService('B',9506,'password123')

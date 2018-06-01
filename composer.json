@@ -1,6 +1,6 @@
 {
     "require": {
-        "easyswoole/easyswoole": "2.0.2",
+        "easyswoole/easyswoole": "^2.0.2",
         "guzzlehttp/guzzle": "^6.3",
         "joshcam/mysqli-database-class": "dev-master",
         "google/protobuf": "^3.5",

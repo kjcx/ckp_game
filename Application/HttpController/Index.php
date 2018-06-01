@@ -12,6 +12,7 @@ use App\Event\ChangeItemSubscriber;
 use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
+use App\Models\Execl\LandInfo;
 use App\Models\Item\Item;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Staff\Staff;
@@ -37,8 +38,10 @@ class Index extends Controller
      */
     public function index()
     {
-        $aa = new Shop();
-        $data = $aa->getAllShop(37);
+
+        $day = strtotime("+1 day");
+        var_dump(date('Ymdhis',$day));
+
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){
@@ -69,6 +72,7 @@ class Index extends Controller
     }
     public function rand_str()
     {
+
         $str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $str1 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $new_str =  substr(str_shuffle($str1),0,1);

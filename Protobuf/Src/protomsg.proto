@@ -600,6 +600,7 @@ message LoadFruitsData{
     int32 ItemId=1;
     int32 FruitsId=2;
     int32 Count=3;
+    bool Status=4;
 }
 message BuyFurnitureReq{
     int32 Id=1;

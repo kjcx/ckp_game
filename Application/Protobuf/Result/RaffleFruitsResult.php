@@ -9,7 +9,7 @@
 namespace App\Protobuf\Result;
 
 /**
- * 招聘抽奖返回
+ * 水果机中奖返回
  * Class RaffleFruitsResult 1035
  * @package App\Protobuf\Result
  */
@@ -18,7 +18,7 @@ class RaffleFruitsResult
     public static function encode($ItemId)
     {
         $RaffleFruitsResult = new \AutoMsg\RaffleFruitsResult();
-        $RaffleFruitsResult->setItemId($ItemId);
+        $RaffleFruitsResult->setItemId([$ItemId]);
         $str = $RaffleFruitsResult->serializeToString();
         return $str;
     }

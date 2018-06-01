@@ -7,6 +7,7 @@
  */
 
 namespace App\Protobuf\Result;
+use App\Models\Execl\LandInfo;
 use App\Models\LandInfo\MyLandInfo;
 
 /**
@@ -20,8 +21,9 @@ class GetAuctionLandResult
     {
         $AuctionLandList = [];
         $GetAuctionLandResult = new \AutoMsg\GetAuctionLandResult();
-        $LandInfoDay = new MyLandInfo();
-        $data = $LandInfoDay->getLandInfoByDay();
+        $LandInfoDay = new LandInfo();
+        $data = $LandInfoDay->getTodayLandInfo();
+        var_dump($data);
         $AuctionLandList = [];
         if($data){
             foreach($data as $k =>$v){

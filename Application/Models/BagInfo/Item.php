@@ -17,7 +17,7 @@ use think\Db;
  */
 class Item extends Model
 {
-    private $table = 'ckzc.item';
+    private $table = 'ckzc.Execl_Item';
 
     /**
      * 根据id获取道具信息

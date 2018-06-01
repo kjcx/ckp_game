@@ -25,6 +25,10 @@ class LoadFruitsData extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>int32 Count = 3;</code>
      */
     private $Count = 0;
+    /**
+     * Generated from protobuf field <code>bool Status = 4;</code>
+     */
+    private $Status = false;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -93,6 +97,28 @@ class LoadFruitsData extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt32($var);
         $this->Count = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>bool Status = 4;</code>
+     * @return bool
+     */
+    public function getStatus()
+    {
+        return $this->Status;
+    }
+
+    /**
+     * Generated from protobuf field <code>bool Status = 4;</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setStatus($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->Status = $var;
 
         return $this;
     }

@@ -23,6 +23,7 @@ use App\Models\Company\Shop as CompanyShop;
 use App\Models\Company\TalentMarketInfo;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\GameConfig;
+use App\Models\Execl\LandInfo;
 use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
@@ -474,7 +475,6 @@ class Web extends WebSocketController
             $this->send(1203,$this->fd,0,'没有足够的金钱');
         }
     }
-
 
 
     /**
@@ -1408,6 +1408,7 @@ class Web extends WebSocketController
      */
     public function msgid_2005()
     {
+        var_dump("msgid2005");
         $str = GetAuctionLandResult::encode();
         $this->send(2006,$this->fd,$str);
     }
@@ -1422,11 +1423,15 @@ class Web extends WebSocketController
         $data_GetAuctionLand = AuctionLandReq::decode($data);
         var_dump($data_GetAuctionLand);
         //处理竞拍请求
+        //0.查询已经竞拍状态
+
         //1验证金币是否足够
+        $LandInfo = new LandInfo();
+        $config = $LandInfo->getBiddingPrice();
         $Bag = new Bag($this->uid);
-        $count = $Bag->getCountByItemId(6);
-        if($count>=600){
-            $LandInfo = new MyLandInfo();
+        $count = $Bag->getCountByItemId($config['Type']);//土地对应类型的余额
+        $new_count = $config['Count'];
+        if($count >= $new_count){
             $create_data['Uid'] = $this->uid;
             $Role = new Role();
             $data_role = $Role->getRole($this->uid);

@@ -24,7 +24,7 @@ class AuctionLandInfo
         $AuctionLandInfo->setPos($Pos);
         $AuctionLandInfo->setAuctionRole($AuctionRole);
         $AuctionLandInfo->setGold($Gold);
-        $CreateTime  = $data['CreateTime'];
+        $CreateTime  = $data['Today'];
         $AuctionLandInfo->setCreateTime($CreateTime);
         return $AuctionLandInfo;
     }
