@@ -51,6 +51,7 @@ use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\CultivateEmployeeReq;
 use App\Protobuf\Req\DestoryBuildReq;
+use App\Protobuf\Req\DismantleReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\FriendAddReq;
 use App\Protobuf\Req\FriendApplyClearReq;
@@ -65,6 +66,7 @@ use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
 use App\Protobuf\Req\RefDropShopReq;
+use App\Protobuf\Req\RefFitnessReq;
 use App\Protobuf\Req\RefStaffReq;
 use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\SavingGoldReq;
@@ -87,6 +89,7 @@ use App\Protobuf\Result\CreateBuildResult;
 use App\Protobuf\Result\CreateCompanyResult;
 use App\Protobuf\Result\CultivateEmployeeResult;
 use App\Protobuf\Result\DestoryBuildResult;
+use App\Protobuf\Result\DismantleResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyClearResult;
@@ -108,6 +111,7 @@ use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\RefDropShopResult;
+use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
@@ -204,12 +208,30 @@ class Web extends WebSocketController
     }
 
     /**
-     *
+     *庄园土地收获
      */
     public function msgid_1056()
     {
+        //TODO::
         $data = HarvestPlantReq::decode($this->data);
+        $land = new Land($this->uid);
         var_dump($data);
+    }
+
+    /**
+     * 铲除地块作物
+     */
+    public function msgid_1062()
+    {
+        $data = DismantleReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->eradicate($data['landId'],$data['uid']);
+        if (isset($res['error'])){
+            $this->send(1092,$this->fd,0,$res['msg'],12);
+        } else {
+            $string = DismantleResult::encode(['landId' => $res]);
+            $this->send(1092,$this->fd,$string);
+        }
     }
     /**
      * 发送
@@ -1431,5 +1453,20 @@ class Web extends WebSocketController
     {
         $data = MyLandInfoResult::encode($this->uid);
         $this->send(2010,$this->fd,$data);
+    }
+
+    /**
+     * 刷新土地状态
+     */
+    public function msgid_1104()
+    {
+        $data = RefFitnessReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->getlandOne($data['landId'],$data['uid']);
+        if (isset($res['error'])) {
+            $this->send(1143,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1143,$this->fd,RefFitnessResult::encode($res));
+        }
     }
 }

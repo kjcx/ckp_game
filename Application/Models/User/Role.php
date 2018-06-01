@@ -245,4 +245,36 @@ class Role extends Model
         $info = $this->getRole($uid);
         return $info['shenjiazhi'];
     }
+
+    /**这些都是GM命令 高能 慎入**/
+    /**
+     *获取全部用户
+     */
+    public function getAllRole()
+    {
+        return $this->mysql->get($this->table);
+    }
+
+    /**
+     * 更新等级
+     * @param $uid
+     * @param $level
+     */
+    public function updateLevel($uid,$level)
+    {
+        return $this->mysql->where('uid',$uid)->update($this->table,['level' => $level]);
+    }
+
+    /**
+     * 更新等级
+     * @param $uid
+     * @param $exp
+     * @return bool
+     */
+    public function updateExp($uid,$exp)
+    {
+        return $this->mysql->where('uid',$uid)->update($this->table,['exp' => $exp]);
+    }
+
+    /**这些都是GM命令 高能 慎入**/
 }
