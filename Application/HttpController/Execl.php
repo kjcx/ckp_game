@@ -27,6 +27,7 @@ use App\Models\Execl\Staff;
 use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
+use App\Models\Item\Item;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
 use App\Models\Trade\Shop;
@@ -323,7 +324,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $Lotto = new Lotto();
@@ -358,7 +359,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $GameConfig = new GameConfig();
@@ -392,7 +393,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $Staff = new Staff();
@@ -429,7 +430,7 @@ class Execl extends Controller
         $sheet = $spreadsheet->getSheet(0);
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        var_dump($highestRow);
+//        var_dump($highestRow);
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
         $Train = new Train();
@@ -454,8 +455,42 @@ class Execl extends Controller
             $this->response()->write(json_encode($arr));
 
         }
-
-
     }
 
+    /**
+     * 掉落库
+     */
+    public function Execl_Item()
+    {
+        $file_temp = 'Execl/Item.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+//        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+//        var_dump($sheetData);
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $Item = new \App\Models\Execl\Item();
+        for($j=4;$j<=$highestRow;$j++) {
+            $str = '';
+            for ($k = 'A'; $k !='T'; $k++) {
+
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $this->response()->withHeader("Content-Type","text/html;charset=utf-8");
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key == 'Id') {
+                    $arr[$key] = (int)trim($str, "\\");
+                } elseif($key == 'Type'){
+                    $arr[$key] = (int)trim($str, "\\");
+                }
+                else {
+                    $arr[$key] = trim($str, "\\");
+                }
+
+            }
+            $this->response()->write(json_encode($arr));
+//            var_dump($arr);
+            $Item->insert($arr);
+        }
+    }
 }

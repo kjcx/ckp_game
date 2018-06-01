@@ -32,8 +32,6 @@ class Account extends Controller
             $Account = new \App\Models\User\Account();
             $where  = 'member_mobile = ' . $member_info['member_mobile'];
             $rs = $Account->find($where);
-            var_dump("=============查询用户==========".time());
-            var_dump($rs);
             if($rs){
                 //用户存在 返回用户信息
                 //生产token 并返回

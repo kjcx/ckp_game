@@ -13,7 +13,7 @@ namespace App\Protobuf\Req;
  */
 class SeedShopPingReq
 {
-    public function decode($data)
+    public static function decode($data)
     {
         $SeedShopPingReq = new \AutoMsg\SeedShopPingReq();
         $SeedShopPingReq->mergeFromString($data);

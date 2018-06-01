@@ -22,7 +22,6 @@ class CultivateEmployeeResult
         $CultivateEmployeeResult = new \AutoMsg\CultivateEmployeeResult();
         $Staff = new Staff();
         $data_Staff = $Staff->getInfoByIds($data);
-        var_dump($data_Staff);
         foreach ($data_Staff as $staff) {
             $StaffList[] = LoadRefStaff::encode($staff);
         }

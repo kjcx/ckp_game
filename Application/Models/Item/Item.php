@@ -39,6 +39,14 @@ class Item extends Model
     }
 
     /**
+     * @param $id
+     */
+    public function getItemAttrById($id)
+    {
+        $item = $this->getItemById($id);
+
+    }
+    /**
      * 获取道具使用效果
      * @param $id
      * @param $count
@@ -52,7 +60,7 @@ class Item extends Model
         $UseEffet =  $data['UseEffet'];
         $UseEffets = explode(';',$UseEffet);
         $arr = [];
-        var_dump($UseEffets);
+//        var_dump($UseEffets);
 
         foreach ($UseEffets as $item) {
             $items = explode(',',$item);
@@ -61,7 +69,7 @@ class Item extends Model
             ];
 
         }
-        var_dump($arr);
+//        var_dump($arr);
         return $arr;
     }
     /**
@@ -71,7 +79,7 @@ class Item extends Model
      */
     public function getSellItemsPrice(array $items)
     {
-        var_dump($items);
+//        var_dump($items);
         $sum = 0;
         foreach ($items as $item) {
             if(stripos($item['Sell'],',')){
@@ -98,7 +106,7 @@ class Item extends Model
      */
     public function getSellItemInfo(array $data)
     {
-        var_dump($data);
+//        var_dump($data);
         //1出售道具详细信息
         $data_item = $this->getItemIds([$data['ItemId']]);
         //2出售道具数量

@@ -56,3 +56,30 @@
 
 
 
+{"file":"\/code\/ckzc_server\/Protobuf\/Src\/AutoMsg\/FriendInfo.php","line":164,"function":"checkInt64","class":"Google\\Protobuf\\Internal\\GPBUtil","type":"::","args":[null]}
+{"file":"\/code\/ckzc_server\/Application\/Protobuf\/Result\/FriendInfo.php","line":65,"function":"setSocialStatus","class":"AutoMsg\\FriendInfo","object":{},"type":"->","args":[null]}
+{"file":"\/code\/ckzc_server\/Application\/Protobuf\/Result\/FriendListResult.php","line":24,"function":"encode","class":"App\\Protobuf\\Result\\FriendInfo","type":"::","args":[[{"id":null,"vip":null,"nickname":null,"icon":null,"shenjiazhi":null,"level":null,"status":1,"apply_time":1526034043},{"id":null,"vip":null,"nickname":null,"icon":null,"shenjiazhi":null,"level":null,"status":3,"apply_time":1527172068}]]}
+{"file":"\/code\/ckzc_server\/Application\/Protobuf\/Result\/JoinGameResult.php","line":48,"function":"encode","class":"App\\Protobuf\\Result\\FriendListResult","type":"::","args":[[{"id":null,"vip":null,"nickname":null,"icon":null,"shenjiazhi":null,"level":null,"status":1,"apply_time":1526034043},{"id":null,"vip":null,"nickname":null,"icon":null,"shenjiazhi":null,"level":null,"status":3,"apply_time":1527172068}]]}
+{"file":"\/code\/ckzc_server\/Application\/Websocket\/Controller\/Web.php","line":307,"function":"encode","class":"App\\Protobuf\\Result\\JoinGameResult","type":"::","args":[{"uid":40}]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/AbstractInterface\/Controller.php","line":78,"function":"msgid_1012","class":"App\\Websocket\\Controller\\Web","object":{"data":"\n\u000230","uid":40,"fd":8},"type":"->","args":[]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/AbstractInterface\/Controller.php","line":26,"function":"__hook","class":"EasySwoole\\Core\\Socket\\AbstractInterface\\Controller","object":{"data":"\n\u000230","uid":40,"fd":8},"type":"->","args":["msgid_1012"]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/AbstractInterface\/WebSocketController.php","line":21,"function":"__construct","class":"EasySwoole\\Core\\Socket\\AbstractInterface\\Controller","object":{"data":"\n\u000230","uid":40,"fd":8},"type":"->","args":[{"controllerClass":"App\\Websocket\\Controller\\Web","action":"msgid_1012","args":{"data":"\n\u000230"}},{}]}
+{"file":"\/code\/ckzc_server\/Application\/Websocket\/Controller\/Web.php","line":148,"function":"__construct","class":"EasySwoole\\Core\\Socket\\AbstractInterface\\WebSocketController","object":{"data":"\n\u000230","uid":40,"fd":8},"type":"->","args":[{},{"controllerClass":"App\\Websocket\\Controller\\Web","action":"msgid_1012","args":{"data":"\n\u000230"}},{}]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/Dispatcher.php","line":111,"function":"__construct","class":"App\\Websocket\\Controller\\Web","object":{"data":"\n\u000230","uid":40,"fd":8},"type":"->","args":[{},{"controllerClass":"App\\Websocket\\Controller\\Web","action":"msgid_1012","args":{"data":"\n\u000230"}},{}]}
+
+
+
+
+{"file":"\/code\/ckzc_server\/Protobuf\/Src\/AutoMsg\/AuctionLandInfo.php","line":134,"function":"checkInt32","class":"Google\\Protobuf\\Internal\\GPBUtil","type":"::","args":[null]}
+{"file":"\/code\/ckzc_server\/Application\/Protobuf\/Result\/AuctionLandInfo.php","line":28,"function":"setCreateTime","class":"AutoMsg\\AuctionLandInfo","object":{},"type":"->","args":[null]}
+{"file":"\/code\/ckzc_server\/Application\/Protobuf\/Result\/GetAuctionLandResult.php","line":30,"function":"encode","class":"App\\Protobuf\\Result\\AuctionLandInfo","type":"::","args":[{"_id":{"$oid":"5b0d4f7d2a63d920e866b676"},"Pos":2000,"Gold":300,"AuctionRole":[],"Date":"2018-05-30","Today":1527609600}]}
+{"file":"\/code\/ckzc_server\/Application\/Websocket\/Controller\/Web.php","line":1389,"function":"encode","class":"App\\Protobuf\\Result\\GetAuctionLandResult","type":"::","args":[]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/AbstractInterface\/Controller.php","line":78,"function":"msgid_2005","class":"App\\Websocket\\Controller\\Web","object":{"data":"\n\u00012","uid":37,"fd":3},"type":"->","args":[]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/AbstractInterface\/Controller.php","line":26,"function":"__hook","class":"EasySwoole\\Core\\Socket\\AbstractInterface\\Controller","object":{"data":"\n\u00012","uid":37,"fd":3},"type":"->","args":["msgid_2005"]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/AbstractInterface\/WebSocketController.php","line":21,"function":"__construct","class":"EasySwoole\\Core\\Socket\\AbstractInterface\\Controller","object":{"data":"\n\u00012","uid":37,"fd":3},"type":"->","args":[{"controllerClass":"App\\Websocket\\Controller\\Web","action":"msgid_2005","args":{"data":"\n\u00012"}},{}]}
+{"file":"\/code\/ckzc_server\/Application\/Websocket\/Controller\/Web.php","line":148,"function":"__construct","class":"EasySwoole\\Core\\Socket\\AbstractInterface\\WebSocketController","object":{"data":"\n\u00012","uid":37,"fd":3},"type":"->","args":[{},{"controllerClass":"App\\Websocket\\Controller\\Web","action":"msgid_2005","args":{"data":"\n\u00012"}},{}]}
+{"file":"\/code\/ckzc_server\/vendor\/easyswoole\/easyswoole\/src\/Core\/Socket\/Dispatcher.php","line":111,"function":"__construct","class":"App\\Websocket\\Controller\\Web","object":{"data":"\n\u00012","uid":37,"fd":3},"type":"->","args":[{},{"controllerClass":"App\\Websocket\\Controller\\Web","action":"msgid_2005","args":{"data":"\n\u00012"}},{}]}
+
+
+
+

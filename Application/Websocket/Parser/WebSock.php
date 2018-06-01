@@ -25,7 +25,7 @@ class WebSock implements ParserInterface
      */
     public static function decode($raw, $client)
     {
-//        var_dump("websocket:" . time());
+
         // TODO: Implement decode() method.
         $command = new CommandBean();
         $baseMessage = new MsgBaseRev();
@@ -34,16 +34,15 @@ class WebSock implements ParserInterface
         $command->setControllerClass(Web::class);
         $data = $baseMessage->getData();
         $msgId = $baseMessage->getMsgId();
-//        var_dump($data);
-//        var_dump($msgId);
 
         $command->setAction('msgid_' . $msgId);
 //        $command->setAction('msgid_1004');
         $command->setArg('data',$data);
+
         return $command;
     }
 
-    public static function encode(string $raw, $client,$command): ?string
+    public static function encode(string $raw,$client):?string
     {
         // TODO: Implement encode() method.
         if (empty($raw)) {

@@ -53,7 +53,6 @@ class Train extends Model
             $res = explode(',',$cost);
             $arr[$Time.'-' .$res[0]] = ['Type'=>$res[1],'Count'=>$res[2]];//1货币类型2 货币数量 (几次+品质)
         }
-        var_dump($arr);
         return $arr;
     }
 

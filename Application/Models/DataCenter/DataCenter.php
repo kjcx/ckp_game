@@ -74,7 +74,7 @@ class DataCenter extends Model
 
         $keys = $this->redis->keys('*:' . $uid . ':*');
         foreach ($keys as $key) {
-            var_dump($this->redis->del($key));
+            $this->redis->del($key);
 
         }
 
@@ -156,7 +156,7 @@ class DataCenter extends Model
     public function getUidByFd($fd) : int
     {
         $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
-        var_dump($keys);
+//        var_dump($keys);
         if ($keys) {
 //            return unserialize($this->redis->get($keys['0']))['uid'];
             $arr =  unserialize($this->redis->get($keys['0']));

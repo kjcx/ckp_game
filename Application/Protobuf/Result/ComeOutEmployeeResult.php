@@ -26,8 +26,8 @@ class ComeOutEmployeeResult
         $ComeOutEmployeeResult->setBuildShopId($ShopId);//店铺id
         $ComeOutEmployeeResult->setBuildShopStaffCount($ShopStaffCount);//店铺员工数量
         $data_Staff = $Staff->getShopStaffByNpcIds($data['NpcCardId']);
-        var_dump("ShopStaffCount:" . $ShopStaffCount);
-        var_dump($data_Staff);
+//        var_dump("ShopStaffCount:" . $ShopStaffCount);
+//        var_dump($data_Staff);
         $StaffData = [];
         foreach ($data_Staff as $item) {
             $StaffData[] = LoadRefStaff::encode($item);

@@ -38,7 +38,37 @@ class Index extends Controller
      */
     public function index()
     {
-      $this->response()->write(123);
+
+        $day = strtotime("+1 day");
+        var_dump(date('Ymdhis',$day));
+
+        return;
+        $client = new Client();
+        for ($i=0;$i<5;$i++){
+//            $data_ip = $this->index2();
+//            foreach ($data_ip as $item) {
+//                $ip = trim($item);
+                $new_str = $this->rand_str();
+                $url = 'http://redbull.hxrdcode.com/template/verify/verify.html?codeString='. $new_str . '&flag=1';
+//                $content = $client->request('get', $url,['proxy'=>[
+//                    'http'=>'http://127.0.0.1',
+//////                    'https'=>'http://221.229.166.87:10128',
+//                ]] );
+                $content = $client->request('get', $url);
+                usleep(1000);
+                $res_str = $content->getBody()->getContents();
+//                var_dump($res_str);
+                $len = stripos($res_str,'<span class="dc">');
+                $code = substr($res_str,$len +17,12);
+                if($code!='错误数据'){
+                    file_put_contents('log.txt',$new_str."\r\n",FILE_APPEND);
+                }else{
+                    file_put_contents('log1.txt',$code.'=>'.$new_str."\r\n",FILE_APPEND);
+                }
+//            }
+
+        }
+
     }
     public function rand_str()
     {
@@ -52,7 +82,6 @@ class Index extends Controller
         for($j=0;$j<5;$j++){
             $new_str .=  $str[rand(0,35)];
         }
-        var_dump(strtoupper($new_str));
         return strtoupper($new_str);
     }
     public function index2()
@@ -76,7 +105,6 @@ class Index extends Controller
     public function LoadRoleBagInfo()
     {
         $arr = LoadBagInfo::encode(2);
-        var_dump($arr);
     }
     public function   test($a,$b)
     {

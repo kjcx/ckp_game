@@ -17,16 +17,14 @@ class AuctionLandInfo
 {
     public static function encode($data)
     {
-        var_dump($data);
         $AuctionLandInfo = new \AutoMsg\AuctionLandInfo();
         $Pos = $data['Pos'];
         $AuctionRole = $data['AuctionRole'];
-        var_dump($AuctionRole);
         $Gold = $data['Gold'];
         $AuctionLandInfo->setPos($Pos);
         $AuctionLandInfo->setAuctionRole($AuctionRole);
         $AuctionLandInfo->setGold($Gold);
-        $CreateTime  = $data['CreateTime'];
+        $CreateTime  = $data['Today'];
         $AuctionLandInfo->setCreateTime($CreateTime);
         return $AuctionLandInfo;
     }

@@ -26,7 +26,6 @@ class Building extends Model
      */
     public function getType($Type)
     {
-        var_dump($Type);
         $data = Db::table($this->table)->where(['Type'=>$Type])->find();
         return $data;
     }
@@ -55,7 +54,6 @@ class Building extends Model
     {
 
         $data = $this->getType($Type);
-        var_dump($data);
         if($data){
             $BuildingCost = $data['BuildingCost'];
             $arr = explode(',', $BuildingCost);

@@ -46,9 +46,9 @@ Class EasySwooleEvent implements EventInterface {
             //请确定有inotify拓展
             if ($workerId == 0) {
 
-//                if (Config::getInstance()->getConf('DEBUG')) {
-//                    MainEventHelper::registerHotLoad();
-//                }
+                if (Config::getInstance()->getConf('DEBUG')) {
+                    MainEventHelper::registerHotLoad();
+                }
                 $start_fd = 0;
                 while(true)
                 {

@@ -111,7 +111,7 @@ class DropStaff extends Model
         if($data){
             return $data['DropLib'];
         }else{
-            var_dump(__FILE__ . __LINE__ ."id有误");
+//            var_dump(__FILE__ . __LINE__ ."id有误");
         }
     }
 
@@ -136,7 +136,7 @@ class DropStaff extends Model
         $StaffId = $arr_quanzhong[array_rand($arr_quanzhong)];
         mt_srand();
         $num = mt_rand($arr_min_max[$StaffId][0],$arr_min_max[$StaffId][1]);
-        var_dump($num,$StaffId);
+//        var_dump($num,$StaffId);
         return ['StaffId'=>$StaffId,'Num'=>$num];
     }
 
@@ -149,7 +149,7 @@ class DropStaff extends Model
     {
         $Staff = new \App\Models\Execl\Staff();
         $data_Staff = $Staff->getInfoById($data['StaffId']);
-        var_dump($data_Staff);
+//        var_dump($data_Staff);
         $Quality = $data_Staff['Quality'];//品质
         $Attribute = $data_Staff['Attribute'];//属性
         $Attributes = explode(';',$Attribute);

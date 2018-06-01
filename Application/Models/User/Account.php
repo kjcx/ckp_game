@@ -68,7 +68,6 @@ class Account extends Model
     {
         $token = md5($uid . rand(10000,99999) . rand(10000,99999). microtime() );
         //插入到
-        var_dump($this->redis);
          $rs = $this->redis->set($token,$uid);
          if($rs){
              return $token;
@@ -103,7 +102,6 @@ class Account extends Model
     {
         //1 支付密码,2余额，
         $pay_app = Config::getInstance()->getConf('APP.pay_app');
-        var_dump($pay_app);
         $key = $this->getAppTokenByUid($uid);
         $url = $pay_app ;
         $client = new Client();
@@ -122,7 +120,6 @@ class Account extends Model
         $Pay->create($postdata);
         $str = $res->getBody()->getContents();
         $arr = json_decode($str,1);
-        var_dump($arr);
         if($arr['code'] == 200){
             //充值成功更改充值订单状态
             $UpdateTime = date('Y-m-d H:i:s',time());

@@ -9,7 +9,7 @@
 namespace App\Protobuf\Req;
 
 /**
- * 招聘
+ * 水果机抽奖请求
  * Class RaffleFruitsReq 1035
  * @package App\Protobuf\Req
  */
@@ -18,8 +18,8 @@ class RaffleFruitsReq
     public static function decode($data)
     {
         $RaffleFruitsReq = new \AutoMsg\RaffleFruitsReq();
-        $RaffleFruitsReq->mergeFromString($data);
-        $Id = $RaffleFruitsReq->getId();
-        return ['Id'=>$Id];
+//        $RaffleFruitsReq->mergeFromString($data);
+//        $Id = $RaffleFruitsReq->getId();
+//        return ['Id'=>$Id];
     }
 }

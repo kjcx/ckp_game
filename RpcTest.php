@@ -10,7 +10,7 @@ require 'vendor/autoload.php';
 
 \EasySwoole\Core\Core::getInstance()->initialize();
 
-$ServiceManager = \EasySwoole\Core\Component\Rpc\Server\ServiceManager::getInstance();
+
 $ServiceManager->addServiceNode(new \EasySwoole\Core\Component\Rpc\Server\ServiceNode(
     [
         'serviceName'=>'A',

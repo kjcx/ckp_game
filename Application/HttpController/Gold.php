@@ -29,9 +29,7 @@ class Gold extends Controller
     public function index2()
     {
         $uid = $this->request()->getQueryParam('uid');
-        var_dump($uid);
         $num = $this->request()->getQueryParam('num');
-        var_dump($num);
 
         $Bag = new Bag($uid);
         $Bag->addBag(2,$num);

@@ -9,10 +9,13 @@
 
 namespace App\Models\BagInfo;
 
+use App\Event\BagAddEvent;
+use App\Event\BagDelEvent;
 use App\Event\UserEvent;
 use App\Models\Model;
 use App\Models\User\Role;
 use App\Traits\MongoTrait;
+use EasySwoole\Core\Swoole\Task\TaskManager;
 use think\Db;
 use App\Models\BagInfo\Item;
 
@@ -187,7 +190,7 @@ class Bag extends Model
 
         //TODO:: 错误码
         if (!$this->checkBagSpace()) {
-            return '背包格子已满';
+            return 'NotEnoughBagSpace';
         }
         $itemData = $this->getBagByItemId($itemId);
 
@@ -209,6 +212,11 @@ class Bag extends Model
         if(in_array($itemId,$this->GoldType)){
             $UserEvent = new UserEvent($this->uid);
             $UserEvent->GoldChangedResultEvent();
+        } else {
+            $eventData = ['uid' => $this->uid,'item' => [$data['id'] => $data['CurCount']]];
+//            TaskManager::async(function ()use($eventData){
+                event(BagAddEvent::class,$eventData);
+//            });
         }
         $result = $this->collection->findOneAndUpdate(['uid' => $this->uid],[
             '$set' => [
@@ -264,6 +272,11 @@ class Bag extends Model
         if(in_array($itemId,$this->GoldType)){
             $UserEvent = new UserEvent($this->uid);
             $UserEvent->GoldChangedResultEvent();
+        } else {
+            $eventData = ['uid' => $this->uid,'item' => [$data['id'] => $data['CurCount']]];
+//            TaskManager::async(function ()use($eventData){
+                event(BagDelEvent::class,$eventData);
+//            });
         }
         return empty($result) ? false : true;
 

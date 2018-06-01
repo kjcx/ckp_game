@@ -53,7 +53,6 @@ class Redis
         $conf = Config::getInstance()->getConf("REDIS_SERVER");
         $this->connect->connect($conf['host'],$conf['port']);
         if (!empty($conf['auth'])) {
-            var_dump('1111');
             $this->connect->auth($conf['auth']);
         }
     }

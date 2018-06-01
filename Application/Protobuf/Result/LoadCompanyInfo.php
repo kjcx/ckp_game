@@ -24,7 +24,7 @@ class LoadCompanyInfo
             $Icon = $data['Icon'];
             $Level = $data['Level'];
             $ClientValue = $data['ClientValue']?:0;
-            var_dump('ClientValueClientValue');
+//            var_dump('ClientValueClientValue');
             $ShopNumber = $data['ShopNumber']?:0;
             $StaffNumber = $data['StaffNumber']?:0;
             $CompanyValue = $data['CompanyValue']?:0;

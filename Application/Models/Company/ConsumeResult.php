@@ -27,7 +27,7 @@ class ConsumeResult extends Model
     public function getConsumeResult($Uid)
     {
         $data = Db::table($this->table)->where(['Uid'=>$Uid])->select();
-        var_dump($data);
+//        var_dump($data);
         return $data;
     }
 

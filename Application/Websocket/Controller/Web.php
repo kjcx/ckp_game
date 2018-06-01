@@ -12,6 +12,7 @@ use App\Event\ChangeAvatarSubscriber;
 use App\Event\ChangeItemEvent;
 use App\Event\ItemEvent;
 use App\Event\ChangeItemSubscriber;
+use App\Event\RoleCreateEvent;
 use App\Event\SellItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Bank\LoansInfo;
@@ -22,20 +23,24 @@ use App\Models\Company\Shop as CompanyShop;
 use App\Models\Company\TalentMarketInfo;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\GameConfig;
+use App\Models\Execl\LandInfo;
 use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
+use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Staff\LottoLog;
 use App\Models\Staff\Staff;
+use App\Models\Store\Seed;
 use App\Models\Trade\Shop;
 use App\Models\User\Account;
 use App\Models\User\FriendApply;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
+use App\Protobuf\Req\AddSoilReq;
 use App\Protobuf\Req\AuctionLandReq;
 use App\Protobuf\Req\BuildLvUpReq;
 use App\Protobuf\Req\ChangeAvatarReq;
@@ -53,16 +58,18 @@ use App\Protobuf\Req\FriendApplyClearReq;
 use App\Protobuf\Req\FriendApplyReq;
 use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
-use App\Protobuf\Req\GetAuctionLandReq;
 use App\Protobuf\Req\GetMapReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
+use App\Protobuf\Req\GrowPlantsReq;
+use App\Protobuf\Req\HarvestPlantReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
-use App\Protobuf\Req\RaffleFruitsReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefStaffReq;
+use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\SavingGoldReq;
+use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
@@ -70,6 +77,7 @@ use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserSalesReq;
+use App\Protobuf\Result\AddSoilResult;
 use App\Protobuf\Result\AuctionLandResult;
 use App\Protobuf\Result\BuildLvUpResult;
 use App\Protobuf\Result\ChangeAvatarResult;
@@ -90,24 +98,26 @@ use App\Protobuf\Result\GetAuctionLandResult;
 use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\GetTalentListResult;
+use App\Protobuf\Result\GrowPlantsResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\LoadStaffResult;
+use App\Protobuf\Result\ManorVisitInfoResult;
 use App\Protobuf\Result\LoansResult;
 use App\Protobuf\Result\MissionFirstCompleteResult;
 use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
-use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefStaffResult;
+use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
+use App\Protobuf\Result\SeedShopPingResult;
 use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
-use App\Protobuf\Result\TalentInfo;
 use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
@@ -120,7 +130,6 @@ use EasySwoole\Core\Socket\Client\WebSocket;
 use EasySwoole\Core\Socket\Common\CommandBean;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use think\Db;
 
 class Web extends WebSocketController
 {
@@ -133,7 +142,6 @@ class Web extends WebSocketController
         $this->data = $request->getArg('data');
         $this->fd = $client->getFd();
         $msgid = $request->getAction();
-        var_dump($msgid);
         if($msgid != 'msgid_1004' ){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $this->uid = $dataCenter->getUidByFd($this->fd);
@@ -156,7 +164,6 @@ class Web extends WebSocketController
     {
         $dataCenter = new DataCenter();
         $fds = $dataCenter->getMyFd(); //获取我所有的Fd
-        var_dump($fds);
         foreach ($fds as $fd) {
             $massTemplate = new Mass(['fd' => $fd,'data' => 11,]);
             TaskManager::async($massTemplate);
@@ -164,6 +171,47 @@ class Web extends WebSocketController
 //        $this->response()->write();
     }
 
+    /**
+     * 庄园买地块
+     */
+    public function msgid_1078()
+    {
+        $data = AddSoilReq::decode($this->data);
+        $land = new Land($this->uid);
+        $id = $land->unlockLand($data['landId']);
+        if (isset($id['error'])) {
+            $this->send(1110,$this->fd,0,$id['msg'],12);
+        } else {
+            $string = AddSoilResult::encode(['id' => $id]);
+            $this->send(1110,$this->fd,$string);
+        }
+
+    }
+
+    /**
+     * 庄园种植
+     */
+    public function msgid_1055()
+    {
+        $data = GrowPlantsReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->plant($data['id'], $data['semenId']);
+        if (isset($res['error'])){
+            $this->send(1085,$this->fd,0,$res['msg'],12);
+        } else {
+            $string = GrowPlantsResult::encode($res);
+            $this->send(1085,$this->fd,$string);
+        }
+    }
+
+    /**
+     *
+     */
+    public function msgid_1056()
+    {
+        $data = HarvestPlantReq::decode($this->data);
+        var_dump($data);
+    }
     /**
      * 发送
      * @param $MsgId
@@ -175,9 +223,12 @@ class Web extends WebSocketController
     public function send($MsgId,$fd,$data,$Result=0,$ErrorMsg='')
     {
         if($Result){
-            var_dump($Result);
             $WsResult = new WsResult();
-            $data_ws = $WsResult->getOne($Result);
+            if (empty($ErrorMsg)) {
+                $data_ws = $WsResult->getOne($Result);
+            } else {
+                $data_ws = $WsResult->getErrorValue($Result);
+            }
             $value = (int)$data_ws['value'];
         }else{
             $value = 0;
@@ -194,10 +245,11 @@ class Web extends WebSocketController
 
         $Data = $this->data;
         $token = \App\Protobuf\Req\ConnectingReq::decode($Data);
+
         //redis查询token是否存在
         $Account = new Account();
         $uid = $Account->getToken($token);
-        var_dump($uid);
+
         if($uid){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $dataCenter->saveClient($this->fd,$uid);
@@ -205,7 +257,6 @@ class Web extends WebSocketController
             $data = \App\Protobuf\Result\ConnectingResult::encode($uid);
            $this->send(1057,$this->fd,$data);
         }else{
-            var_dump("用户不存在");
             $data = \App\Protobuf\Result\ConnectingResult::encode(36);
             $this->send(1057,$this->fd,$data);
         }
@@ -237,6 +288,7 @@ class Web extends WebSocketController
                 $data_role['RoleId'] = $rs;
                 $data = \App\Protobuf\Result\CreateRoleResult::encode($data_role);
                 $str  = \App\Protobuf\Result\MsgBaseSend::encode(1060,$data);
+                event(RoleCreateEvent::class,$this->uid);
                 ServerManager::getInstance()->getServer()->push($this->client()->getFd(),$str,WEBSOCKET_OPCODE_BINARY);
             }else{
                 //角色创建失败
@@ -251,14 +303,10 @@ class Web extends WebSocketController
      */
     public function msgid_1012()
     {
-        var_dump("joingame_start:" . microtime(true));
 
-        var_dump('msgid_1012');
         //加入游戏
-        var_dump($this->uid);
         $data = JoinGameResult::encode(['uid'=>$this->uid]);
         $this->send(1066,$this->fd,$data);
-        var_dump("joingame_end:" . microtime(true));
 
     }
 
@@ -322,7 +370,6 @@ class Web extends WebSocketController
     {
         $Data = $this->data;
         $data_SellItemReq = SellItemReq::decode($Data);
-        var_dump($data_SellItemReq);
         //计算道具所需价格
         $Item = new Item();
         $PriceType  = $Item->getSellItemInfo($data_SellItemReq);
@@ -344,7 +391,6 @@ class Web extends WebSocketController
             $ids = [$data_SellItemReq['ItemId']];
             $dispatcher->dispatch('SellItem',new ChangeItemEvent($this->uid,$ids));
         }else{
-            var_dump("====异常=====");
         }
 
     }
@@ -408,12 +454,12 @@ class Web extends WebSocketController
         }
     }
 
+
     /**
      * 更改头像
      */
     public function msgid_1102()
     {
-        var_dump("mgsid_1102");
         $Data = $this->data;
         $data_RoleInfoIcon = \App\Protobuf\Req\UpdateRoleInfoIconReq::decode($Data);
         //修改个人头像
@@ -435,13 +481,11 @@ class Web extends WebSocketController
     public function msgid_1165()
     {
         $data_pay = CKApiReq::decode($this->data);
-        var_dump($data_pay);
         $Id = $data_pay['PayParams']['Id'];
         $Pwd = $data_pay['PayParams']['Pwd'];
         //获取充值的id
         $Topup = new Topup();
         $data_Topup = $Topup->findById($Id);
-        var_dump($data_Topup);
         //判断app余额是否足够
         $Account = new Account();
         $res = $Account->payByApp($this->uid,$data_Topup['Gold'],$Pwd,'game_recharge');
@@ -477,7 +521,6 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_MoneyChange = MoneyChangeReq::decode($data);
-        var_dump($data_MoneyChange);
         //处理兑换
         $Account = new Account();
         $Account->Change_Ckb_Gold($this->uid,$data_MoneyChange);
@@ -492,7 +535,6 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_TopUpGold = TopUpGoldReq::decode($data);
-        var_dump($data_TopUpGold);
         $str = TopUpGoldResult::encode(true);
         $this->send(1140,$this->fd,$str);
     }
@@ -504,7 +546,6 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_UpdateRoleInfoName = UpdateRoleInfoNameReq::decode($data);
-        var_dump($data_UpdateRoleInfoName);//
 
         //修改角色名字
         $role = new Role();
@@ -864,7 +905,6 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $str = LoadStaffResult::encode($this->uid);
-        var_dump($str);
         $this->send(1118,$this->fd,$str);
     }
 
@@ -1108,9 +1148,45 @@ class Web extends WebSocketController
      */
     public function msgid_1053()
     {
+
+        $data = RequestManorReq::decode($this->data);
+        $land = new Land($this->uid);
+        $landInfo = $land->getLand();
+        $string = RequestManorResult::encode($landInfo);
+        $this->send(1082,$this->fd,$string);
+    }
+
+    /**
+     * 拜访记录
+     * TODO::init
+     * ManorVisitInfoResult
+     */
+    public function msgid_1148()
+    {
+        $data = [];
+        $string = ManorVisitInfoResult::encode();
+        $this->send(1201,$this->fd,$string);
+
         $this->send(1082,$this->fd,'');
     }
 
+    /**
+     * 购买种子商店
+     */
+    public function msgid_1076()
+    {
+        $data = SeedShopPingReq::decode($this->data);
+        var_dump($data);
+        $seed = new Seed($this->uid);
+        $seedRes = $seed->buy($data['ItemId'],$data['ItemCount']);
+        var_dump($seedRes);
+        if (!isset($seedRes['error'])) {
+            $string = SeedShopPingResult::encode($seedRes);
+            $this->send(1108,$this->fd,$string);
+        } else {
+            $this->send(1108,$this->fd,'',$seedRes['msg'],12);
+        }
+    }
     /**
      * 解雇经理
      * return TalentFireResult 1178
@@ -1256,6 +1332,7 @@ class Web extends WebSocketController
         $this->send(1211,$this->fd,$str);
     }
 
+
     /**
      * 贷款 LoansReq
      * return LoansResult 1205
@@ -1309,6 +1386,7 @@ class Web extends WebSocketController
      */
     public function msgid_2005()
     {
+        var_dump("msgid2005");
         $str = GetAuctionLandResult::encode();
         $this->send(2006,$this->fd,$str);
     }
@@ -1323,11 +1401,15 @@ class Web extends WebSocketController
         $data_GetAuctionLand = AuctionLandReq::decode($data);
         var_dump($data_GetAuctionLand);
         //处理竞拍请求
+        //0.查询已经竞拍状态
+
         //1验证金币是否足够
+        $LandInfo = new LandInfo();
+        $config = $LandInfo->getBiddingPrice();
         $Bag = new Bag($this->uid);
-        $count = $Bag->getCountByItemId(6);
-        if($count>=600){
-            $LandInfo = new MyLandInfo();
+        $count = $Bag->getCountByItemId($config['Type']);//土地对应类型的余额
+        $new_count = $config['Count'];
+        if($count >= $new_count){
             $create_data['Uid'] = $this->uid;
             $Role = new Role();
             $data_role = $Role->getRole($this->uid);

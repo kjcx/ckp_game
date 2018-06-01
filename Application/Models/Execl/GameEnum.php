@@ -49,7 +49,6 @@ class GameEnum extends Model
         if($data['list']){
             return $data['list'];
         }else{
-            var_dump("getStaffQuality出错");
         }
     }
 
@@ -62,7 +61,6 @@ class GameEnum extends Model
         if($data['list']){
             return $data['list'];
         }else{
-            var_dump("getStaffAttr出错");
         }
     }
 }
