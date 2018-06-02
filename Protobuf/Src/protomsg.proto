@@ -2212,3 +2212,9 @@ message ChatMesaageReadReq{
     string RoleId=1;
     string MsgId=2;
 }
+message UseCompostReq{
+    int32 Id=1;
+}
+message UseCompostResult{
+    LoadManorData LoadManor=1;
+}

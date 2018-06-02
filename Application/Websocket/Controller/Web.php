@@ -77,6 +77,7 @@ use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
+use App\Protobuf\Req\UseCompostReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserSalesReq;
 use App\Protobuf\Result\AddSoilResult;
@@ -102,6 +103,7 @@ use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\GrowPlantsResult;
+use App\Protobuf\Result\HarvestPlanResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\LoadStaffResult;
 use App\Protobuf\Result\ManorVisitInfoResult;
@@ -126,6 +128,9 @@ use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
+use App\Protobuf\Result\UpgradeLandLevelReq;
+use App\Protobuf\Result\UpgradeLandLevelResult;
+use App\Protobuf\Result\UseCompostResult;
 use App\Protobuf\Result\UseItemResult;
 use App\Protobuf\Result\UserSalesResult;
 use EasySwoole\Core\Component\Spl\SplStream;
@@ -216,7 +221,13 @@ class Web extends WebSocketController
         //TODO::
         $data = HarvestPlantReq::decode($this->data);
         $land = new Land($this->uid);
-        var_dump($data);
+        $res = $land->harvest($data['landId']);
+        if (isset($res['error'])){
+            $this->send(1086,$this->fd,0,$res['msg'],12);
+        } else {
+            $string = HarvestPlanResult::encode($res);
+            $this->send(1086,$this->fd,$string);
+        }
     }
 
     /**
@@ -1472,6 +1483,37 @@ class Web extends WebSocketController
             $this->send(1143,$this->fd,'',$res['msg'],12);
         }  else {
             $this->send(1143,$this->fd,RefFitnessResult::encode($res));
+        }
+    }
+
+    /**
+     * 升级土地
+     */
+    public function msgid_1125()
+    {
+        $data = UpgradeLandLevelReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->upgradeLand($data['landId']);
+        if (isset($res['error'])) {
+            $this->send(1171,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1171,$this->fd,UpgradeLandLevelResult::encode($res));
+        }
+    }
+
+    /**
+     * 施肥
+     * return 2012
+     */
+    public function msgid_2011()
+    {
+        $data = UseCompostReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->useCompost($data['landId']);
+        if (isset($res['error'])) {
+            $this->send(2012,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(2012,$this->fd,UseCompostResult::encode($res));
         }
     }
 }

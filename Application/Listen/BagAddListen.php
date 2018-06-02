@@ -10,10 +10,9 @@ namespace App\Listen;
 
 
 use App\Event\BagAddEvent;
-use App\Models\DataCenter\DataCenter;
-use App\Protobuf\Result\MsgBaseSend;
+use App\Helpers\PushHelper;
+use App\Protobuf\Result\AddItemResult;
 use App\Protobuf\Result\UpdateItemResult;
-use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BagAddListen implements EventSubscriberInterface
@@ -30,15 +29,37 @@ class BagAddListen implements EventSubscriberInterface
 
     public function onPush(BagAddEvent $event)
     {
-        $dataString = UpdateItemResult::encode($event->data['item']);
-        $string = MsgBaseSend::encode(1022,$dataString);
-        $dataCenter = new DataCenter();
-        $fd = $dataCenter->getFdByUid($event->data['uid']);
-        $this->push($fd,$string);
+        switch ($event->data['evenFunc']) {
+            case 'pushBag':
+                $this->pushBag($event);
+                break;
+            case 'pushChange':
+                $this->pushChange($event);
+                break;
+        }
     }
 
-    private function push($fd,$str)
+    /**
+     * 推送背包信息
+     * 完全推送背包信息
+     */
+    private function pushBag($event)
     {
-        ServerManager::getInstance()->getServer()->push($fd,$str,WEBSOCKET_OPCODE_BINARY);
+        $dataString = AddItemResult::encode($event->data['uid']);
+        push(1053,$event->data['uid'],$dataString);
+
+    }
+    /**
+     * 推送更新信息
+     */
+    private function pushChange($event)
+    {
+        $dataString = UpdateItemResult::encode($event->data['item']);
+        push(1022,$event->data['uid'],$dataString);
+    }
+
+    private function push()
+    {
+
     }
 }

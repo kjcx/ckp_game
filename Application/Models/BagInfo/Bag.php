@@ -29,7 +29,7 @@ class Bag extends Model
     private $item; //item类为了验证信息   依赖
     private $initData; //初始化信息
     private $MaxCellNumber;
-    private $GoldType = [2,6];//金币变化通知
+    private $GoldType = [1,2,6];//金币变化通知
 
     public function __construct(int $uid)
     {
@@ -180,12 +180,28 @@ class Bag extends Model
         //TODO::验证当前用户背包格子数量 暂时是999 以后改动读配置
         return array_sum($spaceArr) >= $this->MaxCellNumber ? false : true;
     }
+
+    /**
+     * 批量加商品
+     * @param $items [['Id' => num]]
+     */
+    public function batchAddBag($items)
+    {
+        foreach ($items as $itemKey => $item) {
+            $this->addBag($itemKey,$item,false);
+        }
+        $eventData = ['uid' => $this->uid,'evenFunc' => 'pushBag'];
+        event(BagAddEvent::class,$eventData);
+    }
+
     /**
      * 背包增加商品
-     * @param $itemId 商品id
-     * @param $num 商品数量
+     * @param $itemId 商品ID
+     * @param Int $num 商品数量
+     * @param $onPush 是否推送
+     * @return bool|string
      */
-    public function addBag($itemId,Int $num = 1)
+    public function addBag($itemId,Int $num = 1,$onPush = true)
     {
 
         //TODO:: 错误码
@@ -213,10 +229,10 @@ class Bag extends Model
             $UserEvent = new UserEvent($this->uid);
             $UserEvent->GoldChangedResultEvent();
         } else {
-            $eventData = ['uid' => $this->uid,'item' => [$data['id'] => $data['CurCount']]];
-//            TaskManager::async(function ()use($eventData){
+            if ($onPush) {
+                $eventData = ['uid' => $this->uid,'evenFunc' => 'pushChange','item' => [$data['id'] => $data['CurCount']]];
                 event(BagAddEvent::class,$eventData);
-//            });
+            }
         }
         $result = $this->collection->findOneAndUpdate(['uid' => $this->uid],[
             '$set' => [
@@ -252,7 +268,8 @@ class Bag extends Model
             'OnSpace' => $onSpace,
             'id' => $itemId
         ];
-        if ($num == 0) {
+        if ($num == 0 && !in_array($itemId,$this->GoldType)) {
+            //不是金钱类型的 unset掉
             $update['$unset'] = [
                 'data.' . $itemId => 1
             ];
@@ -294,7 +311,7 @@ class Bag extends Model
             $space = ceil($num / $itemInfo['Count']);
             return $space == 0 ? 1 : $space;
         }
-        return false;
+        return 0;
 
     }
     /**

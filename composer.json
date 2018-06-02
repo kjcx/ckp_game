@@ -1,6 +1,6 @@
 {
     "require": {
-        "easyswoole/easyswoole": "^2.0.2",
+        "easyswoole/easyswoole": "2.1.1",
         "guzzlehttp/guzzle": "^6.3",
         "joshcam/mysqli-database-class": "dev-master",
         "google/protobuf": "^3.5",
@@ -12,13 +12,14 @@
         "phpunit/DbUnit": "^4.0"
     },
     "autoload": {
-        "files": ["Application/Helpers/functions.php"],
         "psr-4": {
             "App\\": "Application/",
             "AutoMsg\\": "Protobuf/Src/AutoMsg/",
             "GPBMetadata\\" :"Protobuf/Src/GPBMetadata",
             "PhpOffice\\PhpSpreadsheet\\": "src/PhpSpreadsheet"
-        }
+        },
+        "files": ["Application/Helpers/functions.php"]
+
     },
     "require-dev": {
         "easyswoole/swoole-ide-helper": "^1.02",
