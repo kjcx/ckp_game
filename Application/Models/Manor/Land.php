@@ -8,6 +8,7 @@
 namespace App\Models\Manor;
 
 use App\Models\BagInfo\Bag;
+use App\Models\Execl\Fram;
 use App\Models\Execl\GameConfig;
 use App\Models\Item\Item;
 use App\Models\Model;
@@ -25,6 +26,7 @@ class Land extends Model
     const SeedlingStage = 1; //幼苗期
     const GrowthStage = 2;//成长期
     const MatureStage = 3;//成熟期
+    const Compost = 163;//肥料
 
     public $mongoTable = 'ckzc_data.manor';
     private $item;
@@ -78,16 +80,19 @@ class Land extends Model
         $uid = $uid == false ? $this->getUid() : $uid;
         $role = new Role();
         $roleInfo = $role->getRole($uid);
-        $landInfo = $this->collection->findOne(['uid' => $uid]);
-        foreach ($landInfo['manor'] as $key => $value) {
-            $landInfo['manor'][$key]['UserName'] = $roleInfo['nickname'];
-            if ($value['SemenId'] > 0) {
-                //种植了作物  计算作物的时间
-                $landInfo['manor'][$key]['PhasesStatus'] = $this->calcCrop($value);
+        $landInfo = $this->collection->findOne(['uid' => (int)$uid]);
+        if (!empty($landInfo['manor'])) {
+            foreach ($landInfo['manor'] as $key => $value) {
+                $landInfo['manor'][$key]['UserName'] = $roleInfo['nickname'];
+                if ($value['SemenId'] > 0) {
+                    //种植了作物  计算作物的时间
+                    $landInfo['manor'][$key]['PhasesStatus'] = $this->calcCrop($value);
+                }
             }
+            $landInfo['name'] = $roleInfo['nickname'];
+            return $landInfo;
         }
-        $landInfo['name'] = $roleInfo['nickname'];
-        return $landInfo;
+
     }
     /**
      * 获得地块详情
@@ -105,6 +110,105 @@ class Land extends Model
         return $lands;
     }
 
+    /**
+     * 收获
+     * @param $lands 地块IDS
+     */
+    public function harvest($lands)
+    {
+        $myLands = $this->getLand();
+        $newLands = [];
+        foreach ($myLands['manor'] as $land) {
+            if (in_array($land['Id'],$lands)) {
+                $newLands[] = $land;
+            }
+        }
+        $harvests = [];
+        $bags = [];
+        foreach ($newLands as $land) {
+            $harvest = [];
+            if ($land['StealTime'] == 0) {
+                //没被偷过
+                $cropInfo = $this->createFruit($land['SemenId'],$land['Profit']);
+                $harvest['Id'] = $land['Id'];
+                $harvest['SemenId'] = $cropInfo['crop'];
+                $harvest['Count'] = $cropInfo['num'];
+                $harvest['Time'] = 0;
+            } else {
+                $harvest['Id'] = $land['Id'];
+                $harvest['SemenId'] = $land['Crop'];//作物的ID  被偷过才有
+                $harvest['Count'] = $land['Crop_num'];//作物的数量  被偷过才有
+                $harvest['Time'] = $land['StealTime'];
+            }
+            $harvests[] = $harvest;
+            if (isset($bags[$harvest['SemenId']])) {
+                $bags[$harvest['SemenId']] = $bags[$harvest['SemenId']] + $harvest['Count'];
+            } else {
+                $bags[$harvest['SemenId']] = $harvest['Count'];
+            }
+        }
+        $bag = new Bag($this->getUid());
+        $bag->batchAddBag($bags);//批量添加进背包
+        //清除地块内容
+        foreach ($newLands as $land) {
+            $this->eradicate($land['Id'],$this->getUid());
+        }
+        return $harvests;
+    }
+
+    /**
+     * 创建果实
+     * @param $seedId 种子ID
+     * @param $profit 收益
+     * @return array
+     */
+    private function createFruit($seedId,$profit)
+    {
+        $itemInfo = $this->item->getItemById($seedId);
+        $itemInfo['Harvest'] = explode(',',$itemInfo['Harvest']);
+        $max = ($itemInfo['Harvest']['1']) * (1 + $profit);
+        $num = mt_rand(1,ceil($max));
+        return ['crop' => $itemInfo['Harvest']['0'],'num' => $num];
+    }
+    /**
+     * 铲除地块
+     * @param $landId
+     * @param $uid
+     * @return array|bool
+     */
+    public function eradicate($landId,$uid)
+    {
+        if ($this->getUid() != $uid) {
+            return ['error' => true,'msg' => 'OneselfEradicate'];
+        }
+        $filter = ['uid' => $this->getUid()];
+        $update = ['$set' => [
+            'manor.' . ($landId - 1) . '.PlantDate' => 0,
+            'manor.' . ($landId - 1) . '.SemenId' => 0,
+            'manor.' . ($landId - 1) . '.PhasesStatus' => 0,
+            'manor.' . ($landId - 1) . '.StealTime' => 0,
+            'manor.' . ($landId - 1) . '.Crop' => 0,
+            'manor.' . ($landId - 1) . '.Crop_num' => 0
+        ]];
+
+        $result = $this->collection->findOneAndUpdate($filter,$update);
+        if ($result) {
+            return $landId;
+        }
+        return ['error' => true,'msg' => 'Error'];
+    }
+    /**
+     * 获取一块地的详情
+     * @param $landId
+     * @param bool $uid
+     * @return mixed
+     */
+    public function getlandOne($landId,$uid = false)
+    {
+        $uid = $uid == false ? $this->getUid() : $uid;
+        $lands = $this->getLand($uid);
+        return $lands['manor'][$landId - 1];
+    }
 
     /**
      * 庄园种植
@@ -152,6 +256,9 @@ class Land extends Model
      */
     private function calcCrop($landDetail)
     {
+        if ($landDetail['SemenId'] == 0) {
+            return 0;
+        }
         $seedInfo = $this->item->getItemById($landDetail['SemenId']);
         $seedStatus = time() - $landDetail['PlantDate'];
 
@@ -199,7 +306,7 @@ class Land extends Model
         //更新地块
         $updateRes = $this->uploadLand($landId);
         if ($updateRes) {
-            //更新身价值
+            //更新身价值 TODO::地块身价值
 
             return $landId;
         }
@@ -216,24 +323,57 @@ class Land extends Model
         $result = $this->collection->findOneAndUpdate(['uid' => $uid],[
             '$set' => [
                 'manor.' . ($landId - 1) . '.SoilState' => self::SoilAlreadyExploit,
-                'manor.' . ($landId - 1) . '.SoilState' => self::SoilAlreadyExploit
             ]
         ]);
         return empty($result) ? false : true;
 
 
     }
-
     /**
      * 土地升级
      */
     public function upgradeLand($landId)
     {
         $bag = new Bag($this->getUid());
-        $this->getLand();
-        $bag->delBag(2,1);
-    }
+        $lands = $this->getLand();
+        //获取当前地块等级
+        $nowLevel = $lands['manor'][$landId - 1]['SoilLevel'];
+        $shouldLevel = $nowLevel + 1;
+        //读取需要升级地块的钱
+        $fram = new Fram();
+        $upgradeLandInfo = $fram->getInfoById($shouldLevel);
+        if (empty($upgradeLandInfo)) {
+            return ['error' => true, 'msg' => 'Error'];
+        }
+        $money = explode(',',$upgradeLandInfo['Cost']);
+        //判断当前等级是否可以升级
+        if ($this->roleInfo['level'] < $upgradeLandInfo['NeedLv']) {
+            return ['error' => true, 'msg' => 'NeedLevel'];
+        }
+        //扣钱
+        $bagRes = $bag->delBag($money['0'],$money['1']);
+        if ($bagRes == false) {
+            return ['error' => true, 'msg' => 'NeedLevel'];
+        }
+        //升级
+        //地块信息
+        $lands['manor'][$landId - 1]['SoilLevel'] = $upgradeLandInfo['Id'];
+        $lands['manor'][$landId - 1]['Profit'] = $upgradeLandInfo['Profit'];
+        $res = $this->collection->findOneAndUpdate(['uid' => $this->getUid()],[
+            '$set' => [
+                'manor.' . ($landId - 1) . '.SoilLevel' => $upgradeLandInfo['Id'],
+                'manor.' . ($landId - 1) . '.Profit' => $upgradeLandInfo['Profit'],
+            ]
+        ]);
+        //更新身价值
+        if ($res) {
+            //TODO::还没做更新身价值
 
+            return $lands['manor'][$landId - 1];
+        }
+
+        //返回
+    }
     /**
      *初始化一个地块
      */
@@ -251,9 +391,33 @@ class Land extends Model
                 'SoilState' => 0,//土地状态
 //                'UserName' => '傅乐心',
                 'SoilLevel' => 1,//土地等级
-                'Profit' => 0 //收益加层
+                'Profit' => 0, //收益加层
+                'Crop' => 0,//作物的ID  被偷过才有
+                'Compost' => 0,//是否使用肥料
+                'Crop_num' => 0//作物的数量  被偷过才有
         ];
         return $landItem;
     }
 
+    /**
+     * 使用肥料
+     */
+    public function useCompost($landId)
+    {
+        $res = $this->getBag()->delBag(self::Compost,1);
+        if ($res == false) {
+            //没肥料
+            return ['error' => true, 'msg' => 'NotEnoughItem'];
+        }
+        $myLands = $this->getLand();
+        $myLands['manor'][$landId - 1];
+        $myLands['manor'][$landId - 1]['Compost'] = self::Compost;
+        $result = $this->collection->findOneAndUpdate(['uid' => $this->getUid()],[
+            '$set' => [
+                'manor.' . ($landId - 1) . '.Compost' => self::Compost]
+        ]);
+        if ($result) {
+            return $myLands['manor'][$landId - 1];
+        }
+    }
 }

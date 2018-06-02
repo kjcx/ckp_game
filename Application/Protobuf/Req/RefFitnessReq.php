@@ -3,24 +3,21 @@
  * Created by PhpStorm.
  * User: dupeng
  * Date: 2018/5/30
- * Time: 下午5:00
+ * Time: 下午5:21
  */
 
 namespace App\Protobuf\Req;
 
 
-class HarvestPlantReq
+class RefFitnessReq
 {
     public static function decode($string)
     {
         $data = [];
-        $obj = new \AutoMsg\HarvestPlantReq();
+        $obj = new \AutoMsg\RefFitnessReq();
         $obj->mergeFromString($string);
-//        LoadListId
-
-        foreach ($obj->getHarvestPlanId()->getIterator() as $v) {
-            $data['landId'][] = $v;
-        }
+        $data['landId'] = $obj->getId();
+        $data['uid'] = $obj->getUserId();
         return $data;
     }
 }

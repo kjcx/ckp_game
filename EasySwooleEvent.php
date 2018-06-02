@@ -9,12 +9,15 @@
 namespace EasySwoole;
 
 use App\Event\RedisEventHelper;
+use App\Helpers\ErrorHandle;
+use App\Models\SystemLog\Handler;
 use App\Process\Subscribe;
-use App\Process\WebScokExist;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
+use EasySwoole\Core\Component\Di;
+use EasySwoole\Core\Component\SysConst;
 use EasySwoole\Core\Swoole\EventHelper;
 use EasySwoole\Core\Swoole\Process\ProcessManager;
 use \EasySwoole\Core\Swoole\ServerManager;
@@ -24,7 +27,7 @@ use \EasySwoole\Core\Http\Response;
 use App\Event\MainEventHelper;
 use EasySwoole\Core\Utility\File;
 use App\Event\RedisEvent;
-use \EasySwoole\Core\Component\Rpc\Server as RpcServer;
+
 Class EasySwooleEvent implements EventInterface {
 
     public static function frameInitialize(): void
@@ -33,7 +36,7 @@ Class EasySwooleEvent implements EventInterface {
         date_default_timezone_set('Asia/Shanghai');
         ini_set('default_socket_timeout', -1);
         self::loadConf(EASYSWOOLE_ROOT . '/Application/Conf');
-        
+        Di::getInstance()->set(SysConst::LOGGER_WRITER,Handler::class);
     }
 
     public static function mainServerCreate(ServerManager $server,EventRegister $register): void
@@ -82,13 +85,15 @@ Class EasySwooleEvent implements EventInterface {
 
         ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
 
-        EventHelper::registerDefaultOnMessage($register, WebSock::class,RedisEventHelper::test(23),RedisEventHelper::test(12));
+        EventHelper::registerDefaultOnMessage($register, WebSock::class,function ($error) {
+            var_dump($error);
+        },ErrorHandle::class);
 
 //        EventHelper::registerDefaultOnMessage($register,WebSock::class);
 
 
         $register->add($register::onClose, function ($ser,$fd) {//离线删除连接
-            RedisEventHelper::remove($fd);
+//            RedisEventHelper::remove($fd);
         });
         $register->add($register::onConnect, function ($ser,$fd) {//离线删除连接
             var_dump('fd'.'-'.$fd);

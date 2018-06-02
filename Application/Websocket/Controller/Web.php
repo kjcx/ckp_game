@@ -53,6 +53,7 @@ use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\CultivateEmployeeReq;
 use App\Protobuf\Req\DestoryBuildReq;
+use App\Protobuf\Req\DismantleReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\FriendAddReq;
 use App\Protobuf\Req\FriendApplyClearReq;
@@ -67,6 +68,7 @@ use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
 use App\Protobuf\Req\RefDropShopReq;
+use App\Protobuf\Req\RefFitnessReq;
 use App\Protobuf\Req\RefStaffReq;
 use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\SavingGoldReq;
@@ -76,6 +78,7 @@ use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
+use App\Protobuf\Req\UseCompostReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserSalesReq;
 use App\Protobuf\Result\AddSoilResult;
@@ -89,6 +92,7 @@ use App\Protobuf\Result\CreateBuildResult;
 use App\Protobuf\Result\CreateCompanyResult;
 use App\Protobuf\Result\CultivateEmployeeResult;
 use App\Protobuf\Result\DestoryBuildResult;
+use App\Protobuf\Result\DismantleResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyClearResult;
@@ -101,6 +105,7 @@ use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\GrowPlantsResult;
+use App\Protobuf\Result\HarvestPlanResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\LoadStaffResult;
 use App\Protobuf\Result\ManorVisitInfoResult;
@@ -112,6 +117,7 @@ use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RefDropShopResult;
+use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
@@ -125,6 +131,9 @@ use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
+use App\Protobuf\Result\UpgradeLandLevelReq;
+use App\Protobuf\Result\UpgradeLandLevelResult;
+use App\Protobuf\Result\UseCompostResult;
 use App\Protobuf\Result\UseItemResult;
 use App\Protobuf\Result\UserSalesResult;
 use EasySwoole\Core\Component\Spl\SplStream;
@@ -208,12 +217,36 @@ class Web extends WebSocketController
     }
 
     /**
-     *
+     *庄园土地收获
      */
     public function msgid_1056()
     {
+        //TODO::
         $data = HarvestPlantReq::decode($this->data);
-        var_dump($data);
+        $land = new Land($this->uid);
+        $res = $land->harvest($data['landId']);
+        if (isset($res['error'])){
+            $this->send(1086,$this->fd,0,$res['msg'],12);
+        } else {
+            $string = HarvestPlanResult::encode($res);
+            $this->send(1086,$this->fd,$string);
+        }
+    }
+
+    /**
+     * 铲除地块作物
+     */
+    public function msgid_1062()
+    {
+        $data = DismantleReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->eradicate($data['landId'],$data['uid']);
+        if (isset($res['error'])){
+            $this->send(1092,$this->fd,0,$res['msg'],12);
+        } else {
+            $string = DismantleResult::encode(['landId' => $res]);
+            $this->send(1092,$this->fd,$string);
+        }
     }
     /**
      * 发送
@@ -1441,7 +1474,7 @@ class Web extends WebSocketController
         $this->send(2010,$this->fd,$data);
     }
 
-    /**
+    /*
      * FruitsDataReq
      * return FruitsDataResult 1030
      */
@@ -1461,20 +1494,20 @@ class Web extends WebSocketController
     {
         //抽奖水果机
         $FruitsData = new FruitsData();
-        $data_FruitsData = $FruitsData->getFruitsData(['Uid'=>$this->uid]);
+        $data_FruitsData = $FruitsData->getFruitsData(['Uid' => $this->uid]);
         var_dump($data_FruitsData);
         $is_false = [];
         $is_true = [];
         foreach ($data_FruitsData as $item) {
-            if($item['Status'] ){
+            if ($item['Status']) {
                 $is_true[] = $item['FruitsId'];
-            }else{
+            } else {
                 $is_false[] = $item['FruitsId'];
             }
         }
         //1判断今日是否抽完
-        if(count($is_false) == 0){
-            $this->send(1035,$this->fd,'','今日均已抽完，请明日再来');
+        if (count($is_false) == 0) {
+            $this->send(1035, $this->fd, '', '今日均已抽完，请明日再来');
             return;
         }
         //2判断第几次是否需要扣费
@@ -1486,35 +1519,79 @@ class Web extends WebSocketController
         $Bag = new Bag($this->uid);
         $gold = $Bag->getCountByItemId($data_price['Type']);
 //        var_dump($data_price);
-        if($gold >= $data_price['Count']){
+        if ($gold >= $data_price['Count']) {
             //3随机一个格子
 //            扣费
-            $rs = $Bag->delBag($data_price['Type'],$data_price['Count']);
-            if($rs){
+            $rs = $Bag->delBag($data_price['Type'], $data_price['Count']);
+            if ($rs) {
                 mt_srand();
                 $FruitsId = $FruitsData->getFruitsId($this->uid);
                 var_dump($FruitsId);
                 //设置redis 状态为Status = true
-                $rs = $FruitsData->updateFruitsData($this->uid,$FruitsId);
-                if($rs){
-                    $rs = $Bag->addBag($data_FruitsData[$FruitsId]['ItemId'],$data_FruitsData[$FruitsId]['Count']);
-                    if($rs){
+                $rs = $FruitsData->updateFruitsData($this->uid, $FruitsId);
+                if ($rs) {
+                    $rs = $Bag->addBag($data_FruitsData[$FruitsId]['ItemId'], $data_FruitsData[$FruitsId]['Count']);
+                    if ($rs) {
                         $str = RaffleFruitsResult::encode($FruitsId);
-                        $this->send(1035,$this->fd,$str);
-                    }else{
+                        $this->send(1035, $this->fd, $str);
+                    } else {
                         var_dump("扣费失败");
                     }
-                }else{
+                } else {
                     var_dump("updateFruitsData失败");
                 }
 
-            }else{
+            } else {
                 var_dump("扣费失败");
             }
 
-        }else{
-            $this->send(1035,$this->fd,'','没有足够的金钱');
+        } else {
+            $this->send(1035, $this->fd, '', '没有足够的金钱');
         }
+    }
+    /*
+     * 刷新土地状态
+     */
+    public function msgid_1104()
+    {
+        $data = RefFitnessReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->getlandOne($data['landId'],$data['uid']);
+        if (isset($res['error'])) {
+            $this->send(1143,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1143,$this->fd,RefFitnessResult::encode($res));
+        }
+    }
 
+    /**
+     * 升级土地
+     */
+    public function msgid_1125()
+    {
+        $data = UpgradeLandLevelReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->upgradeLand($data['landId']);
+        if (isset($res['error'])) {
+            $this->send(1171,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1171,$this->fd,UpgradeLandLevelResult::encode($res));
+        }
+    }
+
+    /**
+     * 施肥
+     * return 2012
+     */
+    public function msgid_2011()
+    {
+        $data = UseCompostReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->useCompost($data['landId']);
+        if (isset($res['error'])) {
+            $this->send(2012,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(2012,$this->fd,UseCompostResult::encode($res));
+        }
     }
 }

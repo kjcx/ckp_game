@@ -9,12 +9,19 @@
 namespace App\Models\Item;
 
 use App\Models\Model;
+use App\Traits\MongoTrait;
 use think\Db;
 
 class Item extends Model
 {
+    use MongoTrait;
     private $table = 'ckzc.item';
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->collection = $this->getMongoClient();
+    }
     /**
      * 根据id获取数据
      * @param array $ids
@@ -34,7 +41,7 @@ class Item extends Model
      */
     public function getItemById($id)
     {
-        $data = Db::table($this->table)->where(['Id'=>$id])->find();
+        $data = Db::table($this->table)->where(['Id'=>(int)$id])->find();
         return $data;
     }
 
