@@ -28,6 +28,7 @@ use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
+use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
@@ -94,6 +95,7 @@ use App\Protobuf\Result\FriendApplyClearResult;
 use App\Protobuf\Result\FriendApplyResult;
 use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
+use App\Protobuf\Result\FruitsDataResult;
 use App\Protobuf\Result\GetAuctionLandResult;
 use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
@@ -108,6 +110,7 @@ use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
+use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
@@ -1436,5 +1439,82 @@ class Web extends WebSocketController
     {
         $data = MyLandInfoResult::encode($this->uid);
         $this->send(2010,$this->fd,$data);
+    }
+
+    /**
+     * FruitsDataReq
+     * return FruitsDataResult 1030
+     */
+    public function msgid_1031()
+    {
+        var_dump("msgid_1031");
+        $str = FruitsDataResult::encode($this->uid);
+        $this->send(1030,$this->fd,$str);
+    }
+
+    /**
+     * 水果机请求
+     * RaffleFruitsReq 1035
+     * return 1035
+     */
+    public function msgid_1035()
+    {
+        //抽奖水果机
+        $FruitsData = new FruitsData();
+        $data_FruitsData = $FruitsData->getFruitsData(['Uid'=>$this->uid]);
+        var_dump($data_FruitsData);
+        $is_false = [];
+        $is_true = [];
+        foreach ($data_FruitsData as $item) {
+            if($item['Status'] ){
+                $is_true[] = $item['FruitsId'];
+            }else{
+                $is_false[] = $item['FruitsId'];
+            }
+        }
+        //1判断今日是否抽完
+        if(count($is_false) == 0){
+            $this->send(1035,$this->fd,'','今日均已抽完，请明日再来');
+            return;
+        }
+        //2判断第几次是否需要扣费
+        $count = count($is_true);
+        $GameConfig = new GameConfig();
+        $data_gameconfig = $GameConfig->getFruits();
+        $data_price = $data_gameconfig[$count];
+
+        $Bag = new Bag($this->uid);
+        $gold = $Bag->getCountByItemId($data_price['Type']);
+//        var_dump($data_price);
+        if($gold >= $data_price['Count']){
+            //3随机一个格子
+//            扣费
+            $rs = $Bag->delBag($data_price['Type'],$data_price['Count']);
+            if($rs){
+                mt_srand();
+                $FruitsId = $FruitsData->getFruitsId($this->uid);
+                var_dump($FruitsId);
+                //设置redis 状态为Status = true
+                $rs = $FruitsData->updateFruitsData($this->uid,$FruitsId);
+                if($rs){
+                    $rs = $Bag->addBag($data_FruitsData[$FruitsId]['ItemId'],$data_FruitsData[$FruitsId]['Count']);
+                    if($rs){
+                        $str = RaffleFruitsResult::encode($FruitsId);
+                        $this->send(1035,$this->fd,$str);
+                    }else{
+                        var_dump("扣费失败");
+                    }
+                }else{
+                    var_dump("updateFruitsData失败");
+                }
+
+            }else{
+                var_dump("扣费失败");
+            }
+
+        }else{
+            $this->send(1035,$this->fd,'','没有足够的金钱');
+        }
+
     }
 }
