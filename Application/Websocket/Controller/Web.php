@@ -1442,6 +1442,7 @@ class Web extends WebSocketController
         //1验证金币是否足够
         $LandInfo = new LandInfo();
         $config = $LandInfo->getBiddingPrice();
+
         $Bag = new Bag($this->uid);
         $count = $Bag->getCountByItemId($config['Type']);//土地对应类型的余额
         $new_count = $config['Count'];
@@ -1467,6 +1468,7 @@ class Web extends WebSocketController
 
     /**
      * 已参与竞拍
+     * return MyLandInfoResult 2010
      */
     public function msgid_2009()
     {

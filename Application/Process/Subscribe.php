@@ -22,6 +22,7 @@ class Subscribe extends AbstractProcess
         $gloableChannel = Config::getInstance()->getConf('rediskeys.gloable');
         $this->redis->subscribe(array_column($gloableChannel,'0'),function ($redis, $chan, $msg) use ($gloableChannel) {
             $gloableChannel[$chan]['1']($msg);
+
         }); //监控的频道 和回调
 
     }

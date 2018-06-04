@@ -24,10 +24,15 @@ class LandInfo extends Model
      */
     public function getTodayLandInfo()
     {
-        $num = $this->getDay();
-        $start = $num *1000;
-        $end = $start + 19;
-        $data = Db::table($this->table)->where('Pos','>=',$start)->where('Pos','<=',$end)->select();
+        $Day = $this->getDay();
+        var_dump($Day);
+        $yushu = $Day % 20;
+        if($yushu > 0){
+            $Day = $yushu;
+        }else{
+            $Day = 20;
+        }
+        $data = Db::table($this->table)->where(['Day'=>(int)$Day])->select();
         return $data;
     }
     /**
@@ -37,14 +42,14 @@ class LandInfo extends Model
     {
         $num = $this->redis->get('LandauctionDay');
         $day_time = $this->redis->ttl('LandauctionDay');
-        if(time()-$day_time > 86400){
+        if(!$num){
+            //生产20*20土地
+            $this->init_Land();
+            $this->redis->setex('LandauctionDay',strtotime(date('Y-m-d',time())),1);
+        }elseif(time()-$day_time > 86400 && $num){
             //第二天
             $num = $num + 1;
             $this->redis->set('LandauctionDay',$num,strtotime(date('Y-m-d',time())));
-        }else{
-            $this->redis->sAdd('LandauctionDay',1,time());
-            //生产20*20土地
-
         }
         return $num;
     }

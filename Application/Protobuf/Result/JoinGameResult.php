@@ -44,6 +44,8 @@ class JoinGameResult
         //好友
         $FriendApply = new FriendApply();
         $data_Friends = $FriendApply->getFriendApply($uid);
+        var_dump("getFriendApply");
+        var_dump($data_Friends);
         //申请中
         $Friend = FriendListResult::encode($data_Friends);
         $JoinGameResult->setFriend($Friend);

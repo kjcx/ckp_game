@@ -8,6 +8,8 @@
 
 namespace App\Protobuf\Result;
 
+use App\Models\LandInfo\MyLandInfo;
+
 /**
  * 我的土地竞拍
  * Class MyLandInfoResult
@@ -18,8 +20,8 @@ class MyLandInfoResult
     public static function encode($uid)
     {
         $MyLandInfoResult = new \AutoMsg\MyLandInfoResult();
-        $data = [];
-
+        $MyLandInfo = new MyLandInfo();
+        $data =  $MyLandInfo->getMyLandInfo($uid);
         $MyLandInfoList = [];
         if($data){
             foreach ($data as $datum) {

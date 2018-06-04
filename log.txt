@@ -152,3 +152,16 @@
 
 
 
+{"file":"\/code\/ckzc_server\/Protobuf\/Src\/AutoMsg\/AuctionLandInfo.php","line":60,"function":"checkInt32","class":"Google\\Protobuf\\Internal\\GPBUtil","type":"::","args":[null]}
+{"file":"\/code\/ckzc_server\/Application\/Protobuf\/Result\/AuctionLandInfo.php","line":24,"function":"setPos","class":"AutoMsg\\AuctionLandInfo","object":{},"type":"->","args":[null]}
+{"file":"\/code\/ckzc_server\/Application\/Protobuf\/Result\/AuctionLandResult.php","line":27,"function":"encode","class":"App\\Protobuf\\Result\\AuctionLandInfo","type":"::","args":[null]}
+{"file":"\/code\/ckzc_server\/Application\/Websocket\/Controller\/Web.php","line":1457,"function":"encode","class":"App\\Protobuf\\Result\\AuctionLandResult","type":"::","args":[1003]}
+
+
+
+
+
+
+
+
+
