@@ -2218,3 +2218,12 @@ message UseCompostReq{
 message UseCompostResult{
     LoadManorData LoadManor=1;
 }
+message RandManorResult{
+    repeated LoadManorData LoadManor=1;
+    int32 Time=2;
+    string UserName=3;
+    string RoleId=4;
+}
+message RandManorRec{
+
+}

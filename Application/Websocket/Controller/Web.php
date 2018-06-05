@@ -671,11 +671,9 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_UseItem = UseItemReq::decode($data);
-        var_dump($data_UseItem);
         $Bag = new Bag($this->uid);
         //0.验证是否有此道具
         $data_bag = $Bag->checkBagHasItemById($data_UseItem['ItemId']);
-        $data_bag['CurCount'] = 10;
         if($data_bag){
             if ($data_bag['CurCount'] >= $data_UseItem['Count']){
                 //1 获取礼包规则

@@ -11,13 +11,14 @@ namespace App\HttpController;
 use App\Models\BagInfo\Bag;
 use App\Models\Item\Item;
 use App\Models\User\Role;
+use App\Traits\MongoTrait;
+use App\Utility\Mysql;
 use EasySwoole\Config;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use think\Db;
 
 class Gm extends Controller
 {
-
 
     /**
      * 获取用户
@@ -31,13 +32,33 @@ class Gm extends Controller
         $this->response()->write(json_encode($roles));
     }
 
+    public function delUser()
+    {
+        $uid = $this->request()->getRequestParam('uid');
+
+        $mysql = Mysql::getInstance()->getConnect();
+        $dbConf = Config::getInstance()->getConf('MONGO');
+        if (empty($dbConf['username'])) {
+            $mongo = new \MongoDB\Client("mongodb://{$dbConf['hostname']}/");
+        } else {
+            $mongo = new \MongoDB\Client("mongodb://{$dbConf['username']}:{$dbConf['password']}@{$dbConf['hostname']}:{$dbConf['prot']}/");
+        }
+        $mysql->where('uid',$uid)->delete('ckzc_role');
+        $mysql->where('uid',$uid)->delete('ckzc_userattr');
+        $mysql->where('id',$uid)->delete('ckzc_member');
+        $mysql->where('uid',$uid)->delete('ckzc_friend_apply');
+        $mongo->ckzc_data->user_bag->deleteOne(['uid' => $uid]);
+        $mongo->ckzc_data->manor->deleteOne(['uid' => $uid]);
+        $response = ['code' => 200,'msg' => '成功'];
+        $this->response()->write($response);
+    }
     /**
      * 加等级
      */
     public function addLevel()
     {
-        $uid = $this->request()->getQueryParam('uid');
-        $level = $this->request()->getQueryParam('level');
+        $uid = $this->request()->getRequestParam('uid');
+        $level = $this->request()->getRequestParam('level');
         $role = new Role();
         if ($role->updateLevel($uid,$level))
         {
@@ -46,7 +67,7 @@ class Gm extends Controller
             $response = ['code' => 401,'msg' => '失败'];
 
         }
-        $this->response()->write(json_encode($response));
+        $this->response()->write($response);
 
     }
 
@@ -56,7 +77,7 @@ class Gm extends Controller
     public function addAllItem()
     {
 
-        $uid = $this->request()->getQueryParam('uid');
+        $uid = $this->request()->getRequestParam('uid');
         $bag = new Bag($uid);
 
         $item = new Item();
@@ -74,8 +95,8 @@ class Gm extends Controller
      */
     public function addExp()
     {
-        $uid = $this->request()->getQueryParam('uid');
-        $exp = $this->request()->getQueryParam('exp');
+        $uid = $this->request()->getRequestParam('uid');
+        $exp = $this->request()->getRequestParam('exp');
         $role = new Role();
         if ($role->updateExp($uid,$exp))
         {
@@ -92,9 +113,9 @@ class Gm extends Controller
      */
     public function addItem()
     {
-        $uid = $this->request()->getQueryParam('uid');
-        $itemId = $this->request()->getQueryParam('itemId');
-        $num = $this->request()->getQueryParam('num');
+        $uid = $this->request()->getRequestParam('uid');
+        $itemId = $this->request()->getRequestParam('itemId');
+        $num = $this->request()->getRequestParam('num');
 
         $bag = new Bag($uid);
 
