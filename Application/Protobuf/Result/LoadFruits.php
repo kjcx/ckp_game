@@ -20,15 +20,15 @@ class LoadFruits
 {
     public static function encode($data)
     {
-        $LoadFruits = new LoadFruitsData();
+        $LoadFruitsData = new LoadFruitsData();
         $Count = $data['Count'];
         $FruitsId = $data['FruitsId'];
         $ItemId = $data['ItemId'];
         $Status = $data['Status'];
-        $LoadFruits->setCount($Count);
-        $LoadFruits->setFruitsId($FruitsId);
-        $LoadFruits->setItemId($ItemId);
-        $LoadFruits->setStatus($Status);
-        return $LoadFruits;
+        $LoadFruitsData->setCount($Count);
+        $LoadFruitsData->setFruitsId($FruitsId);
+        $LoadFruitsData->setItemId($ItemId);
+        $LoadFruitsData->setStatus($Status);
+        return $LoadFruitsData;
     }
 }

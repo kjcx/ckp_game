@@ -13,6 +13,7 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\Execl\LandInfo;
+use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Staff\Staff;
@@ -39,8 +40,8 @@ class Index extends Controller
     public function index()
     {
 
-        $day = strtotime("+1 day");
-        var_dump(date('Ymdhis',$day));
+        $FruitsData = new FruitsData();
+        $FruitsData->getFruitsData(['Uid'=>40]);
 
         return;
         $client = new Client();

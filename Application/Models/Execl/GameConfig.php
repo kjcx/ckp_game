@@ -67,4 +67,20 @@ class GameConfig extends Model
         }
         return $arr;
     }
+
+    /**
+     * 获取水果机配置
+     */
+    public function getFruits()
+    {
+        $data_GameConfig = $this->getInfoByField('Fruits');
+        $Fruits = $data_GameConfig['value'];
+        $Fruitss = explode(';',$Fruits);
+        $arr = [];
+        foreach ($Fruitss as $k => $item) {
+            $res = explode(',',$item);
+            $arr[$k] = ['Type'=>$res[0],'Count'=>$res[1]];
+        }
+        return $arr;
+    }
 }

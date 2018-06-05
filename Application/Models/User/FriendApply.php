@@ -71,16 +71,16 @@ class FriendApply extends Model
     /**
      * 通过好友申请
      * @param $uid 用户id
-     * @param $roleids 通过角色集合
+     * @param $uids 通过角色集合
      * @return bool
      */
-    public function passFriendApply($uid,$roleids)
+    public function passFriendApply($uid,$uids)
     {
         //1 通过角色id获取用户id
-        $data_userinfos = $this->mysql->where('id',$roleids,'in')->get('ckzc_role');
+        $data_userinfos = $this->mysql->where('uid',$uids,'in')->get('ckzc_role');
 //        var_dump($data_userinfos);
         //2 修改申请人uid 和fuid为自己的 对应的记录
-        $uids = array_column($data_userinfos,'uid');
+//        $uids = array_column($data_userinfos,'uid');
 //        var_dump($uids);
         $rs = $this->mysql->where('fuid',$uid)->where('uid',$uids,'in')->update($this->table,['status'=>1,'add_time'=>time()]);
         if($rs){
@@ -101,7 +101,10 @@ class FriendApply extends Model
         $data = $this->mysql
             ->where('f.fuid',$uid)
             ->join('ckzc_role r',"f.uid = r.uid",'LEFT')
-            ->where('f.status',0,'<>')->get($this->table ." f",null,'r.id,r.vip,r.nickname,r.icon,r.shenjiazhi,r.level,f.status,f.apply_time');
+            ->where('f.status',0,'<>')->get($this->table ." f",null,'r.uid,r.vip,r.nickname,r.icon,r.shenjiazhi,r.level,f.status,f.apply_time,r.shopid');
+        var_dump("getFriendApplygetFriendApply" . $uid);
+        var_dump($data);
+
         return $data;
     }
 }

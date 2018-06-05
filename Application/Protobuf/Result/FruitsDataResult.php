@@ -7,6 +7,7 @@
  */
 
 namespace App\Protobuf\Result;
+use App\Models\FruitsData\FruitsData;
 
 /**
  * 返回加载水果机物品
@@ -15,11 +16,20 @@ namespace App\Protobuf\Result;
  */
 class FruitsDataResult
 {
-    public static function encode($data)
+    public static function encode($uid)
     {
         $FruitsDataResult = new \AutoMsg\FruitsDataResult();
         $data = [];
-        $LoadFruits = LoadFruits::encode($data);
-        $FruitsDataResult->setLoadFruits();
+        $FruitsData = new FruitsData();
+        $arr = $FruitsData->getFruitsData(['Uid'=>$uid]);
+        var_dump($arr);
+        $LoadFruits = [];
+        foreach ($arr as $k =>$item) {
+//            $LoadFruits[$k] = LoadFruits::encode($item);
+            $LoadFruits[$k] = LoadFruits::encode($item);
+        }
+        $FruitsDataResult->setLoadFruits($LoadFruits);
+        $str = $FruitsDataResult->serializeToString();
+        return $str;
     }
 }

@@ -12,7 +12,9 @@ return [
         'resetDrop:uid',//掉落库重置资格key
         '1:uid:fd',    //1为机器hash或者编号 uid用户uid fd 用户接入机器的fd 数据中心有使用例子
         'dropShop:10',  //掉落库redis key 对应的mongo 表是 dropShop dropShop:10   表示 dropShop:id = 1  第二个表示id
-        'drop:uid:Id' //掉落率的redis key   每个人的 单个key的过期时间为 180min 规则 drop: + uid:+ 商店Id
+        'drop:uid:Id', //掉落率的redis key   每个人的 单个key的过期时间为 180min 规则 drop: + uid:+ 商店Id
+        'FruitsData:uid',//水果机数据
+        'FruitsDataWeight:uid',//水果机权重数据
     ],
     'a' => 'dupeng',
     'gloable' => [ //全局信息频道

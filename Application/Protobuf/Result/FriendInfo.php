@@ -17,7 +17,8 @@ class FriendInfo
 {
     public static function encode($data)
     {
-
+        var_dump("FriendInfoFriendInfoFriendInfo");
+        var_dump($data);
         $arr = [];
         if(is_array($data) && count($data)>0){
             if(count($data) == count($data, 1)){ //一维数组
@@ -30,7 +31,7 @@ class FriendInfo
                 $ApplyTime = $data['apply_time'];
                 $Icon = $data['icon'];
                 $RoleId = $data['uid'];
-                $ShopId = 1;// 打工店铺
+                $ShopId = $data['shopid'];// 打工店铺
                 $VIP = $data['vip'];
                 $WorkCompany = 'KJCX';//打工公司
                 $FriendInfo->setName($Name);
@@ -56,8 +57,8 @@ class FriendInfo
                     $AddTime = time();
                     $ApplyTime = time();
                     $Icon = $datum['icon'];
-                    $RoleId = $datum['id'];
-                    $ShopId = 1;// 打工店铺
+                    $RoleId = $datum['uid'];
+                    $ShopId = $datum['shopid'];// 打工店铺
                     $VIP = $datum['vip'];
                     $WorkCompany = 'KJCX';//打工公司
                     $FriendInfo->setName($Name);

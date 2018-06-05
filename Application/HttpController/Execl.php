@@ -19,6 +19,8 @@ use App\Models\DataCenter\DataCenter;
 use App\Models\Execl\Building;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\Character;
+use App\Models\Execl\Drop;
+use App\Models\Execl\Fruits;
 use App\Models\Execl\GameConfig;
 use App\Models\Execl\Lotto;
 use App\Models\Execl\Mission;
@@ -61,7 +63,8 @@ class Execl extends Controller
         $highestRow = $sheet->getHighestRow(); // 取得总行数
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
-        for($j=3;$j<=$highestRow;$j++) {
+        $Execl_Drop = new Drop();
+        for($j=4;$j<=$highestRow;$j++) {
             $str = '';
             for ($k = 'A'; $k !='E'; $k++) {
 
@@ -75,7 +78,7 @@ class Execl extends Controller
             }
             $this->response()->write(json_encode($arr));
 //            var_dump($arr);
-            Db::table('Drop')->insert($arr);
+            $Execl_Drop->insert($arr);
         }
     }
 
@@ -458,7 +461,7 @@ class Execl extends Controller
     }
 
     /**
-     * 掉落库
+     * 道具
      */
     public function Execl_Item()
     {
@@ -491,6 +494,43 @@ class Execl extends Controller
             $this->response()->write(json_encode($arr));
 //            var_dump($arr);
             $Item->insert($arr);
+        }
+    }
+
+    /**
+     * 水果机
+     */
+    public function Execl_Fruits()
+    {
+        $file_temp = 'Execl/Fruits.xlsx';
+        $spreadsheet = IOFactory::load($file_temp);
+        $sheet = $spreadsheet->getSheet(0);
+//        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+//        var_dump($sheetData);
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        $num = 0;
+        $Fruits = new Fruits();
+        for($j=4;$j<=$highestRow;$j++) {
+            $str = '';
+            for ($k = 'A'; $k !='E'; $k++) {
+
+                $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
+                $this->response()->withHeader("Content-Type","text/html;charset=utf-8");
+                $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
+                if ($key == 'Id') {
+                    $arr[$key] = (int)trim($str, "\\");
+                } elseif($key == 'Type'){
+                    $arr[$key] = (int)trim($str, "\\");
+                }
+                else {
+                    $arr[$key] = trim($str, "\\");
+                }
+
+            }
+            $this->response()->write(json_encode($arr));
+//            var_dump($arr);
+            $Fruits->insert($arr);
         }
     }
 }

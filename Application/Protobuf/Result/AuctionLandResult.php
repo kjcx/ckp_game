@@ -21,7 +21,9 @@ class AuctionLandResult
     {
         $AuctionLandResult = new \AutoMsg\AuctionLandResult();
         $MyLandInfo = new MyLandInfo();
+        var_dump(111);
         $data = $MyLandInfo->getPosInfoByPos($pos);
+        var_dump($data);
         $AuctionLandInfo = AuctionLandInfo::encode($data);
         $AuctionLandResult->setAuctionLandInfo($AuctionLandInfo);
         $str = $AuctionLandResult->serializeToString();

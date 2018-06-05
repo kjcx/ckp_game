@@ -588,7 +588,7 @@ message FruitsDataReq{
 
 }
 message FruitsDataResult{
-    map<int32, LoadFruitsData> LoadFruits=1;
+     map<int32, LoadFruitsData> LoadFruits=1;
 }
 message RaffleFruitsReq{
     int32 Id=1;

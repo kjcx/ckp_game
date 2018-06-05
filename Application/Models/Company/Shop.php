@@ -310,7 +310,12 @@ class Shop extends Model
         $MasterId = [];
         if($data){
             foreach ($data as $datum) {
-                $MasterId[] = $datum['Master'][0];
+                if(count($datum['Master'])){
+                    $MasterId[] = $datum['Master'][0];
+                }else{
+                    $MasterId = [];
+                }
+
             }
         }
         $Role = new Role();

@@ -19,7 +19,7 @@ use think\Db;
  */
 class MyLandInfo extends Model
 {
-    public $table = 'ckzc.MyLandInfo';
+    public $table = 'ckzc.Execl_LandInfo';
 
     /**
      * 创建记录
@@ -46,8 +46,18 @@ class MyLandInfo extends Model
     public function getMyLandInfo($uid)
     {
         //Status = 1 ;已参与 2 已获得
-        $data = Db::table($this->table)->where(['Status'=>2])->select();
+        $data = Db::table($this->table)->where(['Status'=>2,'Uid'=>$uid])->select();
         return $data;
     }
 
+    /**
+     * 通过pos获取详细信息
+     * @param $Pos
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getPosInfoByPos($Pos)
+    {
+        $data = Db::table($this->table)->where(['Pos'=>$Pos])->find();
+        return $data;
+    }
 }
