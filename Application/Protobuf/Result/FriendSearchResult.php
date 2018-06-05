@@ -18,7 +18,10 @@ class FriendSearchResult
     public static function encode($data)
     {
         $FriendSearchResult = new \AutoMsg\FriendSearchResult();
-        $Friends = FriendInfo::encode($data);
+        $Friends = [];
+        foreach ($data as $datum) {
+            $Friends[] = FriendInfo::encode($datum);
+        }
         $FriendSearchResult->setFriends($Friends);
         $str = $FriendSearchResult->serializeToString();
         return $str;

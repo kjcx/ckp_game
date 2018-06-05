@@ -21,7 +21,10 @@ class FriendListResult
         $FriendListResult = new \AutoMsg\FriendListResult();
 //        $Account = new Account();
 //        $data = $Account->find();
-        $Friends = FriendInfo::encode($data);
+        $Friends = [];
+        foreach ($data as $datum) {
+            $Friends[] = FriendInfo::encode($datum);
+        }
         $FriendListResult->setFriends($Friends);
         $FriendListResult->setBlacks([]);
         return $FriendListResult;

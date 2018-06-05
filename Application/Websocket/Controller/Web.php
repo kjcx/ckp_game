@@ -21,6 +21,7 @@ use App\Models\Company\Company;
 use App\Models\Company\ConsumeResult;
 use App\Models\Company\Shop as CompanyShop;
 use App\Models\Company\TalentMarketInfo;
+use App\Models\DataCenter\DataCenter;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\GameConfig;
 use App\Models\Execl\LandInfo;
@@ -258,6 +259,34 @@ class Web extends WebSocketController
      */
     public function send($MsgId,$fd,$data,$Result=0,$ErrorMsg='')
     {
+        if($Result){
+            $WsResult = new WsResult();
+            if (empty($ErrorMsg)) {
+                $data_ws = $WsResult->getOne($Result);
+            } else {
+                $data_ws = $WsResult->getErrorValue($Result);
+            }
+            $value = (int)$data_ws['value'];
+        }else{
+            $value = 0;
+        }
+        $str  = \App\Protobuf\Result\MsgBaseSend::encode($MsgId,$data,$value,$ErrorMsg);
+        ServerManager::getInstance()->getServer()->push($fd,$str,WEBSOCKET_OPCODE_BINARY);
+    }
+
+    public function sendByUid($MsgId,$uid,$data,$Result=0,$ErrorMsg='')
+    {
+        $DataCenter = new DataCenter();
+        $fd = $DataCenter->getFdByUid($uid);
+        if(!$fd){
+            var_dump("uid:".$uid."不在线");
+            return;
+        }
+        $online = ServerManager::getInstance()->getServer()->exist($fd);
+        if(!$online){
+            var_dump("uid" . $uid . "已经离线");
+            return;
+        }
         if($Result){
             $WsResult = new WsResult();
             if (empty($ErrorMsg)) {
@@ -760,8 +789,14 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_FriendApply = FriendApplyReq::decode($data);
-        var_dump($data_FriendApply);
+//        var_dump($data_FriendApply);
         $str = FriendApplyResult::encode($data_FriendApply,$this->uid);
+        $FriendApply = new FriendApply();
+        $data_userinfos = $FriendApply->getFriendApply($data_FriendApply['RoleId']);
+        var_dump("=====>");
+        var_dump($data_userinfos);
+        $str_other = FriendAddResult::encode($data_userinfos,0);
+        $this->sendByUid(1011,$data_FriendApply['RoleId'],$str_other);
         $this->send(1011,$this->fd,$str);
     }
 
@@ -775,12 +810,21 @@ class Web extends WebSocketController
         //修改状态
         var_dump($data_FriendAdd);
         $FriendApply = new FriendApply();
-        $bool = $FriendApply->passFriendApply($this->uid,$data_FriendAdd);
-        if($bool){
-            $str = FriendAddResult::encode($bool);
+        $data_userinfos = $FriendApply->passFriendApply($this->uid,$data_FriendAdd);
+        if($data_userinfos){
+            $str = FriendAddResult::encode($data_userinfos,1);
             $this->send(1013,$this->fd,$str);
-        }else{
+            $Role = new Role();
+            $data_userinfo = $Role->getRoleByUids([$this->uid]);
+            var_dump("data_userinfo");
+            var_dump($data_userinfo);
+            $str_other = FriendAddResult::encode($data_userinfo,0);
+            foreach ($data_FriendAdd as $item) {
+                $this->sendByUid(1013,$item,$str_other);
+            }
 
+        }else{
+            var_dump("加好友失败");
         }
 
     }
@@ -1436,11 +1480,21 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_GetAuctionLand = AuctionLandReq::decode($data);
         var_dump($data_GetAuctionLand);
+        $LandInfo = new LandInfo();
+
         //处理竞拍请求
-        //0.查询已经竞拍状态
+        //0.查询已经竞拍数量
+        $num = $LandInfo->getLandinfoNumByUid($this->uid);
+        $Role = new Role();
+        $data_level = $Role->getLevel($this->uid);
+        $level = $data_level['level'];
+        $limit_num = $LandInfo->getAuctionLandNums($level);
+        if($num >= $limit_num){
+            //进制拍
+            $this->send(2008,$this->fd,'','AuctionLandTimesMax');
+        }
 
         //1验证金币是否足够
-        $LandInfo = new LandInfo();
         $config = $LandInfo->getBiddingPrice();
 
         $Bag = new Bag($this->uid);

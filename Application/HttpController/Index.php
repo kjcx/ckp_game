@@ -40,9 +40,9 @@ class Index extends Controller
     public function index()
     {
 
-        $FruitsData = new FruitsData();
-        $FruitsData->getFruitsData(['Uid'=>40]);
-
+        $land = new MyLandInfo();
+        $num = $land->getLandinfoNumByUid(40);
+        var_dump($num);
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){

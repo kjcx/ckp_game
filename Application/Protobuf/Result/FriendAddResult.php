@@ -15,11 +15,15 @@ namespace App\Protobuf\Result;
  */
 class FriendAddResult
 {
-    public static function encode($infos)
+    public static function encode($infos,$To=1)
     {
         $FriendAddResult = new \AutoMsg\FriendAddResult();
-        $FriendAddResult->setTo(0);
-        $data_infos = FriendInfo::encode($infos);
+        $FriendAddResult->setTo($To);
+        $data_infos = [];
+
+        foreach ($infos as $info) {
+            $data_infos[] = FriendInfo::encode($info);
+        }
         $FriendAddResult->setInfos($data_infos);
         $str = $FriendAddResult->serializeToString();
         return $str;

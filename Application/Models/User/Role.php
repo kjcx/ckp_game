@@ -156,7 +156,7 @@ class Role extends Model
         if($Search){//搜索
             $data = $this->mysql->where('uid',$uid,'<>')->where('nickname',"%$Name%",'like')->get($this->table);
         }else{//推荐
-            $data = $this->mysql->where('uid',$uid,'<>')->get($this->table,5);
+            $data = $this->mysql->where('uid',$uid,'<>')->orderBy("RAND ()")->get($this->table,5);
         }
         return $data;
     }

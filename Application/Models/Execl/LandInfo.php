@@ -25,13 +25,6 @@ class LandInfo extends Model
     public function getTodayLandInfo()
     {
         $Day = $this->getDay();
-        var_dump($Day);
-        $yushu = $Day % 20;
-        if($yushu > 0){
-            $Day = $yushu;
-        }else{
-            $Day = 20;
-        }
         $data = Db::table($this->table)->where(['Day'=>(int)$Day])->select();
         return $data;
     }
