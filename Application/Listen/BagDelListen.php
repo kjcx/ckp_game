@@ -30,6 +30,7 @@ class BagDelListen implements EventSubscriberInterface
 
     public function onPush(BagDelEvent $event)
     {
+        var_dump($event->data);
         $dataString = UpdateItemResult::encode($event->data['item']);
         $string = MsgBaseSend::encode(1022,$dataString);
         $dataCenter = new DataCenter();

@@ -90,6 +90,7 @@ class Land extends Model
                 }
             }
             $landInfo['name'] = $roleInfo['nickname'];
+            $landInfo['time'] = time();
             return $landInfo;
         }
 
@@ -129,7 +130,7 @@ class Land extends Model
             $harvest = [];
             if ($land['StealTime'] == 0) {
                 //没被偷过
-                $cropInfo = $this->createFruit($land['SemenId'],$land['Profit']);
+                $cropInfo = $this->createFruit($land['SemenId'],isset($land['Profit']) ?? 0);
                 $harvest['Id'] = $land['Id'];
                 $harvest['SemenId'] = $cropInfo['crop'];
                 $harvest['Count'] = $cropInfo['num'];
