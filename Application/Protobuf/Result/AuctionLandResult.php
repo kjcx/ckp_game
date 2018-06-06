@@ -8,7 +8,7 @@
 
 namespace App\Protobuf\Result;
 
-use App\Models\LandInfo\MyLandInfo;
+use App\Models\Execl\LandInfo;
 
 /**
  * 竞拍请求返回 2008
@@ -20,10 +20,8 @@ class AuctionLandResult
     public static function encode($pos)
     {
         $AuctionLandResult = new \AutoMsg\AuctionLandResult();
-        $MyLandInfo = new MyLandInfo();
-        var_dump(111);
-        $data = $MyLandInfo->getPosInfoByPos($pos);
-        var_dump($data);
+        $LandInfo = new LandInfo();
+        $data = $LandInfo->getPosInfoByPos($pos);
         $AuctionLandInfo = AuctionLandInfo::encode($data);
         $AuctionLandResult->setAuctionLandInfo($AuctionLandInfo);
         $str = $AuctionLandResult->serializeToString();

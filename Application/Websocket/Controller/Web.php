@@ -1520,17 +1520,19 @@ class Web extends WebSocketController
         $data_GetAuctionLand = AuctionLandReq::decode($data);
         var_dump($data_GetAuctionLand);
         $LandInfo = new LandInfo();
-
         //处理竞拍请求
         //0.查询已经竞拍数量
         $num = $LandInfo->getLandinfoNumByUid($this->uid);
+
         $Role = new Role();
         $data_level = $Role->getLevel($this->uid);
         $level = $data_level['level'];
         $limit_num = $LandInfo->getAuctionLandNums($level);
+        var_dump("已竞拍数量:".$num . "最大数量" .$limit_num);
         if($num >= $limit_num){
-            //进制拍
+            //限制
             $this->send(2008,$this->fd,'','AuctionLandTimesMax');
+            return;
         }
 
         //1验证金币是否足够
@@ -1546,6 +1548,7 @@ class Web extends WebSocketController
             $create_data['Name'] = $data_role['nickname'];
             $create_data['Pos'] = $data_GetAuctionLand['Pos'];
             $rs = $LandInfo->updateAuctionRole($create_data);
+
             if($rs){
                 $str = AuctionLandResult::encode($data_GetAuctionLand['Pos']);
                 $this->send(2008,$this->fd,$str);
