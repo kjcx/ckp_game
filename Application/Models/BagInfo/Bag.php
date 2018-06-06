@@ -58,8 +58,7 @@ class Bag extends Model
     {
         var_dump("getBag");
         $data = $this->collection->findOne(['uid' => $this->uid]);
-        var_dump("getBaggetBaggetBaggetBag");
-        var_dump($data);
+
         if (!empty($data) && isset($data['data'])) {
             $data['MaxCellNumber'] = $this->MaxCellNumber;
             $data['CurUsedCell'] = array_sum(array_column((array)$data['data'],'OnSpace'));
