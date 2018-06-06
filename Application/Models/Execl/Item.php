@@ -52,7 +52,7 @@ class Item extends Model
      */
     public function getItemById($id)
     {
-        $data = Db::table($this->table)->where(['Id'=>$id])->find();
+        $data = Db::table($this->table)->where(['Id'=>(int)$id])->find();
         return $data;
     }
 

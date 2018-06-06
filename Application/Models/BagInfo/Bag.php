@@ -17,7 +17,7 @@ use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use EasySwoole\Core\Swoole\Task\TaskManager;
 use think\Db;
-use App\Models\BagInfo\Item;
+
 
 class Bag extends Model
 {
@@ -36,7 +36,7 @@ class Bag extends Model
         parent::__construct();
         $this->uid = $uid;
         //依赖进来 但是不需要注入
-        $this->item = new Item();
+        $this->item = new \App\Models\Execl\Item();
         $this->initData = new Init();
         $this->MaxCellNumber = 999;
         $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作
@@ -57,6 +57,8 @@ class Bag extends Model
     public function getBag()
     {
         $data = $this->collection->findOne(['uid' => $this->uid]);
+        var_dump("getBaggetBaggetBaggetBag");
+        var_dump($data);
         if (!empty($data) && isset($data['data'])) {
             $data['MaxCellNumber'] = $this->MaxCellNumber;
             $data['CurUsedCell'] = array_sum(array_column((array)$data['data'],'OnSpace'));
@@ -114,7 +116,6 @@ class Bag extends Model
             'uid' => $this->uid,
             'data' => $bagData
         ];
-
         $res = $this->collection->insertOne($bagInfo);
         if ($res->isAcknowledged()) {
             return true;
