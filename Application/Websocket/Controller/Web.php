@@ -794,9 +794,14 @@ class Web extends WebSocketController
         var_dump($data_FriendApply);
         //1添加好友申请
         $FriendInfo = new FriendInfo();
-        $rs = $FriendInfo->setRedisFriend($this->uid,$data_FriendApply);
+
+        //判断是不是好友
+        $isFriend = $FriendInfo->checkIsFriend($this->uid,$data_FriendApply['RoleId']);
+        if(!$isFriend){
+            $rs = $FriendInfo->setRedisFriend($this->uid,$data_FriendApply);
+        }
         var_dump($rs);
-        if($rs){
+        if($rs || $isFriend){
             //申请成功 1给申请人回复成功
 //            获取申请人信息
             $Role = new Role();
