@@ -15,9 +15,19 @@ namespace App\Protobuf\Result;
  */
 class FriendApplyClearResult
 {
-    public static function encode($data)
+    public static function encode($data,$To=true)
     {
         $FriendApplyClearResult = new \AutoMsg\FriendApplyClearResult();
+        $data_infos = [];
+        if(count($data) == count($data, 1)){
+            $data_infos[] = FriendInfo::encode($data);
+        }else{
+            foreach ($data as $info) {
+                $data_infos[] = FriendInfo::encode($info);
+            }
+        }
+        $FriendApplyClearResult->setInfo($data_infos);
+        $FriendApplyClearResult->setTo($To);
         $str = $FriendApplyClearResult->serializeToString();
         return $str;
     }

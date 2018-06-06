@@ -15,6 +15,7 @@ return [
         'drop:uid:Id', //掉落率的redis key   每个人的 单个key的过期时间为 180min 规则 drop: + uid:+ 商店Id
         'FruitsData:uid',//水果机数据
         'FruitsDataWeight:uid',//水果机权重数据
+        'FriendInfo:uid',//好友数据
     ],
     'a' => 'dupeng',
     'gloable' => [ //全局信息频道

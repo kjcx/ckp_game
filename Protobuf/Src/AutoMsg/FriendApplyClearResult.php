@@ -9,14 +9,80 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *拒绝好友申请 返回
+ *
  * Generated from protobuf message <code>AutoMsg.FriendApplyClearResult</code>
  */
 class FriendApplyClearResult extends \Google\Protobuf\Internal\Message
 {
+    /**
+     *拒绝人的信息
+     *
+     * Generated from protobuf field <code>.AutoMsg.FriendInfo Info = 1;</code>
+     */
+    private $Info = null;
+    /**
+     *是否是自己发出的申请
+     *
+     * Generated from protobuf field <code>bool To = 2;</code>
+     */
+    private $To = false;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
         parent::__construct();
+    }
+
+    /**
+     *拒绝人的信息
+     *
+     * Generated from protobuf field <code>.AutoMsg.FriendInfo Info = 1;</code>
+     * @return \AutoMsg\FriendInfo
+     */
+    public function getInfo()
+    {
+        return $this->Info;
+    }
+
+    /**
+     *拒绝人的信息
+     *
+     * Generated from protobuf field <code>.AutoMsg.FriendInfo Info = 1;</code>
+     * @param \AutoMsg\FriendInfo $var
+     * @return $this
+     */
+    public function setInfo($var)
+    {
+        GPBUtil::checkMessage($var, \AutoMsg\FriendInfo::class);
+        $this->Info = $var;
+
+        return $this;
+    }
+
+    /**
+     *是否是自己发出的申请
+     *
+     * Generated from protobuf field <code>bool To = 2;</code>
+     * @return bool
+     */
+    public function getTo()
+    {
+        return $this->To;
+    }
+
+    /**
+     *是否是自己发出的申请
+     *
+     * Generated from protobuf field <code>bool To = 2;</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setTo($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->To = $var;
+
+        return $this;
     }
 
 }

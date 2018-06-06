@@ -546,11 +546,14 @@ message FriendSearchReq{
 message FriendSearchResult{
     repeated FriendInfo Friends=1;
 }
+//拒绝好友申请
 message FriendApplyClearReq{
-
+    repeated string RoleIds=1; //uid集合
 }
+//拒绝好友申请 返回
 message FriendApplyClearResult{
-
+    FriendInfo Info=1;  //拒绝人的信息
+    bool To=2;  //是否是自己发出的申请
 }
 message FriendAddBlackReq{
     string RoleId=1;

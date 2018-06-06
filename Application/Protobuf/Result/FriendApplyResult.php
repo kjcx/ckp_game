@@ -17,25 +17,20 @@ use App\Models\User\Role;
  */
 class FriendApplyResult
 {
-    public static function encode($data,$uid)
+    public static function encode($data,$To=true,$Applyed=false)
     {
+        var_dump("FriendApplyResult");
+        var_dump($data);
         $FriendApplyResult = new \AutoMsg\FriendApplyResult();
-        $RoleId = $data['RoleId'];
-        $FriendApply = new FriendApply();
-        //1 通过角色id获取用户id
-        $Role = new Role();
-        $userinfo = $Role->getRole($RoleId);//
-        $apply_id = $FriendApply->addFriendApply($uid,$userinfo['uid']);
-        $FriendApplyResult->setApplyed($apply_id);//申请id
-        $role = new Role();
-        $userInfo = $role->getRole($uid);
-        //增加申请时间和添加时间
-        $userInfo['apply_time'] = time();
-        $userInfo['add_time'] = 0;
-        $userInfo['status'] = 2;
-        $Info = FriendInfo::encode($userInfo);
+        $Info = [];
+        if($data){
+            $Info = FriendInfo::encode($data);
+        }else{
+            $Info = new \AutoMsg\FriendInfo();
+        }
         $FriendApplyResult->setInfo($Info);//申请人信息
-        $FriendApplyResult->setTo(true);//是否是自己发出的添加
+        $FriendApplyResult->setTo($To);//是否是自己发出的添加
+        $FriendApplyResult->setApplyed($Applyed);
         $str = $FriendApplyResult->serializeToString();
         return $str;
     }

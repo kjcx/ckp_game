@@ -9,14 +9,48 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *拒绝好友申请
+ *
  * Generated from protobuf message <code>AutoMsg.FriendApplyClearReq</code>
  */
 class FriendApplyClearReq extends \Google\Protobuf\Internal\Message
 {
+    /**
+     *uid集合
+     *
+     * Generated from protobuf field <code>repeated string RoleIds = 1;</code>
+     */
+    private $RoleIds;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
         parent::__construct();
+    }
+
+    /**
+     *uid集合
+     *
+     * Generated from protobuf field <code>repeated string RoleIds = 1;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getRoleIds()
+    {
+        return $this->RoleIds;
+    }
+
+    /**
+     *uid集合
+     *
+     * Generated from protobuf field <code>repeated string RoleIds = 1;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setRoleIds($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
+        $this->RoleIds = $arr;
+
+        return $this;
     }
 
 }

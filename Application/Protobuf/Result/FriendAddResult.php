@@ -18,13 +18,18 @@ class FriendAddResult
     public static function encode($infos,$To=1)
     {
         $FriendAddResult = new \AutoMsg\FriendAddResult();
-        $FriendAddResult->setTo($To);
         $data_infos = [];
-
-        foreach ($infos as $info) {
-            $data_infos[] = FriendInfo::encode($info);
+        if(count($infos) == count($infos, 1)){
+            $data_infos[] = FriendInfo::encode($infos);
+        }else{
+            foreach ($infos as $info) {
+                $data_infos[] = FriendInfo::encode($info);
+            }
         }
+
         $FriendAddResult->setInfos($data_infos);
+        $FriendAddResult->setTo($To);
+
         $str = $FriendAddResult->serializeToString();
         return $str;
     }

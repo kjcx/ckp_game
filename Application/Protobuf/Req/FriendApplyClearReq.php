@@ -19,7 +19,12 @@ class FriendApplyClearReq
     {
         $FriendApplyClearReq = new \AutoMsg\FriendApplyClearReq();
         $FriendApplyClearReq->mergeFromString($data);
-        return [];
+        $uids = $FriendApplyClearReq->getRoleIds()->getIterator();
+        $arr = [];
+        foreach ($uids as $uid) {
+            $arr[] = $uid;
+        }
+        return $arr;
     }
 
 }

@@ -22,12 +22,27 @@ class FriendInfo
         $Name = $data['nickname'];
         $Level = $data['level'];
         $SocialStatus = $data['shenjiazhi'];
+        if(isset($data['FriendStatus'])){
+            $Status = $data['FriendStatus'];
+        }else{
+            $Status = 3;
+        }
+        if(isset($data['AddTime'])){
+            $AddTime = $data['AddTime'];
+        }else{
+            $AddTime = time();
+        }
 
-        $Status = $data['status'];
-//        $data['add_time'];
-//        $data['apply_time'];
-        $AddTime = time();
-        $ApplyTime = time();
+        if(isset($data['ApplyTime'])){
+            $ApplyTime = $data['ApplyTime'];
+        }else{
+            if($Status == 1){
+                $ApplyTime = time();
+            }else{
+                $ApplyTime = 0;
+            }
+
+        }
         $Icon = $data['icon'];
         $RoleId = $data['uid'];
         $ShopId = $data['shopid'];// 打工店铺

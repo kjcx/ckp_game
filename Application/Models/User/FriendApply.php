@@ -100,7 +100,7 @@ class FriendApply extends Model
     {
         $data = $this->mysql
             ->where('f.fuid',$uid)
-            ->join('ckzc_role r',"f.uid = r.uid",'LEFT')
+            ->join('ckzc_role r',"f.fuid = r.uid",'LEFT')
             ->where('f.status',0,'<>')->get($this->table ." f",null,'r.uid,r.vip,r.nickname,r.icon,r.shenjiazhi,r.level,f.fuid,f.status,f.apply_time,r.shopid');
         return $data;
     }

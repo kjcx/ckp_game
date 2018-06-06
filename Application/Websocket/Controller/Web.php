@@ -29,6 +29,7 @@ use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
+use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
 use App\Models\Manor\Land;
@@ -778,6 +779,9 @@ class Web extends WebSocketController
         var_dump($arr);
         $str = FriendSearchResult::encode($arr);
         $this->send(1016,$this->fd,$str);
+
+//        $FriendInfo = new FriendInfo();
+//        $FriendInfo->SearchFriend($this->uid,$data_FriendSearch);
     }
 
     /**
@@ -787,14 +791,34 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_FriendApply = FriendApplyReq::decode($data);
-//        var_dump($data_FriendApply);
+        var_dump($data_FriendApply);
+        //1添加好友申请
+        $FriendInfo = new FriendInfo();
+        $rs = $FriendInfo->setRedisFriend($this->uid,$data_FriendApply);
+        var_dump($rs);
+        if($rs){
+            //申请成功 1给申请人回复成功
+//            获取申请人信息
+            $Role = new Role();
+            $data_role = $Role->getRole($this->uid);
+            $str = FriendApplyResult::encode($data_role,$this->uid);
+            $this->send(1011,$this->fd,$str);
+
+//            2 给被申请人通知
+            $arr[] = $data_role;
+            $str_other = FriendAddResult::encode($arr,0);
+            $this->sendByUid(1011,$data_FriendApply['RoleId'],$str_other);
+        }else{
+            $str = FriendApplyResult::encode('',$this->uid,true,true);
+            $this->send(1011,$this->fd,$str);
+        }
+        return;
+
         $str = FriendApplyResult::encode($data_FriendApply,$this->uid);
         $FriendApply = new FriendApply();
         $data_userinfos = $FriendApply->getFriendApply($data_FriendApply['RoleId']);
-        var_dump("=====>");
-        var_dump($data_userinfos);
-        $str_other = FriendAddResult::encode($data_userinfos,0);
-        $this->sendByUid(1011,$data_FriendApply['RoleId'],$str_other);
+
+
         $this->send(1011,$this->fd,$str);
     }
 
@@ -807,24 +831,27 @@ class Web extends WebSocketController
         $data_FriendAdd = FriendAddReq::decode($data);//通过申请集合
         //修改状态
         var_dump($data_FriendAdd);
-        $FriendApply = new FriendApply();
-        $data_userinfos = $FriendApply->passFriendApply($this->uid,$data_FriendAdd);
-        if($data_userinfos){
+        $FriendInfo = new FriendInfo();
+        $rs = $FriendInfo->passFriendApply($this->uid,$data_FriendAdd);
+        //通过成功
+        $data_userinfos = $FriendInfo->getFriendInfoByFuids($this->uid,$data_FriendAdd);
+
+        if($rs){
+            //给自己通知
             $str = FriendAddResult::encode($data_userinfos,1);
             $this->send(1013,$this->fd,$str);
-            $Role = new Role();
-            $data_userinfo = $Role->getRoleByUids([$this->uid]);
-            var_dump("data_userinfo");
-            var_dump($data_userinfo);
-            $str_other = FriendAddResult::encode($data_userinfo,0);
-            foreach ($data_FriendAdd as $item) {
-                $this->sendByUid(1013,$item,$str_other);
+            //给对方通知
+            $data_info = $FriendInfo->getFriendStatus($this->uid,$data_FriendAdd);
+
+            foreach ($data_info as $item) {
+                $str_other = FriendAddResult::encode($item,false);
+                $this->sendByUid(1013,$item['fuid'],$str_other);
             }
-
         }else{
-            var_dump("加好友失败");
+            var_dump("已经是好友");
+            $str = FriendAddResult::encode($data_userinfos,true);
+            $this->send(1013,$this->fd,$str);
         }
-
     }
 
     /**
@@ -834,8 +861,18 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_FriendApplyClear = FriendApplyClearReq::decode($data);
-        $str = FriendApplyClearResult::encode($data);
+        $FriendInfo = new FriendInfo();
+        $FriendInfo->setRefuseFriend($this->uid,$data_FriendApplyClear);
+        //拒绝申请返回
+        $str = FriendApplyClearResult::encode($data,true);
         $this->send(1017,$this->fd,$str);
+        $data_info = $FriendInfo->getFriendStatus($this->uid,$data_FriendApplyClear);
+        //通知申请人
+        foreach ($data_info as $item) {
+            $str = FriendApplyClearResult::encode($item,false);
+            $this->sendByUid(1017,$item['fuid'],$str);
+        }
+
     }
 
     /**
@@ -846,6 +883,10 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_FriendRemove = FriendRemoveReq::decode($data);
         var_dump($data_FriendRemove);
+        //
+        $FriendInfo = new FriendInfo();
+        $FriendInfo->setRemoveFriend($this->uid,$data_FriendRemove['RoleId']);
+
         $str = FriendRemoveResult::encode($data_FriendRemove);
         $this->send(1012,$this->fd,$str);
     }
