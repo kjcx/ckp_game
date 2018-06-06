@@ -22,8 +22,10 @@ class FriendListResult
 //        $Account = new Account();
 //        $data = $Account->find();
         $Friends = [];
-        foreach ($data as $datum) {
-            $Friends[] = FriendInfo::encode($datum);
+        if($data){
+            foreach ($data as $datum) {
+                $Friends[] = FriendInfo::encode($datum);
+            }
         }
         $FriendListResult->setFriends($Friends);
         $FriendListResult->setBlacks([]);

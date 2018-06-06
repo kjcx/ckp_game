@@ -85,19 +85,23 @@ class FriendInfo extends Model
         $data_Friend = $this->getRedisFriend($Uid);
         $Uids = $this->getFriendUid($Uid);
         $Role = new Role();
-        $data_role = $Role->getRoleByUids($Uids);
-        foreach ($data_role as &$item) {
-            $arr = json_decode($data_Friend[$item['uid']],true);
-            $item['FriendStatus'] = $arr['FriendStatus'];
-            $item['ApplyTime'] = $arr['ApplyTime'];
-            if(isset($arr['AddTime'])){
-                $item['AddTime'] = $arr['AddTime'];
-            }else{
-                $item['AddTime'] = 0;
-            }
+        if($Uids){
+            $data_role = $Role->getRoleByUids($Uids);
+            foreach ($data_role as &$item) {
+                $arr = json_decode($data_Friend[$item['uid']],true);
+                $item['FriendStatus'] = $arr['FriendStatus'];
+                $item['ApplyTime'] = $arr['ApplyTime'];
+                if(isset($arr['AddTime'])){
+                    $item['AddTime'] = $arr['AddTime'];
+                }else{
+                    $item['AddTime'] = 0;
+                }
 
+            }
+            return $data_role;
+        }else{
+            return false;
         }
-        return $data_role;
     }
 
     /**
@@ -188,7 +192,11 @@ class FriendInfo extends Model
             $arr = json_decode($str,true);
             $data_role_new['FriendStatus'] = $arr['FriendStatus'];
             $data_role_new['ApplyTime'] = $arr['ApplyTime'];
-            $data_role_new['AddTime'] = $arr['AddTime'];
+            if(isset($arr['AddTime'])) {
+                $data_role_new['AddTime'] = $arr['AddTime'];
+            }else{
+                $data_role_new['AddTime'] = 0;
+            }
             $data_role_new['fuid'] = $fuid;
 //            var_dump($data_role_new);
             $arr_friend[] = $data_role_new;
@@ -250,5 +258,19 @@ class FriendInfo extends Model
         $data = $Role->SearchFriend($uids,$data);
 //        var_dump($data);
         return $data;
+    }
+
+    /**
+     * 设置黑名单 状态5
+     * @param $Uid
+     * @param $Fuid
+     * @return bool|int
+     */
+    public function setBlackFriend($Uid,$Fuid)
+    {
+        $key = $this->key . $Uid;
+        $arr = ['Uid'=>$Fuid,'FriendStatus'=>5,'ApplyTime'=>time()];
+        $rs = $this->redis->hSet($key,$Fuid,json_encode($arr));
+        return $rs;
     }
 }

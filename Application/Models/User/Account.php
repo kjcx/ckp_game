@@ -169,4 +169,30 @@ class Account extends Model
         }
     }
 
+    /**
+     * @return array
+     */
+    public function getAll()
+    {
+        $data = $this->mysql->join('ckzc_role r',"r.uid = m.id",'LEFT')->get($this->table ." m",null,'m.app_token,m.id,r.nickname');
+        return $data;
+    }
+
+    /**
+     * 验证token是否存在
+     */
+    public function check_app_token($app_token)
+    {
+        $data = $this->mysql->where('app_token',$app_token)->getOne($this->table);
+        return $data;
+    }
+
+    /**
+     * 获取最大apptoken
+     */
+    public function get_app_token()
+    {
+        $data = $this->mysql->orderBy('app_token','DESC')->getOne($this->table);
+        return $data['app_token'];
+    }
 }

@@ -57,6 +57,7 @@ use App\Protobuf\Req\CultivateEmployeeReq;
 use App\Protobuf\Req\DestoryBuildReq;
 use App\Protobuf\Req\DismantleReq;
 use App\Protobuf\Req\DropShopPingReq;
+use App\Protobuf\Req\FriendAddBlackReq;
 use App\Protobuf\Req\FriendAddReq;
 use App\Protobuf\Req\FriendApplyClearReq;
 use App\Protobuf\Req\FriendApplyReq;
@@ -96,6 +97,7 @@ use App\Protobuf\Result\CultivateEmployeeResult;
 use App\Protobuf\Result\DestoryBuildResult;
 use App\Protobuf\Result\DismantleResult;
 use App\Protobuf\Result\DropShopPingResult;
+use App\Protobuf\Result\FriendAddBlackResult;
 use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyClearResult;
 use App\Protobuf\Result\FriendApplyResult;
@@ -1695,5 +1697,20 @@ class Web extends WebSocketController
         }  else {
             $this->send(2012,$this->fd,UseCompostResult::encode($res));
         }
+    }
+
+    /**
+     * 黑名单请求
+     * return FriendAddBlackResult 1018
+     */
+    public function msgid_1026()
+    {
+        $data = $this->data;
+        $data_FriendAddBlack = FriendAddBlackReq::decode($data);
+        $FriendInfo = new FriendInfo();
+        $rs = $FriendInfo->setBlackFriend($this->uid,$data_FriendAddBlack['RoleId']);
+        $black_data = $FriendInfo->getFriendStatus($this->uid,$data_FriendAddBlack);
+        $str = FriendAddBlackResult::encode($black_data[0]);
+        $this->send(1018,$this->fd,$str);
     }
 }
