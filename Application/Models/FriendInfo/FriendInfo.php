@@ -241,14 +241,14 @@ class FriendInfo extends Model
      */
     public function SearchFriend($Uid,$data)
     {
-        $uids = $this->getRedisFriend($Uid);
+        $uids = $this->getFriendUid($Uid);
+//        var_dump($uids);
         $uids[] = $Uid;
         $Role = new Role();
         $Name = $data['Name'];
         $Search  = $data['Search'];
-        $Role->SearchFriend();
-
-        var_dump($data);
+        $data = $Role->SearchFriend($uids,$data);
+//        var_dump($data);
         return $data;
     }
 }

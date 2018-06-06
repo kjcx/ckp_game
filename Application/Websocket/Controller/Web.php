@@ -774,9 +774,8 @@ class Web extends WebSocketController
         $data_FriendSearch = FriendSearchReq::decode($data);
         var_dump($data_FriendSearch);
         //查找玩家
-        $role = new Role();
-        $arr = $role->SearchFriend($this->uid,$data_FriendSearch);
-        var_dump($arr);
+        $FriendInfo = new FriendInfo();
+        $arr = $FriendInfo->SearchFriend($this->uid,$data_FriendSearch);
         $str = FriendSearchResult::encode($arr);
         $this->send(1016,$this->fd,$str);
 
