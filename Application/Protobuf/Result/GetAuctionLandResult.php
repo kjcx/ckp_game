@@ -23,7 +23,6 @@ class GetAuctionLandResult
         $GetAuctionLandResult = new \AutoMsg\GetAuctionLandResult();
         $LandInfoDay = new LandInfo();
         $data = $LandInfoDay->getTodayLandInfo();
-        var_dump($data);
         $AuctionLandList = [];
         if($data){
             foreach($data as $k =>$v){

@@ -102,6 +102,28 @@ class LandInfo extends Model
         return $result[$key];
     }
     /**
+     * 获取当前用户已参与和已竞拍数量
+     * @param $Uid
+     * @return int
+     */
+    public function getLandinfoNumByUid($Uid)
+    {
+
+        $data = $this->getMyLandInfo($Uid);
+
+        //已获得数量
+        if($data){
+            $num = count($data);
+        }else{
+            $num = 0;
+        }
+
+        $Day = $this->redis->get('LandauctionDay');
+        //今日已竞拍数量
+        $today_num = $this->getLandInfoNumByDay($Day,$Uid);
+        return $today_num + $num;
+    }
+    /**
      * 土地竞拍失败返还比例(100,10%填10	BidFailureReturn	int	10
      */
     public function getBidFailureReturn()
@@ -129,5 +151,47 @@ class LandInfo extends Model
         }else{
             return false;
         }
+    }
+
+    /**
+     * 获取个人已竞拍记录
+     * @param $uid
+     * @return array|false|\PDOStatement|string|\think\Collection
+     */
+    public function getMyLandInfo($uid)
+    {
+        //Status = 1 ;已参与 2 已获得
+        $data = Db::table($this->table)->where(['Uid'=>$uid])->select();
+        return $data;
+    }
+
+    /**
+     * 获取今天已竞拍的个数
+     * @param $Day
+     * @param $Uid
+     * @return int
+     */
+    public function getLandInfoNumByDay($Day,$Uid)
+    {
+        $num = 0;
+        $data  = Db::table($this->table)->where(['Day'=>(int)$Day])->select();
+        foreach ($data as $datum) {
+            $AuctionRole = $datum['AuctionRole'];
+            if(isset($AuctionRole[$Uid])){
+                $num++;
+            }
+        }
+        return $num;
+    }
+
+    /**
+     * 通过pos获取详细信息
+     * @param $Pos
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getPosInfoByPos($Pos)
+    {
+        $data = Db::table($this->table)->where(['Pos'=>$Pos])->find();
+        return $data;
     }
 }
