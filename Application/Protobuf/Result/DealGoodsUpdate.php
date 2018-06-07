@@ -18,19 +18,14 @@ class DealGoodsUpdate
     public static function encode($data)
     {
         $DealGoodsUpdate = new \AutoMsg\DealGoodsUpdate();
-        $DealGoodsUpdate->setId();
-        $DealGoodsUpdate->setName();
-        $DealGoodsUpdate->setCount();
-        $DealGoodsUpdate->setBiddingCount();
-        $DealGoodsUpdate->setBiddingName();
-        $DealGoodsUpdate->setCurPrice();
-        $DealGoodsUpdate->setDealId();
-        $DealGoodsUpdate->setDealType();
-        $DealGoodsUpdate->setGoldType();
-        $DealGoodsUpdate->setOwner();
-        $DealGoodsUpdate->setUpTime();
-        $DealGoodsUpdate->setPrice();
-        $DealGoodsUpdate->setBiddingRoleId();
+        $DealGoodsUpdate->setId((string)$data['_id']);//记录id
+        $DealGoodsUpdate->setItemId($data['ItemId']);//道具id
+        $DealGoodsUpdate->setCount($data['Count']);//道具数量
+        $DealGoodsUpdate->setPrice($data['Price']);//价格
+        $DealGoodsUpdate->setGoldType($data['GoldType']);//钱类型
+        $DealGoodsUpdate->setType($data['Type']);//道具类型
+        $DealGoodsUpdate->setUpTime($data['UpTime']);//上架时间
+//        $DealGoodsUpdate->setCurPrice();//当前价格
         $str = $DealGoodsUpdate->serializeToString();
         return $str;
     }

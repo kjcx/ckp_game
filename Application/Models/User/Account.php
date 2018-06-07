@@ -174,7 +174,7 @@ class Account extends Model
      */
     public function getAll()
     {
-        $data = $this->mysql->join('ckzc_role r',"r.uid = m.id",'LEFT')->orderBy('app_token','asc')->get($this->table ." m",null,'m.app_token,m.id,r.nickname');
+        $data = $this->mysql->join('ckzc_role r',"r.uid = m.id",'LEFT')->orderBy('app_token','asc')->get($this->table ." m",null,'r.uid,m.app_token,m.id,r.nickname');
         return $data;
     }
 

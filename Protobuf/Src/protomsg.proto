@@ -1093,21 +1093,7 @@ message RefreshDealGoodsResult{
 message DealGoodsUpdateResult{
     DealGoodsUpdate Goods=1;
 }
-message DealGoodsUpdate{
-    int32 Id=1;
-    int32 Count=2;
-    int32 GoldType=3;
-    int64 Price=4;
-    int64 DealType=5;
-    int32 UpTime=6;
-    int64 CurPrice=7;
-    string DealId=8;
-    string BiddingRoleId=9;
-    string Name=10;
-    int32 BiddingCount=11;
-    string BiddingName=12;
-    string Owner=13;
-}
+
 message RefStaffReq{
     int32 TypeId=1;
 }
@@ -1778,16 +1764,7 @@ message RolePraiseResult{
     int32 PraiseTime=2;
     int32 RolePraiseType=3;
 }
-message UserSalesReq{
-    int32 Id=1;
-    int32 Count=2;
-    int32 GoldType=3;
-    int64 Price=4;
-    int32 DealType=5;
-}
-message UserSalesResult{
-    DealGoodsUpdate Goods=1;
-}
+
 message UserDownGoodsReq{
     string DealId=1;
 }
@@ -2229,4 +2206,55 @@ message RandManorResult{
 }
 message RandManorRec{
 
+}
+
+//交易行列表结构
+message DealGoodsUpdate{
+    string Id=1;//记录id
+    int32 Count=2;//物品数量
+    int32 GoldType=3;//出售货币类型
+    int64 Price=4;//单价
+    int32 UpTime=5;//上架时间
+    int64 CurPrice=6;//当前价格
+    string ItemId=7;//道具id
+    int32 Type=8;//类型前端提供
+}
+
+//用户寄卖请求
+message UserSalesReq{
+    int32 ItemId=1;//道具id
+    int32 Count=2;//物品数量
+    int32 GoldType=3;//出售货币类型
+    int64 Price=4;//单价
+    int32 Type=5;//类型前端提供
+}
+//寄卖请求返回
+message UserSalesResult{
+    DealGoodsUpdate Goods=1;//本次寄卖商品
+}
+//购买请求
+message UserBuyReq{
+    string Id = 1;//记录id
+    int32 Count = 2;//数量
+}
+//购买返回
+message UserBuyResult{
+    DealGoodsUpdate Goods = 1;
+}
+
+//下架请求
+message SoldOutReq{
+    string Id =1;//记录id
+}
+//下架商品返回
+message SoldOutResult{
+    string Id =1;//记录id
+}
+//交易行请求
+message SalesListReq{
+
+}
+//交易行请求
+message SalesListResult{
+    repeated DealGoodsUpdate Goods=1;//所有拍卖行商品数据集合
 }

@@ -255,7 +255,7 @@ class Bag extends Model
         if (empty($itemData)) {
             return false;
         }
-        $num = $itemData['CurCount'] - $num;
+        $num = $itemData['CurCount'] - abs($num);
         if ($num < 0) {
             return false;
         }

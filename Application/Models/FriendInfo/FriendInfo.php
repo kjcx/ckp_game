@@ -273,4 +273,24 @@ class FriendInfo extends Model
         $rs = $this->redis->hSet($key,$Fuid,json_encode($arr));
         return $rs;
     }
+
+    /**
+     * 获取好友状态下的uid
+     * @param int $Uid
+     * @param int $Status
+     * @return array
+     */
+    public function getUidByFriendStatus($Uid,$Status=3)
+    {
+        $data_Friend = $this->getRedisFriend($Uid);
+
+        $Uids = [];
+        foreach ($data_Friend as $item) {
+            $arr = json_decode($item,true);
+            if($arr['FriendStatus'] == $Status){
+                $Uids[] = $arr['Uid'];
+            }
+        }
+        return $Uids;
+    }
 }

@@ -48,7 +48,7 @@ class JoinGameResult
 //        var_dump($data_Friends);
         $FriendInfo = new \App\Models\FriendInfo\FriendInfo();
         $data_Friends = $FriendInfo->getFriendInfoByUid($uid);
-        //申请中
+
         $Friend = FriendListResult::encode($data_Friends);
         $JoinGameResult->setFriend($Friend);
         //公司

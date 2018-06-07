@@ -22,13 +22,19 @@ class FriendListResult
 //        $Account = new Account();
 //        $data = $Account->find();
         $Friends = [];
+        $BlackFriends = [];
         if($data){
             foreach ($data as $datum) {
-                $Friends[] = FriendInfo::encode($datum);
+                if($datum['FriendStatus'] == 5){//黑名单
+                    $BlackFriends[] = FriendInfo::encode($datum);
+                }else{
+                    $Friends[] = FriendInfo::encode($datum);
+                }
+
             }
         }
         $FriendListResult->setFriends($Friends);
-        $FriendListResult->setBlacks([]);
+        $FriendListResult->setBlacks($BlackFriends);
         return $FriendListResult;
     }
 }

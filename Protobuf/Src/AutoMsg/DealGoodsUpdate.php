@@ -9,62 +9,60 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *交易行列表结构
+ *
  * Generated from protobuf message <code>AutoMsg.DealGoodsUpdate</code>
  */
 class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
+     *记录id
+     *
+     * Generated from protobuf field <code>string Id = 1;</code>
      */
-    private $Id = 0;
+    private $Id = '';
     /**
+     *物品数量
+     *
      * Generated from protobuf field <code>int32 Count = 2;</code>
      */
     private $Count = 0;
     /**
+     *出售货币类型
+     *
      * Generated from protobuf field <code>int32 GoldType = 3;</code>
      */
     private $GoldType = 0;
     /**
+     *单价
+     *
      * Generated from protobuf field <code>int64 Price = 4;</code>
      */
     private $Price = 0;
     /**
-     * Generated from protobuf field <code>int64 DealType = 5;</code>
-     */
-    private $DealType = 0;
-    /**
-     * Generated from protobuf field <code>int32 UpTime = 6;</code>
+     *上架时间
+     *
+     * Generated from protobuf field <code>int32 UpTime = 5;</code>
      */
     private $UpTime = 0;
     /**
-     * Generated from protobuf field <code>int64 CurPrice = 7;</code>
+     *当前价格
+     *
+     * Generated from protobuf field <code>int64 CurPrice = 6;</code>
      */
     private $CurPrice = 0;
     /**
-     * Generated from protobuf field <code>string DealId = 8;</code>
+     *道具id
+     *
+     * Generated from protobuf field <code>string ItemId = 7;</code>
      */
-    private $DealId = '';
+    private $ItemId = '';
     /**
-     * Generated from protobuf field <code>string BiddingRoleId = 9;</code>
+     *类型前端提供
+     *
+     * Generated from protobuf field <code>int32 Type = 8;</code>
      */
-    private $BiddingRoleId = '';
-    /**
-     * Generated from protobuf field <code>string Name = 10;</code>
-     */
-    private $Name = '';
-    /**
-     * Generated from protobuf field <code>int32 BiddingCount = 11;</code>
-     */
-    private $BiddingCount = 0;
-    /**
-     * Generated from protobuf field <code>string BiddingName = 12;</code>
-     */
-    private $BiddingName = '';
-    /**
-     * Generated from protobuf field <code>string Owner = 13;</code>
-     */
-    private $Owner = '';
+    private $Type = 0;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -72,8 +70,10 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
-     * @return int
+     *记录id
+     *
+     * Generated from protobuf field <code>string Id = 1;</code>
+     * @return string
      */
     public function getId()
     {
@@ -81,19 +81,23 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
-     * @param int $var
+     *记录id
+     *
+     * Generated from protobuf field <code>string Id = 1;</code>
+     * @param string $var
      * @return $this
      */
     public function setId($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkString($var, True);
         $this->Id = $var;
 
         return $this;
     }
 
     /**
+     *物品数量
+     *
      * Generated from protobuf field <code>int32 Count = 2;</code>
      * @return int
      */
@@ -103,6 +107,8 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *物品数量
+     *
      * Generated from protobuf field <code>int32 Count = 2;</code>
      * @param int $var
      * @return $this
@@ -116,6 +122,8 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *出售货币类型
+     *
      * Generated from protobuf field <code>int32 GoldType = 3;</code>
      * @return int
      */
@@ -125,6 +133,8 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *出售货币类型
+     *
      * Generated from protobuf field <code>int32 GoldType = 3;</code>
      * @param int $var
      * @return $this
@@ -138,6 +148,8 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *单价
+     *
      * Generated from protobuf field <code>int64 Price = 4;</code>
      * @return int|string
      */
@@ -147,6 +159,8 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *单价
+     *
      * Generated from protobuf field <code>int64 Price = 4;</code>
      * @param int|string $var
      * @return $this
@@ -160,29 +174,9 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 DealType = 5;</code>
-     * @return int|string
-     */
-    public function getDealType()
-    {
-        return $this->DealType;
-    }
-
-    /**
-     * Generated from protobuf field <code>int64 DealType = 5;</code>
-     * @param int|string $var
-     * @return $this
-     */
-    public function setDealType($var)
-    {
-        GPBUtil::checkInt64($var);
-        $this->DealType = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 UpTime = 6;</code>
+     *上架时间
+     *
+     * Generated from protobuf field <code>int32 UpTime = 5;</code>
      * @return int
      */
     public function getUpTime()
@@ -191,7 +185,9 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 UpTime = 6;</code>
+     *上架时间
+     *
+     * Generated from protobuf field <code>int32 UpTime = 5;</code>
      * @param int $var
      * @return $this
      */
@@ -204,7 +200,9 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 CurPrice = 7;</code>
+     *当前价格
+     *
+     * Generated from protobuf field <code>int64 CurPrice = 6;</code>
      * @return int|string
      */
     public function getCurPrice()
@@ -213,7 +211,9 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int64 CurPrice = 7;</code>
+     *当前价格
+     *
+     * Generated from protobuf field <code>int64 CurPrice = 6;</code>
      * @param int|string $var
      * @return $this
      */
@@ -226,133 +226,53 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>string DealId = 8;</code>
+     *道具id
+     *
+     * Generated from protobuf field <code>string ItemId = 7;</code>
      * @return string
      */
-    public function getDealId()
+    public function getItemId()
     {
-        return $this->DealId;
+        return $this->ItemId;
     }
 
     /**
-     * Generated from protobuf field <code>string DealId = 8;</code>
+     *道具id
+     *
+     * Generated from protobuf field <code>string ItemId = 7;</code>
      * @param string $var
      * @return $this
      */
-    public function setDealId($var)
+    public function setItemId($var)
     {
         GPBUtil::checkString($var, True);
-        $this->DealId = $var;
+        $this->ItemId = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>string BiddingRoleId = 9;</code>
-     * @return string
-     */
-    public function getBiddingRoleId()
-    {
-        return $this->BiddingRoleId;
-    }
-
-    /**
-     * Generated from protobuf field <code>string BiddingRoleId = 9;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setBiddingRoleId($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->BiddingRoleId = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string Name = 10;</code>
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->Name;
-    }
-
-    /**
-     * Generated from protobuf field <code>string Name = 10;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setName($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->Name = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>int32 BiddingCount = 11;</code>
+     *类型前端提供
+     *
+     * Generated from protobuf field <code>int32 Type = 8;</code>
      * @return int
      */
-    public function getBiddingCount()
+    public function getType()
     {
-        return $this->BiddingCount;
+        return $this->Type;
     }
 
     /**
-     * Generated from protobuf field <code>int32 BiddingCount = 11;</code>
+     *类型前端提供
+     *
+     * Generated from protobuf field <code>int32 Type = 8;</code>
      * @param int $var
      * @return $this
      */
-    public function setBiddingCount($var)
+    public function setType($var)
     {
         GPBUtil::checkInt32($var);
-        $this->BiddingCount = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string BiddingName = 12;</code>
-     * @return string
-     */
-    public function getBiddingName()
-    {
-        return $this->BiddingName;
-    }
-
-    /**
-     * Generated from protobuf field <code>string BiddingName = 12;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setBiddingName($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->BiddingName = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string Owner = 13;</code>
-     * @return string
-     */
-    public function getOwner()
-    {
-        return $this->Owner;
-    }
-
-    /**
-     * Generated from protobuf field <code>string Owner = 13;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setOwner($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->Owner = $var;
+        $this->Type = $var;
 
         return $this;
     }

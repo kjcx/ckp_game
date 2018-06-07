@@ -34,6 +34,7 @@ use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Sales\SalesItem;
 use App\Models\Staff\LottoLog;
 use App\Models\Staff\Staff;
 use App\Models\Store\Seed;
@@ -77,12 +78,14 @@ use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
+use App\Protobuf\Req\SoldOutReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseCompostReq;
 use App\Protobuf\Req\UseItemReq;
+use App\Protobuf\Req\UserBuyReq;
 use App\Protobuf\Req\UserSalesReq;
 use App\Protobuf\Result\AddSoilResult;
 use App\Protobuf\Result\AuctionLandResult;
@@ -101,6 +104,7 @@ use App\Protobuf\Result\FriendAddBlackResult;
 use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyClearResult;
 use App\Protobuf\Result\FriendApplyResult;
+use App\Protobuf\Result\FriendOnlineResult;
 use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\FruitsDataResult;
@@ -125,10 +129,12 @@ use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
+use App\Protobuf\Result\SalesListResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SeedShopPingResult;
 use App\Protobuf\Result\SellItemResult;
+use App\Protobuf\Result\SoldOutResult;
 use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
@@ -139,7 +145,9 @@ use App\Protobuf\Result\UpgradeLandLevelReq;
 use App\Protobuf\Result\UpgradeLandLevelResult;
 use App\Protobuf\Result\UseCompostResult;
 use App\Protobuf\Result\UseItemResult;
+use App\Protobuf\Result\UserBuyResult;
 use App\Protobuf\Result\UserSalesResult;
+use App\Task\Mass;
 use EasySwoole\Core\Component\Spl\SplStream;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
 use EasySwoole\Core\Socket\Client\WebSocket;
@@ -274,9 +282,33 @@ class Web extends WebSocketController
             $value = 0;
         }
         $str  = \App\Protobuf\Result\MsgBaseSend::encode($MsgId,$data,$value,$ErrorMsg);
+
         ServerManager::getInstance()->getServer()->push($fd,$str,WEBSOCKET_OPCODE_BINARY);
     }
 
+    /**
+     * 异步发送
+     * @param $Uids
+     * @param $data
+     */
+    public function sendTask($MsgId,$Uids,$data)
+    {
+        $str  = \App\Protobuf\Result\MsgBaseSend::encode($MsgId,$data);
+        $DataCenter = new DataCenter();
+
+        foreach ($Uids as $uid) {
+            $fd = $DataCenter->getFdByUid($uid);
+            $online = ServerManager::getInstance()->getServer()->exist($fd);
+            if(!$online){
+                continue;
+            }
+            $arr['fd'] = $fd;
+            $arr['data'] = $str;
+            $massTemplate = new Mass($arr);
+            \EasySwoole\Core\Swoole\Task\TaskManager::async($massTemplate);
+        }
+
+    }
     public function sendByUid($MsgId,$uid,$data,$Result=0,$ErrorMsg='')
     {
         $DataCenter = new DataCenter();
@@ -375,7 +407,14 @@ class Web extends WebSocketController
         //加入游戏
         $data = JoinGameResult::encode(['uid'=>$this->uid]);
         $this->send(1066,$this->fd,$data);
+        //通知好友用户上线
+        $str = FriendOnlineResult::encode(['Uid'=>$this->uid,'Online'=>true]);
+        $Friend = new FriendInfo();
+        $Uids = $Friend->getUidByFriendStatus($this->uid,1);
 
+       if($Uids){
+           $this->sendTask(1020,$Uids,$str);//好像上线下
+       }
     }
 
     /**
@@ -1712,5 +1751,123 @@ class Web extends WebSocketController
         $black_data = $FriendInfo->getFriendStatus($this->uid,$data_FriendAddBlack);
         $str = FriendAddBlackResult::encode($black_data[0]);
         $this->send(1018,$this->fd,$str);
+    }
+
+    /**
+     * 交易行请求
+     * SalesListReq
+     * return SalesListResult 2016
+     */
+    public function msgid_2015()
+    {
+        $SalesItem = new SalesItem();
+        $data = $SalesItem->getAll();
+        $str = SalesListResult::encode($data);
+        $this->send(2016,$this->fd,$str);
+    }
+
+    /**
+     * 寄卖请求
+     * UserSalesReq
+     * return UserSalesResult 2017
+     */
+    public function msgid_2016()
+    {
+        $data_UserSales = UserSalesReq::decode($this->data);
+        //验证背包是否存在
+        $Bag = new Bag($this->uid);
+        $Count = $Bag->getCountByItemId($data_UserSales['ItemId']);
+        if($Count >= $data_UserSales['Count']){
+            //开始寄卖
+            $SalesItem = new SalesItem();
+            $insert = $data_UserSales;
+            $insert['UpTime'] = time();
+            $insert['Uid'] = $this->uid;
+            //扣除道具
+            $rs = $Bag->delBag($data_UserSales['ItemId'],$data_UserSales['Count']);
+            if($rs){
+                $Id = $SalesItem->create($insert);
+                if($Id){
+                    $insert['_id'] = (string)$Id;
+                    $str = UserSalesResult::encode($insert);
+                    $this->send(2017,$this->fd,$str);
+                }else{
+                    var_dump("寄卖失败");
+                }
+            }else{
+                var_dump("删除道具失败");
+            }
+        }else{
+            var_dump("道具数量不满足");
+        }
+
+    }
+
+    /**
+     * 交易行购买
+     * UserBuyReq
+     * return UserBuyResult 2019
+     */
+    public function msgid_2018()
+    {
+        $data_UserBuy = UserBuyReq::decode($this->data);
+        //1验证数据存在不
+        $SalesItem = new SalesItem();
+        $info = $SalesItem->getInfoById($data_UserBuy['Id']);
+        if($info>=$data_UserBuy['Count']){
+            //2计算价格
+            $count = $info['Price'] * abs($data_UserBuy['Count']);
+            $Bag = new Bag($this->uid);
+            $Count = $Bag->getCountByItemId($info['GoldType']);
+            if($Count>= $count){
+                //3执行购买
+                $rs = $Bag->delBag($info['GoldType'],$count);//删除金币
+                if($rs){
+                    $rs = $Bag->addBag($info['ItemId'],$data_UserBuy['Count']);//增加道具
+                    if($rs){
+                        $info['Count'] = $data_UserBuy['Count'];
+                        $str = UserBuyResult::encode($info);
+                        $this->send(2019,$this->fd,$str);
+                    }else{
+                        var_dump("购买失败");
+                    }
+                }else{
+                    var_dump("删除道具失败");
+                }
+            }else{
+                var_dump("金币不足");
+            }
+        }else{
+            var_dump("购买数量超出");
+        }
+
+
+
+    }
+
+    /**
+     * SoldOutReq
+     * return SoldOutResult 2021
+     */
+    public function msgid_2020()
+    {
+        $data_SoldOut = SoldOutReq::decode($this->data);
+        //下架
+        //1 验证道具
+        $SalesItem = new SalesItem();
+        $info = $SalesItem->getInfoById($data_SoldOut['Id']);
+        if($info){
+            //2 归还道具
+            $Bag = new Bag($this->uid);
+            $rs = $Bag->addBag($info['ItemId'],$info['Count']);
+            if($rs){
+                $str = SoldOutResult::encode($data_SoldOut['id']);
+                $this->send(2021,$this->fd,$str);
+            }else{
+                var_dump("归还失败");
+            }
+        }else{
+            var_dump("寄卖信息不存在");
+        }
     }
 }
