@@ -9,15 +9,13 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *寄卖请求返回
+ *购买返回
  *
- * Generated from protobuf message <code>AutoMsg.UserSalesResult</code>
+ * Generated from protobuf message <code>AutoMsg.UserBuyResult</code>
  */
-class UserSalesResult extends \Google\Protobuf\Internal\Message
+class UserBuyResult extends \Google\Protobuf\Internal\Message
 {
     /**
-     *本次寄卖商品
-     *
      * Generated from protobuf field <code>.AutoMsg.DealGoodsUpdate Goods = 1;</code>
      */
     private $Goods = null;
@@ -28,8 +26,6 @@ class UserSalesResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     *本次寄卖商品
-     *
      * Generated from protobuf field <code>.AutoMsg.DealGoodsUpdate Goods = 1;</code>
      * @return \AutoMsg\DealGoodsUpdate
      */
@@ -39,8 +35,6 @@ class UserSalesResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     *本次寄卖商品
-     *
      * Generated from protobuf field <code>.AutoMsg.DealGoodsUpdate Goods = 1;</code>
      * @param \AutoMsg\DealGoodsUpdate $var
      * @return $this

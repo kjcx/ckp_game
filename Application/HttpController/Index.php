@@ -12,6 +12,7 @@ use App\Event\ChangeItemSubscriber;
 use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
+use App\Models\DataCenter\DataCenter;
 use App\Models\Execl\LandInfo;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
@@ -22,6 +23,7 @@ use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\LoadBagInfo;
 use App\Protobuf\Result\LoadStaffResult;
+use App\Task\Mass;
 use AutoMsg\LoadRefStaff;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use GuzzleHttp\Client;
@@ -114,11 +116,14 @@ class Index extends Controller
     {
         $arr = LoadBagInfo::encode(2);
     }
-    public function   test($a,$b)
+    public function   test()
     {
-        $c = $a +$b;
-        echo $c;
-        return $c;
+        $arr = [];
+        if($arr){
+            echo 1;
+        }else{
+            echo 2;
+        }
     }
 
 

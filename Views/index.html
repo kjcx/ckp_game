@@ -9,7 +9,7 @@
 <body>
 用户昵称为空的key没有创建角色
 {foreach $data as $v}
-<li>key:{$v['app_token']} -- 用户昵称:【{$v['nickname']}】</li>
+<li>key:{$v['app_token']} -- 用户昵称:【{$v['nickname']}{$v['uid']}】</li>
 {/foreach}
 <form action="" method="post">
     <input type="submit" value="点击创建新账户">

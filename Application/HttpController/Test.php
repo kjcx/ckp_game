@@ -13,6 +13,7 @@ use App\Event\RoleCreateEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Execl\WsResult;
 use App\Models\Item\Item;
+use App\Models\Manor\Land;
 use App\Models\Store\DropStore;
 use App\Models\Store\Seed;
 use App\Models\Store\ShopConfig;
@@ -124,5 +125,10 @@ class Test extends Controller
             $num = bcdiv($num, $to);
         } while ($num > 0);
         return $ret;
+    }
+
+    public function aaa()
+    {
+
     }
 }

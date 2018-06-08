@@ -18,7 +18,8 @@ class UserSalesResult
     public static function encode($data)
     {
         $UserSalesResult = new \AutoMsg\UserSalesResult();
-        $UserSalesResult->setGoods();
+        $Goods = DealGoodsUpdate::encode($data);
+        $UserSalesResult->setGoods($Goods);
         $str = $UserSalesResult->serializeToString();
         return $str;
     }

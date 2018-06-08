@@ -9,30 +9,42 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *用户寄卖请求
+ *
  * Generated from protobuf message <code>AutoMsg.UserSalesReq</code>
  */
 class UserSalesReq extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
+     *道具id
+     *
+     * Generated from protobuf field <code>int32 ItemId = 1;</code>
      */
-    private $Id = 0;
+    private $ItemId = 0;
     /**
+     *物品数量
+     *
      * Generated from protobuf field <code>int32 Count = 2;</code>
      */
     private $Count = 0;
     /**
+     *出售货币类型
+     *
      * Generated from protobuf field <code>int32 GoldType = 3;</code>
      */
     private $GoldType = 0;
     /**
+     *单价
+     *
      * Generated from protobuf field <code>int64 Price = 4;</code>
      */
     private $Price = 0;
     /**
-     * Generated from protobuf field <code>int32 DealType = 5;</code>
+     *类型前端提供
+     *
+     * Generated from protobuf field <code>int32 Type = 5;</code>
      */
-    private $DealType = 0;
+    private $Type = 0;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -40,28 +52,34 @@ class UserSalesReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
+     *道具id
+     *
+     * Generated from protobuf field <code>int32 ItemId = 1;</code>
      * @return int
      */
-    public function getId()
+    public function getItemId()
     {
-        return $this->Id;
+        return $this->ItemId;
     }
 
     /**
-     * Generated from protobuf field <code>int32 Id = 1;</code>
+     *道具id
+     *
+     * Generated from protobuf field <code>int32 ItemId = 1;</code>
      * @param int $var
      * @return $this
      */
-    public function setId($var)
+    public function setItemId($var)
     {
         GPBUtil::checkInt32($var);
-        $this->Id = $var;
+        $this->ItemId = $var;
 
         return $this;
     }
 
     /**
+     *物品数量
+     *
      * Generated from protobuf field <code>int32 Count = 2;</code>
      * @return int
      */
@@ -71,6 +89,8 @@ class UserSalesReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *物品数量
+     *
      * Generated from protobuf field <code>int32 Count = 2;</code>
      * @param int $var
      * @return $this
@@ -84,6 +104,8 @@ class UserSalesReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *出售货币类型
+     *
      * Generated from protobuf field <code>int32 GoldType = 3;</code>
      * @return int
      */
@@ -93,6 +115,8 @@ class UserSalesReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *出售货币类型
+     *
      * Generated from protobuf field <code>int32 GoldType = 3;</code>
      * @param int $var
      * @return $this
@@ -106,6 +130,8 @@ class UserSalesReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *单价
+     *
      * Generated from protobuf field <code>int64 Price = 4;</code>
      * @return int|string
      */
@@ -115,6 +141,8 @@ class UserSalesReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *单价
+     *
      * Generated from protobuf field <code>int64 Price = 4;</code>
      * @param int|string $var
      * @return $this
@@ -128,23 +156,27 @@ class UserSalesReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 DealType = 5;</code>
+     *类型前端提供
+     *
+     * Generated from protobuf field <code>int32 Type = 5;</code>
      * @return int
      */
-    public function getDealType()
+    public function getType()
     {
-        return $this->DealType;
+        return $this->Type;
     }
 
     /**
-     * Generated from protobuf field <code>int32 DealType = 5;</code>
+     *类型前端提供
+     *
+     * Generated from protobuf field <code>int32 Type = 5;</code>
      * @param int $var
      * @return $this
      */
-    public function setDealType($var)
+    public function setType($var)
     {
         GPBUtil::checkInt32($var);
-        $this->DealType = $var;
+        $this->Type = $var;
 
         return $this;
     }

@@ -19,11 +19,11 @@ class UserSalesReq
     {
         $UserSalesReq = new \AutoMsg\UserSalesReq();
         $UserSalesReq->mergeFromString($data);
-        $Id = $UserSalesReq->getId();
+        $ItemId = $UserSalesReq->getItemId();
         $Count = $UserSalesReq->getCount();
-        $DealType = $UserSalesReq->getDealType();
         $GoldType = $UserSalesReq->getGoldType();
         $Price = $UserSalesReq->getPrice();
-        return ['Id'=>$Id,'Count'=>$Count,'DealType'=>$DealType,'GoldType'=>$GoldType,'Price'=>$Price];
+        $Type = $UserSalesReq->getType();
+        return ['ItemId'=>$ItemId,'Count'=>$Count,'GoldType'=>$GoldType,'Price'=>$Price,'Type'=>$Type];
     }
 }
