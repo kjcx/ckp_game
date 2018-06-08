@@ -421,4 +421,13 @@ class Land extends Model
             return $myLands['manor'][$landId - 1];
         }
     }
+
+    /**
+     * 随机请求庄园
+     */
+    public function randLand()
+    {
+        $data = $this->mysql->orderBy("RAND()")->getOne('ckzc_role','uid');
+        return $this->getLand($data['uid']);
+    }
 }
