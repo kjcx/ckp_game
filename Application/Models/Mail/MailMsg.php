@@ -49,4 +49,21 @@ class MailMsg extends Model
             return false;
         }
     }
+
+    /**
+     * 获取所有邮件
+     * @param $uid
+     */
+    public function getRedisMailByUid($uid)
+    {
+        $data = $this->redis->zRange($this->key,0,-1);
+        foreach ($data as $datum) {
+            var_dump($datum);
+        }
+    }
+
+    public function setRedisMail()
+    {
+        
+    }
 }

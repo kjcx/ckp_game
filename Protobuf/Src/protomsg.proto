@@ -2216,7 +2216,7 @@ message DealGoodsUpdate{
     int64 Price=4;//单价
     int32 UpTime=5;//上架时间
     int64 CurPrice=6;//当前价格
-    string ItemId=7;//道具id
+    int32 ItemId=7;//道具id
     int32 Type=8;//类型前端提供
 }
 

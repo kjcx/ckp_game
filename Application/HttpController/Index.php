@@ -18,6 +18,7 @@ use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Sales\SalesItem;
 use App\Models\Staff\Staff;
 use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
@@ -118,12 +119,18 @@ class Index extends Controller
     }
     public function   test()
     {
-        $arr = [];
-        if($arr){
-            echo 1;
-        }else{
-            echo 2;
-        }
+//        $insert['Count'] = 10;
+//        $insert['GoldType'] = 6;
+//        $insert['Type'] = 1;
+//        $insert['ItemId'] = 10001;
+//        $insert['UpTime'] = time();
+//        $insert['Uid'] = 36;
+//        $insert['Price'] = 6;
+//        $SalesItem = new SalesItem();
+//        $Id = $SalesItem->create($insert);
+        $SalesItem = new SalesItem();
+        $rs = $SalesItem->getAll();
+        var_dump($rs);
     }
 
 
