@@ -71,6 +71,7 @@ use App\Protobuf\Req\HarvestPlantReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
+use App\Protobuf\Req\ReadMailReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefFitnessReq;
 use App\Protobuf\Req\RefStaffReq;
@@ -123,8 +124,10 @@ use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
+use App\Protobuf\Result\OnGetMyGoodsResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RandManorResult;
+use App\Protobuf\Result\ReadMailResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
@@ -1885,5 +1888,34 @@ class Web extends WebSocketController
         }  else {
             $this->send(2014,$this->fd,RandManorResult::encode($res));
         }
+    }
+
+    /**
+     * 获取自己上架的商品列表
+     * return 1228
+     */
+    public function msgid_1168()
+    {
+        $SalesItem = new SalesItem();
+        $data = $SalesItem->getAllByUid($this->uid);
+        $str = OnGetMyGoodsResult::ecode($data);
+        $this->send(1228,$this->fd,$str);
+    }
+
+    /**
+     * 邮件阅读请求
+    * ReadMailReq
+    * return 1114 ReadMailResult
+     */
+    public function msgid_1081()
+    {
+        $data = $this->data;
+        $data_ReadMail = ReadMailReq::decode($data);
+        var_dump($data_ReadMail);
+
+
+        //设置邮件为已读
+        $str = ReadMailResult::encode($data_ReadMail['Id']);
+        $this->send(1114,$this->fd,$str);
     }
 }

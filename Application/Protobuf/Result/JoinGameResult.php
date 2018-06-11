@@ -78,6 +78,8 @@ class JoinGameResult
         //邮件
         $MailMsg = new \App\Models\Mail\MailMsg();
         $data = $MailMsg->getRedisMailByUid($uid);
+        var_dump($uid);
+        var_dump($data);
         $Mails = MailResult::encode($data);
         $JoinGameResult->setMails($Mails);
 
