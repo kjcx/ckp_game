@@ -20,10 +20,10 @@ class MailResult
         $MailResult = new \AutoMsg\MailResult();
         $Mails = [];
         foreach ($data as $item) {
-            $Mails[] = MailResult::encode($item);
+            $Mails[] = MailMsg::encode($item);
         }
-        $MailResult->setMail($Mails);
-        $str = $MailResult->serializeToString();
-        return $str;
+//        $MailResult->setMail($Mails);
+//        $str = $MailResult->serializeToString();
+        return $Mails;
     }
 }

@@ -17,7 +17,7 @@ class MailMsg
 {
     public static function encode($item)
     {
-        $Id = $item['Id'];
+        $Id = $item['_id'];
         $Msg = $item['Msg'];
         $Item = $item['Item'];
         $Read = $item['Read'];
@@ -38,7 +38,6 @@ class MailMsg
         $MailMsg->setSendTime($SendTime);//发送时间
         $MailMsg->setTitle($Title);//邮件标题
         $MailMsg->setSenderId($SenderId);//发件人id
-
         return $MailMsg;
     }
 

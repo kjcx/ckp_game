@@ -13,6 +13,7 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Execl\GameConfig;
 use App\Models\Execl\LandInfo;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
@@ -45,35 +46,16 @@ class Index extends Controller
     public function index()
     {
         $Mail = new MailMsg();
-        $Mail->setRedisMail(36);
-        $Mail->getRedisMailByUid(36);
-        return;
-        $client = new Client();
-        for ($i=0;$i<5;$i++){
-//            $data_ip = $this->index2();
-//            foreach ($data_ip as $item) {
-//                $ip = trim($item);
-                $new_str = $this->rand_str();
-                $url = 'http://redbull.hxrdcode.com/template/verify/verify.html?codeString='. $new_str . '&flag=1';
-//                $content = $client->request('get', $url,['proxy'=>[
-//                    'http'=>'http://127.0.0.1',
-//////                    'https'=>'http://221.229.166.87:10128',
-//                ]] );
-                $content = $client->request('get', $url);
-                usleep(1000);
-                $res_str = $content->getBody()->getContents();
-//                var_dump($res_str);
-                $len = stripos($res_str,'<span class="dc">');
-                $code = substr($res_str,$len +17,12);
-                if($code!='错误数据'){
-                    file_put_contents('log.txt',$new_str."\r\n",FILE_APPEND);
-                }else{
-                    file_put_contents('log1.txt',$code.'=>'.$new_str."\r\n",FILE_APPEND);
-                }
-//            }
-
-        }
-
+        $GameConfig = new GameConfig();
+        $data['Title'] = 'Title';
+        $data['Item'] = [10001=>2];
+        $data['SenderIcon'] = $GameConfig->getMailNpcHead();
+        $data['SenderName'] = $GameConfig->getMailNpcName();
+        $data['Msg'] = 'ceshi';
+        $data['SenderId'] = 'system';
+        $data['Uid'] = 34;
+        $rs = $Mail->createMailMsg($data);
+        var_dump($rs);
     }
     public function rand_str()
     {
@@ -92,8 +74,9 @@ class Index extends Controller
     public function index2()
     {
 
-        $arr = file('http://vip.zdaye.com/?api=201704181142528378&fitter=2&px=2');
-        return $arr;
+       $Mail = new MailMsg();
+       $list = $Mail->getRedisMailByUid(36);
+        var_dump($list);
     }
     public function setRolebag()
     {

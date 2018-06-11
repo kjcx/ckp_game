@@ -83,4 +83,24 @@ class GameConfig extends Model
         }
         return $arr;
     }
+
+    /**
+     * 邮件官方名称
+     */
+    public function getMailNpcName()
+    {
+        $data_GameConfig = $this->getInfoByField('MailNpcName');
+        $MailNpcName = $data_GameConfig['value'];
+        return $MailNpcName;
+    }
+
+    /**
+     * 邮件头像
+     */
+    public function getMailNpcHead()
+    {
+        $data_GameConfig = $this->getInfoByField('MailNpcHead');
+        $MailNpcHead = $data_GameConfig['value'];
+        return $MailNpcHead;
+    }
 }
