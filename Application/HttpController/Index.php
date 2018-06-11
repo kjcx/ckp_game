@@ -18,6 +18,7 @@ use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Mail\MailMsg;
 use App\Models\Staff\Staff;
 use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
@@ -42,16 +43,9 @@ class Index extends Controller
      */
     public function index()
     {
-
-        $friend = new FriendInfo();
-        $rs = $friend->setRedisFriend('1',['Uid'=>3,'FriendStatus'=>3,'add_time'=>time()]);
-        var_dump($rs);
-        $data = $friend->getRedisFriend('1');
-        var_dump($data);
-        $r = $friend->checkIsFriend(1,3);
-        $r = $friend->getFriendUid(1);
-        var_dump($r);
-
+        $Mail = new MailMsg();
+        $Mail->setRedisMail(36);
+        $Mail->getRedisMailByUid(36);
         return;
         $client = new Client();
         for ($i=0;$i<5;$i++){
