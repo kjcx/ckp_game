@@ -124,6 +124,7 @@ use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\RaffleFruitsResult;
+use App\Protobuf\Result\RandManorResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
@@ -1869,6 +1870,20 @@ class Web extends WebSocketController
             }
         }else{
             var_dump("寄卖信息不存在");
+        }
+    }
+
+    /**
+     * 随机请求庄园
+     */
+    public function msgid_2013()
+    {
+        $land = new Land($this->uid);
+        $res = $land->randLand();
+        if (isset($res['error'])) {
+            $this->send(2014,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(2014,$this->fd,RandManorResult::encode($res));
         }
     }
 }
