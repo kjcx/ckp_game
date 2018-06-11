@@ -18,6 +18,7 @@ class DealGoodsUpdate
     public static function encode($data)
     {
         $DealGoodsUpdate = new \AutoMsg\DealGoodsUpdate();
+        var_dump((string)$data['_id']);
         $DealGoodsUpdate->setId((string)$data['_id']);//记录id
         $DealGoodsUpdate->setItemId($data['ItemId']);//道具id
         $DealGoodsUpdate->setCount($data['Count']);//道具数量
@@ -26,7 +27,6 @@ class DealGoodsUpdate
         $DealGoodsUpdate->setType($data['Type']);//道具类型
         $DealGoodsUpdate->setUpTime($data['UpTime']);//上架时间
 //        $DealGoodsUpdate->setCurPrice();//当前价格
-        $str = $DealGoodsUpdate->serializeToString();
-        return $str;
+        return $DealGoodsUpdate;
     }
 }

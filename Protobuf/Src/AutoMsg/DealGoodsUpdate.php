@@ -54,9 +54,9 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     /**
      *道具id
      *
-     * Generated from protobuf field <code>string ItemId = 7;</code>
+     * Generated from protobuf field <code>int32 ItemId = 7;</code>
      */
-    private $ItemId = '';
+    private $ItemId = 0;
     /**
      *类型前端提供
      *
@@ -228,8 +228,8 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     /**
      *道具id
      *
-     * Generated from protobuf field <code>string ItemId = 7;</code>
-     * @return string
+     * Generated from protobuf field <code>int32 ItemId = 7;</code>
+     * @return int
      */
     public function getItemId()
     {
@@ -239,13 +239,13 @@ class DealGoodsUpdate extends \Google\Protobuf\Internal\Message
     /**
      *道具id
      *
-     * Generated from protobuf field <code>string ItemId = 7;</code>
-     * @param string $var
+     * Generated from protobuf field <code>int32 ItemId = 7;</code>
+     * @param int $var
      * @return $this
      */
     public function setItemId($var)
     {
-        GPBUtil::checkString($var, True);
+        GPBUtil::checkInt32($var);
         $this->ItemId = $var;
 
         return $this;

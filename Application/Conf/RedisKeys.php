@@ -18,6 +18,7 @@ return [
         'FriendInfo:uid',//好友数据
         'manorStealLog:uid',//庄园偷取日志 有序集合
         'manorStealLogDetail:uid:$id', //庄园偷取单个日志 $id为一个算法Id
+
     ],
     'a' => 'dupeng',
     'gloable' => [ //全局信息频道

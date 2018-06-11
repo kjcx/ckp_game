@@ -18,9 +18,9 @@ class SalesListResult
     public static function encode($data)
     {
         $SalesListResult = new \AutoMsg\SalesListResult();
-        $data = [];
+        $goods = [];
         foreach ($data as $datum) {
-            $goods[] = DealGoodsUpdate::encode($data);
+            $goods[] = DealGoodsUpdate::encode($datum);
         }
 
         $SalesListResult->setGoods($goods);
