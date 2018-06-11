@@ -1919,9 +1919,8 @@ class Web extends WebSocketController
 
         //设置邮件为已读
         $str = ReadMailResult::encode($data_ReadMail['Id']);
-        $this->send(1114, $this->fd, $str);
-    }
-    /*
+        $this->send(1114,$this->fd,$str);
+=======
      * 偷菜
      * return 1091
      */
@@ -1935,5 +1934,6 @@ class Web extends WebSocketController
         }  else {
             $this->send(1091,$this->fd,StealSemenResult::encode($res));
         }
+>>>>>>> 390a2ed1c9937b3daaf3be15d5168c2427fd17a7
     }
 }
