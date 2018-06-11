@@ -79,6 +79,7 @@ use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
 use App\Protobuf\Req\SoldOutReq;
+use App\Protobuf\Req\StealSemenReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TopUpGoldReq;
@@ -136,6 +137,7 @@ use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SeedShopPingResult;
 use App\Protobuf\Result\SellItemResult;
 use App\Protobuf\Result\SoldOutResult;
+use App\Protobuf\Result\StealSemenResult;
 use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
@@ -1883,6 +1885,22 @@ class Web extends WebSocketController
             $this->send(2014,$this->fd,'',$res['msg'],12);
         }  else {
             $this->send(2014,$this->fd,RandManorResult::encode($res));
+        }
+    }
+
+    /**
+     * 偷菜
+     * return 1091
+     */
+    public function msgid_1061()
+    {
+        $data = StealSemenReq::decode($this->data);
+        $land = new Land($this->uid);
+        $res = $land->steal($data['uid'],$data['landIds']);
+        if ($res == false) {
+            $this->send(1091,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1091,$this->fd,StealSemenResult::encode($res));
         }
     }
 }
