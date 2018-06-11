@@ -13,11 +13,14 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Execl\GameConfig;
 use App\Models\Execl\LandInfo;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Sales\SalesItem;
+use App\Models\Mail\MailMsg;
 use App\Models\Staff\Staff;
 use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
@@ -42,43 +45,17 @@ class Index extends Controller
      */
     public function index()
     {
-
-        $friend = new FriendInfo();
-        $rs = $friend->setRedisFriend('1',['Uid'=>3,'FriendStatus'=>3,'add_time'=>time()]);
+        $Mail = new MailMsg();
+        $GameConfig = new GameConfig();
+        $data['Title'] = 'Title';
+        $data['Item'] = [10001=>2];
+        $data['SenderIcon'] = $GameConfig->getMailNpcHead();
+        $data['SenderName'] = $GameConfig->getMailNpcName();
+        $data['Msg'] = 'ceshi';
+        $data['SenderId'] = 'system';
+        $data['Uid'] = 34;
+        $rs = $Mail->createMailMsg($data);
         var_dump($rs);
-        $data = $friend->getRedisFriend('1');
-        var_dump($data);
-        $r = $friend->checkIsFriend(1,3);
-        $r = $friend->getFriendUid(1);
-        var_dump($r);
-
-        return;
-        $client = new Client();
-        for ($i=0;$i<5;$i++){
-//            $data_ip = $this->index2();
-//            foreach ($data_ip as $item) {
-//                $ip = trim($item);
-                $new_str = $this->rand_str();
-                $url = 'http://redbull.hxrdcode.com/template/verify/verify.html?codeString='. $new_str . '&flag=1';
-//                $content = $client->request('get', $url,['proxy'=>[
-//                    'http'=>'http://127.0.0.1',
-//////                    'https'=>'http://221.229.166.87:10128',
-//                ]] );
-                $content = $client->request('get', $url);
-                usleep(1000);
-                $res_str = $content->getBody()->getContents();
-//                var_dump($res_str);
-                $len = stripos($res_str,'<span class="dc">');
-                $code = substr($res_str,$len +17,12);
-                if($code!='错误数据'){
-                    file_put_contents('log.txt',$new_str."\r\n",FILE_APPEND);
-                }else{
-                    file_put_contents('log1.txt',$code.'=>'.$new_str."\r\n",FILE_APPEND);
-                }
-//            }
-
-        }
-
     }
     public function rand_str()
     {
@@ -97,8 +74,9 @@ class Index extends Controller
     public function index2()
     {
 
-        $arr = file('http://vip.zdaye.com/?api=201704181142528378&fitter=2&px=2');
-        return $arr;
+       $Mail = new MailMsg();
+       $list = $Mail->getRedisMailByUid(36);
+        var_dump($list);
     }
     public function setRolebag()
     {
@@ -118,12 +96,18 @@ class Index extends Controller
     }
     public function   test()
     {
-        $arr = [];
-        if($arr){
-            echo 1;
-        }else{
-            echo 2;
-        }
+//        $insert['Count'] = 10;
+//        $insert['GoldType'] = 6;
+//        $insert['Type'] = 1;
+//        $insert['ItemId'] = 10001;
+//        $insert['UpTime'] = time();
+//        $insert['Uid'] = 36;
+//        $insert['Price'] = 6;
+//        $SalesItem = new SalesItem();
+//        $Id = $SalesItem->create($insert);
+        $SalesItem = new SalesItem();
+        $rs = $SalesItem->getAll();
+        var_dump($rs);
     }
 
 

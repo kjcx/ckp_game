@@ -75,6 +75,12 @@ class JoinGameResult
             $LoadingGoldResult[] = SavingInfo::ecode($item);
         }
         $JoinGameResult->setLoadingGoldResult($LoadingGoldResult);
+        //邮件
+        $MailMsg = new \App\Models\Mail\MailMsg();
+        $data = $MailMsg->getRedisMailByUid($uid);
+        $Mails = MailResult::encode($data);
+        $JoinGameResult->setMails($Mails);
+
         $str = $JoinGameResult->serializeToString();
         return $str;
     }

@@ -1763,6 +1763,7 @@ class Web extends WebSocketController
     {
         $SalesItem = new SalesItem();
         $data = $SalesItem->getAll();
+        var_dump($data);
         $str = SalesListResult::encode($data);
         $this->send(2016,$this->fd,$str);
     }
@@ -1770,9 +1771,9 @@ class Web extends WebSocketController
     /**
      * 寄卖请求
      * UserSalesReq
-     * return UserSalesResult 2017
+     * return UserSalesResult 2018
      */
-    public function msgid_2016()
+    public function msgid_2017()
     {
         $data_UserSales = UserSalesReq::decode($this->data);
         //验证背包是否存在
@@ -1791,7 +1792,7 @@ class Web extends WebSocketController
                 if($Id){
                     $insert['_id'] = (string)$Id;
                     $str = UserSalesResult::encode($insert);
-                    $this->send(2017,$this->fd,$str);
+                    $this->send(2018,$this->fd,$str);
                 }else{
                     var_dump("寄卖失败");
                 }
@@ -1807,9 +1808,9 @@ class Web extends WebSocketController
     /**
      * 交易行购买
      * UserBuyReq
-     * return UserBuyResult 2019
+     * return UserBuyResult 2020
      */
-    public function msgid_2018()
+    public function msgid_2019()
     {
         $data_UserBuy = UserBuyReq::decode($this->data);
         //1验证数据存在不
@@ -1828,7 +1829,7 @@ class Web extends WebSocketController
                     if($rs){
                         $info['Count'] = $data_UserBuy['Count'];
                         $str = UserBuyResult::encode($info);
-                        $this->send(2019,$this->fd,$str);
+                        $this->send(2020,$this->fd,$str);
                     }else{
                         var_dump("购买失败");
                     }
@@ -1848,9 +1849,9 @@ class Web extends WebSocketController
 
     /**
      * SoldOutReq
-     * return SoldOutResult 2021
+     * return SoldOutResult 2022
      */
-    public function msgid_2020()
+    public function msgid_2021()
     {
         $data_SoldOut = SoldOutReq::decode($this->data);
         //下架
@@ -1863,7 +1864,7 @@ class Web extends WebSocketController
             $rs = $Bag->addBag($info['ItemId'],$info['Count']);
             if($rs){
                 $str = SoldOutResult::encode($data_SoldOut['id']);
-                $this->send(2021,$this->fd,$str);
+                $this->send(2022,$this->fd,$str);
             }else{
                 var_dump("归还失败");
             }

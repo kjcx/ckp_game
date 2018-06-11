@@ -16,6 +16,7 @@ return [
         'FruitsData:uid',//水果机数据
         'FruitsDataWeight:uid',//水果机权重数据
         'FriendInfo:uid',//好友数据
+
     ],
     'a' => 'dupeng',
     'gloable' => [ //全局信息频道
