@@ -9,6 +9,7 @@
 namespace App\Models\Mail;
 
 
+use App\Models\Execl\GameConfig;
 use App\Models\Model;
 use think\Db;
 
@@ -31,12 +32,20 @@ class MailMsg extends Model
      */
     public function createMailMsg($data)
     {
+        var_dump("createMailMsg");
         $data['Read'] = false;
         $data['Reward'] = false;
         $data['SendTime'] = time();
+        $GameConfig = new GameConfig();
+        $data['SenderIcon'] = $GameConfig->getMailNpcHead();
+        $data['SenderName'] = $GameConfig->getMailNpcName();
+        $data['SenderId'] = 'system';
+
+        var_dump($data);
         $rs = Db::table($this->table)->insert($data);
         if($rs){
             $Id =  Db::table($this->table)->getLastInsID();
+            var_dump($Id);
             $data['_id'] = $Id;
             $this->setRedisMail($data['Uid'],$data);
             return true;
@@ -52,15 +61,18 @@ class MailMsg extends Model
      */
     public function getRedisMailByUid($Uid)
     {
+        var_dump("getRedisMailByUid");
         $key = $this->MailList . $Uid;
         $data = $this->redis->HGETALL($key);
+        var_dump($data);
+
         $list = [];
         foreach ($data as $datum =>$value) {
             $bool = $this->redis->exists($datum);
             if($bool){
                 $list[] = json_decode($value,true);
             }else{
-                $this->redis->hDel($key,$datum);
+//                $this->redis->hDel($key,$datum);
             }
         }
         return $list;
@@ -74,22 +86,22 @@ class MailMsg extends Model
      */
     public function setRedisMail($Uid,$data)
     {
-        $key  = $this->Mail . (string)$data['_id'];
-        $this->redis->setex($key,$this->expiry,json_encode($data));
-        $this->redis->hSet('MailList:36',$key,json_encode($data));
+        var_dump("setRedisMail");
+        $key  = $this->Mail . $Uid  . ':' .  (string)$data['_id'];
+        $rs = $this->redis->setex($key,$this->expiry,json_encode($data));
+//        var_dump($key);
+        $this->redis->hSet('MailList:'.$Uid,$key,json_encode($data));
         return true;
+    }
 
-        $data['Read'] = false;
-        $data['Reward'] = false;
-        $data['Title'] = 'Title';
-        $data['Item'] = [10001=>2];
-        $data['SenderIcon'] = '0001';
-        $data['SenderName'] = 'admin';
-        $data['Msg'] = 'ceshi';
-        $data['SendTime'] = time();
-        $data['SenderId'] = 1;
-        $data['Id'] = '1';
-        $this->redis->setex($key,10,json_encode($data));
-        $this->redis->hSet('MailList:36',$key,json_encode($data));
+    /**
+     * 设置已读
+     * @param $Id
+     * @return int|string
+     */
+    public function getRead($Id)
+    {
+        $rs = Db::table($this->table)->where('_id',$Id)->update(['Read'=>true]);
+        return $rs;
     }
 }

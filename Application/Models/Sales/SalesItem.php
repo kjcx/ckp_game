@@ -48,4 +48,15 @@ class SalesItem extends Model
         $data = Db::table($this->table)->where('Count','>',0)->select();
         return $data;
     }
+
+    /**
+     * 获取所有
+     * @param $Uid
+     * @return array|false|\PDOStatement|string|\think\Collection
+     */
+    public function getAllByUid($Uid)
+    {
+        $data = Db::table($this->table)->where('Uid',$Uid)->where('Count','>',0)->select();
+        return $data;
+    }
 }

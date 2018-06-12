@@ -19,11 +19,11 @@ class MailResult
     {
         $MailResult = new \AutoMsg\MailResult();
         $Mails = [];
-        foreach ($data as $item) {
-            $Mails[] = MailMsg::encode($item);
+        if($data){
+            foreach ($data as $item) {
+                $Mails[] = MailMsg::encode($item);
+            }
         }
-//        $MailResult->setMail($Mails);
-//        $str = $MailResult->serializeToString();
         return $Mails;
     }
 }

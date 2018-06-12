@@ -49,11 +49,8 @@ class Index extends Controller
         $GameConfig = new GameConfig();
         $data['Title'] = 'Title';
         $data['Item'] = [10001=>2];
-        $data['SenderIcon'] = $GameConfig->getMailNpcHead();
-        $data['SenderName'] = $GameConfig->getMailNpcName();
         $data['Msg'] = 'ceshi';
-        $data['SenderId'] = 'system';
-        $data['Uid'] = 34;
+        $data['Uid'] = 40;
         $rs = $Mail->createMailMsg($data);
         var_dump($rs);
     }
@@ -75,7 +72,7 @@ class Index extends Controller
     {
 
        $Mail = new MailMsg();
-       $list = $Mail->getRedisMailByUid(36);
+       $list = $Mail->getRedisMailByUid(40);
         var_dump($list);
     }
     public function setRolebag()
