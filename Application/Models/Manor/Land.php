@@ -451,7 +451,7 @@ class Land extends Model
         $SingleStealTime = $SingleStealTime['value'];
         //循环判断是否可以被偷
         $filter = [
-            'uid' => $uid
+            'uid' => (int)$uid
         ];
         $update = [
             '$set' => []
@@ -497,7 +497,6 @@ class Land extends Model
             }
         }
         $res = $this->collection->findOneAndUpdate($filter,$update);
-        var_dump($res);
         return empty($res) ? false : $stealLand;
     }
 
