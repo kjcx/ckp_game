@@ -1,0 +1,432 @@
+AddItemReq,AddItemReq.proto,send,1000, 添加道具进背包请求
+ChangeAvatarReq,ChangeAvatarReq.proto,send,1002,
+ConnectingReq,ConnectingReq.proto,send,1004, 客户端请求接入服务器
+CreateBuildReq,CreateBuildReq.proto,send,1005,
+CreateCompanyReq,CreateCompanyReq.proto,send,1006,
+CreateRoleReq,CreateRoleReq.proto,send,1007, NewRoleResult
+DeleteRoleReq,DeleteRoleReq.proto,send,1008,
+DestoryBuildReq,DestoryBuildReq.proto,send,1010,
+GetMapReq,GetMapReq.proto,send,1011,
+JoinGameReq,JoinGameReq.proto,send,1012, 客户端请求加入游戏
+RemoveItemReq,RemoveItemReq.proto,send,1013,
+SellItemReq,SellItemReq.proto,send,1014,
+UseItemReq,UseItemReq.proto,send,1015, 使用物品
+AchievementReq,AchievementReq.proto,send,1069, 请求成就列表
+AchievementResult,AchievementResult.proto,rec,1100, 请求成就返回
+TCAchievementResult,TCAchievementResult.proto,rec,1101, 主动下发成就完成状态
+ActiveAchievementReq,ActiveAchievementReq.proto,send,1070, 激活成就请求
+ActiveAchievementResult,ActiveAchievementResult.proto,rec,1102, 激活成就返回
+GetAchievementRewardReq,GetAchievementRewardReq.proto,send,1072, 领取成就奖励请求
+GetAchievementRewardResult,GetAchievementRewardResult.proto,rec,1104, 领取成就奖励返回
+UnLoadAchievementReq,UnLoadAchievementReq.proto,send,1073, 卸载成就称号请求
+UnLoadAchievementResult,UnLoadAchievementResult.proto,rec,1105, 卸载成就称号返回
+AppointManagerReq,AppointManagerReq.proto,send,1088, 任命主管
+AppointManagerResult,AppointManagerResult.proto,rec,1123, 任命主管返回
+ChangeManagerReq,ChangeManagerReq.proto,send,1089, 换主管请求
+ChangeManagerResult,ChangeManagerResult.proto,rec,1124, 换主管返回
+GetManagerInfoReq,GetManagerInfoReq.proto,send,1090, 请求详细信息列表
+GetManagerInfoResult,GetManagerInfoResult.proto,rec,1125, 请求详细信息列表
+AuctionShopReq,AuctionShopReq.proto,send,1136, 获取拍卖店铺信息
+AuctionShopResult,AuctionShopResult.proto,rec,1183, 返回拍卖店铺信息
+RoleAuctionShopReq,RoleAuctionShopReq.proto,send,1140, 自己竞拍过的所有店铺
+RoleAuctionShopResult,RoleAuctionShopResult.proto,rec,1189, 自己竞拍过的所有店铺
+UpdataRoleShopResult,UpdataRoleShopResult.proto,rec,1190, 主动推送拍卖店铺信息
+ShopAuctionReq,ShopAuctionReq.proto,send,1139, 私有店铺拍卖
+ShopAuctionResult,ShopAuctionResult.proto,rec,1187, 私有店铺拍卖
+TestReq,TestReq.proto,send,1137, 私有店铺拍卖
+TestResult,TestResult.proto,rec,1191, 私有店铺拍卖
+PublicRoleShopReq,PublicRoleShopReq.proto,send,1141, 个人拍卖获得的公有店铺
+PublicRoleShopResult,PublicRoleShopResult.proto,rec,1192, 个人拍卖获得的公有店铺
+ShopInfoReq,ShopInfoReq.proto,send,1144, 个人拍卖获得的公有店铺
+ShopInfoResult,ShopInfoResult.proto,rec,1196, 个人拍卖获得的公有店铺
+NoBodyShopReq,NoBodyShopReq.proto,send,1158, 获取所有无主店铺
+NoBodyShopResult,NoBodyShopResult.proto,rec,1211, 获取无主店铺
+PurchaseShopReq,PurchaseShopReq.proto,send,1159, 购买无主店铺
+PurchaseShopResult,PurchaseShopResult.proto,rec,1212, 购买无主店铺
+BiddingAhReq,BiddingAhReq.proto,send,1064, 竞价拍卖行中的商品
+BiddingAhResult,BiddingAhResult.proto,rec,1094, 竞标拍卖行中的商品返回
+BiddingGoodsReq,BiddingGoodsReq.proto,send,1057, 商品竞价请求
+BiddingGoodsResult,BiddingGoodsResult.proto,rec,1088, 商品竞价返回
+BuildAdvReq,BuildAdvReq.proto,send,1016, 店铺宣传请求
+BuildAdvResult,BuildAdvResult.proto,rec,1000, 店铺宣传请求返回
+BuildAdvFailedResult,BuildAdvFailedResult.proto,rec,1001, 宣传失败返回
+BuildExtendReq,BuildExtendReq.proto,send,1017, 店铺扩建
+BuildExtendResult,BuildExtendResult.proto,rec,1002, 店铺扩建成功
+BuildExtendFailedResult,BuildExtendFailedResult.proto,rec,1003, 店铺扩建失败
+BuildLvUpReq,BuildLvUpReq.proto,send,1018, 建筑升级
+BuildLvUpResult,BuildLvUpResult.proto,rec,1004, 建筑升级
+BuildLvUpFailedResult,BuildLvUpFailedResult.proto,rec,1005, 建筑升级
+SendMsgToChannelReq,SendMsgToChannelReq.proto,send,1019, 向频道中发送消息
+SendMsgToChannelResult,SendMsgToChannelResult.proto,rec,1006, 向频道中发送消息
+TCRecMsgFromChannelResult,TCRecMsgFromChannelResult.proto,rec,1007, 主动下发消息到频道中
+TCRecMsgHorseResult,TCRecMsgHorseResult.proto,rec,1008, 跑马灯消息 系统消息
+AuctionEndStartResult,AuctionEndStartResult.proto,rec,1186, 跑马灯消息 系统消息
+TCRecSystemMsgResult,TCRecSystemMsgResult.proto,rec,1130, 系统消息
+TextShopEndMsgResult,TextShopEndMsgResult.proto,rec,1204, 私有店铺拍卖
+CKApiReq,CKApiReq.proto,send,1165, 请求创客数据
+CKErrResult,CKErrResult.proto,rec,1219, 错误返回
+CkTeamResult,CkTeamResult.proto,rec,1220, 错误返回
+CkGetRmbResult,CkGetRmbResult.proto,rec,1229, 创客提现返回
+CkPayResult,CkPayResult.proto,rec,1224, 创客支付返回
+CKRichResult,CKRichResult.proto,rec,1221, 创客支付返回
+CKPayLogResult,CKPayLogResult.proto,rec,1222, 创客支付日志
+CKApiResult,CKApiResult.proto,rec,1223, 请求创客数据返回
+CKConnectReq,CKConnectReq.proto,send,1164, 创客连接请求
+CKConnectResult,CKConnectResult.proto,rec,1218, 创客连接请求返回
+DataCountReq,DataCountReq.proto,send,1105, 请求数据统计数据
+DataCountResult,DataCountResult.proto,rec,1144, 数据统计数据返回
+DelMailsReq,DelMailsReq.proto,send,1080, 删除邮件请求
+DelMailsResult,DelMailsResult.proto,rec,1113, 删除邮件返回
+DropShopReq,DropShopReq.proto,send,1074, 商城商店
+DropShopResult,DropShopResult.proto,rec,1106, 返回商城商店信息
+SeedShopReq,SeedShopReq.proto,send,1071, 种子商店
+SeedShopResult,SeedShopResult.proto,rec,1103, 种子商店
+DropShopPingReq,DropShopPingReq.proto,send,1075, 掉落库的商品购买
+DropShopPingResult,DropShopPingResult.proto,rec,1107, 掉落库的商品购买
+SeedShopPingReq,SeedShopPingReq.proto,send,1076, 购买种子商店
+SeedShopPingResult,SeedShopPingResult.proto,rec,1108, 购买种子商店
+RefDropShopReq,RefDropShopReq.proto,send,1077, 刷新商城商品
+RefDropShopResult,RefDropShopResult.proto,rec,1109, 刷新商城商品
+ShopAllReq,ShopAllReq.proto,send,1106, 加载所有商店
+ShopAllResult,ShopAllResult.proto,rec,1145, 加载所有商店
+ModelClothesReq,ModelClothesReq.proto,send,1150, 购买时装
+ModelClothesResult,ModelClothesResult.proto,rec,1203, 购买时装
+FriendAwardReq,FriendAwardReq.proto,send,1117, 一键领取好友奖励请求
+FriendAwardResult,FriendAwardResult.proto,rec,1161, 请求返回
+FriendApplyReq,FriendApplyReq.proto,send,1021, 添加好友申请
+FriendApplyResult,FriendApplyResult.proto,rec,1011, 添加好友申请返回
+FriendAddReq,FriendAddReq.proto,send,1022, 添加好友
+FriendRemoveReq,FriendRemoveReq.proto,send,1023, 删除好友
+FriendRemoveResult,FriendRemoveResult.proto,rec,1012, 删除好友返回
+FriendAddResult,FriendAddResult.proto,rec,1013, 添加好友返回
+FriendListResult,FriendListResult.proto,rec,1014,
+FriendUpdateResult,FriendUpdateResult.proto,rec,1015, 好友状态更新
+FriendSearchReq,FriendSearchReq.proto,send,1024,推荐玩家
+FriendSearchResult,FriendSearchResult.proto,rec,1016,推荐返回
+FriendApplyClearReq,FriendApplyClearReq.proto,send,1025, 清空好友申请
+FriendApplyClearResult,FriendApplyClearResult.proto,rec,1017, 清空好友申请
+FriendAddBlackReq,FriendAddBlackReq.proto,send,1026, 添加到黑名单
+FriendAddBlackResult,FriendAddBlackResult.proto,rec,1018, 添加到黑名单返回
+FriendRemoveBlackReq,FriendRemoveBlackReq.proto,send,1027, 从黑名单中移除
+FriendRemoveBlackResult,FriendRemoveBlackResult.proto,rec,1019, 从黑名单中移除返回
+FriendOnlineResult,FriendOnlineResult.proto,rec,1020, 好友上线下线
+FriendBaseResult,FriendBaseResult.proto,rec,1232, 
+FriendValueUpdateResult,FriendValueUpdateResult.proto,rec,1170, 好友友情值更新
+FriendInteractiveReq,FriendInteractiveReq.proto,send,1129, 好友互动操作
+FriendInteractiveResult,FriendInteractiveResult.proto,rec,1175, 好友互动操作返回
+FruitsDataReq,FruitsDataReq.proto,send,1031, 加载水果机物品
+FruitsDataResult,FruitsDataResult.proto,rec,1030, 返回加载水果机物品
+RaffleFruitsReq,RaffleFruitsReq.proto,send,1035, 抽奖
+RaffleFruitsResult,RaffleFruitsResult.proto,rec,1035, 返回抽奖信息
+BuyFurnitureReq,BuyFurnitureReq.proto,send,1107, 购买家具
+BuyFurnitureResult,BuyFurnitureResult.proto,rec,1146, 购买家具返回 返回变化的道具
+SellFurnitureReq,SellFurnitureReq.proto,send,1108, 出售家具
+SellFurnitureResult,SellFurnitureResult.proto,rec,1147, 出售家具返回
+FurnitureStarReq,FurnitureStarReq.proto,send,1109, 家具升星
+FurnitureStarResult,FurnitureStarResult.proto,rec,1148, 家具升星返回
+AddFurnReq,AddFurnReq.proto,send,1112, 家具升星返回
+AddFurnResult,AddFurnResult.proto,rec,1151, 家具升星返回
+UpdateFurnitureResult,UpdateFurnitureResult.proto,rec,1153, 更新家具
+GetMailItemsReq,GetMailItemsReq.proto,send,1065, 获取邮件中的物品
+GetMailItemsResult,GetMailItemsResult.proto,rec,1095, 获取邮件中的物品
+GetMailItemsFailedResult,GetMailItemsFailedResult.proto,rec,1112, 获取邮件中的物品失败处理 
+GetPrivateLandReq,GetPrivateLandReq.proto,send,1138, 获取私有土地请求
+GetPrivateLandResult,GetPrivateLandResult.proto,rec,1185, 获取私有土地请求返回
+ItemBuyReq,ItemBuyReq.proto,send,1028, 道具购买
+ItemBuyResult,ItemBuyResult.proto,rec,1021, 道具购买返回
+UpdateItemResult,UpdateItemResult.proto,rec,1022, 道具更新
+LoadingGoldReq,LoadingGoldReq.proto,send,1029,
+LoadingGoldResult,LoadingGoldResult.proto,rec,1023,
+MailReq,MailReq.proto,send,1058, 邮件协议
+MailResult,MailResult.proto,rec,1089, 邮件协议
+ReadMailReq,ReadMailReq.proto,send,1081, 阅读邮件请求
+ReadMailResult,ReadMailResult.proto,rec,1114, 阅读邮件返回
+MakeReq,MakeReq.proto,send,1052,
+MakeResult,MakeResult.proto,rec,1081, 返回制作成功的道具和数量
+RequestManorReq,RequestManorReq.proto,send,1053, 请求庄园
+RequestManorResult,RequestManorResult.proto,rec,1082, 请求庄园
+InitiativeRequestManorReq,InitiativeRequestManorReq.proto,send,1063, 种子成熟主动请求刷新
+InitiativeRequestManorResult,InitiativeRequestManorResult.proto,rec,1093, 种子成熟主动请求刷新返回
+ClearStateReq,ClearStateReq.proto,send,1054, 客户端返回要清除异常状态的id
+ClearStateResult,ClearStateResult.proto,rec,1084,  除草 浇水 收获  种植
+GrowPlantsReq,GrowPlantsReq.proto,send,1055, 种植植物
+GrowPlantsResult,GrowPlantsResult.proto,rec,1085, 返回种植成功的植物编号和地皮的id
+HarvestPlantReq,HarvestPlantReq.proto,send,1056, 收获
+HarvestPlanResult,HarvestPlanResult.proto,rec,1086, 收获
+StealSemenReq,StealSemenReq.proto,send,1061, 偷取植物 
+StealSemenResult,StealSemenResult.proto,rec,1091, 偷取植物 
+DismantleReq,DismantleReq.proto,send,1062, 拆除植物
+DismantleResult,DismantleResult.proto,rec,1092, 拆除植物
+AddSoilReq,AddSoilReq.proto,send,1078, 添加土地
+AddSoilResult,AddSoilResult.proto,rec,1110, 添加土地
+RefFitnessReq,RefFitnessReq.proto,send,1104, 刷新状态
+RefFitnessResult,RefFitnessResult.proto,rec,1143, 刷新状态
+AKeyMatureReq,AKeyMatureReq.proto,send,1124,一键成熟
+AKeyMatureResult,AKeyMatureResult.proto,rec,1172, 一键成熟
+UpgradeLandLevelReq,UpgradeLandLevelReq.proto,send,1125, 升级土地等级
+UpgradeLandLevelResult,UpgradeLandLevelResult.proto,rec,1171, 升级土地等级
+ManorVisitInfoTipResult,ManorVisitInfoTipResult.proto,rec,1200, 纪录提示
+ManorVisitInfoReq,ManorVisitInfoReq.proto,send,1148, 获取拜访纪录
+ManorVisitInfoResult,ManorVisitInfoResult.proto,rec,1201, 拜访纪录返回
+MissionResult,MissionResult.proto,rec,1025, 任务相关信息
+CreateRoadOpenResult,CreateRoadOpenResult.proto,rec,1024, 创客之路开启
+CreateRoadRewardReq,CreateRoadRewardReq.proto,send,1048, 领取创客之路奖励
+CreateRoadRewardResult,CreateRoadRewardResult.proto,rec,1079, 领取创客之路奖励返回
+MissionVitalityGetReq,MissionVitalityGetReq.proto,send,1049, 领取活跃度奖励
+MissionVitalityGetResult,MissionVitalityGetResult.proto,rec,1077, 领取活跃度奖励返回
+MissionVitalityResult,MissionVitalityResult.proto,rec,1076, 活跃度更新
+MissionGetRewardReq,MissionGetRewardReq.proto,send,1030, 领取任务奖励
+MissionGetRewardResult,MissionGetRewardResult.proto,rec,1026, 领取任务奖励返回
+MissionCompleteResult,MissionCompleteResult.proto,rec,1027, 完成任务
+MissionNewResult,MissionNewResult.proto,rec,1028, 新任务
+MissionDataResult,MissionDataResult.proto,rec,1029,更新
+MissionFirstCompleteReq,MissionFirstCompleteReq.proto,send,1149, 快速完成任务
+MissionFirstCompleteResult,MissionFirstCompleteResult.proto,rec,1202, 快速完成任务
+MoneyChangeReq,MoneyChangeReq.proto,send,1079, 货币兑换请求
+MoneyChangeResult,MoneyChangeResult.proto,rec,1111, 货币兑换返回
+NpcFavorabilityReq,NpcFavorabilityReq.proto,send,1036, 加载NPC好感度
+NpcFavorabilityResult,NpcFavorabilityResult.proto,rec,1037, NPC好感度
+NpcRelationAdvanceReq,NpcRelationAdvanceReq.proto,send,1037, NPC好感度提升
+NpcRelationAdvanceResult,NpcRelationAdvanceResult.proto,rec,1038, NPC好感度提升
+AddNpcRelationAdvanceReq,AddNpcRelationAdvanceReq.proto,send,1038, 添加好感度
+AddNpcRelationAdvanceResult,AddNpcRelationAdvanceResult.proto,rec,1133, 添加好感度
+ProcurementReq,ProcurementReq.proto,send,1039, 
+ProcurementResult,ProcurementResult.proto,rec,1039, 初始化返回数据
+ConsumeReq,ConsumeReq.proto,send,1040, 获取客户端需要消耗的店铺id
+ConsumeResult,ConsumeResult.proto,rec,1040, 收取后返回收取多少金钱
+ShopBasisReq,ShopBasisReq.proto,send,1161, 返回店铺的客流
+ShopBasisResult,ShopBasisResult.proto,rec,1215, 返回店铺的加成后的所有客流
+HarvestPublicShopReq,HarvestPublicShopReq.proto,send,1145, 收取公共地图的金币
+HarvestPublicShopResult,HarvestPublicShopResult.proto,rec,1197, 收取公共地图的金币
+PurchaseReq,PurchaseReq.proto,send,1041, 客户端返回采购需要的参数采购
+PurchaseResult,PurchaseResult.proto,rec,1041, 
+StrategyStrikeReq,StrategyStrikeReq.proto,send,1067, 策略打击
+GetUserShopReq,GetUserShopReq.proto,send,1160, 返回请求别人的店铺
+GetUserShopResult,GetUserShopResult.proto,rec,1214, 返回请求别人的店铺
+RandomPosReq,RandomPosReq.proto,send,1099, 随机取得地块坐标请求
+RandomPosResult,RandomPosResult.proto,rec,1137, 随机取得地块坐标返回
+RankingReq,RankingReq.proto,send,1094, 排行榜查看请求
+RankingResult,RankingResult.proto,rec,1132, 排行榜查看请求返回
+GetRankingReq,GetRankingReq.proto,send,1095, 获取个人排名
+GetRankingResult,GetRankingResult.proto,rec,1131, 获取个人排名返回
+Get2RedPacketResult,Get2RedPacketResult.proto,rec,1159, 获取红包
+UpdateRedPacketRecordReq,UpdateRedPacketRecordReq.proto,send,1118, 获取红包
+UpdateRedPacketRecordResult,UpdateRedPacketRecordResult.proto,rec,1162, 获取红包
+GetRedPacketReq,GetRedPacketReq.proto,send,1116, 获取红包
+GetRedPacketResult,GetRedPacketResult.proto,rec,1154, 获取红包
+ReceiveRedPacketReq,ReceiveRedPacketReq.proto,send,1113, 领红包
+ReceiveRedPacketResult,ReceiveRedPacketResult.proto,rec,1155, 领红包
+LoadResultRedPacket,LoadResultRedPacket.proto,rec,1156, 返回发红包信息
+RefreshAHReq,RefreshAHReq.proto,send,1066, 刷新，浏览拍卖行请求
+RefreshAHResult,RefreshAHResult.proto,rec,1096, 刷新，浏览拍卖行返回
+RefreshDealGoodsReq,RefreshDealGoodsReq.proto,send,1050, 刷新交易市场请求
+RefreshDealGoodsResult,RefreshDealGoodsResult.proto,rec,1083, 更新寄卖消息
+DealGoodsUpdateResult,DealGoodsUpdateResult.proto,rec,1099, 单个商品更新消息
+RefStaffReq,RefStaffReq.proto,send,1082, 抽卡NPC
+RefStaffResult,RefStaffResult.proto,rec,1117, 返回抽卡ID
+LoadStaffReq,LoadStaffReq.proto,send,1083, 加载所有员工
+LoadStaffResult,LoadStaffResult.proto,rec,1118, 返回所有员工
+TypeCountStaffReq,TypeCountStaffReq.proto,send,1147, 加载免费抽奖的次数和Cd时间
+TypeCountStaffResult,TypeCountStaffResult.proto,rec,1199, 加载免费抽奖的次数和Cd时间
+EmployeesCardReq,EmployeesCardReq.proto,send,1084, 员工工作证
+EmployeesCardResult,EmployeesCardResult.proto,rec,1119, 返回员工工作证
+LevelUpEmployeeReq,LevelUpEmployeeReq.proto,send,1085, 升级员工
+LevelUpEmployeeResult,LevelUpEmployeeResult.proto,rec,1120, 返回升级员工信息
+CultivateEmployeeReq,CultivateEmployeeReq.proto,send,1086, 培训员工
+CultivateEmployeeResult,CultivateEmployeeResult.proto,rec,1121, 返回培训员工信息
+DismissalEmployeeReq,DismissalEmployeeReq.proto,send,1087, 解雇员工
+DismissalEmployeeResult,DismissalEmployeeResult.proto,rec,1122, 返回解雇员工信息
+ComeOutEmployeeReq,ComeOutEmployeeReq.proto,send,1091, 获取前台传来的铺id和人数是调入还是调出
+ComeOutEmployeeResult,ComeOutEmployeeResult.proto,rec,1126, 返回店铺信息和员工信息
+RequestGoodsDownReq,RequestGoodsDownReq.proto,send,1167, 商品请求下架
+RequestGoodsDownResult,RequestGoodsDownResult.proto,rec,1227, 请求下架返回 
+OnGetMyGoodsReq,OnGetMyGoodsReq.proto,send,1168, 获取自己上架的商品列表
+OnGetMyGoodsResult,OnGetMyGoodsResult.proto,rec,1228, 获取自己的上架商品列表返回
+ResidentDelegateReq,ResidentDelegateReq.proto,send,1096, 加载居名委托任务
+ResidentDelegateResult,ResidentDelegateResult.proto,rec,1134, 返回居民委托任务
+RefResidentDelegateReq,RefResidentDelegateReq.proto,send,1097, 刷新任务
+RefResidentDelegateResult,RefResidentDelegateResult.proto,rec,1115, 刷新任务
+AccomplishResidentDelegateReq,AccomplishResidentDelegateReq.proto,send,1098, 完成任务
+AccomplishResidentDelegateResult,AccomplishResidentDelegateResult.proto,rec,1135, 完成任务
+RoomReq,RoomReq.proto,send,1042, 客户端请求用户的房间信息
+RoomResult,RoomResult.proto,rec,1042, 返回给客户端的房间信息
+RoomListResult,RoomListResult.proto,rec,1225, 客户端当前房间列表信息
+RoomVisitInfoReq,RoomVisitInfoReq.proto,send,1059, 获取拜访纪录
+RoomVisitInfoResult,RoomVisitInfoResult.proto,rec,1087, 拜访纪录返回
+RoomVisitInfoTipResult,RoomVisitInfoTipResult.proto,rec,1188, 纪录提示
+RoomConfigUpdateReq,RoomConfigUpdateReq.proto,send,1043, 请求更新房间配置
+RoomConfigUpdateResult,RoomConfigUpdateResult.proto,rec,1043, 请求更新房间配置
+RoomBuyReq,RoomBuyReq.proto,send,1044,升级
+RoomBuyResult,RoomBuyResult.proto,rec,1044,升级
+RoomSellReq,RoomSellReq.proto,send,1045, 房间出售
+RoomSellResult,RoomSellResult.proto,rec,1045, 房间出售
+RoomLiveReq,RoomLiveReq.proto,send,1166, 居住房屋
+RoomLiveResult,RoomLiveResult.proto,rec,1226, 居住房屋返回
+RoomVisitReq,RoomVisitReq.proto,send,1046, 拜访用户房间
+RoomVisitResult,RoomVisitResult.proto,rec,1046, 拜访用户房间
+RoomUpdateReq,RoomUpdateReq.proto,send,1119, 房屋升级请求
+RoomUpdateResult,RoomUpdateResult.proto,rec,1163, 房屋升级请求
+SavingGoldReq,SavingGoldReq.proto,send,1047, 存款请求
+SavingGoldResult,SavingGoldResult.proto,rec,1047, 存款返回
+LoadLoansReq,LoadLoansReq.proto,send,1156, 加载贷款信息
+LoadLoansResult,LoadLoansResult.proto,rec,1209, 加载贷款信息
+LoansReq,LoansReq.proto,send,1152, 贷款请求
+LoansResult,LoansResult.proto,rec,1205, 贷款返回
+GoldRepaymentReq,GoldRepaymentReq.proto,send,1153, 用金币返款请求
+GoldRepaymentResult,GoldRepaymentResult.proto,rec,1206, 用金币还款返回
+StaffRepaymentReq,StaffRepaymentReq.proto,send,1154, 用员工返款请求
+StaffRepaymentResult,StaffRepaymentResult.proto,rec,1207, 用员工还款返回
+ShopRepaymentReq,ShopRepaymentReq.proto,send,1155, 店铺返款请求
+ShopRepaymentResult,ShopRepaymentResult.proto,rec,1208, 店铺员工还款返回
+ItemRepaymentReq,ItemRepaymentReq.proto,send,1157, 道具返款请求
+ItemRepaymentResult,ItemRepaymentResult.proto,rec,1210, 道具员工还款返回
+SevenDaysReq,SevenDaysReq.proto,send,1123, 返回7天登陆
+SevenDaysResult,SevenDaysResult.proto,rec,1166, 返回7天登陆
+PickUpSevenDaysReq,PickUpSevenDaysReq.proto,send,1120,领取奖励
+PickUpSevenDaysResult,PickUpSevenDaysResult.proto,rec,1167, 领取奖励
+SignReq,SignReq.proto,send,1121, 签到数据
+SignResult,SignResult.proto,rec,1168, 签到到数据
+DaySignReq,DaySignReq.proto,send,1122, 签到数据
+DaySignResult,DaySignResult.proto,rec,1169, 签到到数据
+DrawLotsReq,DrawLotsReq.proto,send,1151, 抽签
+DrawLotsResult,DrawLotsResult.proto,rec,1213, 返回抽签Id
+OnLineAwardsReq,OnLineAwardsReq.proto,send,1162, 在线奖励
+OnLineAwardsResult,OnLineAwardsResult.proto,rec,1216, 在线奖励
+GetOnLineAwardsReq,GetOnLineAwardsReq.proto,send,1163, 在线奖励
+GetOnLineAwardsResult,GetOnLineAwardsResult.proto,rec,1217, 在线奖励
+ShopLeaderReq,ShopLeaderReq.proto,send,1092, 雇佣店长
+ShopLeaderResult,ShopLeaderResult.proto,rec,1128, 雇佣店长返回
+TCShopLeaderResult,TCShopLeaderResult.proto,rec,1127, 被雇佣后，通知被雇佣的人
+FireLeaderReq,FireLeaderReq.proto,send,1093, 解雇店长
+FireLeaderResult,FireLeaderResult.proto,rec,1129, 解雇店长返回
+SkillReq,SkillReq.proto,send,1032, 技能列表
+SkillResult,SkillResult.proto,rec,1031, 技能列表返回
+UnLockSkillResult,UnLockSkillResult.proto,rec,1032, 解锁技能通知
+LearnSkillReq,LearnSkillReq.proto,send,1033, 学习技能请求
+LearnSkillResult,LearnSkillResult.proto,rec,1033, 学习技能返回
+SkillLvUpReq,SkillLvUpReq.proto,send,1034, 升级技能
+SkillLvUpResult,SkillLvUpResult.proto,rec,1034, 升级技能返回
+TakeOutReq,TakeOutReq.proto,send,1126, 请求打开外卖界面协议
+UpdateOutReq,UpdateOutReq.proto,send,1127, 主动刷新好友外卖喜好信息
+TakeOutResult,TakeOutResult.proto,rec,1173, 请求打开外卖界面返回
+GiftTakeOutReq,GiftTakeOutReq.proto,send,1128, 给好友送外卖
+GiftTakeOutResult,GiftTakeOutResult.proto,rec,1174, 给好友送外卖返回
+GetTalentListReq,GetTalentListReq.proto,send,1130, 获取人才市场列表
+GetTalentListResult,GetTalentListResult.proto,rec,1176, 返回人才列表
+TalentRefreshReq,TalentRefreshReq.proto,send,1135, 刷新人才市场
+TalentRefreshResult,TalentRefreshResult.proto,rec,1182, 返回人才列表
+TalentHireReq,TalentHireReq.proto,send,1131, 雇佣
+TalentHireResult,TalentHireResult.proto,rec,1177, 雇佣返回
+TalentFireReq,TalentFireReq.proto,send,1132, 解雇
+TalentFireResult,TalentFireResult.proto,rec,1178, 解雇返回
+TalentDigReq,TalentDigReq.proto,send,1133, 挖人
+TalentDigResult,TalentDigResult.proto,rec,1179, 挖人返回
+TalentDigSelfResult,TalentDigSelfResult.proto,rec,1180, 被挖人返回提示
+TalentLeaveReq,TalentLeaveReq.proto,send,1134, 离职
+TalentLeaveResult,TalentLeaveResult.proto,rec,1181, 离职返回
+TalentChangeResult,TalentChangeResult.proto,rec,1184, 状态变化返回
+ScoreShopReq,ScoreShopReq.proto,send,1142, 请求积分商店
+ScoreShopResult,ScoreShopResult.proto,rec,1193, 请求积分商店返回
+ScoreShopRecordResult,ScoreShopRecordResult.proto,rec,1195, 积分商店日志
+ScoreShopBuyReq,ScoreShopBuyReq.proto,send,1143, 积分商店购买商品
+ScoreShopBuyResult,ScoreShopBuyResult.proto,rec,1194, 积分商店购买商品返回
+TalkingGroupReq,TalkingGroupReq.proto,send,1115, 谈判团任命请求
+TalkingGroupResult,TalkingGroupResult.proto,rec,1157, 谈判团任命返回
+TalkIngGroupChangeReq,TalkIngGroupChangeReq.proto,send,1114, 谈判团换任
+TalkIngGroupChangeResult,TalkIngGroupChangeResult.proto,rec,1158, 谈判团换任
+TalkingGroupPKReq,TalkingGroupPKReq.proto,send,1146, 谈判团PK
+TalkingGroupPKResult,TalkingGroupPKResult.proto,rec,1198, 谈判团PK返回
+TCBuildUpdateResult,TCBuildUpdateResult.proto,rec,1048, 店铺信息更新消息
+TCDepartmentInvestmentResult,TCDepartmentInvestmentResult.proto,rec,1049, 更新部门投资部
+TCDepartmentFinanceResult,TCDepartmentFinanceResult.proto,rec,1050, 更新部门财务部
+TCDepartmentPersonnelResult,TCDepartmentPersonnelResult.proto,rec,1051, 更新部门 人事部
+TCDepartmentMarketResult,TCDepartmentMarketResult.proto,rec,1052, 更新部门 市场部
+TopUpReq,TopUpReq.proto,send,1100,
+TopUpResult,TopUpResult.proto,rec,1139,
+TopUpGoldReq,TopUpGoldReq.proto,send,1101,
+TopUpGoldResult,TopUpGoldResult.proto,rec,1140,
+LoadTradeDataResult,LoadTradeDataResult.proto,rec,1233, 加载贸易数据
+AccomplisTradehReq,AccomplisTradehReq.proto,send,1170, 完成贸易发送港口ID到后台
+AccomplisTradehResult,AccomplisTradehResult.proto,rec,1234, 完成贸易
+StartTradehReq,StartTradehReq.proto,send,1171, 开始贸易
+StartTradehResult,StartTradehResult.proto,rec,1235, 开始贸易
+OpenPortReq,OpenPortReq.proto,send,1172, 开港口
+OpenPortResult,OpenPortResult.proto,rec,1236, 开港口
+UpdateRoleInfoIconReq,UpdateRoleInfoIconReq.proto,send,1102,
+UpdateRoleInfoIconResult,UpdateRoleInfoIconResult.proto,rec,1141,
+UpdateRoleInfoNameReq,UpdateRoleInfoNameReq.proto,send,1103,
+UpdateRoleInfoNameResult,UpdateRoleInfoNameResult.proto,rec,1142,
+PraiseRoleIdReq,PraiseRoleIdReq.proto,send,1110, 点赞数
+PraiseRoleIdResult,PraiseRoleIdResult.proto,rec,1149, 点赞数
+GetPraiseRoleIdReq,GetPraiseRoleIdReq.proto,send,1111, 显示点赞数
+GetPraiseRoleIdResult,GetPraiseRoleIdResult.proto,rec,1150, 显示点赞数
+RolePraiseResult,RolePraiseResult.proto,rec,1152, 别人点赞主动推送
+UserSalesReq,UserSalesReq.proto,send,1051, 用户寄卖请求
+UserSalesResult,UserSalesResult.proto,rec,1080, 用户寄卖返回
+UserDownGoodsReq,UserDownGoodsReq.proto,send,1060, 商品下架请求
+UserDownGoodsResult,UserDownGoodsResult.proto,rec,1090, 下架请求返回
+VipGiftReq,VipGiftReq.proto,send,1169, vip请求
+VipGiftResult,VipGiftResult.proto,rec,1230, vip请求返回
+GiftTakeLogsResult,GiftTakeLogsResult.proto,rec,1231, 礼包领取记录 进入游戏传给用户
+AddFavourLevelResult,AddFavourLevelResult.proto,rec,1136, 更新Npc好感度等级
+AddFavourCountResult,AddFavourCountResult.proto,rec,1138, 更新Npc好感度
+GMResult,GMResult.proto,rec,1164, gm命令
+AddItemResult,AddItemResult.proto,rec,1053, 添加道具进背包返回
+ChangeAvatarResult,ChangeAvatarResult.proto,rec,1055,
+CompanyExpResult,CompanyExpResult.proto,rec,1036, 更新公司营收
+ConnectingResult,ConnectingResult.proto,rec,1057,
+CreateBuildResult,CreateBuildResult.proto,rec,1058,
+CreateCompanyResult,CreateCompanyResult.proto,rec,1059,
+CreateRoleResult,CreateRoleResult.proto,rec,1060, 客户端的请求：创建新角色 返回值
+DeleteRoleResult,DeleteRoleResult.proto,rec,1061,
+DestoryBuildResult,DestoryBuildResult.proto,rec,1063,
+GetMapResult,GetMapResult.proto,rec,1064,
+GoldChangedResult,GoldChangedResult.proto,rec,1065,
+JoinGameResult,JoinGameResult.proto,rec,1066,
+FriendAwardInfoResult,FriendAwardInfoResult.proto,rec,1165,
+LoadFinanceLogResult,LoadFinanceLogResult.proto,rec,1067,
+RemoveItemResult,RemoveItemResult.proto,rec,1068, 移除物品返回
+SellItemResult,SellItemResult.proto,rec,1069, 出售道具返回
+TCFinanceLogChangedResult,TCFinanceLogChangedResult.proto,rec,1070,
+TCLevelUpResult,TCLevelUpResult.proto,rec,1071,
+TCRoleBagChangeResult,TCRoleBagChangeResult.proto,rec,1072,
+TCRoleInfoChangeResult,TCRoleInfoChangeResult.proto,rec,1073,
+UpdateAvatarResult,UpdateAvatarResult.proto,rec,1074,
+UpdateShenjiaResult,UpdateShenjiaResult.proto,rec,1075,
+UpdateCompanyIncomeResult,UpdateCompanyIncomeResult.proto,rec,1116,
+UseItemResult,UseItemResult.proto,rec,1078, 使用物品返回
+NewMsgResult,NewMsgResult.proto,rec,2000,新消息返回
+ReadMsgReq,ReadMsgReq.proto,send,2001,已读消息请求
+ReadMsgResult,ReadMsgResult.proto,rec,2002,已读消息返回
+BankDepositReq,BankDepositReq.proto,send,2003,银行取款请求
+BankDepositResult,BankDepositResult.proto,rec,2004,银行取款返回
+GetAuctionLandReq,GetAuctionLandReq.proto,send,2005, 获取今日拍卖土地信息
+GetAuctionLandResult,GetAuctionLandResult.proto,rec,2006, 返回今日拍卖土地信息
+AuctionLandReq,AuctionLandReq.proto,send,2007, 竞拍土地请求
+AuctionLandResult,AuctionLandResult.proto,rec,2008, 返回竞拍土地
+GetMyLandInfoReq,GetMyLandInfoReq.proto,send,2009, 已获得土地请求
+MyLandInfoResult,MyLandInfoResult.proto,rec,2010, 已获得土地返回
+ChatToChatResult,ChatToChatResult.proto,rec,3011,一对一聊天返回
+UseCompostReq,UseCompostReq.proto,send,2011, 使用肥料请求
+UseCompostResult,UseCompostResult.proto,rec,2012, 使用肥料返回
+RandManorReq,RandManorReq.proto,send,2013,随机请求庄园请求
+RandManorResult,RandManorResult.proto,rec,2014,随机请求庄园返回
+SalesListReq,SalesListReq.proto,send,2015,交易行请求
+SalesListResult,SalesListResult.proto,rec,2016,交易行请求返回
+UserSalesReq,UserSalesReq.proto,send,2017,寄卖请求
+UserSalesResult,UserSalesResult.proto,rec,2018,寄卖请求返回
+UserBuyReq,UserBuyReq.proto,send,2019,购买请求
+UserBuyResult,UserBuyResult.proto,rec,2020,购买请求返回
+SoldOutReq,SoldOutReq.proto,send,2021,下架请求
+SoldOutResult,SoldOutResult.proto,rec,2022,下架请求返回
+ChatConnectingReq,ChatConnectingReq.proto,send,3000, 连接聊天服务器 //完成
+ChatConnectingResult,ChatConnectingResult.proto,rec,3001, 连接聊天服务器返回-1成功-2失败-失败会被踢掉-//完成
+ChatSendMsgToChannelReq,ChatSendMsgToChannelReq.proto,send,3002, 向频道中发送消息-//结构体有待商榷
+ChatSendMsgToChannelResult,ChatSendMsgToChannelResult.proto,rec,3003, 向频道中发送消息返回-//结构体有待商榷
+ChatMsgFromChannelResult,ChatMsgFromChannelResult.proto,rec,3004, 主动下发消息到频道中-//结构体有待商榷
+ChatTCRecMsgHorseResult,ChatTCRecMsgHorseResult.proto,rec,3005, 跑马灯消息 系统消息-//完成
+ChatTCRecSystemMsgResult,ChatTCRecSystemMsgResult.proto,rec,3006, 系统消息-//完成
+ChatNoReadResult,ChatNoReadResult.proto,rec,3007, 一对一聊天-返回-//完成
+ChatOneToOneReq,ChatOneToOneReq.proto,send,3008, 一对一聊天-发送-//完成
+ChatMesaageReadReq,ChatMesaageReadReq.proto,send,3009, 消息已读-发送-//完成
+ChatMessageUnreadListResult,ChatMessageUnreadListResult.proto,rec,3010,未读消息列表

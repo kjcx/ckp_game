@@ -14,7 +14,6 @@ use App\Event\ItemEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\RoleCreateEvent;
 use App\Event\SellItemEvent;
-use App\Event\UserEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Bank\LoansInfo;
 use App\Models\Bank\SavingGold;
@@ -33,7 +32,6 @@ use App\Models\Execl\WsResult;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\Item\Item;
-use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Sales\SalesItem;
@@ -57,7 +55,6 @@ use App\Protobuf\Req\ConsumeReq;
 use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\CultivateEmployeeReq;
-use App\Protobuf\Req\DelMailsReq;
 use App\Protobuf\Req\DestoryBuildReq;
 use App\Protobuf\Req\DismantleReq;
 use App\Protobuf\Req\DropShopPingReq;
@@ -67,7 +64,6 @@ use App\Protobuf\Req\FriendApplyClearReq;
 use App\Protobuf\Req\FriendApplyReq;
 use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
-use App\Protobuf\Req\GetMailItemsReq;
 use App\Protobuf\Req\GetMapReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
 use App\Protobuf\Req\GrowPlantsReq;
@@ -103,7 +99,6 @@ use App\Protobuf\Result\ComeOutEmployeeResult;
 use App\Protobuf\Result\CreateBuildResult;
 use App\Protobuf\Result\CreateCompanyResult;
 use App\Protobuf\Result\CultivateEmployeeResult;
-use App\Protobuf\Result\DelMailsResult;
 use App\Protobuf\Result\DestoryBuildResult;
 use App\Protobuf\Result\DismantleResult;
 use App\Protobuf\Result\DropShopPingResult;
@@ -116,7 +111,6 @@ use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\FruitsDataResult;
 use App\Protobuf\Result\GetAuctionLandResult;
-use App\Protobuf\Result\GetMailItemsResult;
 use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
 use App\Protobuf\Result\GetTalentListResult;
@@ -1490,10 +1484,7 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_GetMap = GetMapReq::decode($data);
         var_dump($data_GetMap);
-        //1查询所有地块
-        $LandInfo = new LandInfo();
-        $data_infopos = $LandInfo->getPosInfoByPoss($data_GetMap);
-        $str = GetMapResult::encode($this->uid,2,$data_infopos);//开发区
+        $str = GetMapResult::encode($this->uid,2);//开发区
         $this->send(1064,$this->fd,$str);
     }
 
@@ -1836,24 +1827,17 @@ class Web extends WebSocketController
             $Bag = new Bag($this->uid);
             $Count = $Bag->getCountByItemId($info['GoldType']);
             if($Count>= $count){
-                //3.1执行购买
+                //3执行购买
                 $rs = $Bag->delBag($info['GoldType'],$count);//删除金币
                 if($rs){
-                    //3.2 扣除交易行
-                    $rs = $SalesItem->ReduceSalesItem($data_UserBuy['Id'],$data_UserBuy['Count']);
+                    $rs = $Bag->addBag($info['ItemId'],$data_UserBuy['Count']);//增加道具
                     if($rs){
-                        $rs = $Bag->addBag($info['ItemId'],$data_UserBuy['Count']);//增加道具
-                        if($rs){
-                            $info['Count'] = $data_UserBuy['Count'];
-                            $str = UserBuyResult::encode($info);
-                            $this->send(2020,$this->fd,$str);
-                        }else{
-                            var_dump("购买失败");
-                        }
+                        $info['Count'] = $data_UserBuy['Count'];
+                        $str = UserBuyResult::encode($info);
+                        $this->send(2020,$this->fd,$str);
                     }else{
-                        var_dump("扣除交易行失败");
+                        var_dump("购买失败");
                     }
-
                 }else{
                     var_dump("删除道具失败");
                 }
@@ -1880,22 +1864,15 @@ class Web extends WebSocketController
         $SalesItem = new SalesItem();
         $info = $SalesItem->getInfoById($data_SoldOut['Id']);
         if($info){
-            //2.1 下架
-            $rs = $SalesItem->SoldOutById($data_SoldOut['Id']);
+            //2 归还道具
+            $Bag = new Bag($this->uid);
+            $rs = $Bag->addBag($info['ItemId'],$info['Count']);
             if($rs){
-                // 2.2 归还道具
-                $Bag = new Bag($this->uid);
-                $rs = $Bag->addBag($info['ItemId'],$info['Count']);
-                if($rs){
-                    $str = SoldOutResult::encode($data_SoldOut['Id']);
-                    $this->send(2022,$this->fd,$str);
-                }else{
-                    var_dump("归还失败");
-                }
+                $str = SoldOutResult::encode($data_SoldOut['id']);
+                $this->send(2022,$this->fd,$str);
             }else{
-                var_dump("下架失败");
+                var_dump("归还失败");
             }
-
         }else{
             var_dump("寄卖信息不存在");
         }
@@ -1916,6 +1893,7 @@ class Web extends WebSocketController
     }
 
     /**
+<<<<<<< HEAD
      * 获取自己上架的商品列表
      * return 1228
      */
@@ -1923,7 +1901,6 @@ class Web extends WebSocketController
     {
         $SalesItem = new SalesItem();
         $data = $SalesItem->getAllByUid($this->uid);
-        var_dump($data);
         $str = OnGetMyGoodsResult::ecode($data);
         $this->send(1228,$this->fd,$str);
     }
@@ -1938,14 +1915,12 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_ReadMail = ReadMailReq::decode($data);
         var_dump($data_ReadMail);
-        $Mail = new MailMsg();
-        $Mail->setRead($this->uid,$data_ReadMail['Id']);
+
 
         //设置邮件为已读
         $str = ReadMailResult::encode($data_ReadMail['Id']);
-        $this->send(1114, $this->fd, $str);
-    }
-    /*
+        $this->send(1114,$this->fd,$str);
+=======
      * 偷菜
      * return 1091
      */
@@ -1959,39 +1934,6 @@ class Web extends WebSocketController
         }  else {
             $this->send(1091,$this->fd,StealSemenResult::encode($res));
         }
-    }
-
-    /**
-     * 一键获取邮件物品
-     * GetMailItemsReq
-     * return 1095 GetMailItemsResult
-     */
-    public function msgid_1065()
-    {
-        $data = $this->data;
-        $data_GetMailItems = GetMailItemsReq::decode($data);
-        var_dump($data_GetMailItems);
-        //获取邮件中的道具
-        $Mail = new MailMsg();
-        $data = $Mail->setRewardByIds($this->uid,$data_GetMailItems);
-        $str = GetMailItemsResult::encode($data_GetMailItems);
-        $this->send(1095,$this->fd,$str);
-
-    }
-
-    /**
-     * 批量删除邮件
-     *  DelMailsReq 1080
-     * return 1113 DelMailsResult
-     */
-    public function msgid_1080()
-    {
-        $data = $this->data;
-        $data_DelMails = DelMailsReq::decode($data);
-        var_dump($data_DelMails);
-        $Mail = new MailMsg();
-        $rs = $Mail->DelRedisMail($this->uid,$data_DelMails);
-        $str = DelMailsResult::encode($data_DelMails);
-        $this->send(1113,$this->fd,$str);
+>>>>>>> 390a2ed1c9937b3daaf3be15d5168c2427fd17a7
     }
 }

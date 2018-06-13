@@ -74,7 +74,12 @@ class DataCenter extends Model
 
         $keys = $this->redis->keys('*:' . $uid . ':*');
         foreach ($keys as $key) {
+<<<<<<< HEAD
+            $this->redis->del($key);
+=======
 //            $this->redis->del($key);
+
+>>>>>>> eb16d552f5f8a9ca2d356fb67177178b23b1bf1e
         }
 
     }

@@ -16,6 +16,8 @@ return [
         'FruitsData:uid',//水果机数据
         'FruitsDataWeight:uid',//水果机权重数据
         'FriendInfo:uid',//好友数据
+        'manorStealLog:uid',//庄园偷取日志 有序集合
+        'manorStealLogDetail:uid:$id', //庄园偷取单个日志 $id为一个算法Id
 
     ],
     'a' => 'dupeng',

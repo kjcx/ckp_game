@@ -9,6 +9,9 @@
 namespace App\Models\Mail;
 
 
+use App\Event\UserEvent;
+use App\Models\BagInfo\Bag;
+use App\Models\Execl\GameConfig;
 use App\Models\Model;
 use think\Db;
 
@@ -31,13 +34,26 @@ class MailMsg extends Model
      */
     public function createMailMsg($data)
     {
+        var_dump("createMailMsg");
         $data['Read'] = false;
         $data['Reward'] = false;
         $data['SendTime'] = time();
+        $GameConfig = new GameConfig();
+        $data['SenderIcon'] = $GameConfig->getMailNpcHead();
+        $data['SenderName'] = $GameConfig->getMailNpcName();
+        $data['SenderId'] = 'system';
+
+        var_dump($data);
         $rs = Db::table($this->table)->insert($data);
         if($rs){
             $Id =  Db::table($this->table)->getLastInsID();
+            var_dump($Id);
             $data['_id'] = $Id;
+            //通知用户 如果在线
+            $UserEvent = new UserEvent($data['Uid']);
+
+            $UserEvent->MailResultEvent($data);
+
             $this->setRedisMail($data['Uid'],$data);
             return true;
         }else{
@@ -52,15 +68,18 @@ class MailMsg extends Model
      */
     public function getRedisMailByUid($Uid)
     {
+        var_dump("getRedisMailByUid");
         $key = $this->MailList . $Uid;
         $data = $this->redis->HGETALL($key);
+        var_dump($data);
+
         $list = [];
         foreach ($data as $datum =>$value) {
             $bool = $this->redis->exists($datum);
             if($bool){
                 $list[] = json_decode($value,true);
             }else{
-                $this->redis->hDel($key,$datum);
+//                $this->redis->hDel($key,$datum);
             }
         }
         return $list;
@@ -74,22 +93,103 @@ class MailMsg extends Model
      */
     public function setRedisMail($Uid,$data)
     {
-        $key  = $this->Mail . (string)$data['_id'];
-        $this->redis->setex($key,$this->expiry,json_encode($data));
-        $this->redis->hSet('MailList:36',$key,json_encode($data));
+        var_dump("setRedisMail");
+        $key  = $this->Mail . $Uid  . ':' .  (string)$data['_id'];
+        $rs = $this->redis->setex($key,$this->expiry,json_encode($data));
+//        var_dump($key);
+        $this->redis->hSet('MailList:'.$Uid,$key,json_encode($data));
         return true;
+    }
 
-        $data['Read'] = false;
-        $data['Reward'] = false;
-        $data['Title'] = 'Title';
-        $data['Item'] = [10001=>2];
-        $data['SenderIcon'] = '0001';
-        $data['SenderName'] = 'admin';
-        $data['Msg'] = 'ceshi';
-        $data['SendTime'] = time();
-        $data['SenderId'] = 1;
-        $data['Id'] = '1';
-        $this->redis->setex($key,10,json_encode($data));
-        $this->redis->hSet('MailList:36',$key,json_encode($data));
+    /**
+     * 设置已读
+     * @param $Uid
+     * @param $Id
+     * @return int|string
+     */
+    public function setRead($Uid,$Id)
+    {
+        $rs = Db::table($this->table)->where('_id',$Id)->update(['Read'=>true]);
+        $this->setRedisRead($Uid,$Id);
+        return $rs;
+    }
+
+    /**
+     * 设置已读
+     * @param $Uid
+     * @param $Id
+     * @return bool|int
+     */
+    public function setRedisRead($Uid,$Id)
+    {
+        $str = $this->redis->hGet($this->MailList . $Uid,$this->Mail . $Uid .':' .$Id);
+        $arr = json_decode($str,true);
+        $arr['Read'] = true;
+        $rs = $this->redis->hSet($this->MailList . $Uid,$this->Mail . $Uid .':' .$Id,json_encode($arr));
+        return $rs;
+    }
+
+    /**
+     * 设置已获得礼品
+     * @param $Uid
+     * @param $Ids
+     * @return bool
+     */
+    public function setRewardByIds($Uid,$Ids)
+    {
+        $key = $this->MailList . $Uid;
+        $Bag = new Bag($Uid);
+        $data = $this->redis->hGetAll($key);
+//        var_dump($data);
+        foreach ($data as $datum =>$value) {
+            $item = json_decode($value,true);
+            if(in_array($datum,$Ids)){
+                foreach ($item['Item'] as $k => $v) {
+                    $rs = $Bag->addBag($k,$v);
+                    $item['Reward'] = true;
+                    $this->redis->hSet($key,$datum,json_encode($item));
+                    $rs = $this->setReward($v['_id']);
+                    if(!$rs){
+                        var_dump("添加失败");
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 设置mongo 已领取
+     * @param $Id
+     * @return int|string
+     */
+    public function setReward($Id)
+    {
+        $arr['Reward'] = true;
+        $rs = Db::table($this->table)->where('_id',$Id)->update($arr);
+        return $rs;
+    }
+
+    /**
+     * 删除邮件
+     * @param $Uid
+     * @param $Ids
+     */
+    public function DelRedisMail($Uid,$Ids)
+    {
+        $key = $this->MailList . $Uid;
+        $data = $this->redis->hGetAll($key);
+        foreach ($data as $datum =>$value) {
+            $arr = json_decode($value,true);
+            if(in_array($arr['_id'],$Ids)){
+                //删除redis
+                $rs = $this->redis->hDel($key,$datum);
+                //删除mongo
+                $rs = Db::table($this->table)->where('_id',$arr['_id'])->delete();
+                if(!$rs){
+                    var_dump("删除邮件失败");
+                }
+            }
+        }
     }
 }

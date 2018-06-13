@@ -428,6 +428,91 @@ class Land extends Model
     public function randLand()
     {
         $data = $this->mysql->orderBy("RAND()")->getOne('ckzc_role','uid');
-        return $this->getLand($data['uid']);
+//        return $this->getLand($data['uid']);
+        return $this->getLand(36);
+    }
+
+    /**
+     * 偷菜
+     * @param $uid 被偷人的uid
+     * @param $landIds 偷的地块
+     */
+    public function steal($uid,$landIds)
+    {
+        //返回数据
+        $stealLand = [];
+        //获得地块
+        $lands = $this->getLand($uid);
+        //查询单一能被偷次数
+        $gameConfig = new GameConfig();
+        $SingleStealTime = $gameConfig->getInfoByField('SingleStealTime');
+        $MaxStealTime = $gameConfig->getInfoByField('MaxStealTime');
+        $MaxStealTime = $MaxStealTime['value'];
+        $SingleStealTime = $SingleStealTime['value'];
+        //循环判断是否可以被偷
+        $filter = [
+            'uid' => (int)$uid
+        ];
+        $update = [
+            '$set' => []
+        ];
+        foreach ($lands['manor'] as $land) {
+            if (in_array($land['Id'],$landIds)) {
+                //在被偷的行列里
+                //判断还能不能被偷
+                if ($land['StealTime'] >= $MaxStealTime) {
+                    $stealLand[] = [
+                        'Id' => $land['Id'],
+                        'SemenId' => $land['Crop'],
+                        'Count' => 0,
+                        'Time' => $land['StealTime'],
+                    ];
+                } else {
+                    if ($land['StealTime'] == 0) {
+                        //没被偷过 要生成果实
+                        $fruit = $this->createFruit($land['SemenId'],$land['Profit']);
+                        $stealLand[] = [
+                            'Id' => $land['Id'],
+                            'SemenId' => $land['Crop'],
+                            'Count' => $SingleStealTime, //一次貌似只能偷一个
+                            'Time' => $land['StealTime'],
+                        ];
+                        $update['$set']['manor.' . ($land['Id'] - 1) . '.Crop'] = $fruit['crop'];//果实Id
+                        $update['$set']['manor.' . ($land['Id'] - 1) . '.StealTime'] = $land['StealTime'] + 1;//被偷次数
+                        $update['$set']['manor.' . ($land['Id'] - 1) . '.Crop_num'] = $fruit['num'] - $SingleStealTime;//剩余果实数量
+                    } else {
+                        $stealLand[] = [
+                            'Id' => $land['Id'],
+                            'SemenId' => $land['Crop'],
+                            'Count' => ($land['Crop_num'] - $SingleStealTime) >= 0 ? $SingleStealTime : 0, //一次貌似只能偷一个
+                            'Time' => $land['StealTime'],
+                        ];
+                        //被偷过 不需要生成果实
+                        $update['$set']['manor.' . ($land['Id'] - 1) . '.StealTime'] = $land['StealTime'] + 1;//被偷次数
+                        $update['$set']['manor.' . ($land['Id'] - 1) . '.Crop_num'] =
+                            ($land['Crop_num'] - $SingleStealTime) >= 0 ? ($land['Crop_num'] - $SingleStealTime) : 0;//剩余果实数量
+                    }
+
+                }
+            }
+        }
+        $res = $this->collection->findOneAndUpdate($filter,$update);
+        return empty($res) ? false : $stealLand;
+    }
+
+    /**
+     * todo::偷取写入内容还没确定
+     * 偷取日志功能 可以是偷取日志 也可以是收获日志
+     * @param $uid 被偷取的uid
+     * @param $stealId 偷取人的uid
+     */
+    private function stealLog($uid,$stealId)
+    {
+        $str = time() . mt_rand(1,9999);//生成唯一的key
+        $stringKey = 'manorStealLogDetail:' . $uid . ':' . substr(md5($str), 8, 16);
+        $value = 'xxx偷了你的菜';
+        $this->redis->set($stringKey,$value,60 * 60 * 24 *2); //保留48小时
+        $key = 'manorStealLog:' . $uid;
+        $this->redis->zAdd($key,time(),$stringKey);
     }
 }
