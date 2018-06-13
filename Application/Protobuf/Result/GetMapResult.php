@@ -22,17 +22,17 @@ class GetMapResult
 {
     /**
      * @param $uid
-     * @param $type 1店铺2开发区
+     * @param $Area 2私有1 公共
      * @param $LoadLandInfoDic
      * @return \AutoMsg\GetMapResult
      */
-    public static function encode($uid,$type=1,$LoadLandInfoDic='')
+    public static function encode($uid,$Area=1,$LoadLandInfoDic='')
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
-        $LandBuildInfo = LandBuildInfo::encode($uid,$type);
+        $LandBuildInfo = LandBuildInfo::encode($uid,$Area);
         $GetMapResult->setLoadBuildInfo($LandBuildInfo);
 
-        if($type == 1){
+        if($Area == 2){
             return $GetMapResult;
         }else{
             $LoadLandInfo = new LoadLandInfo();
