@@ -34,7 +34,8 @@ class GetMapResult
         if($type == 1){
             return $GetMapResult;
         }else{
-//            $GetMapResult->setLoadLandInfoDic($LoadLandInfoDic);
+//            $LandBuildInfo = new LandBuildInfo
+            $GetMapResult->setLoadLandInfoDic($LoadLandInfoDic);
             $str = $GetMapResult->serializeToString();
             return $str;
         }
