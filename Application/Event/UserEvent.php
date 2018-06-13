@@ -24,6 +24,7 @@ class UserEvent extends Event
     {
         $DataCenter  = new \App\Models\DataCenter\DataCenter();
         $fd = $DataCenter->getFdByUid($uid);
+        var_dump($uid,$fd);
         $this->uid = $uid;
         $this->fd = $fd;
     }
