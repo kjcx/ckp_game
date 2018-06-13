@@ -87,16 +87,18 @@ class FriendInfo extends Model
         $Role = new Role();
         if($Uids){
             $data_role = $Role->getRoleByUids($Uids);
-            foreach ($data_role as &$item) {
-                $arr = json_decode($data_Friend[$item['uid']],true);
-                $item['FriendStatus'] = $arr['FriendStatus'];
-                $item['ApplyTime'] = $arr['ApplyTime'];
-                if(isset($arr['AddTime'])){
-                    $item['AddTime'] = $arr['AddTime'];
-                }else{
-                    $item['AddTime'] = 0;
-                }
+            if($data_role){
+                foreach ($data_role as &$item) {
+                    $arr = json_decode($data_Friend[$item['uid']],true);
+                    $item['FriendStatus'] = $arr['FriendStatus'];
+                    $item['ApplyTime'] = $arr['ApplyTime'];
+                    if(isset($arr['AddTime'])){
+                        $item['AddTime'] = $arr['AddTime'];
+                    }else{
+                        $item['AddTime'] = 0;
+                    }
 
+                }
             }
             return $data_role;
         }else{
