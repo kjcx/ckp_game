@@ -57,7 +57,7 @@ class JoinGameResult
         $CompanyInfo = LoadCompanyInfo::encode($data_Company);
         $JoinGameResult->setCompanyInfo($CompanyInfo);
         //店铺
-//        $MapInfo = GetMapResult::encode($uid,1);//店铺
+        $MapInfo = GetMapResult::encode($uid,2);//店铺
         $JoinGameResult->setMapInfo($MapInfo);
         //店铺主管信息
         $Shop = new Shop();

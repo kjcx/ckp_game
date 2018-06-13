@@ -1023,8 +1023,8 @@ class Web extends WebSocketController
         $Shop = new CompanyShop();
         var_dump($data_CreateBuild);
         //*判断是否有公司
-        $rs = $Shop->getAllShop($this->uid);
-        var_dump($rs);
+        $Company = new Company();
+        $rs = $Company->getCompany($this->uid);
         if(!$rs){
             $this->send(1058,$this->fd,'','请先创建公司');
             return;
@@ -1494,7 +1494,7 @@ class Web extends WebSocketController
         $LandInfo = new LandInfo();
         $data_infopos = $LandInfo->getPosInfoByPoss($data_GetMap['Pos']);
         var_dump($data_infopos);
-        $str = GetMapResult::encode($this->uid,2,$data_infopos);//开发区
+        $str = GetMapResult::encode($this->uid,1,$data_infopos);//开发区
         $this->send(1064,$this->fd,$str);
     }
 
