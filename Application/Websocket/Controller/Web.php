@@ -60,11 +60,13 @@ use App\Protobuf\Req\CultivateEmployeeReq;
 use App\Protobuf\Req\DelMailsReq;
 use App\Protobuf\Req\DestoryBuildReq;
 use App\Protobuf\Req\DismantleReq;
+use App\Protobuf\Req\DismissalEmployeeReq;
 use App\Protobuf\Req\DropShopPingReq;
 use App\Protobuf\Req\FriendAddBlackReq;
 use App\Protobuf\Req\FriendAddReq;
 use App\Protobuf\Req\FriendApplyClearReq;
 use App\Protobuf\Req\FriendApplyReq;
+use App\Protobuf\Req\FriendRemoveBlackReq;
 use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
 use App\Protobuf\Req\GetMailItemsReq;
@@ -106,12 +108,14 @@ use App\Protobuf\Result\CultivateEmployeeResult;
 use App\Protobuf\Result\DelMailsResult;
 use App\Protobuf\Result\DestoryBuildResult;
 use App\Protobuf\Result\DismantleResult;
+use App\Protobuf\Result\DismissalEmployeeResult;
 use App\Protobuf\Result\DropShopPingResult;
 use App\Protobuf\Result\FriendAddBlackResult;
 use App\Protobuf\Result\FriendAddResult;
 use App\Protobuf\Result\FriendApplyClearResult;
 use App\Protobuf\Result\FriendApplyResult;
 use App\Protobuf\Result\FriendOnlineResult;
+use App\Protobuf\Result\FriendRemoveBlackResult;
 use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\FruitsDataResult;
@@ -1493,7 +1497,7 @@ class Web extends WebSocketController
         //1查询所有地块
         $LandInfo = new LandInfo();
         $data_infopos = $LandInfo->getPosInfoByPoss($data_GetMap['Pos']);
-        var_dump($data_infopos);
+//        var_dump($data_infopos);
         $str = GetMapResult::encode($this->uid,1,$data_infopos);//开发区
         $this->send(1064,$this->fd,$str);
     }
@@ -1994,5 +1998,33 @@ class Web extends WebSocketController
         $rs = $Mail->DelRedisMail($this->uid,$data_DelMails);
         $str = DelMailsResult::encode($data_DelMails);
         $this->send(1113,$this->fd,$str);
+    }
+
+    /**
+     * 移除黑名单 FriendRemoveBlackReq
+     * return 1019 FriendRemoveBlackResult
+     */
+    public function msgid_1027()
+    {
+        $data = $this->data;
+        $data_uid = FriendRemoveBlackReq::decode($data);
+        $str = FriendRemoveBlackResult::encode($data_uid['Uid']);
+        $this->send(1019,$this->fd,$str);
+    }
+
+    /**
+     * 解雇员工
+     * return 1122 DismissalEmployeeResult
+     */
+    public function msgid_1087()
+    {
+        $data = $this->data;
+
+        $listId = DismissalEmployeeReq::decode($data);
+        var_dump($listId);
+        //删除员工
+
+        $str = DismissalEmployeeResult::encode($listId);
+        $this->send(1122,$this->fd,$str);
     }
 }
