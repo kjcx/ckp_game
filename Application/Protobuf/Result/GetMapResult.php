@@ -22,16 +22,19 @@ class GetMapResult
     /**
      * @param $uid
      * @param $type 1店铺2开发区
+     * @param $LoadLandInfoDic
      * @return \AutoMsg\GetMapResult
      */
-    public static function encode($uid,$type=1)
+    public static function encode($uid,$type=1,$LoadLandInfoDic)
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
         $LandBuildInfo = LandBuildInfo::encode($uid);
         $GetMapResult->setLoadBuildInfo($LandBuildInfo);
+
         if($type == 1){
             return $GetMapResult;
         }else{
+//            $GetMapResult->setLoadLandInfoDic($LoadLandInfoDic);
             $str = $GetMapResult->serializeToString();
             return $str;
         }

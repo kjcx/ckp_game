@@ -194,4 +194,15 @@ class LandInfo extends Model
         $data = Db::table($this->table)->where(['Pos'=>$Pos])->find();
         return $data;
     }
+
+    /**
+     * 根据坐标id获取数据
+     * @param $Poss
+     * @return array|false|\PDOStatement|string|\think\Collection
+     */
+    public function getPosInfoByPoss($Poss)
+    {
+        $data = Db::table($this->table)->where('Pos','in',$Poss)->select();
+        return $data;
+    }
 }

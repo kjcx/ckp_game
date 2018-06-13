@@ -10,6 +10,8 @@ namespace App\Event;
 use App\Models\BagInfo\Bag;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\GoldChangedResult;
+use App\Protobuf\Result\MailMsg;
+use App\Protobuf\Result\MailResult;
 use App\Protobuf\Result\UpdateShenjiaResult;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -50,6 +52,17 @@ class UserEvent extends Event
         var_dump($data_Item);
         $data = GoldChangedResult::encode([2=>$data_Item['CurCount']]);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1065,$data);
+        ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);
+    }
+
+    public function MailResultEvent($data)
+    {
+        var_dump("邮件通知");
+        $MailResult = new \AutoMsg\MailResult();
+        $Mail = MailMsg::encode($data);
+        $MailResult->setMail($Mail);
+        $str = $MailResult->serializeToString();
+        $str = \App\Protobuf\Result\MsgBaseSend::encode(1089,$str);
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);
     }
 }

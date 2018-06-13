@@ -26,5 +26,7 @@ class OnGetMyGoodsResult
         }
 
         $OnGetMyGoodsResult->setGoods($Goods);
+        $str = $OnGetMyGoodsResult->serializeToString();
+        return $str;
     }
 }
