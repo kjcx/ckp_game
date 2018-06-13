@@ -21,8 +21,8 @@ class JoinGameResult
         $uid = $arr['uid'];
         $JoinGameResult = new \AutoMsg\JoinGameResult();
         //设置角色信息
-//        var_dump("设置角色信息");
-//        var_dump($uid);
+        var_dump("设置角色信息");
+        var_dump($uid);
         $str_role = LoadRoleInfo::encode($uid);
         $JoinGameResult->setLoadRoleInfo($str_role);
         //设置服务器时间
@@ -48,7 +48,7 @@ class JoinGameResult
 //        var_dump($data_Friends);
         $FriendInfo = new \App\Models\FriendInfo\FriendInfo();
         $data_Friends = $FriendInfo->getFriendInfoByUid($uid);
-
+        var_dump("好友");
         $Friend = FriendListResult::encode($data_Friends);
         $JoinGameResult->setFriend($Friend);
         //公司
@@ -60,7 +60,6 @@ class JoinGameResult
         $MapInfo = GetMapResult::encode($uid,1);//店铺
         $JoinGameResult->setMapInfo($MapInfo);
         //店铺主管信息
-
         $Shop = new Shop();
         $TalentDatas = $Shop->getMasterByUid($uid);
         $JoinGameResult->setTalentDatas($TalentDatas);
@@ -76,12 +75,11 @@ class JoinGameResult
         }
         $JoinGameResult->setLoadingGoldResult($LoadingGoldResult);
         //邮件
-        $MailMsg = new \App\Models\Mail\MailMsg();
-        $data = $MailMsg->getRedisMailByUid($uid);
-        var_dump($uid);
-        var_dump($data);
-        $Mails = MailResult::encode($data);
-        $JoinGameResult->setMails($Mails);
+//        $MailMsg = new \App\Models\Mail\MailMsg();
+//        $data = $MailMsg->getRedisMailByUid($uid);
+//
+//        $Mails = MailResult::encode($data);
+//        $JoinGameResult->setMails($Mails);
 
         $str = $JoinGameResult->serializeToString();
         return $str;

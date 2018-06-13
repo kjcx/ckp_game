@@ -25,7 +25,7 @@ class GetMapResult
      * @param $LoadLandInfoDic
      * @return \AutoMsg\GetMapResult
      */
-    public static function encode($uid,$type=1,$LoadLandInfoDic)
+    public static function encode($uid,$type=1,$LoadLandInfoDic='')
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
         $LandBuildInfo = LandBuildInfo::encode($uid);
