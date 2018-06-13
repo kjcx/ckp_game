@@ -16,11 +16,11 @@ use App\Protobuf\Result\LoadBuildInfo;
 
 class LandBuildInfo extends Model
 {
-    public static function encode($uid)
+    public static function encode($uid,$Type)
     {
         $Shop = new Shop();
         $Staff = new Staff();
-        $data = $Shop->getAllShop($uid);
+        $data = $Shop->getAllShop($uid,$Type);
         $arr = [];
         if($data){
             foreach ($data as $datum) {
