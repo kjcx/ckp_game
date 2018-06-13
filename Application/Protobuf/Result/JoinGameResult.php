@@ -57,7 +57,7 @@ class JoinGameResult
         $CompanyInfo = LoadCompanyInfo::encode($data_Company);
         $JoinGameResult->setCompanyInfo($CompanyInfo);
         //店铺
-        $MapInfo = GetMapResult::encode($uid,1);//店铺
+//        $MapInfo = GetMapResult::encode($uid,1);//店铺
         $JoinGameResult->setMapInfo($MapInfo);
         //店铺主管信息
         $Shop = new Shop();
@@ -75,11 +75,11 @@ class JoinGameResult
         }
         $JoinGameResult->setLoadingGoldResult($LoadingGoldResult);
         //邮件
-//        $MailMsg = new \App\Models\Mail\MailMsg();
-//        $data = $MailMsg->getRedisMailByUid($uid);
-//
-//        $Mails = MailResult::encode($data);
-//        $JoinGameResult->setMails($Mails);
+        $MailMsg = new \App\Models\Mail\MailMsg();
+        $data = $MailMsg->getRedisMailByUid($uid);
+
+        $Mails = MailResult::encode($data);
+        $JoinGameResult->setMails($Mails);
 
         $str = $JoinGameResult->serializeToString();
         return $str;
