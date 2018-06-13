@@ -11,6 +11,7 @@ namespace App\Protobuf\Result;
 
 use App\Models\Company\Shop;
 use App\Models\LoadData\LandBuildInfo;
+use AutoMsg\LoadLandInfo;
 
 /**
  * 获得店铺信息
@@ -28,14 +29,18 @@ class GetMapResult
     public static function encode($uid,$type=1,$LoadLandInfoDic='')
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
-        $LandBuildInfo = LandBuildInfo::encode($uid);
+        $LandBuildInfo = LandBuildInfo::encode($uid,$type);
         $GetMapResult->setLoadBuildInfo($LandBuildInfo);
 
         if($type == 1){
             return $GetMapResult;
         }else{
-//            $LandBuildInfo = new LandBuildInfo
-            $GetMapResult->setLoadLandInfoDic($LoadLandInfoDic);
+            $LoadLandInfo = new LoadLandInfo();
+            $arr = [];
+            foreach ($LoadLandInfoDic as $item) {
+                $arr[] = $LoadLandInfo->setPos($item);
+            }
+            $GetMapResult->setLoadLandInfoDic($arr);
             $str = $GetMapResult->serializeToString();
             return $str;
         }

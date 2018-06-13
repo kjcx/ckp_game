@@ -63,6 +63,7 @@ class Shop extends Model
         $dataCompany['Income'] = $data_Building['Income'];//身价
         $dataCompany['OutputItem'] = $data_Building['OutputItem'];//可能掉落的道具
         $dataCompany['CreateTime'] = time();//可能掉落的道具
+        $dataCompany['Type'] = 1;//私有的2 土地竞拍的
         //员工上线人数
         $BuildingLevel = new BuildingLevel();
         $data_BuildingLevel = $BuildingLevel->getInfoByLevel(1);
@@ -107,11 +108,12 @@ class Shop extends Model
     /**
      * 获取所有店铺
      * @param $Uid
+     * @param $Type
      * @return array|false|\PDOStatement|string|\think\Collection
      */
-    public function getAllShop($Uid)
+    public function getAllShop($Uid,$Type)
     {
-        $data = Db::table($this->table)->where('Uid',$Uid)->select();
+        $data = Db::table($this->table)->where('Uid',$Uid)->where('Type',$Type)->select();
         return $data;
 
     }
