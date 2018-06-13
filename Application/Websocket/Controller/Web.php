@@ -1492,7 +1492,8 @@ class Web extends WebSocketController
         var_dump($data_GetMap);
         //1查询所有地块
         $LandInfo = new LandInfo();
-        $data_infopos = $LandInfo->getPosInfoByPoss($data_GetMap);
+        $data_infopos = $LandInfo->getPosInfoByPoss($data_GetMap['Pos']);
+        var_dump($data_infopos);
         $str = GetMapResult::encode($this->uid,2,$data_infopos);//开发区
         $this->send(1064,$this->fd,$str);
     }
