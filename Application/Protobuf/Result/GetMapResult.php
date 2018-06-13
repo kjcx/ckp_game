@@ -35,10 +35,15 @@ class GetMapResult
         if($Area == 2){
             return $GetMapResult;
         }else{
-            $LoadLandInfo = new LoadLandInfo();
+
             $arr = [];
-            foreach ($LoadLandInfoDic as $item) {
-                $arr[] = $LoadLandInfo->setPos($item);
+            foreach ($LoadLandInfoDic as $k=>$item) {
+                var_dump($item);
+                $LoadLandInfo = new LoadLandInfo();
+                $LoadLandInfo->setPos($item['Pos']);
+                $LoadLandInfo->setRoleId($item['Uid']);
+//                $LoadLandInfo->setState()
+                $arr[$k+1] = $LoadLandInfo;
             }
             $GetMapResult->setLoadLandInfoDic($arr);
             $str = $GetMapResult->serializeToString();
