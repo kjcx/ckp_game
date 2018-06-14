@@ -56,6 +56,7 @@ class Bag extends Model
      */
     public function getBag()
     {
+        var_dump("getBag");
         $data = $this->collection->findOne(['uid' => $this->uid]);
 
         if (!empty($data) && isset($data['data'])) {
@@ -73,11 +74,16 @@ class Bag extends Model
     public function initBag()
     {
 
+        var_dump("initBag");
+
+        var_dump(123);
+        var_dump($this->getBag());
         if (!empty($this->getBag())) {
             return false;
         }
 
         $initData = $this->initData->getInitData();
+        var_dump($initData);
         //生成背包数据
         //绑金 初始道具  初始创客币 初始金币
         $initData['goldBind']; //绑金
@@ -88,6 +94,7 @@ class Bag extends Model
         $itemData = $this->item->getItemByid($initData['item']['id']);
         $coinData = $this->item->getItemByid($initData['coin']['id']);
         $goldData = $this->item->getItemByid($initData['gold']['id']);
+        var_dump( $goldData);
         $bagData = [
             $goldBindData['Id'] => [
                 'id' => $goldBindData['Id'],
