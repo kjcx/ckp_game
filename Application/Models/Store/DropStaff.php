@@ -169,4 +169,16 @@ class DropStaff extends Model
         return $insert;
     }
 
+    /**
+     * 获取抽奖次数
+     * @param $Type
+     * @return mixed
+     */
+    public function getNumber($Type)
+    {
+        $Lotto = new Lotto();
+        $info = $Lotto->getLootoInfo($Type);
+        return $info['Number'];
+    }
+
 }

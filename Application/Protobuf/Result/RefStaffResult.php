@@ -20,11 +20,16 @@ class RefStaffResult
     public static function encode($data_Staff)
     {
         $RefStaffResult = new \AutoMsg\RefStaffResult();
-        $LoadRefStaff[] = LoadRefStaff::encode($data_Staff);
+        $LoadRefStaff = [];
+        foreach ($data_Staff as $item){
+            var_dump($item);
+            $LoadRefStaff[] = LoadRefStaff::encode($item);
+        }
+
         $RefStaffResult->setLoadRefStaffList($LoadRefStaff);
 
         $LottoLog = new LottoLog();
-        $data = $LottoLog->getTypeCountStaff($data_Staff['Uid']);//查询免费抽奖次数和数据
+        $data = $LottoLog->getTypeCountStaff($data_Staff[0]['Uid']);//查询免费抽奖次数和数据
         $TypeCountStaff = [];
         foreach ($data as $k =>$datum) {
             $TypeCountStaff[$k] = TypeCountStaff::encode($datum);

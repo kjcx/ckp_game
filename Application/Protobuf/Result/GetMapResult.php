@@ -38,7 +38,6 @@ class GetMapResult
 
             $arr = [];
             foreach ($LoadLandInfoDic as $k=>$item) {
-                var_dump($item);
                 $LoadLandInfo = new LoadLandInfo();
                 $LoadLandInfo->setPos($item['Pos']);
                 $LoadLandInfo->setRoleId($item['Uid']);
