@@ -129,8 +129,8 @@ class Staff extends Model
      */
     public function getShopStaffCountByShopId($ShopId)
     {
-        $count = Db::table($this->table)->where(['ShopId'=>$ShopId])->count();
-        return $count;
+        $count = Db::table($this->table)->where(['ShopId'=>$ShopId])->select();
+        return count($count);
     }
 
     /**

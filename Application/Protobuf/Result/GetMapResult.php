@@ -41,7 +41,8 @@ class GetMapResult
                 $LoadLandInfo = new LoadLandInfo();
                 $LoadLandInfo->setPos($item['Pos']);
                 $LoadLandInfo->setRoleId($item['Uid']);
-//                $LoadLandInfo->setState()
+                $LoadLandInfo->setState($item['Status']);
+                $LoadLandInfo->setRoleName($item['Name']);
                 $arr[$item['Pos']] = $LoadLandInfo;
             }
             $GetMapResult->setLoadLandInfoDic($arr);

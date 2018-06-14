@@ -73,8 +73,9 @@ class DataCenter extends Model
     {
 
         $keys = $this->redis->keys($this->serverHash . ':' . $uid . ':*');
+        var_dump($keys);
         foreach ($keys as $key) {
-//            $this->redis->del($key);
+            $this->redis->del($key);
         }
 
     }
