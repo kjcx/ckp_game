@@ -42,7 +42,7 @@ class GetMapResult
                 $LoadLandInfo->setPos($item['Pos']);
                 $LoadLandInfo->setRoleId($item['Uid']);
 //                $LoadLandInfo->setState()
-                $arr[$k+1] = $LoadLandInfo;
+                $arr[$item['Pos']] = $LoadLandInfo;
             }
             $GetMapResult->setLoadLandInfoDic($arr);
             $str = $GetMapResult->serializeToString();
