@@ -27,7 +27,7 @@ class ChangeItemSubscriber implements EventSubscriberInterface
                 ["GoldChangedResult",98],
             ],
             "UseItem"=>[
-                ["UpdateItemResult",100],
+//                ["UpdateItemResult",100],
                 ["UpdateShenjiaResult",99],
                 ["GoldChangedResult",98],
             ]

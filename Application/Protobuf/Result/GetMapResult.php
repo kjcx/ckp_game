@@ -38,11 +38,22 @@ class GetMapResult
 
             $arr = [];
             foreach ($LoadLandInfoDic as $k=>$item) {
+                var_dump($item['Pos']);
                 $LoadLandInfo = new LoadLandInfo();
                 $LoadLandInfo->setPos($item['Pos']);
-                $LoadLandInfo->setRoleId($item['Uid']);
+                if(isset($item['Uid'])){
+                    $Uid = $item['Uid'];
+                }else{
+                    $Uid = 0;
+                }
+                $LoadLandInfo->setRoleId($Uid);
                 $LoadLandInfo->setState($item['Status']);
-                $LoadLandInfo->setRoleName($item['Name']);
+                if(isset($item['Name'])){
+                    $Name = $item['Name'];
+                }else{
+                    $Name = '';
+                }
+                $LoadLandInfo->setRoleName($Name);
                 $arr[$item['Pos']] = $LoadLandInfo;
             }
             $GetMapResult->setLoadLandInfoDic($arr);

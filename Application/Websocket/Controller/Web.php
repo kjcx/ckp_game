@@ -732,19 +732,24 @@ class Web extends WebSocketController
         $Bag = new Bag($this->uid);
         //0.验证是否有此道具
         $data_bag = $Bag->checkBagHasItemById($data_UseItem['ItemId']);
+
         if($data_bag){
+            var_dump("道具存在");
             if ($data_bag['CurCount'] >= $data_UseItem['Count']){
                 //1 获取礼包规则
-                $Item = new Item();
+                $Item = new \App\Models\Execl\Item();
                 $data_item = $Item->getItemUseEffetById($data_UseItem);
                 //2 使用礼包
+//                获得道具：1，道具ID，数量；1，道具ID2，数量
+//                增加属性：2，属性ID，值；2，属性ID2，值
+//                增加货币：3，货币ID，值；3，货币ID2，值
+//                增加经验：4，经验值
+//                打开UI：5，UI名字
 
+                var_dump($data_item);
                 $bool = false;
-                $ids[] = $data_UseItem['ItemId'];
-                foreach ($data_item as $v) {
-                    $item_count[$v['Id']] = $v['CurCount'];
-                    $bool = $Bag->addBag($v['Id'],$v['CurCount']);
-                    $ids[] =  $v['Id'];
+                foreach ($data_item as $ItemId=>$CurCount) {
+                    $bool = $Bag->addBag($ItemId,$CurCount);
                 }
                 var_dump('使用礼包');
                 var_dump($bool);
@@ -752,10 +757,10 @@ class Web extends WebSocketController
                     //使用成功 扣除礼包
                     $rs = $Bag->delBag($data_UseItem['ItemId'],$data_UseItem['Count']);
                     var_dump('使用成功 扣除礼包');
-                    var_dump($ids);
+
                     if($rs){
                         $ids[] =  $data_UseItem['ItemId'];
-                        $str = UseItemResult::encode($this->uid,$item_count);
+                        $str = UseItemResult::encode($this->uid,$data_item);
                         $this->send(1078,$this->fd,$str);
                         $dispatcher = new EventDispatcher();
                         $subscriber = new ChangeItemSubscriber();
@@ -768,6 +773,7 @@ class Web extends WebSocketController
                 $this->send(1078,$this->fd,'','道具数量不足');
             }
         }else{
+            var_dump("背包中没有该道具");
             //道具不存在
             $this->send(1078,$this->fd,'','背包中没有该道具');
         }
@@ -1497,7 +1503,6 @@ class Web extends WebSocketController
         //1查询所有地块
         $LandInfo = new LandInfo();
         $data_infopos = $LandInfo->getPosInfoByPoss($data_GetMap['Pos']);
-//        var_dump($data_infopos);
         $str = GetMapResult::encode($this->uid,1,$data_infopos);//开发区
         $this->send(1064,$this->fd,$str);
     }

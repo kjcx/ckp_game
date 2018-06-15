@@ -75,19 +75,22 @@ class Item extends Model
         $id = $items['ItemId'];
         $Count = $items['Count'];
         $data = $this->getItemById($id);
-        $UseEffet =  $data['UseEffet'];
-        $UseEffets = explode(';',$UseEffet);
+        var_dump($data);
         $arr = [];
-//        var_dump($UseEffets);
+        if(isset($data['UseEffet'])){
+            $UseEffet =  $data['UseEffet'];
+            $UseEffets = explode(';',$UseEffet);
 
-        foreach ($UseEffets as $item) {
-            $items = explode(',',$item);
-            $arr[]  = [
-                'Id'=>$items[1],'CurCount'=>$items[2]
-            ];
 
+            foreach ($UseEffets as $item) {
+                $items = explode(',',$item);
+                if($items[0] == 1){
+                    $arr[$items[1]] = $items[2];
+                }elseif($items[0] == 3){
+                    $arr[$items[1]] = $items[2];
+                }
+            }
         }
-//        var_dump($arr);
         return $arr;
     }
     /**
