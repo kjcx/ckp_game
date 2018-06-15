@@ -14,7 +14,7 @@ use Google\Protobuf\Internal\GPBUtil;
 class DismissalEmployeeResult extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>repeated int32 ListId = 1;</code>
+     * Generated from protobuf field <code>repeated string ListId = 1;</code>
      */
     private $ListId;
 
@@ -24,7 +24,7 @@ class DismissalEmployeeResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 ListId = 1;</code>
+     * Generated from protobuf field <code>repeated string ListId = 1;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getListId()
@@ -33,13 +33,13 @@ class DismissalEmployeeResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 ListId = 1;</code>
-     * @param int[]|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>repeated string ListId = 1;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setListId($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::INT32);
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
         $this->ListId = $arr;
 
         return $this;

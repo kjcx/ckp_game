@@ -203,4 +203,15 @@ class Staff extends Model
             return false;
         }
     }
+
+    /**
+     * 删除员工
+     * @param $Ids
+     * @return int
+     */
+    public function DelStaff($Ids)
+    {
+        $rs = Db::table($this->table)->where('_id','in',$Ids)->delete();
+        return $rs;
+    }
 }

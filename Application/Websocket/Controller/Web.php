@@ -2028,8 +2028,14 @@ class Web extends WebSocketController
         $listId = DismissalEmployeeReq::decode($data);
         var_dump($listId);
         //删除员工
+        $Staff = new Staff();
+        $rs = $Staff->DelStaff($listId);
+        if($rs){
+            $str = DismissalEmployeeResult::encode($listId);
+            $this->send(1122,$this->fd,$str);
+        }else{
+            var_dump("删除员工失败");
+        }
 
-        $str = DismissalEmployeeResult::encode($listId);
-        $this->send(1122,$this->fd,$str);
     }
 }
