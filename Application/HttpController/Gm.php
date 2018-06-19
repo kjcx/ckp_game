@@ -52,7 +52,7 @@ class Gm extends Controller
         $response = ['code' => 200,'msg' => '成功'];
         $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
         $this->response()->withHeader("Access-Control-Allow-Origin", "*");
-        $this->response()->write($response);
+        $this->response()->write(json_encode($response));
     }
     /**
      * 加等级
@@ -71,7 +71,7 @@ class Gm extends Controller
         }
         $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
         $this->response()->withHeader("Access-Control-Allow-Origin", "*");
-        $this->response()->write($response);
+        $this->response()->write(json_encode($response));
 
     }
 
