@@ -50,6 +50,8 @@ class Gm extends Controller
         $mongo->ckzc_data->user_bag->deleteOne(['uid' => $uid]);
         $mongo->ckzc_data->manor->deleteOne(['uid' => $uid]);
         $response = ['code' => 200,'msg' => '成功'];
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write($response);
     }
     /**
@@ -67,6 +69,8 @@ class Gm extends Controller
             $response = ['code' => 401,'msg' => '失败'];
 
         }
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write($response);
 
     }
@@ -87,6 +91,8 @@ class Gm extends Controller
         }
         
         $response = ['code' => 200,'msg' => '成功'];
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write(json_encode($response));
     }
 
@@ -105,6 +111,8 @@ class Gm extends Controller
             $response = ['code' => 401,'msg' => '失败'];
 
         }
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write(json_encode($response));
     }
 
@@ -126,6 +134,8 @@ class Gm extends Controller
             $response = ['code' => 401,'msg' => '失败'];
 
         }
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write(json_encode($response));
     }
 
