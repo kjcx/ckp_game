@@ -17,7 +17,7 @@ use App\Models\Execl\GameConfig;
 use App\Models\Execl\LandInfo;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
-use App\Models\Item\Item;
+use App\Models\Item\ItemBak;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Sales\SalesItem;
 use App\Models\Mail\MailMsg;
@@ -49,7 +49,7 @@ class Index extends Controller
         $Mail = new MailMsg();
         $GameConfig = new GameConfig();
         $data['Title'] = 'Title';
-        $data['Item'] = [10001=>2];
+        $data['ItemBak'] = [10001=>2];
         $data['Msg'] = 'ceshi';
         $data['Uid'] = 34;
         $rs = $Mail->createMailMsg($data);

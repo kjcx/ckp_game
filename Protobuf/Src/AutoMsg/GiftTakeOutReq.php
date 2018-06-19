@@ -18,7 +18,7 @@ class GiftTakeOutReq extends \Google\Protobuf\Internal\Message
      */
     private $FriendId = '';
     /**
-     * Generated from protobuf field <code>int32 Item = 2;</code>
+     * Generated from protobuf field <code>int32 ItemBak = 2;</code>
      */
     private $Item = 0;
 
@@ -50,7 +50,7 @@ class GiftTakeOutReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Item = 2;</code>
+     * Generated from protobuf field <code>int32 ItemBak = 2;</code>
      * @return int
      */
     public function getItem()
@@ -59,7 +59,7 @@ class GiftTakeOutReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Item = 2;</code>
+     * Generated from protobuf field <code>int32 ItemBak = 2;</code>
      * @param int $var
      * @return $this
      */

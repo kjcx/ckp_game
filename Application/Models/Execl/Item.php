@@ -9,6 +9,7 @@
 namespace App\Models\Execl;
 
 use App\Models\Model;
+use App\Models\Store\DropStore;
 use think\Db;
 
 class Item extends Model
@@ -76,19 +77,25 @@ class Item extends Model
         $Count = $items['Count'];
         var_dump($id);
         $data = $this->getItemById($id);
+<<<<<<< HEAD
         var_dump($data['UseEffet']);
+=======
+//        var_dump($data);
+>>>>>>> d7cc9fb38557d5a7d80c8745a069e627ca8e1aec
         $arr = [];
         if(isset($data['UseEffet'])){
             $UseEffet =  $data['UseEffet'];
             $UseEffets = explode(';',$UseEffet);
-
-
             foreach ($UseEffets as $item) {
                 $items = explode(',',$item);
                 if($items[0] == 1){
                     $arr[$items[1]] = $items[2];
                 }elseif($items[0] == 3){
                     $arr[$items[1]] = $items[2];
+                }elseif ($items[0] == 6){
+                    $data_drop = $this->getItemByDropId($items[1]);
+//                    var_dump($data_drop);
+                    return $data_drop;
                 }
             }
         }
@@ -136,5 +143,34 @@ class Item extends Model
         $data_price = $this->getSellItemsPrice($data_item);
         return $data_price;
     }
+    /**
+     * 通过掉落库id获取商品
+     * @param $DropId
+     * @return
+     */
+    public function getItemByDropId($DropId)
+    {
+        $Drop = new Drop();
+        $info = $Drop->getInfoById($DropId);
+        $arr = explode(';',$info['DropLib']);
+//        var_dump($arr);
+        $new = [];
+        foreach ($arr as $item) {
+            $res = explode(',',$item);
+            $weigth = $res[3];//权重
+            $max = $res[2];//最大数量
+            $min = $res[1];//最小数量
+            $ItemId = $res[0];//权重
+            for($i=0;$i<$weigth;$i++){
+                $arr[] = $ItemId;
+            }
+            $new[$ItemId] = rand($min,$max);
+        }
 
+        mt_srand();
+        $ItemId = $arr[array_rand($arr)];
+        $Count = $new[$ItemId];
+
+        return [$ItemId=>$Count];
+    }
 }

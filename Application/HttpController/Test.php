@@ -12,7 +12,7 @@ namespace App\HttpController;
 use App\Event\RoleCreateEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Execl\WsResult;
-use App\Models\Item\Item;
+use App\Models\Item\ItemBak;
 use App\Models\Manor\Land;
 use App\Models\Store\DropStore;
 use App\Models\Store\Seed;
@@ -65,7 +65,7 @@ class Test extends Controller
     public function aab()
     {
         event(RoleCreateEvent::class,36);
-//        $a = new Item();
+//        $a = new ItemBak();
 //        $b = $a->getOne('人际交往');
 //        $this->response()->write(json_encode($b));
     }

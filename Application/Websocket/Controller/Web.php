@@ -32,7 +32,7 @@ use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
-use App\Models\Item\Item;
+use App\Models\Item\ItemBak;
 use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
@@ -495,7 +495,7 @@ class Web extends WebSocketController
         $Data = $this->data;
         $data_SellItemReq = SellItemReq::decode($Data);
         //计算道具所需价格
-        $Item = new Item();
+        $Item = new ItemBak();
         $PriceType  = $Item->getSellItemInfo($data_SellItemReq);
         //出售道具事件
         if($PriceType){
@@ -746,7 +746,7 @@ class Web extends WebSocketController
 //                增加货币：3，货币ID，值；3，货币ID2，值
 //                增加经验：4，经验值
 //                打开UI：5，UI名字
-
+//                    6掉落库
                 var_dump($data_item);
                 $bool = false;
                 foreach ($data_item as $ItemId=>$CurCount) {
