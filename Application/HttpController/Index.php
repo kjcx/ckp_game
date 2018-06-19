@@ -21,6 +21,7 @@ use App\Models\Item\Item;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Sales\SalesItem;
 use App\Models\Mail\MailMsg;
+use App\Models\Sign\SignInfo;
 use App\Models\Staff\Staff;
 use App\Models\Store\DropStaff;
 use App\Models\User\RoleBag;
@@ -93,18 +94,12 @@ class Index extends Controller
     }
     public function   test()
     {
-//        $insert['Count'] = 10;
-//        $insert['GoldType'] = 6;
-//        $insert['Type'] = 1;
-//        $insert['ItemId'] = 10001;
-//        $insert['UpTime'] = time();
-//        $insert['Uid'] = 36;
-//        $insert['Price'] = 6;
-//        $SalesItem = new SalesItem();
-//        $Id = $SalesItem->create($insert);
-        $SalesItem = new SalesItem();
-        $rs = $SalesItem->getAll();
-        var_dump($rs);
+        $SignInfo = new SignInfo();
+
+        $SignInfo->setSign(40);
+
+        $arr = $SignInfo->getSign(40);
+
     }
 
 

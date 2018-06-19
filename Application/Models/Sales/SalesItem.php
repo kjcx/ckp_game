@@ -40,12 +40,12 @@ class SalesItem extends Model
     }
 
     /**
-     * 获取所有
+     * @param $Uid
      * @return array|false|\PDOStatement|string|\think\Collection
      */
-    public function getAll()
+    public function getAll($Uid)
     {
-        $data = Db::table($this->table)->where('Count','>',0)->select();
+        $data = Db::table($this->table)->where('Uid','<>',$Uid)->where('Count','>',0)->select();
         return $data;
     }
 
