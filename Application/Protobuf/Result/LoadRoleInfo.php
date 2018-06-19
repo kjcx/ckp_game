@@ -19,6 +19,7 @@ class LoadRoleInfo
         $Name = $arr['nickname'];
         $RoleId = $arr['uid'];
         $Sex = $arr['sex'];
+        var_dump("sex" . $Sex);
         $Icon = $arr['icon'];
         $Exp = $arr['exp'];
         $Level = $arr['level'];

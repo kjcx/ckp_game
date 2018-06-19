@@ -149,6 +149,7 @@ use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SeedShopPingResult;
 use App\Protobuf\Result\SellItemResult;
+use App\Protobuf\Result\SignResult;
 use App\Protobuf\Result\SoldOutResult;
 use App\Protobuf\Result\StealSemenResult;
 use App\Protobuf\Result\TalentFireResult;
@@ -1786,8 +1787,7 @@ class Web extends WebSocketController
     public function msgid_2015()
     {
         $SalesItem = new SalesItem();
-        $data = $SalesItem->getAll();
-        var_dump($data);
+        $data = $SalesItem->getAll($this->uid);
         $str = SalesListResult::encode($data);
         $this->send(2016,$this->fd,$str);
     }
@@ -2037,5 +2037,15 @@ class Web extends WebSocketController
             var_dump("删除员工失败");
         }
 
+    }
+
+    /**
+     * 签到请求
+     * return 1168 签到返回
+     */
+    public function msgid_1121()
+    {
+        $str  = SignResult::encode($this->uid);
+        $this->send(1168,$this->fd,$str);
     }
 }
