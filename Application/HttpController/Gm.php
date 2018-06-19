@@ -9,7 +9,7 @@
 namespace App\HttpController;
 
 use App\Models\BagInfo\Bag;
-use App\Models\Item\Item;
+use App\Models\Item\ItemBak;
 use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use App\Utility\Mysql;
@@ -84,7 +84,7 @@ class Gm extends Controller
         $uid = $this->request()->getRequestParam('uid');
         $bag = new Bag($uid);
 
-        $item = new Item();
+        $item = new ItemBak();
         $items = $this->getAllItem();
         foreach ($items as $k => $v) {
             $bag->addBag($v['Id'],20);

@@ -12,7 +12,7 @@ use App\Models\Model;
 use App\Traits\MongoTrait;
 use think\Db;
 
-class Item extends Model
+class ItemBak extends Model
 {
     use MongoTrait;
     private $table = 'ckzc.item';
@@ -120,5 +120,39 @@ class Item extends Model
         $data_item[0]['Count'] = $data['Count'];
         $data_price = $this->getSellItemsPrice($data_item);
         return $data_price;
+    }
+
+    /**
+     * 通过掉落库id获取商品
+     * @param $DropId
+     * @return
+     */
+    public function getItemByDropId($DropId)
+    {
+        var_dump($DropId);
+//        20001,3,3,10;20002,3,3,10;20003,3,3,10
+        $Drop = new Drop();
+        var_dump($DropId);
+        $str = $Drop->getInfoById($DropId);
+        $arr = explode(';',$str);
+        var_dump($arr);
+        $new = [];
+        foreach ($arr as $item) {
+            $res = explode(',',$item);
+            $weigth = $res[3];//权重
+            $max = $res[2];//最大数量
+            $min = $res[1];//最小数量
+            $ItemId = $res[0];//权重
+            for($i=0;$i<$weigth;$i++){
+                $arr[] = $ItemId;
+            }
+            $new[$ItemId] = rand($min,$max);
+        }
+
+        mt_srand();
+        $ItemId = $arr[array_rand($arr)];
+        $Count = $new[$ItemId];
+
+        return [$ItemId=>$Count];
     }
 }
