@@ -795,6 +795,7 @@ message LoadManorData{
     int32 SoilState=8;
     string UserName=9;
     int32 SoilLevel=10;
+    int32 Compost=11;
 }
 message LoadListId{
     int32 Id=1;

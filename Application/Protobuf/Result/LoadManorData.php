@@ -26,6 +26,7 @@ class LoadManorData
             $manor->setSoilState($value['SoilState']);
             $manor->setUserName($value['UserName']);
             $manor->setSoilLevel($value['SoilLevel']);
+            $manor->setCompost($value['Compost']);
         }
         return $manor;
     }
