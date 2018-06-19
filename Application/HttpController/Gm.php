@@ -50,7 +50,9 @@ class Gm extends Controller
         $mongo->ckzc_data->user_bag->deleteOne(['uid' => $uid]);
         $mongo->ckzc_data->manor->deleteOne(['uid' => $uid]);
         $response = ['code' => 200,'msg' => '成功'];
-        $this->response()->write($response);
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
+        $this->response()->write(json_encode($response));
     }
     /**
      * 加等级
@@ -67,7 +69,9 @@ class Gm extends Controller
             $response = ['code' => 401,'msg' => '失败'];
 
         }
-        $this->response()->write($response);
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
+        $this->response()->write(json_encode($response));
 
     }
 
@@ -87,6 +91,8 @@ class Gm extends Controller
         }
         
         $response = ['code' => 200,'msg' => '成功'];
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write(json_encode($response));
     }
 
@@ -105,6 +111,8 @@ class Gm extends Controller
             $response = ['code' => 401,'msg' => '失败'];
 
         }
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write(json_encode($response));
     }
 
@@ -126,6 +134,8 @@ class Gm extends Controller
             $response = ['code' => 401,'msg' => '失败'];
 
         }
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
         $this->response()->write(json_encode($response));
     }
 
@@ -138,7 +148,7 @@ class Gm extends Controller
         if (empty($conf['username'])) {
             $mongo = new \MongoDB\Client("mongodb://{$conf['hostname']}/");
         } else {
-            $mongo = new \MongoDB\Client("mongodb://{$conf['username']}:{$conf['password']}@{$conf['hostname']}:{$conf['prot']}/");
+            $mongo = new \MongoDB\Client("mongodb://{$conf['username']}:{$conf['password']}@{$conf['hostname']}:{$conf['hostport']}/");
         }
         return $mongo->ckzc->item->find()->toArray();
     }

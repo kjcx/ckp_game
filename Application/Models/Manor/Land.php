@@ -428,8 +428,8 @@ class Land extends Model
     public function randLand()
     {
         $data = $this->mysql->orderBy("RAND()")->getOne('ckzc_role','uid');
-//        return $this->getLand($data['uid']);
-        return $this->getLand(36);
+        return $this->getLand($data['uid']);
+//        return $this->getLand(36);
     }
 
     /**
