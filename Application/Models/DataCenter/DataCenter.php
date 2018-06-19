@@ -72,9 +72,10 @@ class DataCenter extends Model
     private function delUserClientInfo($uid)
     {
 
-        $keys = $this->redis->keys('*:' . $uid . ':*');
+        $keys = $this->redis->keys($this->serverHash . ':' . $uid . ':*');
+        var_dump($keys);
         foreach ($keys as $key) {
-//            $this->redis->del($key);
+            $this->redis->del($key);
         }
 
     }

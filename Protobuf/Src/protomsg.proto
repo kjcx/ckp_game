@@ -1137,10 +1137,10 @@ message CultivateEmployeeResult{
     //int32 TrainTime=2;
 }
 message DismissalEmployeeReq{
-    repeated int32 ListId=1;
+    repeated string ListId=1;
 }
 message DismissalEmployeeResult{
-    repeated int32 ListId=1;
+    repeated string ListId=1;
 }
 message ComeOutEmployeeReq{
     string ShopId=1;

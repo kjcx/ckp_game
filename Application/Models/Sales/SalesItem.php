@@ -59,4 +59,37 @@ class SalesItem extends Model
         $data = Db::table($this->table)->where('Uid',$Uid)->where('Count','>',0)->select();
         return $data;
     }
+
+    /**
+     * 下架商品
+     * @param $Id
+     * @return int
+     */
+    public function SoldOutById($Id)
+    {
+        $rs = Db::table($this->table)->where('_id',$Id)->delete();
+        return $rs;
+    }
+
+    /**
+     * 减少商品数量
+     * @param $Id
+     * @param $num
+     * @return int|true
+     */
+    public function ReduceSalesItem($Id,$num)
+    {
+        $data = $this->getInfoById($Id);
+        if($data['Count'] > $num){
+            $rs = Db::table($this->table)->where('_id',$Id)->setDec('Count',$num);
+            return $rs;
+        }elseif ($data['Count'] == $num){
+            //删除商品
+            $rs = $this->SoldOutById($Id);
+            return $rs;
+        }else{
+            var_dump("减少商品数量失败");
+            return false;
+        }
+    }
 }

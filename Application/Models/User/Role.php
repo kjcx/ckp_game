@@ -63,6 +63,7 @@ class Role extends Model
         //后期事务
         //创建默认角色
         $rs = $this->mysql->insert($this->table,$data);
+        var_dump($rs);
         if($rs){
 //            $arr['rid'] = $rs;//角色id
 //            $arr['uid'] = $data['uid'];//用户id
@@ -71,7 +72,9 @@ class Role extends Model
 //            $arr['items'] = json_encode([]);//已获取道具数量
 //            $res = $this->createRoleBag($arr);
             $Bag = new Bag($uid);
+
             $res = $Bag->initBag();
+            var_dump($res);
             if($res){
                 return $rs;
             }else{

@@ -476,7 +476,7 @@ class Execl extends Controller
         $Item = new \App\Models\Execl\Item();
         for($j=4;$j<=$highestRow;$j++) {
             $str = '';
-            for ($k = 'A'; $k !='T'; $k++) {
+            for ($k = 'A'; $k !='X'; $k++) {
 
                 $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
                 $this->response()->withHeader("Content-Type","text/html;charset=utf-8");

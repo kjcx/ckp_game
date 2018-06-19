@@ -11,6 +11,7 @@ namespace App\Protobuf\Result;
 
 use App\Models\Company\Shop;
 use App\Models\LoadData\LandBuildInfo;
+use AutoMsg\LoadLandInfo;
 
 /**
  * 获得店铺信息
@@ -21,17 +22,41 @@ class GetMapResult
 {
     /**
      * @param $uid
-     * @param $type 1店铺2开发区
+     * @param $Area 2私有1 公共
+     * @param $LoadLandInfoDic
      * @return \AutoMsg\GetMapResult
      */
-    public static function encode($uid,$type=1)
+    public static function encode($uid,$Area=1,$LoadLandInfoDic='')
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
-        $LandBuildInfo = LandBuildInfo::encode($uid);
+        $LandBuildInfo = LandBuildInfo::encode($uid,$Area);
         $GetMapResult->setLoadBuildInfo($LandBuildInfo);
-        if($type == 1){
+
+        if($Area == 2){
             return $GetMapResult;
         }else{
+
+            $arr = [];
+            foreach ($LoadLandInfoDic as $k=>$item) {
+                var_dump($item['Pos']);
+                $LoadLandInfo = new LoadLandInfo();
+                $LoadLandInfo->setPos($item['Pos']);
+                if(isset($item['Uid'])){
+                    $Uid = $item['Uid'];
+                }else{
+                    $Uid = 0;
+                }
+                $LoadLandInfo->setRoleId($Uid);
+                $LoadLandInfo->setState($item['Status']);
+                if(isset($item['Name'])){
+                    $Name = $item['Name'];
+                }else{
+                    $Name = '';
+                }
+                $LoadLandInfo->setRoleName($Name);
+                $arr[$item['Pos']] = $LoadLandInfo;
+            }
+            $GetMapResult->setLoadLandInfoDic($arr);
             $str = $GetMapResult->serializeToString();
             return $str;
         }

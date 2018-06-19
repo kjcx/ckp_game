@@ -39,32 +39,38 @@ class Staff extends Model
         }else{
             $data = $DropStaff->getLottoDropLib($Type);
         }
-        //2 随机掉落库 id
-        $arr = $DropStaff->mt_rand($data);
-        //2 获取掉落库信息
-        $Info = $DropStaff->getDropLibInfo($arr);
-        //3 随机获取 员工id
-        $arr = $DropStaff->getRadnDropLib($Info);
-        //4. 获取员工信息
-        $StaffInfo = $DropStaff->getStaffInfo($arr);
-        //5 插入数据库
+        $number = $DropStaff->getNumber($Type);
+        $StaffInfos = [];
+        for ($i=0; $i<$number;$i++){
+            //2 随机掉落库 id
+            $arr = $DropStaff->mt_rand($data);
+            //2 获取掉落库信息
+            $Info = $DropStaff->getDropLibInfo($arr);
+            //3 随机获取 员工id
+            $arr = $DropStaff->getRadnDropLib($Info);
+            //4. 获取员工信息
+            $StaffInfo = $DropStaff->getStaffInfo($arr);
+            //5 插入数据库
 //        $DropStaff = new DropStaff();
 //        $data = $DropStaff->rand($Type,true);
-        $StaffInfo['Uid'] = $Uid;
-        $StaffInfo['CreateTime'] = time();
-        $StaffInfo['ShopId'] = "";
-        $StaffInfo['Pos'] = 0;
-        $StaffInfo['LevelUpTime'] = 0;
-        $StaffInfo['Appointed'] = false;
-        $StaffInfo['TrainNum'] = 0;//总培训次数
-        $StaffInfo['TodayTrainNum'] = 0;//今日培训次数
-        $rs = Db::table($this->table)->insert($StaffInfo);
-        if($rs){
-            $StaffInfo['_id'] = Db::getLastInsID();
-            return $StaffInfo;
-        }else{
-            return false;
+            $StaffInfo['Uid'] = $Uid;
+            $StaffInfo['CreateTime'] = time();
+            $StaffInfo['ShopId'] = "";
+            $StaffInfo['Pos'] = 0;
+            $StaffInfo['LevelUpTime'] = 0;
+            $StaffInfo['Appointed'] = false;
+            $StaffInfo['TrainNum'] = 0;//总培训次数
+            $StaffInfo['TodayTrainNum'] = 0;//今日培训次数
+            $rs = Db::table($this->table)->insert($StaffInfo);
+            if($rs){
+                $StaffInfo['_id'] = Db::getLastInsID();
+                $StaffInfos[] = $StaffInfo;
+            }else{
+                return false;
+            }
         }
+        return $StaffInfos;
+
     }
 
     /**
@@ -123,8 +129,8 @@ class Staff extends Model
      */
     public function getShopStaffCountByShopId($ShopId)
     {
-        $count = Db::table($this->table)->where(['ShopId'=>$ShopId])->count();
-        return $count;
+        $count = Db::table($this->table)->where(['ShopId'=>$ShopId])->select();
+        return count($count);
     }
 
     /**
@@ -196,5 +202,16 @@ class Staff extends Model
         }else{
             return false;
         }
+    }
+
+    /**
+     * 删除员工
+     * @param $Ids
+     * @return int
+     */
+    public function DelStaff($Ids)
+    {
+        $rs = Db::table($this->table)->where('_id','in',$Ids)->delete();
+        return $rs;
     }
 }
