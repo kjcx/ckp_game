@@ -1336,7 +1336,7 @@ class Web extends WebSocketController
     {
 
         $data = RequestManorReq::decode($this->data);
-        $land = new Land($this->uid);
+        $land = new Land($data['userId']);
         $landInfo = $land->getLand();
         $string = RequestManorResult::encode($landInfo);
         $this->send(1082,$this->fd,$string);
