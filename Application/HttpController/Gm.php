@@ -148,7 +148,7 @@ class Gm extends Controller
         if (empty($conf['username'])) {
             $mongo = new \MongoDB\Client("mongodb://{$conf['hostname']}/");
         } else {
-            $mongo = new \MongoDB\Client("mongodb://{$conf['username']}:{$conf['password']}@{$conf['hostname']}:{$conf['port']}/");
+            $mongo = new \MongoDB\Client("mongodb://{$conf['username']}:{$conf['password']}@{$conf['hostname']}:{$conf['hostport']}/");
         }
         return $mongo->ckzc->item->find()->toArray();
     }
