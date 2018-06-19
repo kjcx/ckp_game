@@ -74,8 +74,9 @@ class Item extends Model
     {
         $id = $items['ItemId'];
         $Count = $items['Count'];
+        var_dump($id);
         $data = $this->getItemById($id);
-        var_dump($data);
+        var_dump($data['UseEffet']);
         $arr = [];
         if(isset($data['UseEffet'])){
             $UseEffet =  $data['UseEffet'];
