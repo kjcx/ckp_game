@@ -19,9 +19,9 @@ class LoadSignInfoList
     {
         $LoadSignInfoList = new \AutoMsg\LoadSignInfoList();
         $LoadSignList = [];
-        foreach ($data as $datum) {
-            $LoadSignList[]  =LoadSignInfo::ecode($datum);
-        }
+//        foreach ($data as $k => $datum) {
+//            $LoadSignList[$datum['Day']]  = LoadSignInfo::encode($datum);
+//        }
         $LoadSignInfoList->setLoadSignList($LoadSignList);
         return $LoadSignInfoList;
     }

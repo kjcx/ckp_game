@@ -15,7 +15,7 @@ namespace App\Protobuf\Result;
  */
 class SignResult
 {
-    public static function encode($Uid)
+    public static function encode($data)
     {
         //查询用户签到情况
 

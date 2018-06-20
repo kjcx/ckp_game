@@ -85,6 +85,7 @@ use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
+use App\Protobuf\Req\SignReq;
 use App\Protobuf\Req\SoldOutReq;
 use App\Protobuf\Req\StealSemenReq;
 use App\Protobuf\Req\TalentFireReq;
@@ -2045,7 +2046,16 @@ class Web extends WebSocketController
      */
     public function msgid_1121()
     {
-        $str  = SignResult::encode($this->uid);
+        $data = [];
+        //空请求  不需要解析
+        for ($i = 1; $i < 21; $i++) {
+            $data[] = [
+                'Day' => $i,
+                'IsSign' => $i % 2 == 0 ? true : false
+            ];
+        }
+        $str  = SignResult::encode($data);
+        var_dump($this->fd);
         $this->send(1168,$this->fd,$str);
     }
 }
