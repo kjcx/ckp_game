@@ -43,15 +43,16 @@ Class EasySwooleEvent implements EventInterface {
     public static function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
-        $dataCenter = new DataCenter();
-//        $dataCenter->init();
+
+
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
 
             //为workerId为0的进程添加定时器
             //请确定有inotify拓展
             if ($workerId == 0) {
-
+                $dataCenter = new DataCenter();
+                $dataCenter->init();
                 if (Config::getInstance()->getConf('DEBUG')) {
                     MainEventHelper::registerHotLoad();
                 }
