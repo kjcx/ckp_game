@@ -20,7 +20,10 @@ class SignResult
         //查询用户签到情况
 
         $SignResult = new \AutoMsg\SignResult();
-        $LoaSignInfo = LoadSignInfoList::encode($data);
+        for($i=1;$i<=31;$i++){
+            $data[]  = ['Day'=>$i,'IsSign'=>true];
+        }
+        $LoaSignInfo[date('m',time())] = LoadSignInfoList::encode($data);
         $SignResult->setLoaSignInfo($LoaSignInfo);
         $str = $SignResult->serializeToString();
         return $str;

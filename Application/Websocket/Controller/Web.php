@@ -2046,6 +2046,8 @@ class Web extends WebSocketController
     public function msgid_1121()
     {
         $str  = SignResult::encode($this->uid);
+        var_dump('1121');
+        var_dump($str);
         $this->send(1168,$this->fd,$str);
     }
 }

@@ -31,7 +31,7 @@ class JoinGameResult
         //设置任务信息
         var_dump("设置任务信息");
         $MissionResult = MissionResult::encode();
-        var_dump($MissionResult);
+//        var_dump($MissionResult);
         $JoinGameResult->setMission($MissionResult);
         //背包信息
         var_dump('背包信息');
