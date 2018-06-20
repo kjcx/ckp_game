@@ -33,10 +33,13 @@ class Bag extends Model
 
     public function __construct(int $uid)
     {
+        var_dump($uid);
         parent::__construct();
         $this->uid = $uid;
+        var_dump($this->uid);
         //依赖进来 但是不需要注入
         $this->item = new \App\Models\Execl\Item();
+        var_dump($this->item);
         $this->initData = new Init();
         $this->MaxCellNumber = 999;
         $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作

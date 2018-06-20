@@ -23,8 +23,13 @@ class JoinGameResult
         //设置角色信息
         var_dump("设置角色信息");
         var_dump($uid);
+          var_dump('设置服务器时间');
         $str_role = LoadRoleInfo::encode($uid);
+ var_dump('sssss');
         $JoinGameResult->setLoadRoleInfo($str_role);
+        var_dump('设置服务器时间');
+
+
         //设置服务器时间
         $LoadServerConfig = LoadServerConfig::encode();
         $JoinGameResult->setServerConfig($LoadServerConfig);
@@ -32,15 +37,20 @@ class JoinGameResult
         $MissionResult = MissionResult::encode();
 //        var_dump($MissionResult);
         $JoinGameResult->setMission($MissionResult);
+         var_dump('背包信息');
+
         //背包信息
         $LoadBagInfo = LoadBagInfo::encode($uid);
         $JoinGameResult->setRoleBag($LoadBagInfo);
         //技能列表
         $SkillResult = SkillResult::encode();
         $JoinGameResult->setSkillResult($SkillResult);
+         var_dump('每日充值限额');
         //每日充值限额
         $DayCountInfo = DayCountInfo::encode();
         $JoinGameResult->setDayCountInfo($DayCountInfo);
+
+         var_dump('123456');
         //好友
 //        $FriendApply = new FriendApply();
 //        $data_Friends = $FriendApply->getFriendApply($uid);

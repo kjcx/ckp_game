@@ -13,10 +13,12 @@ class LoadBagInfo
 {
     public static function encode($uid)
     {
+         var_dump("查询背包信息");
         //查询背包信息
         $Bag = new Bag($uid);
+        var_dump($Bag);
         $data = $Bag->getBag();
-//        var_dump($data);
+      
         $LoadBagInfo = new \AutoMsg\LoadBagInfo();
         $LoadBagInfo->setMaxCellNumber((int)$data['MaxCellNumber']);
         $LoadBagInfo->setCurUsedCell((int)$data['CurUsedCell']);
