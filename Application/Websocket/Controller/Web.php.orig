@@ -2046,9 +2046,22 @@ class Web extends WebSocketController
      */
     public function msgid_1121()
     {
+<<<<<<< HEAD
         $str  = SignResult::encode($this->uid);
         var_dump('1121');
         var_dump($str);
+=======
+        $data = [];
+        //空请求  不需要解析
+        for ($i = 1; $i < 21; $i++) {
+            $data[] = [
+                'Day' => $i,
+                'IsSign' => $i % 2 == 0 ? true : false
+            ];
+        }
+        $str  = SignResult::encode($data);
+        var_dump($this->fd);
+>>>>>>> 0e155e452aefa4b10b6e155d1ab010271d81251e
         $this->send(1168,$this->fd,$str);
     }
 }
