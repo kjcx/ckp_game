@@ -67,8 +67,6 @@ class Account extends Model
     public function crateToken($uid)
     {
         $token = md5($uid . rand(10000,99999) . rand(10000,99999). microtime() );
-        var_dump($token);
-        var_dump($this->redis->set(1111,111));
         //插入到
          $rs = $this->redis->set($token,$uid);
          if($rs){
