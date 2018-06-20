@@ -423,7 +423,9 @@ class Web extends WebSocketController
     {
 
         //加入游戏
+        var_dump(21);
         $data = JoinGameResult::encode(['uid'=>$this->uid]);
+        var_dump(12);
         $this->send(1066,$this->fd,$data);
         //通知好友用户上线
         $str = FriendOnlineResult::encode(['Uid'=>$this->uid,'Online'=>true]);
