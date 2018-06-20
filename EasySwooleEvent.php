@@ -10,6 +10,7 @@ namespace EasySwoole;
 
 use App\Event\RedisEventHelper;
 use App\Helpers\ErrorHandle;
+use App\Models\DataCenter\DataCenter;
 use App\Models\SystemLog\Handler;
 use App\Process\Subscribe;
 use App\Utility\MysqlPool;
@@ -42,6 +43,8 @@ Class EasySwooleEvent implements EventInterface {
     public static function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
 
+        $dataCenter = new DataCenter();
+        $dataCenter->init();
         // TODO: Implement mainServerCreate() method.
         $register->add($register::onWorkerStart,function (\swoole_server $server,$workerId){
 
@@ -93,7 +96,7 @@ Class EasySwooleEvent implements EventInterface {
 
 
         $register->add($register::onClose, function ($ser,$fd) {//离线删除连接
-//            RedisEventHelper::remove($fd);
+            RedisEventHelper::remove($fd);
         });
         $register->add($register::onConnect, function ($ser,$fd) {//离线删除连接
             var_dump('fd'.'-'.$fd);

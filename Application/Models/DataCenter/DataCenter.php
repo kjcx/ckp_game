@@ -27,6 +27,18 @@ class DataCenter extends Model
     }
 
     /**
+     * 初始化数据中心问题
+     */
+    public function init()
+    {
+        $key = 'dataCenter:*';
+        $keys = $this->redis->keys($key);
+        foreach ($keys as $k) {
+            $this->redis->del($k);
+        }
+        $this->redis->del($this->dataCenterKey);
+    }
+    /**
      * 设置数据中心
      */
     private function setDataCenter() : void
@@ -72,7 +84,7 @@ class DataCenter extends Model
     private function delUserClientInfo($uid)
     {
 
-        $keys = $this->redis->keys($this->serverHash . ':' . $uid . ':*');
+        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':' . $uid . ':*');
         var_dump($keys);
         foreach ($keys as $key) {
             $this->redis->del($key);
@@ -96,7 +108,7 @@ class DataCenter extends Model
 
         $this->delUserClientInfo($uid);
         if ($this->redis
-            ->set($this->serverHash . ':' . $uid . ':' . $fd,
+            ->set('dataCenter:' . $this->serverHash . ':' . $uid . ':' . $fd,
                 serialize(['serverHash' => $this->serverHash,'uid' => $uid ,'fd' => $fd])))
         {
             return true;
@@ -126,7 +138,7 @@ class DataCenter extends Model
     public function getMyFd() : array
     {
         //机器号 下面的所有连接信息
-        $fds = $this->redis->keys($this->serverHash . ':*:*');
+        $fds = $this->redis->keys('dataCenter:' . $this->serverHash . ':*:*');
 
         foreach ($fds as $key => $fd) {
             $fds[$key] = unserialize($this->redis->get($fd));
@@ -141,7 +153,7 @@ class DataCenter extends Model
      */
     public function getClientInfoByFd($fd) : array
     {
-        $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
+        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':*:' . $fd);
         if ($keys) {
             return unserialize($this->redis->get($keys['0']));
         }
@@ -155,7 +167,7 @@ class DataCenter extends Model
      */
     public function getUidByFd($fd) : int
     {
-        $keys = $this->redis->keys($this->serverHash . ':*:' . $fd);
+        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':*:' . $fd);
 //        var_dump($keys);
         if ($keys) {
 //            return unserialize($this->redis->get($keys['0']))['uid'];
@@ -172,7 +184,7 @@ class DataCenter extends Model
      */
     public function getFdByUid($uid)
     {
-        $keys = $this->redis->keys($this->serverHash . ':' . $uid. ':*');
+        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':' . $uid. ':*');
         if ($keys) {
 //            return unserialize($this->redis->get($keys['0']))['uid'];
             $arr =  unserialize($this->redis->get($keys['0']));
