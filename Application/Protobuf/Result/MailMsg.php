@@ -17,6 +17,10 @@ class MailMsg
 {
     public static function encode($item)
     {
+        $MailMsg = new \AutoMsg\MailMsg();
+        if(!$item){
+            return $MailMsg;
+        }
         $Id = $item['_id'];
         $Msg = $item['Msg'];
         $Item = $item['Item'];
@@ -27,7 +31,7 @@ class MailMsg
         $SendTime = $item['SendTime'];
         $Title = $item['Title'];
         $SenderId = $item['SenderId'];
-        $MailMsg = new \AutoMsg\MailMsg();
+
         $MailMsg->setId($Id);//邮件id
         $MailMsg->setItem($Item);//道具
         $MailMsg->setMsg($Msg);//消息
