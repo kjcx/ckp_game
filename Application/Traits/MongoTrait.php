@@ -9,6 +9,7 @@
 namespace App\Traits;
 
 use EasySwoole\Config;
+use think\Db;
 
 trait MongoTrait
 {
@@ -29,6 +30,8 @@ trait MongoTrait
             return $this->mongo->selectDatabase(explode('.',$this->mongoTable)['0'])
                                             ->selectCollection(explode('.',$this->mongoTable)['1']);
         }
+
+
         return $this;
     }
 }
