@@ -35,7 +35,7 @@ class JoinGameResult
         $JoinGameResult->setServerConfig($LoadServerConfig);
         //设置任务信息
         $MissionResult = MissionResult::encode();
-//        var_dump($MissionResult);
+       // var_dump($MissionResult);
         $JoinGameResult->setMission($MissionResult);
          var_dump('背包信息');
 
