@@ -10,7 +10,7 @@
 namespace App\Models\Trade;
 
 use App\Models\BagInfo\Bag;
-use App\Models\Item\ItemBak;
+use App\Models\Execl\Item;
 use App\Models\User\Account;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
@@ -26,7 +26,7 @@ class Shop
     public function Buy(int $uid, array $ids)
     {
         //1.查询购买道具的详细信息
-        $item = new ItemBak();
+        $item = new Item();
         $data_item = $item->getItemIds($ids);
 //        var_dump("查询购买道具的详细信息");
 //        var_dump($data_item);

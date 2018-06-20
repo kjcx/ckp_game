@@ -144,7 +144,7 @@ class MailMsg extends Model
         foreach ($data as $datum =>$value) {
             $item = json_decode($value,true);
             if(in_array($datum,$Ids)){
-                foreach ($item['ItemBak'] as $k => $v) {
+                foreach ($item['Item'] as $k => $v) {
                     $rs = $Bag->addBag($k,$v);
                     $item['Reward'] = true;
                     $this->redis->hSet($key,$datum,json_encode($item));

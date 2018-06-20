@@ -29,7 +29,6 @@ use App\Models\Execl\Staff;
 use App\Models\Execl\Topup;
 use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
-use App\Models\Item\ItemBak;
 use App\Models\Test\Event;
 use App\Models\Execl\GameEnum;
 use App\Models\Trade\Shop;
@@ -465,7 +464,7 @@ class Execl extends Controller
      */
     public function Execl_Item()
     {
-        $file_temp = 'Execl/ItemBak.xlsx';
+        $file_temp = 'Execl/Item.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);

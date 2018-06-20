@@ -51,8 +51,7 @@ Class EasySwooleEvent implements EventInterface {
             //为workerId为0的进程添加定时器
             //请确定有inotify拓展
             if ($workerId == 0) {
-                $dataCenter = new DataCenter();
-                $dataCenter->init();
+
                 if (Config::getInstance()->getConf('DEBUG')) {
                     MainEventHelper::registerHotLoad();
                 }
@@ -83,11 +82,12 @@ Class EasySwooleEvent implements EventInterface {
                     }
                 }
             }
+
         });
 
         ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
 
-        ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
+//        ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
 
         EventHelper::registerDefaultOnMessage($register, WebSock::class,function ($error) {
             var_dump($error);

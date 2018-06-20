@@ -11,7 +11,7 @@ namespace App\Models\Store;
 
 
 use App\Models\BagInfo\Bag;
-use App\Models\Item\ItemBak;
+use App\Models\Execl\Item;
 use App\Models\Model;
 use App\Traits\MongoTrait;
 use App\Traits\UserTrait;
@@ -27,7 +27,7 @@ class Seed extends Model
         parent::__construct();
         $this->setUid($uid);
         $this->setRoleInfo();
-        $this->item = new ItemBak();
+        $this->item = new Item();
     }
 
     /**

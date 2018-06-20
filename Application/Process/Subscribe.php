@@ -7,6 +7,7 @@
  */
 namespace App\Process;
 
+use App\Models\DataCenter\DataCenter;
 use App\Utility\Redis;
 use EasySwoole\Core\Swoole\Process\AbstractProcess;
 use Swoole\Process;
@@ -18,6 +19,8 @@ class Subscribe extends AbstractProcess
 
     public function run(Process $process)
     {
+        $dataCenter = new DataCenter();
+        $dataCenter->init();
         $this->redis = Redis::getInstance()->getConnect();
         $gloableChannel = Config::getInstance()->getConf('rediskeys.gloable');
         $this->redis->subscribe(array_column($gloableChannel,'0'),function ($redis, $chan, $msg) use ($gloableChannel) {

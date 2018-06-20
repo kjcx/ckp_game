@@ -14,7 +14,7 @@ use Google\Protobuf\Internal\GPBUtil;
 class AddItemReq extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>map<int32, int64> ItemBak = 1;</code>
+     * Generated from protobuf field <code>map<int32, int64> Item = 1;</code>
      */
     private $Item;
 

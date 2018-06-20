@@ -25,6 +25,7 @@ use App\Models\Company\TalentMarketInfo;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\GameConfig;
+use App\Models\Execl\Item;
 use App\Models\Execl\LandInfo;
 use App\Models\Execl\Lotto;
 use App\Models\Execl\Topup;
@@ -32,7 +33,6 @@ use App\Models\Execl\Train;
 use App\Models\Execl\WsResult;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
-use App\Models\Item\ItemBak;
 use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
@@ -498,7 +498,7 @@ class Web extends WebSocketController
         $Data = $this->data;
         $data_SellItemReq = SellItemReq::decode($Data);
         //计算道具所需价格
-        $Item = new ItemBak();
+        $Item = new Item();
         $PriceType  = $Item->getSellItemInfo($data_SellItemReq);
         //出售道具事件
         if($PriceType){
@@ -1338,8 +1338,9 @@ class Web extends WebSocketController
      */
     public function msgid_1053()
     {
-
+        var_dump(1);
         $data = RequestManorReq::decode($this->data);
+        var_dump($data['userId']);
         $land = new Land($data['userId']);
         $landInfo = $land->getLand();
         $string = RequestManorResult::encode($landInfo);
@@ -1357,7 +1358,7 @@ class Web extends WebSocketController
         $string = ManorVisitInfoResult::encode();
         $this->send(1201,$this->fd,$string);
 
-        $this->send(1082,$this->fd,'');
+//        $this->send(1082,$this->fd,'');
     }
 
     /**
@@ -2049,8 +2050,6 @@ class Web extends WebSocketController
     public function msgid_1121()
     {
         $str  = SignResult::encode($this->uid);
-        var_dump('1121');
-        var_dump($str);
         $this->send(1168,$this->fd,$str);
     }
 }

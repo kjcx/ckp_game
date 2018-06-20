@@ -31,6 +31,7 @@ class DataCenter extends Model
      */
     public function init()
     {
+        var_dump("intintintint");
         $key = 'dataCenter:*';
         $keys = $this->redis->keys($key);
         foreach ($keys as $k) {

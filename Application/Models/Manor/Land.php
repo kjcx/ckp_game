@@ -10,7 +10,6 @@ namespace App\Models\Manor;
 use App\Models\BagInfo\Bag;
 use App\Models\Execl\Fram;
 use App\Models\Execl\GameConfig;
-use App\Models\Item\ItemBak;
 use App\Models\Model;
 use App\Models\User\Role;
 use App\Traits\MongoTrait;
@@ -37,7 +36,7 @@ class Land extends Model
         $this->setUid($uid);
         $this->setRoleInfo();
         $this->collection = $this->getMongoClient();
-        $this->item = new ItemBak();
+        $this->item = new \App\Models\Execl\Item();
     }
 
     /**
