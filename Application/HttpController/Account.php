@@ -70,6 +70,7 @@ class Account extends Controller
         if($uid){
             //生产token 并返回
             $token = $Account->crateToken($uid);
+            var_dump($token);
             if($token){
                 $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
                 $this->response()->withHeader("Access-Control-Allow-Origin", "*");
