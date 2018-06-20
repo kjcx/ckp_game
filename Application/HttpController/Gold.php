@@ -12,7 +12,7 @@ use App\Event\ChangeItemSubscriber;
 use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
-use App\Models\Item\Item;
+use App\Models\Item\ItemBak;
 use App\Models\User\RoleBag;
 use App\Protobuf\Result\LoadBagInfo;
 use App\Protobuf\Result\LoadStaffResult;

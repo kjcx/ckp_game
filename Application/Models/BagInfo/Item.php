@@ -12,7 +12,7 @@ use think\Db;
 
 /**
  * 道具类
- * Class Item
+ * Class ItemBak
  * @package App\Models\BagInfo
  */
 class Item extends Model

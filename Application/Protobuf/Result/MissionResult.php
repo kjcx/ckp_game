@@ -12,12 +12,15 @@ class MissionResult
 {
     public static function encode()
     {
+        var_dump(1);
         $MissionResult = new \AutoMsg\MissionResult();
-        $VitalityStatus = $MissionResult->getVitalityStatus();
+//        $VitalityStatus = $MissionResult->getVitalityStatus();
         $VitalityStatus[0] = true;
         $Mission = new Mission();
+        var_dump(2);
         $data = $Mission->getMissionByLevel(0);
-//        var_dump($data);
+        var_dump(3);
+        var_dump($data);
         $arr = [];
         foreach ($data as $datum) {
 //            $Complete = 1;//完成状态
