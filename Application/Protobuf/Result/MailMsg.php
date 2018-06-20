@@ -19,7 +19,7 @@ class MailMsg
     {
         $Id = $item['_id'];
         $Msg = $item['Msg'];
-        $Item = $item['ItemBak'];
+        $Item = $item['Item'];
         $Read = $item['Read'];
         $Reward = $item['Reward'];
         $SenderIcon = $item['SenderIcon'];

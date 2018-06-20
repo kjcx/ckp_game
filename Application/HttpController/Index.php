@@ -51,7 +51,7 @@ class Index extends Controller
         $data['Title'] = 'Title';
         $data['ItemBak'] = [10001=>2];
         $data['Msg'] = 'ceshi';
-        $data['Uid'] = 40;
+        $data['Uid'] = 34;
         $rs = $Mail->createMailMsg($data);
         var_dump($rs);
     }

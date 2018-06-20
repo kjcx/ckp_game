@@ -15,13 +15,11 @@ namespace App\Protobuf\Result;
  */
 class LoadSignInfo
 {
-    public static function ecode($data)
+    public static function encode($data)
     {
         $LoadSignInfo = new \AutoMsg\LoadSignInfo();
-        $Day = $data['Day'];
-        $IsSign = $data['IsSign'];
-        $LoadSignInfo->setDay($Day);
-        $LoadSignInfo->setIsSign($IsSign);
+        $LoadSignInfo->setDay($data['Day']);
+        $LoadSignInfo->setIsSign($data['IsSign']);
         return $LoadSignInfo;
     }
 }

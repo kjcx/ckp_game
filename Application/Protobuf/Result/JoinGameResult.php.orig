@@ -36,7 +36,11 @@ class JoinGameResult
         //设置任务信息
         var_dump("设置任务信息");
         $MissionResult = MissionResult::encode();
+<<<<<<< HEAD
+//        var_dump($MissionResult);
+=======
 
+>>>>>>> 0e155e452aefa4b10b6e155d1ab010271d81251e
         $JoinGameResult->setMission($MissionResult);
          var_dump('背包信息');
 

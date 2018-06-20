@@ -17,7 +17,7 @@ use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use EasySwoole\Core\Swoole\Task\TaskManager;
 use think\Db;
-
+use App\Models\Execl\Item;
 
 class Bag extends Model
 {
@@ -36,7 +36,7 @@ class Bag extends Model
         parent::__construct();
         $this->uid = $uid;
         //依赖进来 但是不需要注入
-        $this->item = new \App\Models\Execl\Item();
+        $this->item = new Item();
         $this->initData = new Init();
         $this->MaxCellNumber = 999;
         $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作

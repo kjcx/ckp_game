@@ -15,5 +15,11 @@ namespace App\Protobuf\Req;
  */
 class SignReq
 {
-
+    public static function decode($string)
+    {
+        $data = [];
+        $obj = new \AutoMsg\SignReq();
+        $obj->mergeFromString($string);
+        return $data;
+    }
 }
