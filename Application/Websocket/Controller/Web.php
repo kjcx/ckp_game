@@ -82,6 +82,7 @@ use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefFitnessReq;
 use App\Protobuf\Req\RefStaffReq;
 use App\Protobuf\Req\RequestManorReq;
+use App\Protobuf\Req\RoomReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
@@ -145,6 +146,7 @@ use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
+use App\Protobuf\Result\RoomResult;
 use App\Protobuf\Result\SalesListResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
@@ -255,6 +257,7 @@ class Web extends WebSocketController
         $data = HarvestPlantReq::decode($this->data);
         $land = new Land($this->uid);
         $res = $land->harvest($data['landId']);
+        var_dump($res);
         if (isset($res['error'])){
             $this->send(1086,$this->fd,0,$res['msg'],12);
         } else {
@@ -2051,5 +2054,15 @@ class Web extends WebSocketController
     {
         $str  = SignResult::encode($this->uid);
         $this->send(1168,$this->fd,$str);
+    }
+
+    /**
+     * 请求
+     */
+    public function msgid_1042()
+    {
+        $data = RoomReq::decode($this->data);
+        $string = RoomResult::encode(['uid' => $this->uid,'roomId' => 1,'config' => []]);
+        $this->send(1042,$this->fd,$string);
     }
 }

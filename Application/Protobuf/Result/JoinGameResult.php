@@ -92,6 +92,14 @@ class JoinGameResult
 
         $Mails = MailResult::encode($data);
         $JoinGameResult->setMails($Mails);
+        //住宅信息 TODO::
+        $data = [
+            ['uid' => $uid,'roomId' => 1,'config' => []],
+            ['uid' => $uid,'roomId' => 2,'config' => []],
+            ['uid' => $uid,'roomId' => 3,'config' => []],
+        ];
+        $roomResult = RoomListResult::encode($data);
+        $JoinGameResult->setRoom($roomResult);
 
         $str = $JoinGameResult->serializeToString();
         return $str;

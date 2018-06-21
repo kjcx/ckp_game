@@ -261,7 +261,6 @@ class Land extends Model
         }
         $seedInfo = $this->item->getItemById($landDetail['SemenId']);
         $seedStatus = time() - $landDetail['PlantDate'];
-
         if (($seedStatus / ($seedInfo['MatureTime'] * 60)) > 1) {
             //成熟
             return self::MatureStage;
