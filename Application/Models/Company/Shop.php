@@ -14,6 +14,7 @@ use App\Models\Execl\Building;
 use App\Models\Execl\BuildingLevel;
 use App\Models\Execl\GameConfig;
 use App\Models\Execl\GameEnum;
+use App\Models\Execl\LandInfo;
 use App\Models\Model;
 use App\Models\User\Role;
 use App\Protobuf\Result\TalentInfo;
@@ -81,6 +82,11 @@ class Shop extends Model
         $dataCompany['CurExtendLv'] = 0;//扩展等级
         $rs = Db::table($this->table)->insert($dataCompany);
         if($rs){
+            if($data['AreaId'] == 1){//私有地区
+                //设置土地状态
+                $LandInfo = new LandInfo();
+                $rs = $LandInfo->setPosStatus($data['Pos'],3);
+            }
             //创建成功 扣除金币
             $data_ShopTypeMoney = $this->getShopTypeMoney($data['ShopType']);
             $Bag = new Bag($uid);

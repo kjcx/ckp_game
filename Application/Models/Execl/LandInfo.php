@@ -208,4 +208,16 @@ class LandInfo extends Model
         $data = Db::table($this->table)->where('Pos','in',$Poss)->select();
         return $data;
     }
+
+    /**
+     * 设置土地状态
+     * @param $Pos
+     * @param int $Status
+     * @return int|string
+     */
+    public function setPosStatus($Pos,$Status=1)
+    {
+        $rs = Db::table($this->table)->where('Pos',$Pos)->update(['Status'=>$Status]);
+        return $rs;
+    }
 }

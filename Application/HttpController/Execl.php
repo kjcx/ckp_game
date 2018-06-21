@@ -513,7 +513,6 @@ class Execl extends Controller
         for($j=4;$j<=$highestRow;$j++) {
             $str = '';
             for ($k = 'A'; $k !='E'; $k++) {
-
                 $str = $spreadsheet->getActiveSheet()->getCell("$k$j")->getValue() . '\\';//读取单元格
                 $this->response()->withHeader("Content-Type","text/html;charset=utf-8");
                 $key = $spreadsheet->getActiveSheet()->getCell("{$k}1")->getValue();
