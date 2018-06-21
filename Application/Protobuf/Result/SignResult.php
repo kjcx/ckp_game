@@ -21,7 +21,7 @@ class SignResult
 
         $SignResult = new \AutoMsg\SignResult();
 
-        for($i=1;$i<=31;$i++){
+        for($i=1;$i<=30;$i++){
             $data[]  = ['Day'=>$i,'IsSign'=>true];
         }
         $LoaSignInfo[date('m',time())] = LoadSignInfoList::encode($data);

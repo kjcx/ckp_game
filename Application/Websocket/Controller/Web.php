@@ -57,6 +57,7 @@ use App\Protobuf\Req\ConsumeReq;
 use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\CultivateEmployeeReq;
+use App\Protobuf\Req\DaySignReq;
 use App\Protobuf\Req\DelMailsReq;
 use App\Protobuf\Req\DestoryBuildReq;
 use App\Protobuf\Req\DismantleReq;
@@ -2064,5 +2065,27 @@ class Web extends WebSocketController
         $data = RoomReq::decode($this->data);
         $string = RoomResult::encode(['uid' => $this->uid,'roomId' => 1,'config' => []]);
         $this->send(1042,$this->fd,$string);
+    }
+
+    /**
+     * 签到请求
+     * return DaySignResult 1169
+     */
+    public function msgid_1122()
+    {
+        $data = $this->data;
+        $data_DaySign = DaySignReq::decode($data);
+        //1判断是否是今天签到
+        $day = date('d',time());
+        //判断是否已经签到
+
+        if($data == $data_DaySign['Day']){
+            //今日签到
+        }else{
+            //补签
+        }
+
+        //返回签到成功
+
     }
 }

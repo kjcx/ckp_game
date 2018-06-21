@@ -127,5 +127,16 @@ class SignInfo extends Model
         var_dump($num);
     }
 
+    /**
+     * 检查是否签到
+     * @param $Uid
+     * @param $Day
+     */
+    public function checkIsSign($Uid,$Day)
+    {
+        $key = $this->key . 'Uid:' . date('m');
+        $this->redis->getBit($key,$Day);
+    }
+
 
 }

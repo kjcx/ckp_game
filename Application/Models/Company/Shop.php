@@ -47,6 +47,9 @@ class Shop extends Model
      */
     public function create($uid,$data)
     {
+        $Role = new Role();
+        $data_role = $Role->getRole($uid);
+        $RoleName = $data_role['nickname'];
         //获取公司名称
         $Company = new Company();
         $CompanyName = $Company->getCompanyName($uid);
@@ -64,6 +67,7 @@ class Shop extends Model
         $dataCompany['Income'] = $data_Building['Income'];//身价
         $dataCompany['OutputItem'] = $data_Building['OutputItem'];//可能掉落的道具
         $dataCompany['CreateTime'] = time();//可能掉落的道具
+        $dataCompany['RoleName'] = $RoleName;//可能掉落的道具
 //        $dataCompany['Area'] = 2;//私有的2 土地竞拍的1
         //员工上线人数
         $BuildingLevel = new BuildingLevel();

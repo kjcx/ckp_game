@@ -34,6 +34,8 @@ class LoadBuildInfo
         $Area= $data['AreaId'];//
         $CurExtendLv= $data['CurExtendLv'];//
         $Income= $data['Income'];//
+        $RoleName= $data['RoleName']?:'';//
+        $Uid= $data['Uid'];//
 //        $CustomerAddtion= $data['CustomerAddtion'];//
 
         $LoadBuildInfo->setBuildId($BuildId);//店铺id
@@ -50,6 +52,8 @@ class LoadBuildInfo
         $LoadBuildInfo->setArea($Area);//代表是公有的还是私有的或者其他
         $LoadBuildInfo->setCurExtendLv($CurExtendLv);//当前扩建等级
         $LoadBuildInfo->setIncome($Income);//店铺身价
+        $LoadBuildInfo->setRoleName($RoleName);
+        $LoadBuildInfo->setRoleId($Uid);
         if(is_array($data['Master'])){
             $Master = $data['Master'];
         }else{
