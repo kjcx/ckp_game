@@ -63,7 +63,7 @@ class Shop extends Model
         $dataCompany['Income'] = $data_Building['Income'];//身价
         $dataCompany['OutputItem'] = $data_Building['OutputItem'];//可能掉落的道具
         $dataCompany['CreateTime'] = time();//可能掉落的道具
-        $dataCompany['Area'] = 2;//私有的2 土地竞拍的1
+//        $dataCompany['Area'] = 2;//私有的2 土地竞拍的1
         //员工上线人数
         $BuildingLevel = new BuildingLevel();
         $data_BuildingLevel = $BuildingLevel->getInfoByLevel(1);
@@ -100,8 +100,9 @@ class Shop extends Model
     public function getShop($uid,$data)
     {
         $ShopType = $data['ShopType'];
+        $AreaId = $data['AreaId'];
         $Pos = $data['Pos'];
-        $data= Db::table($this->table)->where(['Uid'=>$uid,'ShopType'=>$ShopType,'Pos'=>$Pos])->find();
+        $data= Db::table($this->table)->where(['Uid'=>$uid,'ShopType'=>$ShopType,'AreaId'=>$AreaId,'Pos'=>$Pos])->find();
         return $data;
     }
 
@@ -111,9 +112,9 @@ class Shop extends Model
      * @param $Type
      * @return array|false|\PDOStatement|string|\think\Collection
      */
-    public function getAllShop($Uid,$Area=1)
+    public function getAllShop($Uid,$AreaId=1)
     {
-        $data = Db::table($this->table)->where('Uid',$Uid)->where('Area',$Area)->select();
+        $data = Db::table($this->table)->where('Uid',$Uid)->where('AreaId',$AreaId)->select();
         return $data;
 
     }

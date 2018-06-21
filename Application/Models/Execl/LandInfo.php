@@ -24,7 +24,9 @@ class LandInfo extends Model
      */
     public function getTodayLandInfo()
     {
+        var_dump(111);
         $Day = $this->getDay();
+        var_dump($Day);
         $data = Db::table($this->table)->where(['Day'=>(int)$Day])->select();
         return $data;
     }
@@ -34,6 +36,7 @@ class LandInfo extends Model
     public function getDay()
     {
         $num = $this->redis->get('LandauctionDay');
+        var_dump("num" . $num);
         $day_time = $this->redis->ttl('LandauctionDay');
         if(!$num){
             //生产20*20土地
