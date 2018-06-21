@@ -8,7 +8,6 @@
 
 namespace App\Protobuf\Result;
 use App\Models\Execl\LandInfo;
-use App\Models\LandInfo\MyLandInfo;
 
 /**
  * 获取今日竞拍土地返回
@@ -19,6 +18,7 @@ class GetAuctionLandResult
 {
     public static function encode()
     {
+
         $AuctionLandList = [];
         $GetAuctionLandResult = new \AutoMsg\GetAuctionLandResult();
         $LandInfoDay = new LandInfo();

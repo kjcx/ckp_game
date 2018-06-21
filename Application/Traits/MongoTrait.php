@@ -28,7 +28,7 @@ trait MongoTrait
 
         if (isset($this->mongoTable) && strpos($this->mongoTable,'.') !== false) {
             return $this->mongo->selectDatabase(explode('.',$this->mongoTable)['0'])
-                                            ->selectCollection(explode('.',$this->mongoTable)['1']);
+                ->selectCollection(explode('.',$this->mongoTable)['1']);
         }
 
 
