@@ -9,7 +9,7 @@
 namespace App\Models\Staff;
 
 
-use App\Models\Execl\Lotto;
+use App\Models\Excel\Lotto;
 use App\Models\Model;
 use think\Db;
 

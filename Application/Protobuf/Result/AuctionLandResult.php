@@ -8,7 +8,7 @@
 
 namespace App\Protobuf\Result;
 
-use App\Models\Execl\LandInfo;
+use App\Models\Excel\LandInfo;
 
 /**
  * 竞拍请求返回 2008

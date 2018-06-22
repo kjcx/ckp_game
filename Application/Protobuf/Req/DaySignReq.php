@@ -20,6 +20,7 @@ class DaySignReq
         $DaySignReq = new \AutoMsg\DaySignReq();
         $DaySignReq->mergeFromString($data);
         $Day = $DaySignReq->getDay();
-        return ['Day'=>$Day];
+        $arr = ['Day'=>$Day];
+        return  $arr;
     }
 }

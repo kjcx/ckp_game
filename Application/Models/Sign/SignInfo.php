@@ -110,9 +110,48 @@ class SignInfo extends Model
         $Day = date('d',time());
         $arr = $this->redis->setBit($this->key . $Uid . $Month,$Day,1);
     }
-    public function getSignCount()
+
+    /**
+     * 获取每个人当前月签到情况
+     * @param $Uid
+     * @return array
+     */
+    public function getSignMonthInfoByUid($Uid)
     {
-        
+        $key = $this->key . $Uid . ':' . date('Ym');
+        $t = date('t',time());
+        $list = [];
+        $Seven = false;
+        $Fourteen = false;
+        $Twenty_one = false;
+        $Twenty_eight = false;
+        for ($i=1;$i<= $t;$i++){
+            $count = 0;
+            $IsSign = $this->redis->getBit($key,$i);
+            $bool  =false;
+            if($IsSign){
+                $bool = true;
+                $count++;
+                if($count == 7){
+                    $Seven = true;
+                }elseif($count == 14){
+                    $Fourteen = true;
+                }elseif($count == 21){
+                    $Twenty_one = true;
+                }elseif($count == 28){
+                    $Twenty_eight = true;
+                }
+            }else{
+                $count = 0;
+            }
+            $data[]  = ['Day'=>$i,'IsSign'=>$bool];
+        }
+        $list['data'] = $data;
+        $list['101'] = $Seven;
+        $list['102'] = $Fourteen;
+        $list['103'] = $Twenty_one;
+        $list['104'] = $Twenty_eight;
+        return $list;
     }
 
     /**
@@ -131,12 +170,26 @@ class SignInfo extends Model
      * 检查是否签到
      * @param $Uid
      * @param $Day
+     * @return int
      */
     public function checkIsSign($Uid,$Day)
     {
-        $key = $this->key . 'Uid:' . date('m');
-        $this->redis->getBit($key,$Day);
+        $key = $this->key . $Uid .':' . date('Ym');
+        $rs = $this->redis->getBit($key,$Day);
+        return $rs;
     }
 
+    /**
+     * 设置签名
+     * @param $Uid
+     * @param $Day
+     * @return int
+     */
+    public function setIsSignByUid($Uid,$Day)
+    {
+        $key = $this->key . $Uid . ':' . date('Ym');
+        $rs = $this->redis->setBit($key,$Day,1);
+        return $rs;
+    }
 
 }

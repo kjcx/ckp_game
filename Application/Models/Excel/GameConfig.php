@@ -6,7 +6,7 @@
  * Time: 下午8:17
  */
 
-namespace App\Models\Execl;
+namespace App\Models\Excel;
 
 
 use App\Models\Model;
@@ -102,5 +102,15 @@ class GameConfig extends Model
         $data_GameConfig = $this->getInfoByField('MailNpcHead');
         $MailNpcHead = $data_GameConfig['value'];
         return $MailNpcHead;
+    }
+
+    /**
+     * 补签到
+     */
+    public function getSignGold()
+    {
+        $data_GameConfig = $this->getInfoByField('SignGold');
+        $SignGold = $data_GameConfig['value'];
+        return $SignGold;
     }
 }

@@ -6,7 +6,7 @@
  * Time: 下午1:11
  */
 namespace App\Protobuf\Result;
-use App\Models\Execl\Mission;
+use App\Models\Excel\Mission;
 
 class MissionResult
 {

@@ -7,7 +7,7 @@
  */
 namespace App\Models\User;
 use App\Models\BagInfo\Bag;
-use App\Models\Execl\Character;
+use App\Models\Excel\Character;
 use App\Models\Model;
 
 class Role extends Model

@@ -16,21 +16,21 @@ use App\Event\ItemResultEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\UserEvent;
 use App\Models\DataCenter\DataCenter;
-use App\Models\Execl\Building;
-use App\Models\Execl\BuildingLevel;
-use App\Models\Execl\Character;
-use App\Models\Execl\Drop;
-use App\Models\Execl\Fruits;
-use App\Models\Execl\GameConfig;
-use App\Models\Execl\Lotto;
-use App\Models\Execl\Mission;
-use App\Models\Execl\Randomname;
-use App\Models\Execl\Staff;
-use App\Models\Execl\Topup;
-use App\Models\Execl\Train;
-use App\Models\Execl\WsResult;
+use App\Models\Excel\Building;
+use App\Models\Excel\BuildingLevel;
+use App\Models\Excel\Character;
+use App\Models\Excel\Drop;
+use App\Models\Excel\Fruits;
+use App\Models\Excel\GameConfig;
+use App\Models\Excel\Lotto;
+use App\Models\Excel\Mission;
+use App\Models\Excel\Randomname;
+use App\Models\Excel\Staff;
+use App\Models\Excel\Topup;
+use App\Models\Excel\Train;
+use App\Models\Excel\WsResult;
 use App\Models\Test\Event;
-use App\Models\Execl\GameEnum;
+use App\Models\Excel\GameEnum;
 use App\Models\Trade\Shop;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
@@ -49,6 +49,8 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Execl extends Controller
 {
+    public $key;
+    public $msg;
     /**
      * 掉落库
      */
@@ -472,7 +474,7 @@ class Execl extends Controller
         $highestRow = $sheet->getHighestRow(); // 取得总行数
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
         $num = 0;
-        $Item = new \App\Models\Execl\Item();
+        $Item = new \App\Models\Excel\Item();
         for($j=4;$j<=$highestRow;$j++) {
             $str = '';
             for ($k = 'A'; $k !='AE'; $k++) {

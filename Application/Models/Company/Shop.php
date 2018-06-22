@@ -10,11 +10,11 @@ namespace App\Models\Company;
 
 
 use App\Models\BagInfo\Bag;
-use App\Models\Execl\Building;
-use App\Models\Execl\BuildingLevel;
-use App\Models\Execl\GameConfig;
-use App\Models\Execl\GameEnum;
-use App\Models\Execl\LandInfo;
+use App\Models\Excel\Building;
+use App\Models\Excel\BuildingLevel;
+use App\Models\Excel\GameConfig;
+use App\Models\Excel\GameEnum;
+use App\Models\Excel\LandInfo;
 use App\Models\Model;
 use App\Models\User\Role;
 use App\Protobuf\Result\TalentInfo;

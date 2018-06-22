@@ -10,7 +10,7 @@
 namespace App\Models\Store;
 
 use App\Models\BagInfo\Bag;
-use App\Models\Execl\Drop;
+use App\Models\Excel\Drop;
 use App\Models\Model;
 use App\Models\Trade\Shop;
 use App\Traits\MongoTrait;

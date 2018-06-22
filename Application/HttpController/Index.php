@@ -13,8 +13,9 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\DataCenter\DataCenter;
-use App\Models\Execl\GameConfig;
-use App\Models\Execl\LandInfo;
+use App\Models\Excel\GameConfig;
+use App\Models\Excel\Item;
+use App\Models\Excel\LandInfo;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\LandInfo\MyLandInfo;
@@ -45,14 +46,10 @@ class Index extends Controller
      */
     public function index()
     {
-        $Mail = new MailMsg();
-        $GameConfig = new GameConfig();
-        $data['Title'] = 'Title';
-        $data['Item'] = [10001=>2];
-        $data['Msg'] = 'ceshi';
-        $data['Uid'] = 34;
-        $rs = $Mail->createMailMsg($data);
-        var_dump($rs);
+
+       $rs = new Item();
+        $data = $rs->getOne();
+        var_dump($data);
     }
     public function rand_str()
     {

@@ -7,7 +7,7 @@
  */
 
 namespace App\Protobuf\Result;
-use App\Models\Execl\LandInfo;
+use App\Models\Excel\LandInfo;
 
 /**
  * 获取今日竞拍土地返回
@@ -23,6 +23,7 @@ class GetAuctionLandResult
         $GetAuctionLandResult = new \AutoMsg\GetAuctionLandResult();
         $LandInfoDay = new LandInfo();
         $data = $LandInfoDay->getTodayLandInfo();
+        var_dump($data);
         $AuctionLandList = [];
         if($data){
             foreach($data as $k =>$v){

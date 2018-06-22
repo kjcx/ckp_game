@@ -17,7 +17,7 @@ use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use EasySwoole\Core\Swoole\Task\TaskManager;
 use think\Db;
-use App\Models\Execl\Item;
+use App\Models\Excel\Item;
 
 class Bag extends Model
 {

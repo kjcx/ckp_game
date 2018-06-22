@@ -6,7 +6,7 @@
  * Time: 下午7:27
  */
 
-namespace App\Models\Execl;
+namespace App\Models\Excel;
 
 
 use App\Models\Model;

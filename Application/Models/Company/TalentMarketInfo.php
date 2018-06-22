@@ -9,7 +9,7 @@
 namespace App\Models\Company;
 
 
-use App\Models\Execl\GameConfig;
+use App\Models\Excel\GameConfig;
 use App\Models\Model;
 use think\Db;
 

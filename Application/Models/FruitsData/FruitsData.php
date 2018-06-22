@@ -9,8 +9,8 @@
 namespace App\Models\FruitsData;
 
 
-use App\Models\Execl\Drop;
-use App\Models\Execl\Fruits;
+use App\Models\Excel\Drop;
+use App\Models\Excel\Fruits;
 use App\Models\Model;
 use think\Db;
 

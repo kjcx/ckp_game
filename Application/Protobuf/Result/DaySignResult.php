@@ -8,12 +8,20 @@
 
 namespace App\Protobuf\Result;
 
-
+/**
+ * 签到返回 1169
+ * Class DaySignResult
+ * @package App\Protobuf\Result
+ */
 class DaySignResult
 {
-    public static function encode()
+    public static function encode($data)
     {
         $DaySignResult = new \AutoMsg\DaySignResult();
-        $DaySignResult->setLoaSignInfo();
+        $LoaSignInfo[date('m',time())] = LoadSignInfo::encode($data);
+        $DaySignResult->setLoaSignInfo($LoaSignInfo);
+        $str = $DaySignResult->serializeToString();
+        return $str;
+
     }
 }

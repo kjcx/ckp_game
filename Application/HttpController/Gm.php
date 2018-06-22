@@ -9,7 +9,7 @@
 namespace App\HttpController;
 
 use App\Models\BagInfo\Bag;
-use App\Models\Execl\Item;
+use App\Models\Excel\Item;
 use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use App\Utility\Mysql;

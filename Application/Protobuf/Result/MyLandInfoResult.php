@@ -8,7 +8,7 @@
 
 namespace App\Protobuf\Result;
 
-use App\Models\Execl\LandInfo;
+use App\Models\Excel\LandInfo;
 
 /**
  * 我的土地竞拍
