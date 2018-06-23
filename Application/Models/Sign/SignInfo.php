@@ -16,6 +16,7 @@ class SignInfo extends Model
 {
     public $table = 'ckzc.SignInfo';
     public $key  = 'Sign:';
+    public $Reward  = 'Reward:';
     /**
      * 创建每月信息
      */
@@ -62,25 +63,6 @@ class SignInfo extends Model
     }
 
     /**
-     * @param $Uid
-     * @return mixed
-     */
-    public function getRedisSign($Uid)
-    {
-        $arr = $this->redis->setBit($this->key.$Uid.':'.date("Y-m",time()),date('d',time()),1);
-        return;
-        $rs =  $this->checkSignKey($Uid);
-        if(!$rs){
-            $rs = $this->create($Uid);
-        }
-        $month = date('M',time());
-        $hashkey = $month . "*";
-        $arr = $this->redis->setBit($this->key.$Uid.':'.date("Y-m",time()),date('d',time()));
-        var_dump($arr);
-        return $arr;
-    }
-
-    /**
      * 检查签收数据是否存在
      * @param $Uid
      * @return bool
@@ -95,28 +77,12 @@ class SignInfo extends Model
         }
     }
 
-    public function getSign($Uid)
-    {
-        $Month = date('m',time());
-        $Day = date('d',time());
-        $value = $this->redis->get($this->key . $Uid . $Month);
-        $bitmap = unpack('C*', $value);
-        var_dump($bitmap);
-    }
-
-    public function setSign($Uid)
-    {
-        $Month = date('m',time());
-        $Day = date('d',time());
-        $arr = $this->redis->setBit($this->key . $Uid . $Month,$Day,1);
-    }
-
     /**
      * 获取每个人当前月签到情况
      * @param $Uid
      * @return array
      */
-    public function getSignMonthInfoByUid($Uid)
+    public function getRedisSignMonthInfoByUid($Uid)
     {
         $key = $this->key . $Uid . ':' . date('Ym');
         $t = date('t',time());
@@ -125,6 +91,7 @@ class SignInfo extends Model
         $Fourteen = false;
         $Twenty_one = false;
         $Twenty_eight = false;
+        $data = [];
         for ($i=1;$i<= $t;$i++){
             $count = 0;
             $IsSign = $this->redis->getBit($key,$i);
@@ -132,13 +99,13 @@ class SignInfo extends Model
             if($IsSign){
                 $bool = true;
                 $count++;
-                if($count == 7){
+                if($count == 7){//判断是否满足连续7天签到
                     $Seven = true;
-                }elseif($count == 14){
+                }elseif($count == 14){//判断是否满足连续14天签到
                     $Fourteen = true;
-                }elseif($count == 21){
+                }elseif($count == 21){//判断是否满足连续21天签到
                     $Twenty_one = true;
-                }elseif($count == 28){
+                }elseif($count == 28){//判断是否满足连续28天签到
                     $Twenty_eight = true;
                 }
             }else{
@@ -147,23 +114,24 @@ class SignInfo extends Model
             $data[]  = ['Day'=>$i,'IsSign'=>$bool];
         }
         $list['data'] = $data;
-        $list['101'] = $Seven;
-        $list['102'] = $Fourteen;
-        $list['103'] = $Twenty_one;
-        $list['104'] = $Twenty_eight;
+        //获取已领取奖励列表
+        $Reward = $this->getRedisRewardByUid($Uid);
+        if($Reward){
+            $IsSign_Seven = $Reward['Seven'];//判断7天签到奖励是否领取
+            $IsSign_Fourteen = $Reward['IsSign_Fourteen'];//判断14天签到奖励是否领取
+            $IsSign_Twenty_one = $Reward['IsSign_Twenty_one'];//判断2`天签到奖励是否领取
+            $IsSign_Twenty_eight = $Reward['IsSign_Twenty_eight'];//判断18天签到奖励是否领取
+        }else{
+            $IsSign_Seven = false;
+            $IsSign_Fourteen = false;
+            $IsSign_Twenty_one = false;
+            $IsSign_Twenty_eight = false;
+        }
+        $list['101'] = [['Day'=>0,'IsSign'=>$IsSign_Seven]];
+        $list['102'] = [['Day'=>0,'IsSign'=>$IsSign_Fourteen]];
+        $list['103'] = [['Day'=>0,'IsSign'=>$IsSign_Twenty_one]];
+        $list['104'] = [['Day'=>0,'IsSign'=>$IsSign_Twenty_eight]];
         return $list;
-    }
-
-    /**
-     * 获取本月签到数据
-     * @param $Uid
-     */
-    public function getSignMonthCount($Uid)
-    {
-        $month = ':' . date('m',time());
-        $num = $this->redis->bitCount($this->key . $Uid . $month);
-        var_dump($num);
-        var_dump($num);
     }
 
     /**
@@ -180,7 +148,7 @@ class SignInfo extends Model
     }
 
     /**
-     * 设置签名
+     * 设置签到
      * @param $Uid
      * @param $Day
      * @return int
@@ -192,4 +160,39 @@ class SignInfo extends Model
         return $rs;
     }
 
+    /**
+     * 获取用户当前月签到信息
+     * @param $Uid
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getSignMonthInfoByUid($Uid)
+    {
+        $data = Db::table($this->table)->where('Uid',$Uid)->where('Date',date('Ym'))->find();
+        return $data;
+    }
+
+    /**
+     * 设置奖励是否领取
+     * @param $Uid
+     * @param $Num
+     * @return bool|int
+     */
+    public function setRedisRewardByUid($Uid,$Num)
+    {
+        $key = $this->Reward . date('Ym') . $Uid;
+        $rs = $this->redis->hSet($key,$Num,true);
+        return $rs;
+    }
+
+    /**
+     * 获取用户领取奖励情况
+     * @param $Uid
+     * @return array
+     */
+    public function getRedisRewardByUid($Uid)
+    {
+        $key = $this->Reward . date('Ym') . $Uid;
+        $data = $this->redis->hGetAll($key);
+        return $data;
+    }
 }

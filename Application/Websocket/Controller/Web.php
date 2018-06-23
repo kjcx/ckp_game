@@ -33,6 +33,7 @@ use App\Models\Excel\Train;
 use App\Models\Excel\WsResult;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
+use App\Models\Log\Pay;
 use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
@@ -79,6 +80,7 @@ use App\Protobuf\Req\HarvestPlantReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
+use App\Protobuf\Req\PickUpSevenDaysReq;
 use App\Protobuf\Req\ReadMailReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefFitnessReq;
@@ -141,6 +143,7 @@ use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\OnGetMyGoodsResult;
+use App\Protobuf\Result\PickUpSevenDaysResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RandManorResult;
 use App\Protobuf\Result\ReadMailResult;
@@ -625,12 +628,16 @@ class Web extends WebSocketController
         if($res['code'] == 200){
             //充值成功
             //背包金额增加
-            $rolebag = new RoleBag();
             $Bag = new Bag($this->uid);
-            $Bag->addBag(2,$data_Topup['Gold']);
-            //返回充值成功
-            $data  = CkPayResult::encode(true);
-            $this->send(1224,$this->fd,$data);
+            $rs = $Bag->addBag(2,$data_Topup['Gold']);
+            if($rs){
+                $Pay = new Pay();
+                $Pay->create(['Uid'=>$this->uid,'Gold'=>$data_Topup['Gold'],'CreateTime'=>time()]);
+                //返回充值成功
+                $data  = CkPayResult::encode(true);
+                $this->send(1224,$this->fd,$data);
+            }
+
         }else{
             //充值失败
             $data  = CkPayResult::encode(false);
@@ -2103,5 +2110,27 @@ class Web extends WebSocketController
         //返回签到成功
         $str = DaySignResult::encode(['Day'=>$data_DaySign['Day'],'IsSign'=>true]);
         $this->send(1169,$this->fd,$str);
+    }
+
+    /**
+     * 领取奖励
+     * return 1167 PickUpSevenDaysResult
+     */
+    public function msgid_1120()
+    {
+        $data = $this->data;
+        $data_day = PickUpSevenDaysReq::decode($data);
+        var_dump($data_day);
+        //1 判断奖励是否领取
+        $SignInfo = new SignInfo();
+        $Info = $SignInfo->getRedisRewardByUid($this->uid);
+        if($Info[$data_day['Id']]){
+            //已经领取
+            $this->send(1167,$this->fd,'','奖励已领取');
+        }else{
+            //领取奖励
+            $str = PickUpSevenDaysResult::encode($data_day);
+            $this->send(1167,$this->fd,$str);
+        }
     }
 }

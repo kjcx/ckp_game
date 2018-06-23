@@ -22,31 +22,13 @@ class SignResult
 
         $SignResult = new \AutoMsg\SignResult();
         $SignInfo = new SignInfo();
-        $data = $SignInfo->getSignMonthInfoByUid($uid);
+        $data = $SignInfo->getRedisSignMonthInfoByUid($uid);
         $LoaSignInfo[date('m',time())] = LoadSignInfoList::encode($data['data']);
+        $LoaSignInfo[101] = LoadSignInfoList::encode($data[101]);
+        $LoaSignInfo[102] = LoadSignInfoList::encode($data[102]);
+        $LoaSignInfo[103] = LoadSignInfoList::encode($data[103]);
+        $LoaSignInfo[104] = LoadSignInfoList::encode($data[104]);
 
-        if($data[101]){
-
-            $LoaSignInfo[101] = LoadSignInfoList::encode([['Day'=>7,'IsSign'=>true]]);
-        }else{
-            $LoaSignInfo[101] = LoadSignInfoList::encode([['Day'=>7,'IsSign'=>false]]);
-        }
-        if($data[102]){
-            $LoaSignInfo[102] = LoadSignInfoList::encode([['Day'=>14,'IsSign'=>true]]);
-        }else{
-            $LoaSignInfo[102] = LoadSignInfoList::encode([['Day'=>14,'IsSign'=>false]]);
-        }
-        if($data[103]){
-            $LoaSignInfo[103] = LoadSignInfoList::encode([['Day'=>21,'IsSign'=>true]]);
-        }else{
-            $LoaSignInfo[103] = LoadSignInfoList::encode([['Day'=>21,'IsSign'=>false]]);
-        }
-
-        if($data[104]){
-            $LoaSignInfo[104] = LoadSignInfoList::encode([['Day'=>28,'IsSign'=>true]]);
-        }else{
-            $LoaSignInfo[104] = LoadSignInfoList::encode([['Day'=>28,'IsSign'=>false]]);
-        }
         $SignResult->setLoaSignInfo($LoaSignInfo);
         $str = $SignResult->serializeToString();
         return $str;
