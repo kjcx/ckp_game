@@ -14,7 +14,7 @@ use think\Db;
 /**
  * 店铺等级
  * Class BuildingLevel
- * @package App\Models\Execl
+ * @package App\Models\Excel
  */
 class BuildingLevel extends Model
 {

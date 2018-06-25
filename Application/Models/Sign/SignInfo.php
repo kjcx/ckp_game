@@ -113,7 +113,7 @@ class SignInfo extends Model
             }
             $data[]  = ['Day'=>$i,'IsSign'=>$bool];
         }
-        $list['data'] = $data;
+//        $list['data'] = $data;
         //获取已领取奖励列表
         $Reward = $this->getRedisRewardByUid($Uid);
         if($Reward){
@@ -127,11 +127,11 @@ class SignInfo extends Model
             $IsSign_Twenty_one = false;
             $IsSign_Twenty_eight = false;
         }
-        $list['101'] = [['Day'=>0,'IsSign'=>$IsSign_Seven]];
-        $list['102'] = [['Day'=>0,'IsSign'=>$IsSign_Fourteen]];
-        $list['103'] = [['Day'=>0,'IsSign'=>$IsSign_Twenty_one]];
-        $list['104'] = [['Day'=>0,'IsSign'=>$IsSign_Twenty_eight]];
-        return $list;
+        $data[] = ['Day'=>101,'IsSign'=>$IsSign_Seven];
+        $data[] = ['Day'=>102,'IsSign'=>$IsSign_Fourteen];
+        $data[] = ['Day'=>103,'IsSign'=>$IsSign_Twenty_one];
+        $data[] = ['Day'=>104,'IsSign'=>$IsSign_Twenty_eight];
+        return $data;
     }
 
     /**
@@ -157,7 +157,11 @@ class SignInfo extends Model
     {
         $key = $this->key . $Uid . ':' . date('Ym');
         $rs = $this->redis->setBit($key,$Day,1);
-        return $rs;
+        if($rs == 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**

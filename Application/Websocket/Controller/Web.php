@@ -28,6 +28,7 @@ use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
 use App\Models\Excel\Lotto;
+use App\Models\Excel\Sign;
 use App\Models\Excel\Topup;
 use App\Models\Excel\Train;
 use App\Models\Excel\WsResult;
@@ -2093,7 +2094,10 @@ class Web extends WebSocketController
             //今日签到
             $rs = $SignInfo->checkIsSign($this->uid,$data_DaySign['Day']);
             if(!$rs){
-                $SignInfo->setIsSignByUid($this->uid,$data_DaySign['Day']);
+                $Sign = $SignInfo->setIsSignByUid($this->uid,$data_DaySign['Day']);
+            }else{
+                var_dump("今日已签到");
+                return;
             }
         }else{
             //补签
@@ -2102,14 +2106,35 @@ class Web extends WebSocketController
             $Bag = new Bag($this->uid);
             $rs = $Bag->delBag(6,$data_price);
             if($rs){
-                $rs = $SignInfo->setIsSignByUid($this->uid,$data_DaySign['Day']);
+                $Sign = $SignInfo->setIsSignByUid($this->uid,$data_DaySign['Day']);
             }else{
                 var_dump("扣款失败");
+                return;
             }
         }
-        //返回签到成功
-        $str = DaySignResult::encode(['Day'=>$data_DaySign['Day'],'IsSign'=>true]);
-        $this->send(1169,$this->fd,$str);
+        var_dump($Sign);
+        if($Sign){
+            //赠送道具
+            $Excel_Sign = new Sign();
+            $Reward = $Excel_Sign->getReward($data_DaySign['Day']);
+            var_dump($Reward);
+            if($Reward){
+                $Bag = new Bag($this->uid);
+                $rs = $Bag->addBag($Reward['ItemId'],$Reward['Count']);
+                if(!$rs){
+                    var_dump("签到赠送道具失败");
+                }
+            }else{
+                var_dump("获取签到奖励失败");
+            }
+            //返回签到成功
+            $str = DaySignResult::encode(['Day'=>$data_DaySign['Day'],'IsSign'=>true]);
+            $this->send(1169,$this->fd,$str);
+        }else{
+            var_dump("签到失败");
+            return;
+        }
+
     }
 
     /**

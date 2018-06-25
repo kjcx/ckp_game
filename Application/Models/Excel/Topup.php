@@ -13,7 +13,7 @@ use think\Db;
 /**
  * 充值金额列表
  * Class Topup
- * @package App\Models\Execl
+ * @package App\Models\Excel
  */
 class Topup extends Model
 {

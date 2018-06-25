@@ -13,7 +13,7 @@ use think\Db;
 /**
  * 任务
  * Class Mission
- * @package App\Models\Execl
+ * @package App\Models\Excel
  */
 class Mission extends Model
 {

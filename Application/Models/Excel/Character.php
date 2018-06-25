@@ -15,7 +15,7 @@ use think\Db;
 /**
  * 默认角色信息
  * Class Character
- * @package App\Models\Execl
+ * @package App\Models\Excel
  */
 class Character extends Model
 {
