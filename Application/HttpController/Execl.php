@@ -56,7 +56,7 @@ class Execl extends Controller
      */
     public function ExeclDrop()
     {
-        $file_temp = 'Execl/Drop.xlsx';
+        $file_temp = 'Excel/Drop.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
@@ -86,7 +86,7 @@ class Execl extends Controller
     public function Execl_GameEnum()
     {
 
-        $file_temp = 'Execl/_GameEnum.xlsx';
+        $file_temp = 'Excel/_GameEnum.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
@@ -155,7 +155,7 @@ class Execl extends Controller
     //角色默认信息
     public function Execl_Character()
     {
-        $file_temp = 'Execl/Character.xlsx';
+        $file_temp = 'Excel/Character.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
@@ -183,7 +183,7 @@ class Execl extends Controller
 
     public function Execl_Topup()
     {
-        $file_temp = 'Execl/Topup.xlsx';
+        $file_temp = 'Excel/Topup.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
@@ -221,7 +221,7 @@ class Execl extends Controller
 
     public function Execl_Mission()
     {
-        $file_temp = 'Execl/Building.xlsx';
+        $file_temp = 'Excel/Building.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
@@ -255,7 +255,7 @@ class Execl extends Controller
      */
     public function Execl_Building()
     {
-        $file_temp = 'Execl/Building.xlsx';
+        $file_temp = 'Excel/Building.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 
@@ -289,7 +289,7 @@ class Execl extends Controller
      */
     public function Execl_BuildingLevel()
     {
-        $file_temp = 'Execl/BuildingLevel.xlsx';
+        $file_temp = 'Excel/BuildingLevel.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 
@@ -323,7 +323,7 @@ class Execl extends Controller
      */
     public function Execl_Lotto()
     {
-        $file_temp = 'Execl/Lotto.xlsx';
+        $file_temp = 'Excel/Lotto.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 
@@ -358,7 +358,7 @@ class Execl extends Controller
      */
     public function Execl_GameConfig()
     {
-        $file_temp = 'Execl/_GameConfig.xlsx';
+        $file_temp = 'Excel/_GameConfig.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 
@@ -392,7 +392,7 @@ class Execl extends Controller
      */
     public function Execl_Staff()
     {
-        $file_temp = 'Execl/Staff.xlsx';
+        $file_temp = 'Excel/Staff.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 
@@ -429,7 +429,7 @@ class Execl extends Controller
      */
     public function Execl_Train()
     {
-        $file_temp = 'Execl/Train.xlsx';
+        $file_temp = 'Excel/Train.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 
@@ -466,7 +466,7 @@ class Execl extends Controller
      */
     public function Execl_Item()
     {
-        $file_temp = 'Execl/Item.xlsx';
+        $file_temp = 'Excel/Item.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
@@ -503,7 +503,7 @@ class Execl extends Controller
      */
     public function Execl_Fruits()
     {
-        $file_temp = 'Execl/Fruits.xlsx';
+        $file_temp = 'Excel/Fruits.xlsx';
         $spreadsheet = IOFactory::load($file_temp);
         $sheet = $spreadsheet->getSheet(0);
 //        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);

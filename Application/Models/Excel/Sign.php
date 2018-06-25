@@ -13,7 +13,7 @@ use think\Db;
 /**
  * 签到表
  * Class Sign
- * @package App\Models\Execl
+ * @package App\Models\Excel
  */
 class Sign extends Model
 {
@@ -26,7 +26,16 @@ class Sign extends Model
      */
     public function getReward($Day)
     {
-        $data = Db::table($this->table)->where('Month',date('m'))->where('Day',$Day)->find();
-        return $data;
+        var_dump(date('M'));
+        var_dump($Day);
+        $data = Db::table($this->table)->where('Month',date('M'))->where('Day',$Day)->find();
+        var_dump($data);
+
+        if($data){
+            $res = explode(',',$data);
+            return ['ItemId'=>$res[0],'Count'=>$res[1]];
+        }else{
+            return  [];
+        }
     }
 }
