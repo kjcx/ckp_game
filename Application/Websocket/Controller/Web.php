@@ -30,6 +30,7 @@ use App\Models\Excel\LandInfo;
 use App\Models\Excel\Lotto;
 use App\Models\Excel\Sign;
 use App\Models\Excel\Topup;
+use App\Models\Excel\TotalRewards;
 use App\Models\Excel\Train;
 use App\Models\Excel\WsResult;
 use App\Models\FriendInfo\FriendInfo;
@@ -1224,20 +1225,36 @@ class Web extends WebSocketController
             $BuildingLevel = new BuildingLevel();
             $UpdateLevel = $Level + 1;
             $data_BuildingLevel = $BuildingLevel->getInfoByLevel($UpdateLevel);
-            $UpgradeCost = $data_BuildingLevel['UpgradeCost'];
-            $data_UpgradeCost = explode(',',$UpgradeCost);
+            $UpgradeCost = $data_BuildingLevel['UpgradeCost'];//升级需要扣费
+            //所需道具
+            $data_NeedItems = $BuildingLevel->getNeedItems($data_BuildingLevel['NeedItems'],$data_Shop['ShopType']);
             $Bag = new Bag($this->uid);
-            $Count = $Bag->getCountByItemId($data_UpgradeCost[0]);
-            if($Count>= $data_UpgradeCost[1]){
-                //金币足够 执行升级动作
-                $rs = $Shop->UpdateLevel($Id,$data_BuildingLevel);
-                if($rs){
-                    $str = BuildLvUpResult::encode($this->uid);
-                    $this->send(1004,$this->fd,$str);
+            $bool = false;
+            foreach ($data_NeedItems as $data_NeedItem) {
+                $bool = $Bag->checkCountByItemId($data_NeedItem['ItemId'],$data_NeedItem['Count']);
+                if(!$bool){
+                    var_dump("道具数量不足");
+                    $this->send(1004,$this->fd,'','道具数量不足');
+                    return;
+                }
+            }
+            if($bool){
+                $data_UpgradeCost = explode(',',$UpgradeCost);
+                $Count = $Bag->getCountByItemId($data_UpgradeCost[0]);
+                if($Count>= $data_UpgradeCost[1]){
+                    //金币足够 执行升级动作
+                    $rs = $Shop->UpdateLevel($Id,$data_BuildingLevel);
+                    if($rs){
+                        $str = BuildLvUpResult::encode($Id);
+                        $this->send(1004,$this->fd,$str);
+                    }
+                }else{
+                    $this->send(1004,$this->fd,'','没有足够的金钱');
                 }
             }else{
-                $this->send(1004,$this->fd,'','没有足够的金钱');
+                return;
             }
+
         }
 
     }
@@ -2163,6 +2180,15 @@ class Web extends WebSocketController
             $this->send(1167,$this->fd,'','奖励已领取');
         }else{
             //领取奖励
+            $TotalRewards = new TotalRewards();
+            $list = $TotalRewards->getRewardByNeedDays($data_day['Id']);
+            if($list){
+                $Bag = new Bag($this->uid);
+                foreach ($list as $item) {
+                    $rs = $Bag->addBag($item['ItemId'],$item['Count']);
+                }
+                $SignInfo->setRedisRewardByUid($this->uid,$data_day['Id']);
+            }
             $str = PickUpSevenDaysResult::encode($data_day);
             $this->send(1167,$this->fd,$str);
         }

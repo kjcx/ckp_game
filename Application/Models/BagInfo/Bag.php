@@ -393,5 +393,21 @@ class Bag extends Model
         }
         return $Count;
     }
-    
+
+    /**
+     * 验证道具数量是否满足
+     * @param $ItemId
+     * @param $Count
+     * @return bool
+     */
+    public function checkCountByItemId($ItemId,$Count)
+    {
+        $num = $this->getCountByItemId($ItemId);
+        if($num >= $Count){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
 }

@@ -7,6 +7,7 @@
  */
 
 namespace App\Protobuf\Result;
+
 use App\Models\Excel\GameConfig;
 
 /** 加载用户的数据信息
@@ -39,7 +40,6 @@ class LoadRefStaff
           //  var_dump(15 - $data['TrainNum']);
             $GameConfig = new GameConfig();
             $MaxTrainTime = $GameConfig->getMaxTrainTime();
-
             $LoadRefStaff->setComprehensionTime($ComprehensionTime - $data['TrainNum']);//总剩余可培训次数
             $LoadRefStaff->setAppointed($Appointed);//是否已任职
             $LoadRefStaff->setBasicProperties($BasicProperties);//基础属性：

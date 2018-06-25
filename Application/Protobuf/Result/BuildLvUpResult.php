@@ -14,10 +14,10 @@ use App\Models\LoadData\LandBuildInfo;
 
 class BuildLvUpResult
 {
-    public static function encode($uid)
+    public static function encode($ShopId)
     {
         $BuildLvUpResult = new \AutoMsg\BuildLvUpResult();
-        $LandBuildInfo = LandBuildInfo::encode($uid);
+        $LandBuildInfo = LandBuildInfo::getOne($ShopId);
         $BuildLvUpResult->setLandBuildInfo($LandBuildInfo);
         $str = $BuildLvUpResult->serializeToString();
         return $str;

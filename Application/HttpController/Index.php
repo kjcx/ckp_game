@@ -13,6 +13,7 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Excel\BuildingLevel;
 use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
@@ -47,9 +48,9 @@ class Index extends Controller
     public function index()
     {
 
-       $rs = new Item();
-        $data = $rs->getOne();
-        var_dump($data);
+        $b = new BuildingLevel();
+        $b->checkItem(1,'1,302,6,303,6,301,6;2,302,6,303,6,301,6;3,302,6,303,6,301,6;4,302,6,303,6,301,6;5,302,6,303,6,301,6');
+
     }
     public function rand_str()
     {
