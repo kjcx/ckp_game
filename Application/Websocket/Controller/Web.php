@@ -2116,6 +2116,31 @@ class Web extends WebSocketController
         $day = date('d',time());
         //判断是否已经签到
         $SignInfo = new SignInfo();
+        if(in_array($data_DaySign['Day'],[101,102,103,104])){
+            //领取累计签到奖励
+            //1 判断奖励是否领取
+            $SignInfo = new SignInfo();
+            $Info = $SignInfo->getRedisRewardByUid($this->uid);
+            if(isset($Info[$data_DaySign['Day']])){
+                //已经领取
+                $this->send(1167,$this->fd,'','奖励已领取');
+            }else{
+                //领取奖励
+                $TotalRewards = new TotalRewards();
+                $D = [101=>7,102=>14,103=>21,104=>28];
+                $list = $TotalRewards->getRewardByNeedDays($D[$data_DaySign['Day']]);
+                if($list){
+                    $Bag = new Bag($this->uid);
+                    foreach ($list as $item) {
+                        $rs = $Bag->addBag($item['ItemId'],$item['Count']);
+                    }
+                    $SignInfo->setRedisRewardByUid($this->uid,$data_DaySign['Day']);
+                }
+                $str = DaySignResult::encode(['Day'=>$data_DaySign['Day'],'IsSign'=>true]);
+                $this->send(1169,$this->fd,$str);
+                return;
+            }
+        }
         if($day == $data_DaySign['Day']){
             //今日签到
             $rs = $SignInfo->checkIsSign($this->uid,$data_DaySign['Day']);
