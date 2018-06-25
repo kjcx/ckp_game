@@ -2079,15 +2079,13 @@ class Web extends WebSocketController
     }
 
     /**
-<<<<<<< HEAD
      *
      */
     public function msgid_1059()
     {
         
     }
-
-=======
+    /**
      * 签到请求
      * return DaySignResult 1169
      */
@@ -2144,5 +2142,4 @@ class Web extends WebSocketController
             $this->send(1167,$this->fd,$str);
         }
     }
->>>>>>> 5b8d1023d83cf712b602996eb0b969660b15a904
 }
