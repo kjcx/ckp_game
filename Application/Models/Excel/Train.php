@@ -26,7 +26,7 @@ class Train extends Model
      */
     public function getInfoById($Id)
     {
-        $data = Db::table($this->table)->where(['Id'=>$Id])->find();
+        $data = Db::table($this->table)->where(['Id'=>(int)$Id])->find();
         if($data){
             return $data;
         }else{
@@ -44,7 +44,7 @@ class Train extends Model
         if(!$Time){
             $Time = 1;
         }
-        $data = Db::table($this->table)->where('Time',(string)$Time)->find();
+        $data = Db::table($this->table)->where('Time',$Time)->find();
 //        var_dump($Time);
         $Cost = $data['Cost'];
         $Costs = explode(';',$Cost);

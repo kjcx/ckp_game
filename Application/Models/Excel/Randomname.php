@@ -31,6 +31,7 @@ class Randomname extends Model
     public function getRandSurName()
     {
         $data = $this->getOne();
+        var_dump($data);
         if($data){
             $SurName = $data['SurName'];
             mt_srand();

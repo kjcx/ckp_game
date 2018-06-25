@@ -26,7 +26,10 @@ class Drop extends Model
      */
     public function getInfoById($Id)
     {
-        $data = Db::table($this->table)->where(['Id'=>$Id])->find();
+        $data = Db::table($this->table)->where(['Id'=>(int)$Id])->find();
+        var_dump("getInfoById" . $Id);
+        var_dump($Id);
+        var_dump($data);
         if($data){
             return $data;
         }else{
