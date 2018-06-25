@@ -195,4 +195,5 @@ class Account extends Model
         $data = $this->mysql->orderBy('app_token','DESC')->getOne($this->table);
         return $data['app_token'];
     }
+
 }

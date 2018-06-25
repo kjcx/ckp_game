@@ -9,9 +9,9 @@
 namespace App\Models\Store;
 
 
-use App\Models\Execl\Drop;
-use App\Models\Execl\Lotto;
-use App\Models\Execl\Randomname;
+use App\Models\Excel\Drop;
+use App\Models\Excel\Lotto;
+use App\Models\Excel\Randomname;
 use App\Models\Model;
 use App\Models\Staff\Staff;
 
@@ -147,7 +147,7 @@ class DropStaff extends Model
      */
     public function getStaffInfo($data)
     {
-        $Staff = new \App\Models\Execl\Staff();
+        $Staff = new \App\Models\Excel\Staff();
         $data_Staff = $Staff->getInfoById($data['StaffId']);
 //        var_dump($data_Staff);
         $Quality = $data_Staff['Quality'];//品质

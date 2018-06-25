@@ -35,10 +35,9 @@ class GetMapResult
         if($Area == 2){
             return $GetMapResult;
         }else{
-
             $arr = [];
             foreach ($LoadLandInfoDic as $k=>$item) {
-                var_dump($item['Pos']);
+                var_dump($item);
                 $LoadLandInfo = new LoadLandInfo();
                 $LoadLandInfo->setPos($item['Pos']);
                 if(isset($item['Uid'])){

@@ -9,7 +9,7 @@
 namespace App\Protobuf\Result;
 
 
-use App\Models\Execl\Lotto;
+use App\Models\Excel\Lotto;
 use App\Models\Staff\LottoLog;
 
 class TypeCountStaffResult

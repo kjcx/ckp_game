@@ -10,10 +10,11 @@ namespace App\Models\Company;
 
 
 use App\Models\BagInfo\Bag;
-use App\Models\Execl\Building;
-use App\Models\Execl\BuildingLevel;
-use App\Models\Execl\GameConfig;
-use App\Models\Execl\GameEnum;
+use App\Models\Excel\Building;
+use App\Models\Excel\BuildingLevel;
+use App\Models\Excel\GameConfig;
+use App\Models\Excel\GameEnum;
+use App\Models\Excel\LandInfo;
 use App\Models\Model;
 use App\Models\User\Role;
 use App\Protobuf\Result\TalentInfo;
@@ -46,6 +47,9 @@ class Shop extends Model
      */
     public function create($uid,$data)
     {
+        $Role = new Role();
+        $data_role = $Role->getRole($uid);
+        $RoleName = $data_role['nickname'];
         //获取公司名称
         $Company = new Company();
         $CompanyName = $Company->getCompanyName($uid);
@@ -63,6 +67,7 @@ class Shop extends Model
         $dataCompany['Income'] = $data_Building['Income'];//身价
         $dataCompany['OutputItem'] = $data_Building['OutputItem'];//可能掉落的道具
         $dataCompany['CreateTime'] = time();//可能掉落的道具
+        $dataCompany['RoleName'] = $RoleName;//可能掉落的道具
 //        $dataCompany['Area'] = 2;//私有的2 土地竞拍的1
         //员工上线人数
         $BuildingLevel = new BuildingLevel();
@@ -81,6 +86,11 @@ class Shop extends Model
         $dataCompany['CurExtendLv'] = 0;//扩展等级
         $rs = Db::table($this->table)->insert($dataCompany);
         if($rs){
+            if($data['AreaId'] == 1){//私有地区
+                //设置土地状态
+                $LandInfo = new LandInfo();
+                $rs = $LandInfo->setPosStatus($data['Pos'],3);
+            }
             //创建成功 扣除金币
             $data_ShopTypeMoney = $this->getShopTypeMoney($data['ShopType']);
             $Bag = new Bag($uid);

@@ -7,6 +7,7 @@
  */
 
 namespace App\Protobuf\Result;
+use App\Models\Sign\SignInfo;
 
 /**
  * 返回签到结果
@@ -20,11 +21,14 @@ class SignResult
         //查询用户签到情况
 
         $SignResult = new \AutoMsg\SignResult();
+        $SignInfo = new SignInfo();
+        $data = $SignInfo->getRedisSignMonthInfoByUid($uid);
+        $LoaSignInfo[date('m',time())] = LoadSignInfoList::encode($data['data']);
+        $LoaSignInfo[101] = LoadSignInfoList::encode($data[101]);
+        $LoaSignInfo[102] = LoadSignInfoList::encode($data[102]);
+        $LoaSignInfo[103] = LoadSignInfoList::encode($data[103]);
+        $LoaSignInfo[104] = LoadSignInfoList::encode($data[104]);
 
-        for($i=1;$i<=31;$i++){
-            $data[]  = ['Day'=>$i,'IsSign'=>true];
-        }
-        $LoaSignInfo[date('m',time())] = LoadSignInfoList::encode($data);
         $SignResult->setLoaSignInfo($LoaSignInfo);
         $str = $SignResult->serializeToString();
         return $str;

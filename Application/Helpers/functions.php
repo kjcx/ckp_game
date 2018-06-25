@@ -27,7 +27,7 @@ if (!function_exists('push')) {
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $fd = $dataCenter->getFdByUid($uid);
             if ($errorMsg) {
-                $WsResult = new \App\Models\Execl\WsResult();
+                $WsResult = new \App\Models\Excel\WsResult();
                 $data_ws = $WsResult->getErrorValue($errorMsg);
                 $value = $data_ws['value'];
             } else {

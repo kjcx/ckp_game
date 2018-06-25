@@ -6,14 +6,14 @@
  * Time: 下午3:48
  */
 
-namespace App\Models\Execl;
+namespace App\Models\Excel;
 
 use App\Models\Model;
 use think\Db;
 
 class LandInfo extends Model
 {
-    private $table = 'ckzc.Execl_LandInfo';
+    private $table = 'ckzc.Excel_LandInfo';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);
@@ -28,6 +28,8 @@ class LandInfo extends Model
         $Day = $this->getDay();
         var_dump($Day);
         $data = Db::table($this->table)->where(['Day'=>(int)$Day])->select();
+        var_dump($data);
+
         return $data;
     }
     /**
@@ -62,7 +64,7 @@ class LandInfo extends Model
                 $data[] = ['Pos'=>($j * 1000 + $i),'Gold'=>300,'AuctionRole'=>[],'Date'=>date('Y-m-d',$day),'Today'=>$day];
             }
         }
-        Db::table('Execl_LandInfo')->insertAll($data);
+        Db::table('Excel_LandInfo')->insertAll($data);
     }
 
     /**
@@ -207,5 +209,17 @@ class LandInfo extends Model
     {
         $data = Db::table($this->table)->where('Pos','in',$Poss)->select();
         return $data;
+    }
+
+    /**
+     * 设置土地状态
+     * @param $Pos
+     * @param int $Status
+     * @return int|string
+     */
+    public function setPosStatus($Pos,$Status=1)
+    {
+        $rs = Db::table($this->table)->where('Pos',$Pos)->update(['Status'=>$Status]);
+        return $rs;
     }
 }

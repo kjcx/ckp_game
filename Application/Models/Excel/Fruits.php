@@ -6,14 +6,14 @@
  * Time: 下午3:48
  */
 
-namespace App\Models\Execl;
+namespace App\Models\Excel;
 
 use App\Models\Model;
 use think\Db;
 
 class Fruits extends Model
 {
-    private $table = 'ckzc.Execl_Fruits';
+    private $table = 'ckzc.Excel_Fruits';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

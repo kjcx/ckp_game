@@ -6,14 +6,14 @@
  * Time: 下午3:48
  */
 
-namespace App\Models\Execl;
+namespace App\Models\Excel;
 
 use App\Models\Model;
 use think\Db;
 
 class Staff extends Model
 {
-    private $table = 'ckzc.Execl_Staff';
+    private $table = 'ckzc.Excel_Staff';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

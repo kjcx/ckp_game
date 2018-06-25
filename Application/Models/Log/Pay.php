@@ -34,4 +34,15 @@ class Pay extends Model
     {
         Db::table($this->table)->where(['lg_source_only'=>$lg_source_only])->update($update);
     }
+
+    /**
+     * 获取是否是第一次充值
+     * @param $Uid
+     * @return array|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getFirstRecharge($Uid)
+    {
+        $rs = Db::table($this->table)->where('Uid',$Uid)->find();
+        return $rs;
+    }
 }

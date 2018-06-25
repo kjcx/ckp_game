@@ -6,7 +6,7 @@
  * Time: 上午11:32
  */
 namespace App\Protobuf\Result;
-use App\Models\Execl\GameEnum;
+use App\Models\Excel\GameEnum;
 
 /**
  * 每日信息

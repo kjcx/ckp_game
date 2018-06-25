@@ -23,21 +23,23 @@ use App\Models\Company\ConsumeResult;
 use App\Models\Company\Shop as CompanyShop;
 use App\Models\Company\TalentMarketInfo;
 use App\Models\DataCenter\DataCenter;
-use App\Models\Execl\BuildingLevel;
-use App\Models\Execl\GameConfig;
-use App\Models\Execl\Item;
-use App\Models\Execl\LandInfo;
-use App\Models\Execl\Lotto;
-use App\Models\Execl\Topup;
-use App\Models\Execl\Train;
-use App\Models\Execl\WsResult;
+use App\Models\Excel\BuildingLevel;
+use App\Models\Excel\GameConfig;
+use App\Models\Excel\Item;
+use App\Models\Excel\LandInfo;
+use App\Models\Excel\Lotto;
+use App\Models\Excel\Topup;
+use App\Models\Excel\Train;
+use App\Models\Excel\WsResult;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
+use App\Models\Log\Pay;
 use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
+use App\Models\Sign\SignInfo;
 use App\Models\Staff\LottoLog;
 use App\Models\Staff\Staff;
 use App\Models\Store\Seed;
@@ -58,6 +60,7 @@ use App\Protobuf\Req\ConsumeReq;
 use App\Protobuf\Req\CreateBuildReq;
 use App\Protobuf\Req\CreateCompanyReq;
 use App\Protobuf\Req\CultivateEmployeeReq;
+use App\Protobuf\Req\DaySignReq;
 use App\Protobuf\Req\DelMailsReq;
 use App\Protobuf\Req\DestoryBuildReq;
 use App\Protobuf\Req\DismantleReq;
@@ -78,6 +81,7 @@ use App\Protobuf\Req\HarvestPlantReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
+use App\Protobuf\Req\PickUpSevenDaysReq;
 use App\Protobuf\Req\ReadMailReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefFitnessReq;
@@ -108,6 +112,7 @@ use App\Protobuf\Result\ComeOutEmployeeResult;
 use App\Protobuf\Result\CreateBuildResult;
 use App\Protobuf\Result\CreateCompanyResult;
 use App\Protobuf\Result\CultivateEmployeeResult;
+use App\Protobuf\Result\DaySignResult;
 use App\Protobuf\Result\DelMailsResult;
 use App\Protobuf\Result\DestoryBuildResult;
 use App\Protobuf\Result\DismantleResult;
@@ -139,6 +144,7 @@ use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
 use App\Protobuf\Result\OnGetMyGoodsResult;
+use App\Protobuf\Result\PickUpSevenDaysResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RandManorResult;
 use App\Protobuf\Result\ReadMailResult;
@@ -623,12 +629,16 @@ class Web extends WebSocketController
         if($res['code'] == 200){
             //充值成功
             //背包金额增加
-            $rolebag = new RoleBag();
             $Bag = new Bag($this->uid);
-            $Bag->addBag(2,$data_Topup['Gold']);
-            //返回充值成功
-            $data  = CkPayResult::encode(true);
-            $this->send(1224,$this->fd,$data);
+            $rs = $Bag->addBag(2,$data_Topup['Gold']);
+            if($rs){
+                $Pay = new Pay();
+                $Pay->create(['Uid'=>$this->uid,'Gold'=>$data_Topup['Gold'],'CreateTime'=>time()]);
+                //返回充值成功
+                $data  = CkPayResult::encode(true);
+                $this->send(1224,$this->fd,$data);
+            }
+
         }else{
             //充值失败
             $data  = CkPayResult::encode(false);
@@ -745,7 +755,7 @@ class Web extends WebSocketController
             var_dump("道具存在");
             if ($data_bag['CurCount'] >= $data_UseItem['Count']){
                 //1 获取礼包规则
-                $Item = new \App\Models\Execl\Item();
+                $Item = new \App\Models\Excel\Item();
                 $data_item = $Item->getItemUseEffetById($data_UseItem);
                 //2 使用礼包
 //                获得道具：1，道具ID，数量；1，道具ID2，数量
@@ -1425,7 +1435,7 @@ class Web extends WebSocketController
         $GameConfig = new GameConfig();
         $config = $GameConfig->getInfoByField('MaxTrainTime');//员工每天最大培训次数
         $MaxTrainTime = $config['value'];
-        $Execl_Staff = new \App\Models\Execl\Staff();
+        $Execl_Staff = new \App\Models\Excel\Staff();
         $arr = [];
         $Bag = new Bag($this->uid);
         $isTrue = true;
@@ -2069,6 +2079,7 @@ class Web extends WebSocketController
     }
 
     /**
+<<<<<<< HEAD
      *
      */
     public function msgid_1059()
@@ -2076,4 +2087,62 @@ class Web extends WebSocketController
         
     }
 
+=======
+     * 签到请求
+     * return DaySignResult 1169
+     */
+    public function msgid_1122()
+    {
+        $data = $this->data;
+        $data_DaySign = DaySignReq::decode($data);
+        var_dump($data_DaySign);
+        //1判断是否是今天签到
+        $day = date('d',time());
+        //判断是否已经签到
+        $SignInfo = new SignInfo();
+        if($day == $data_DaySign['Day']){
+            //今日签到
+            $rs = $SignInfo->checkIsSign($this->uid,$data_DaySign['Day']);
+            if(!$rs){
+                $SignInfo->setIsSignByUid($this->uid,$data_DaySign['Day']);
+            }
+        }else{
+            //补签
+            $GameConfig = new GameConfig();
+            $data_price = $GameConfig->getSignGold();
+            $Bag = new Bag($this->uid);
+            $rs = $Bag->delBag(6,$data_price);
+            if($rs){
+                $rs = $SignInfo->setIsSignByUid($this->uid,$data_DaySign['Day']);
+            }else{
+                var_dump("扣款失败");
+            }
+        }
+        //返回签到成功
+        $str = DaySignResult::encode(['Day'=>$data_DaySign['Day'],'IsSign'=>true]);
+        $this->send(1169,$this->fd,$str);
+    }
+
+    /**
+     * 领取奖励
+     * return 1167 PickUpSevenDaysResult
+     */
+    public function msgid_1120()
+    {
+        $data = $this->data;
+        $data_day = PickUpSevenDaysReq::decode($data);
+        var_dump($data_day);
+        //1 判断奖励是否领取
+        $SignInfo = new SignInfo();
+        $Info = $SignInfo->getRedisRewardByUid($this->uid);
+        if($Info[$data_day['Id']]){
+            //已经领取
+            $this->send(1167,$this->fd,'','奖励已领取');
+        }else{
+            //领取奖励
+            $str = PickUpSevenDaysResult::encode($data_day);
+            $this->send(1167,$this->fd,$str);
+        }
+    }
+>>>>>>> 5b8d1023d83cf712b602996eb0b969660b15a904
 }

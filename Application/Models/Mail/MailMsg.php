@@ -11,7 +11,7 @@ namespace App\Models\Mail;
 
 use App\Event\UserEvent;
 use App\Models\BagInfo\Bag;
-use App\Models\Execl\GameConfig;
+use App\Models\Excel\GameConfig;
 use App\Models\Model;
 use think\Db;
 

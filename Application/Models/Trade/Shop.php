@@ -10,7 +10,7 @@
 namespace App\Models\Trade;
 
 use App\Models\BagInfo\Bag;
-use App\Models\Execl\Item;
+use App\Models\Excel\Item;
 use App\Models\User\Account;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;

@@ -2,25 +2,41 @@
 /**
  * Created by PhpStorm.
  * User: dongkai
- * Date: 2018/4/14
- * Time: 下午5:18
+ * Date: 2018/5/10
+ * Time: 下午3:48
  */
 
-namespace App\Models\Item;
+namespace App\Models\Excel;
 
 use App\Models\Model;
-use App\Traits\MongoTrait;
+use App\Models\Store\DropStore;
 use think\Db;
 
-class ItemBak extends Model
+class Item extends Model
 {
-    use MongoTrait;
-    private $table = 'ckzc.item';
-
-    public function __construct()
+    private $table = 'ckzc.Excel_Item';
+    public function insert($arr)
     {
-        parent::__construct();
-        $this->collection = $this->getMongoClient();
+        Db::table($this->table)->insert($arr);
+    }
+
+    public function getOne()
+    {
+        return Db::table($this->table)->find();
+    }
+    /**
+     * 获取提条记录
+     * @param $Id
+     * @return array|bool|false|null|\PDOStatement|string|\think\Model
+     */
+    public function getInfoById($Id)
+    {
+        $data = Db::table($this->table)->where(['Id'=>$Id])->find();
+        if($data){
+            return $data;
+        }else{
+            return false;
+        }
     }
     /**
      * 根据id获取数据
@@ -63,20 +79,27 @@ class ItemBak extends Model
     {
         $id = $items['ItemId'];
         $Count = $items['Count'];
+        var_dump($id);
         $data = $this->getItemById($id);
-        $UseEffet =  $data['UseEffet'];
-        $UseEffets = explode(';',$UseEffet);
+
+        var_dump($data);
         $arr = [];
-//        var_dump($UseEffets);
-
-        foreach ($UseEffets as $item) {
-            $items = explode(',',$item);
-            $arr[]  = [
-                'Id'=>$items[1],'CurCount'=>$items[2]
-            ];
-
+        if(isset($data['UseEffet'])){
+            $UseEffet =  $data['UseEffet'];
+            $UseEffets = explode(';',$UseEffet);
+            foreach ($UseEffets as $item) {
+                $items = explode(',',$item);
+                if($items[0] == 1){
+                    $arr[$items[1]] = $items[2];
+                }elseif($items[0] == 3){
+                    $arr[$items[1]] = $items[2];
+                }elseif ($items[0] == 6){
+                    $data_drop = $this->getItemByDropId($items[1]);
+//                    var_dump($data_drop);
+                    return $data_drop;
+                }
+            }
         }
-//        var_dump($arr);
         return $arr;
     }
     /**
@@ -121,7 +144,6 @@ class ItemBak extends Model
         $data_price = $this->getSellItemsPrice($data_item);
         return $data_price;
     }
-
     /**
      * 通过掉落库id获取商品
      * @param $DropId
@@ -129,13 +151,10 @@ class ItemBak extends Model
      */
     public function getItemByDropId($DropId)
     {
-        var_dump($DropId);
-//        20001,3,3,10;20002,3,3,10;20003,3,3,10
         $Drop = new Drop();
-        var_dump($DropId);
-        $str = $Drop->getInfoById($DropId);
-        $arr = explode(';',$str);
-        var_dump($arr);
+        $info = $Drop->getInfoById($DropId);
+        $arr = explode(';',$info['DropLib']);
+//        var_dump($arr);
         $new = [];
         foreach ($arr as $item) {
             $res = explode(',',$item);

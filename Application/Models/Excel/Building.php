@@ -6,7 +6,7 @@
  * Time: 下午3:48
  */
 
-namespace App\Models\Execl;
+namespace App\Models\Excel;
 
 use App\Models\Model;
 use think\Db;
