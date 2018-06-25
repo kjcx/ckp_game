@@ -13,7 +13,7 @@ use think\Db;
 
 class Fram extends Model
 {
-    private $table = 'ckzc.fram';
+    private $table = 'ckzc.Excel_Fram';
 
     /**
      * 获取提条记录
