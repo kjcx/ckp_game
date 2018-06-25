@@ -352,7 +352,7 @@ class Land extends Model
         //扣钱
         $bagRes = $bag->delBag($money['0'],$money['1']);
         if ($bagRes == false) {
-            return ['error' => true, 'msg' => 'NeedLevel'];
+            return ['error' => true, 'msg' => 'NotEnoughMoney'];
         }
         //升级
         //地块信息

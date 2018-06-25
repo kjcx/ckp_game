@@ -22,7 +22,7 @@ class Fram extends Model
      */
     public function getInfoById($Id)
     {
-        $data = Db::table($this->table)->where(['Id'=>(string)$Id])->find();
+        $data = Db::table($this->table)->where(['Id'=>(int)$Id])->find();
         if($data){
             return $data;
         }else{

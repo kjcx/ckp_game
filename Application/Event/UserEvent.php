@@ -51,6 +51,7 @@ class UserEvent extends Event
         $Bag = new Bag($this->uid);
         $data_Item = $Bag->getBagByItemId(2);
         var_dump($data_Item);
+        var_dump($data_Item['CurCount']);
         $data = GoldChangedResult::encode([2=>$data_Item['CurCount']]);
         $str = \App\Protobuf\Result\MsgBaseSend::encode(1065,$data);
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);
