@@ -107,6 +107,7 @@ class DropStaff extends Model
     public function getDropLibInfo($DropId)
     {
         $Drop = new Drop();
+        var_dump("getDropLibInfo" .$DropId );
         $data = $Drop->getInfoById($DropId);
         if($data){
             return $data['DropLib'];

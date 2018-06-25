@@ -138,6 +138,7 @@ class Bag extends Model
     public function getBagByItemId($itemId)
     {
         $data = $this->collection->findOne(['uid' => $this->uid]);
+
         if (isset($data['data'][$itemId])) {
             return $data['data'][$itemId];
         }
