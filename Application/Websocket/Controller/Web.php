@@ -36,6 +36,7 @@ use App\Models\FruitsData\FruitsData;
 use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
 use App\Models\Staff\LottoLog;
 use App\Models\Staff\Staff;
@@ -2057,12 +2058,22 @@ class Web extends WebSocketController
     }
 
     /**
-     * 请求
+     * 请求 TODO::获取房屋信息
      */
     public function msgid_1042()
     {
         $data = RoomReq::decode($this->data);
-        $string = RoomResult::encode(['uid' => $this->uid,'roomId' => 1,'config' => []]);
+        $room = new Room($data['uid']);
+        $string = RoomResult::encode(['uid' => $this->uid,'roomId' => 202,'config' => []]);
         $this->send(1042,$this->fd,$string);
     }
+
+    /**
+     *
+     */
+    public function msgid_1059()
+    {
+        
+    }
+
 }

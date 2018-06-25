@@ -165,6 +165,8 @@ class Land extends Model
     private function createFruit($seedId,$profit)
     {
         $itemInfo = $this->item->getItemById($seedId);
+        var_dump($itemInfo);
+        var_dump($seedId);
         $itemInfo['Harvest'] = explode(',',$itemInfo['Harvest']);
         $max = ($itemInfo['Harvest']['1']) * (1 + $profit);
         $num = mt_rand(1,ceil($max));
