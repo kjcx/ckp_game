@@ -22,7 +22,7 @@ use think\Db;
 class Staff extends Model
 {
     public $table = 'ckzc.Staff';
-
+    public $key = 'TodayTrainNum:';
     /**
      * 创建员工
      * @param $Uid 用户id
@@ -61,6 +61,7 @@ class Staff extends Model
             $StaffInfo['Appointed'] = false;
             $StaffInfo['TrainNum'] = 0;//总培训次数
             $StaffInfo['TodayTrainNum'] = 0;//今日培训次数
+            var_dump($StaffInfo);
             $rs = Db::table($this->table)->insert($StaffInfo);
             if($rs){
                 $StaffInfo['_id'] = Db::getLastInsID();
@@ -196,8 +197,18 @@ class Staff extends Model
         $BasicProperties[4] = $BasicProperties[4] + $shuxing[4];
         $rs = Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->update(['BasicProperties'=>$BasicProperties]);
         if($rs){
+            //判断是否是第二天
+            $Staff = new Staff();
+            $IsPeixun = $Staff->getRedisTodayTrainNum($staff['Uid'],(string)$staff['_id']);
+            var_dump($IsPeixun);
+            if($IsPeixun){
+                Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->setInc('TodayTrainNum',1);
+
+            }else{
+                $Staff->setRedisTodayTrainNum($staff['Uid'],(string)$staff['_id']);
+                Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->update(['TodayTrainNum'=>1]);
+            }
             Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->setInc('TrainNum',1);
-            Db::table($this->table)->where(['_id'=>(string)$staff['_id']])->setInc('TodayTrainNum',1);
             return true;
         }else{
             return false;
@@ -213,5 +224,40 @@ class Staff extends Model
     {
         $rs = Db::table($this->table)->where('_id','in',$Ids)->delete();
         return $rs;
+    }
+
+    /**
+     * 获取员工今日是否培训过
+     * @param $Uid
+     * @param $StaffId
+     * @return bool
+     */
+    public function getRedisTodayTrainNum($Uid,$StaffId)
+    {
+        $key = $this->key .$Uid .':' . $StaffId;
+        $rs = $this->redis->get($key);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 获取每个员工每天的培训次数
+     * @param $Uid
+     * @param $StaffId
+     * @return bool
+     */
+    public function setRedisTodayTrainNum($Uid,$StaffId)
+    {
+        $key = $this->key .$Uid .':' . $StaffId;
+        $ttl = strtotime(date("Y-m-d",strtotime("+1 day"))) - time();
+        $rs = $this->redis->setex($key,$ttl,1);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

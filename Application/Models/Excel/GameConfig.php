@@ -113,4 +113,14 @@ class GameConfig extends Model
         $SignGold = $data_GameConfig['value'];
         return $SignGold;
     }
+
+    /**
+     * 获取每日员工每天最大培训次数
+     */
+    public function getMaxTrainTime()
+    {
+        $data_GameConfig = $this->getInfoByField('MaxTrainTime');
+        $MaxTrainTime = $data_GameConfig['value'];
+        return $MaxTrainTime;
+    }
 }
