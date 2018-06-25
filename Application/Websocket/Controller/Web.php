@@ -1760,7 +1760,6 @@ class Web extends WebSocketController
         $data = UpgradeLandLevelReq::decode($this->data);
         $land = new Land($this->uid);
         $res = $land->upgradeLand($data['landId']);
-        var_dump($res);
         if (isset($res['error'])) {
             $this->send(1171,$this->fd,'',$res['msg'],12);
         }  else {

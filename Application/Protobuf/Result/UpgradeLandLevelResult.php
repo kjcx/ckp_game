@@ -11,7 +11,7 @@ namespace App\Protobuf\Result;
 
 class UpgradeLandLevelResult
 {
-    public static function decode($data)
+    public static function encode($data)
     {
         $obj = new \AutoMsg\UpgradeLandLevelResult();
         $obj->setLoadManor(LoadManorData::encode($data));
