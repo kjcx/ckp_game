@@ -10,6 +10,7 @@ namespace App\Listen;
 
 use App\Event\RoleCreateEvent;
 use App\Models\Manor\Land;
+use App\Models\Room\Room;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 
@@ -20,6 +21,7 @@ class RoleCreateListen implements EventSubscriberInterface
         return [
             "role.create" => [
                 ['initManorLand',30],
+                ['initRoom',20],
             ],
         ];
     }
@@ -33,5 +35,14 @@ class RoleCreateListen implements EventSubscriberInterface
         // 初始化庄园地块信息
         $land = new Land($event->getUid());
         $land->initLand();
+    }
+
+    /**
+     * 初始化住宅
+     */
+    public function initRoom(RoleCreateEvent $event)
+    {
+        $room = new Room($event->getUid());
+        $room->init();
     }
 }
