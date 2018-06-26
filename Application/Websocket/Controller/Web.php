@@ -28,6 +28,7 @@ use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
 use App\Models\Excel\Lotto;
+use App\Models\Excel\Npc;
 use App\Models\Excel\Sign;
 use App\Models\Excel\Topup;
 use App\Models\Excel\TotalRewards;
@@ -39,6 +40,7 @@ use App\Models\Log\Pay;
 use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Npc\NpcInfo;
 use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
 use App\Models\Sign\SignInfo;
@@ -99,6 +101,7 @@ use App\Protobuf\Req\StealSemenReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TopUpGoldReq;
+use App\Protobuf\Req\UnlockNpcReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseCompostReq;
 use App\Protobuf\Req\UseItemReq;
@@ -145,6 +148,7 @@ use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
+use App\Protobuf\Result\NpcListResult;
 use App\Protobuf\Result\OnGetMyGoodsResult;
 use App\Protobuf\Result\PickUpSevenDaysResult;
 use App\Protobuf\Result\RaffleFruitsResult;
@@ -168,6 +172,7 @@ use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TopUpGoldResult;
+use App\Protobuf\Result\UnlockNpcResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
 use App\Protobuf\Result\UpgradeLandLevelReq;
@@ -2216,6 +2221,52 @@ class Web extends WebSocketController
             }
             $str = PickUpSevenDaysResult::encode($data_day);
             $this->send(1167,$this->fd,$str);
+        }
+    }
+
+    /**
+     * 居民人脉列表
+     * return 2024 NpcListResult
+     */
+    public function msgid_2023()
+    {
+        $data = $this->data;
+        //处理居民npc逻辑
+        //获取默认npc + 需要解锁npc
+        $NpcInfo = new NpcInfo();
+        $data = $NpcInfo->getRedisNpcList($this->uid);
+        var_dump($data);
+        $str = NpcListResult::encode($data);
+        $this->send(2024,$this->fd,$str);
+    }
+
+    /**
+     * 请求解锁npc
+     * return 2026
+     */
+    public function msgid_2025()
+    {
+        $data = $this->data;
+        $data_UnlockNpc = UnlockNpcReq::decode($data);
+        var_dump($data_UnlockNpc);
+        //处理解锁逻辑
+        $Npc = new Npc();
+        $Items = $Npc->getUnlockItemId($data_UnlockNpc['NpcId']);
+        $Bag = new Bag($this->uid);
+        $bool = false;
+        foreach ($Items as $k =>$item) {
+            $bool = $Bag->checkCountByItemId($k,$item);
+            if(!$bool){
+                //道具不满足
+                $this->send(2026,$this->fd,'','道具数量不足');
+                return;
+            }
+        }
+        if($bool){
+            $str = UnlockNpcResult::encode($data_UnlockNpc['NpcId']);
+            $this->send(2026,$this->fd,$str);
+        }else{
+            var_dump("道具数量不足");
         }
     }
 }

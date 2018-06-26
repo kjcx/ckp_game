@@ -20,6 +20,7 @@ use App\Models\Excel\LandInfo;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Npc\NpcInfo;
 use App\Models\Sales\SalesItem;
 use App\Models\Mail\MailMsg;
 use App\Models\Sign\SignInfo;
@@ -48,8 +49,11 @@ class Index extends Controller
     public function index()
     {
 
-        $b = new BuildingLevel();
-        $b->checkItem(1,'1,302,6,303,6,301,6;2,302,6,303,6,301,6;3,302,6,303,6,301,6;4,302,6,303,6,301,6;5,302,6,303,6,301,6');
+       $NpcInfo  = new NpcInfo();
+       $data = $NpcInfo->getRedisNpcList(65);
+//        var_dump($data[113]);
+       var_dump($NpcInfo->checkNpcStatus(65,113));
+       $NpcInfo->setRedisNpcUnlock(65,113);
 
     }
     public function rand_str()

@@ -55,4 +55,21 @@ class Npc extends Model
         $data = Db::table($this->table)->where('Type',$defaulttype)->select();
         return $data;
     }
+
+    /**
+     * 初始化npc数据
+     */
+    public function getNpcInit()
+    {
+        $data = Db::table($this->table)->where('Type','in',[1,2])->order('Type')->select();
+        $arr = [];
+        foreach ($data as $datum) {
+            if($datum['Type'] == 1){
+                $arr[$datum['Id']] = 1;
+            }else{
+                $arr[$datum['Id']] =0;
+            }
+        }
+        return $arr;
+    }
 }
