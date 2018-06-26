@@ -2259,3 +2259,25 @@ message SalesListReq{
 message SalesListResult{
     repeated DealGoodsUpdate Goods=1;//所有拍卖行商品数据集合
 }
+
+//请求解锁npc
+message UnlockNpcReq{
+	int32 NpcId=1;//NPCId;
+}
+//返回解锁npc成功
+message UnlockNpcResult{
+	int32 NpcId=1;//NPCId;
+}
+//请求npc列表
+message NpcListReq{
+
+}
+//返回npc列表
+message NpcListResult{
+	repeated NpcInfo NpcData=1;
+}
+//npc状态
+message NpcInfo{
+	int32 NpcId=1;
+    bool Status=2;
+}

@@ -430,3 +430,7 @@ ChatNoReadResult,ChatNoReadResult.proto,rec,3007, 一对一聊天-返回-//完�
 ChatOneToOneReq,ChatOneToOneReq.proto,send,3008, 一对一聊天-发送-//完成
 ChatMesaageReadReq,ChatMesaageReadReq.proto,send,3009, 消息已读-发送-//完成
 ChatMessageUnreadListResult,ChatMessageUnreadListResult.proto,rec,3010,未读消息列表
+NpcListReq,NpcListReq.proto,send,2023,获取Npc列表
+NpcListResult,NpcListResult.proto,rec,2024,返回npc列表
+UnlockNpcReq,UnlockNpcReq.proto,send,2025,解锁npc
+UnlockNpcResult,UnlockNpcResult.proto,rec,2026,返回解锁npc

@@ -2592,4 +2592,29 @@ return [
         'msgid' => '3010',
         'desc' => '未读消息列表',
     ],
+    [
+        'type' => 'send',
+        'message' => 'NpcListReq',
+        'msgid' =>'2023',
+        'desc'=>'获取Npc列表',
+    ],
+    [
+        'type' => 'rec',
+        'message' => 'NpcListResult',
+        'msgid' =>'2024',
+        'desc'=>'返回npc列表',
+    ],
+    [
+        'type' => 'send',
+        'message' => 'UnlockNpcReq',
+        'msgid' =>'2025',
+        'desc'=>'解锁npc',
+    ],
+    [
+        'type' => 'rec',
+        'message' => 'UnlockNpcResult',
+        'msgid' =>'2026',
+        'desc'=>'返回解锁npc',
+    ],
+
 ];
