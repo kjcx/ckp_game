@@ -158,6 +158,7 @@ use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
+use App\Protobuf\Result\ResidentDelegateResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
 use App\Protobuf\Result\RoomResult;
 use App\Protobuf\Result\SalesListResult;
@@ -2268,5 +2269,19 @@ class Web extends WebSocketController
         }else{
             var_dump("道具数量不足");
         }
+    }
+
+    /**
+     * 居民委托任务
+     * ResidentDelegateReq 1096
+     * return 1134 ResidentDelegateResult
+     */
+    public function msgid_1096()
+    {
+        $data = [];
+        //委托任务
+
+        $str = ResidentDelegateResult::encode($data);
+        $this->send(1134,$this->fd,$str);
     }
 }

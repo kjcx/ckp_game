@@ -9,20 +9,34 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *返回居民委托任务
+ *
  * Generated from protobuf message <code>AutoMsg.ResidentDelegateResult</code>
  */
 class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>map<int32, .AutoMsg.LoadResidentDelegate> ItemCount = 1;</code>
+     *完成任务所需要的道具
+     *
+     * Generated from protobuf field <code>map<int32, .AutoMsg.ItemList> ItemCount = 1;</code>
      */
     private $ItemCount;
     /**
-     * Generated from protobuf field <code>int32 Count = 2;</code>
+     *居民npc和任务id
+     *
+     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTask = 2;</code>
+     */
+    private $NpcTask;
+    /**
+     *任务次数
+     *
+     * Generated from protobuf field <code>int32 Count = 3;</code>
      */
     private $Count = 0;
     /**
-     * Generated from protobuf field <code>int32 RefCount = 3;</code>
+     *刷新次数
+     *
+     * Generated from protobuf field <code>int32 RefCount = 4;</code>
      */
     private $RefCount = 0;
 
@@ -32,7 +46,9 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>map<int32, .AutoMsg.LoadResidentDelegate> ItemCount = 1;</code>
+     *完成任务所需要的道具
+     *
+     * Generated from protobuf field <code>map<int32, .AutoMsg.ItemList> ItemCount = 1;</code>
      * @return \Google\Protobuf\Internal\MapField
      */
     public function getItemCount()
@@ -41,20 +57,50 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>map<int32, .AutoMsg.LoadResidentDelegate> ItemCount = 1;</code>
+     *完成任务所需要的道具
+     *
+     * Generated from protobuf field <code>map<int32, .AutoMsg.ItemList> ItemCount = 1;</code>
      * @param array|\Google\Protobuf\Internal\MapField $var
      * @return $this
      */
     public function setItemCount($var)
     {
-        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\LoadResidentDelegate::class);
+        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\ItemList::class);
         $this->ItemCount = $arr;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>int32 Count = 2;</code>
+     *居民npc和任务id
+     *
+     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTask = 2;</code>
+     * @return \Google\Protobuf\Internal\MapField
+     */
+    public function getNpcTask()
+    {
+        return $this->NpcTask;
+    }
+
+    /**
+     *居民npc和任务id
+     *
+     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTask = 2;</code>
+     * @param array|\Google\Protobuf\Internal\MapField $var
+     * @return $this
+     */
+    public function setNpcTask($var)
+    {
+        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\NpcTask::class);
+        $this->NpcTask = $arr;
+
+        return $this;
+    }
+
+    /**
+     *任务次数
+     *
+     * Generated from protobuf field <code>int32 Count = 3;</code>
      * @return int
      */
     public function getCount()
@@ -63,7 +109,9 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 Count = 2;</code>
+     *任务次数
+     *
+     * Generated from protobuf field <code>int32 Count = 3;</code>
      * @param int $var
      * @return $this
      */
@@ -76,7 +124,9 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 RefCount = 3;</code>
+     *刷新次数
+     *
+     * Generated from protobuf field <code>int32 RefCount = 4;</code>
      * @return int
      */
     public function getRefCount()
@@ -85,7 +135,9 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 RefCount = 3;</code>
+     *刷新次数
+     *
+     * Generated from protobuf field <code>int32 RefCount = 4;</code>
      * @param int $var
      * @return $this
      */

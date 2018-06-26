@@ -82,4 +82,26 @@ class NpcInfo extends Model
             return false;
         }
     }
+
+    public function getRedisNpcRand($Uid,$num)
+    {
+        $data = $this->getRedisNpcList($Uid);
+
+    }
+
+    /**
+     * 已经获取的npc
+     * @param $Uid
+     */
+    public function getRedisHaveNpc($Uid)
+    {
+        $data = $this->getRedisNpcList($Uid);
+        $NpcIds = [];
+        foreach ($data as $k=>$datum) {
+            if($datum){
+                $NpcIds[] = $k;
+            }
+        }
+        return $NpcIds;
+    }
 }
