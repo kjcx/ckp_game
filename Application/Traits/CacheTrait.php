@@ -9,7 +9,6 @@
 namespace App\Traits;
 
 
-use App\Utility\Redis;
 use MongoDB\BSON\ObjectId;
 
 trait CacheTrait
@@ -73,10 +72,9 @@ trait CacheTrait
     {
         $dbInfo = $this->getTableInfo($key);
         $filter = $this->createFilter($key);
-        $this->redis = Redis::getInstance()->getConnect();
         if ($this->redis->sIsMember($key,$value)) {
             //当前key存在  更新一下 score
-            
+
         } else {
             $update = [
                 '$push' => ['items' => [
@@ -85,7 +83,9 @@ trait CacheTrait
                 ]]
             ];
         }
+
         $res = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->findOneAndUpdate($filter,$update);
+
         if ($res) {
             return $this->zsetLoad($key);
         }
