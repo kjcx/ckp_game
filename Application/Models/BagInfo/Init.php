@@ -17,12 +17,12 @@ class Init extends Model
 {
     use MongoTrait;
 
-    private $mongoTable = 'config_PlayerInit';
+    private $mongoTable = 'ckzc.Excel_PlayerInit';
 
     public function __construct()
     {
         parent::__construct();
-        $this->getMongoClient();
+        $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作
     }
 
     /**
@@ -32,8 +32,7 @@ class Init extends Model
     public function getInitData()
     {
         $mongoConf = Config::getInstance()->getConf('MONGO');
-        $collection = $this->mongo->ckzc->{$this->mongoTable};
-        $data = $collection->findOne(['Id.value' => '1']);
+        $data = $this->collection->findOne(['Id.value' => '1']);
         return $data;
     }
 }

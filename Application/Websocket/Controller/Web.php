@@ -2069,18 +2069,19 @@ class Web extends WebSocketController
     }
 
     /**
-     * 请求 TODO::获取房屋信息
+     * 请求
      */
     public function msgid_1042()
     {
         $data = RoomReq::decode($this->data);
         $room = new Room($data['uid']);
-        $string = RoomResult::encode(['uid' => $this->uid,'roomId' => 202,'config' => []]);
+        $roomData = $room->getUseRoom();
+        $string = RoomResult::encode($roomData);
         $this->send(1042,$this->fd,$string);
     }
 
     /**
-     *
+     *家具升星
      */
     public function msgid_1059()
     {

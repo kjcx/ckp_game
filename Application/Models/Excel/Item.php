@@ -58,6 +58,7 @@ class Item extends Model
     public function getItemById($id)
     {
         $data = Db::table($this->table)->where(['Id'=>(int)$id])->find();
+        var_dump($data);
         return $data;
     }
 
