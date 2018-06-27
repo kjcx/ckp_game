@@ -16,9 +16,9 @@ use Google\Protobuf\Internal\GPBUtil;
 class ItemList extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>map<int32, int64> ItemList = 1;</code>
+     * Generated from protobuf field <code>map<int32, int64> Item = 1;</code>
      */
-    private $ItemList;
+    private $Item;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -26,23 +26,23 @@ class ItemList extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>map<int32, int64> ItemList = 1;</code>
+     * Generated from protobuf field <code>map<int32, int64> Item = 1;</code>
      * @return \Google\Protobuf\Internal\MapField
      */
-    public function getItemList()
+    public function getItem()
     {
-        return $this->ItemList;
+        return $this->Item;
     }
 
     /**
-     * Generated from protobuf field <code>map<int32, int64> ItemList = 1;</code>
+     * Generated from protobuf field <code>map<int32, int64> Item = 1;</code>
      * @param array|\Google\Protobuf\Internal\MapField $var
      * @return $this
      */
-    public function setItemList($var)
+    public function setItem($var)
     {
         $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::INT64);
-        $this->ItemList = $arr;
+        $this->Item = $arr;
 
         return $this;
     }

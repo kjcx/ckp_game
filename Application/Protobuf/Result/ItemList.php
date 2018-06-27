@@ -18,7 +18,7 @@ class ItemList
     public static function encode($ItmeList)
     {
         $ItmeList = new \AutoMsg\ItemList();
-        $ItmeList->setItemList($ItmeList);
+        $ItmeList->setItem($ItmeList);
         return $ItmeList;
     }
 }

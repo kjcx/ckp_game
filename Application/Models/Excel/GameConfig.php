@@ -123,4 +123,6 @@ class GameConfig extends Model
         $MaxTrainTime = $data_GameConfig['value'];
         return $MaxTrainTime;
     }
+
+
 }

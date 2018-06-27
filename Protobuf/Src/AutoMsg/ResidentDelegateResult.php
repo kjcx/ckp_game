@@ -24,9 +24,9 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     /**
      *居民npc和任务id
      *
-     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTask = 2;</code>
+     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTaskList = 2;</code>
      */
-    private $NpcTask;
+    private $NpcTaskList;
     /**
      *任务次数
      *
@@ -74,25 +74,25 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     /**
      *居民npc和任务id
      *
-     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTask = 2;</code>
+     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTaskList = 2;</code>
      * @return \Google\Protobuf\Internal\MapField
      */
-    public function getNpcTask()
+    public function getNpcTaskList()
     {
-        return $this->NpcTask;
+        return $this->NpcTaskList;
     }
 
     /**
      *居民npc和任务id
      *
-     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTask = 2;</code>
+     * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTaskList = 2;</code>
      * @param array|\Google\Protobuf\Internal\MapField $var
      * @return $this
      */
-    public function setNpcTask($var)
+    public function setNpcTaskList($var)
     {
         $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\NpcTask::class);
-        $this->NpcTask = $arr;
+        $this->NpcTaskList = $arr;
 
         return $this;
     }

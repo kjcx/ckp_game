@@ -41,6 +41,7 @@ use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Npc\NpcInfo;
+use App\Models\Npc\NpcTask;
 use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
 use App\Models\Sign\SignInfo;
@@ -53,6 +54,7 @@ use App\Models\User\FriendApply;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
+use App\Protobuf\Req\AddNpcRelationAdvanceReq;
 use App\Protobuf\Req\AddSoilReq;
 use App\Protobuf\Req\AuctionLandReq;
 use App\Protobuf\Req\BuildLvUpReq;
@@ -2284,8 +2286,8 @@ class Web extends WebSocketController
     public function msgid_1096()
     {
         //委托任务
-        $NpcInfo = new NpcInfo();
-        $data_task = $NpcInfo->getRedisTask($this->uid);
+        $NpcTask = new NpcTask();
+        $data_task = $NpcTask->getRedisTask($this->uid);
         $str = ResidentDelegateResult::encode($data_task);
         $this->send(1134,$this->fd,$str);
     }
@@ -2302,4 +2304,27 @@ class Web extends WebSocketController
         $this->send(1037,$this->fd,$str);
     }
 
+    /**
+     * 提升好感度
+     * return 1133 AddNpcRelationAdvanceResult
+     */
+    public function msgid_1038()
+    {
+        $data = $this->data;
+        $data_item = AddNpcRelationAdvanceReq::decode($data);
+        $Bag = new Bag($this->uid);
+        $rs = $Bag->checkCountByItemId($data_item['ItemId'],$data_item['ItemCount']);
+        if($rs){
+            $rs = $Bag->delBag($data_item['ItemId'],$data_item['ItemCount']);
+            if($rs){
+                $Item = new Item();
+                $data_iteminfo = $Item->getInfoById($data_item['ItemId']);
+                $Friend = $data_iteminfo['Friend'];
+            }else{
+                var_dump("删除背包失败");
+            }
+        }else{
+            var_dump("道具数量不足");
+        }
+    }
 }
