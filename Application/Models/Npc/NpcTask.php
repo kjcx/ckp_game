@@ -22,12 +22,16 @@ class NpcTask extends Model
     {
         $key = $this->key . $Uid;
         $bool = $this->checkExists($Uid);
+        var_dump("是否存在");
+        var_dump($bool);
         if(!$bool){
             $arr = [];//随机任务
             $arr = $this->checkExists($Uid);
             $this->setRedisTask($Uid,$arr);
         }
-        $str = $this->redis->get($key);
+        $str = $this->redis->hGetAll($key);
+        var_dump($key);
+        var_dump($str);
         $arr = unserialize($str);
         var_dump($arr);
         return $arr;
@@ -53,6 +57,8 @@ class NpcTask extends Model
     {
         $key = $this->key . $Uid;
         $rs = $this->redis->exists($key);
+        var_dump('存在' .$key);
+        var_dump($rs);
         if($rs){
             return true;
         }else{

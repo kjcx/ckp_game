@@ -41,7 +41,7 @@ class Gm extends Controller
         if (empty($dbConf['username'])) {
             $mongo = new \MongoDB\Client("mongodb://{$dbConf['hostname']}/");
         } else {
-            $mongo = new \MongoDB\Client("mongodb://{$dbConf['username']}:{$dbConf['password']}@{$dbConf['hostname']}:{$dbConf['prot']}/");
+            $mongo = new \MongoDB\Client("mongodb://{$dbConf['username']}:{$dbConf['password']}@{$dbConf['hostname']}:{$dbConf['hostport']}/");
         }
         $mysql->where('uid',$uid)->delete('ckzc_role');
         $mysql->where('uid',$uid)->delete('ckzc_userattr');
