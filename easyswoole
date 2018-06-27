@@ -1,2 +1,2 @@
 <?php
-require './vendor/easyswoole/easyswoole/bin/easyswoole';
+require '/data/ckp_server/vendor/easyswoole/easyswoole/bin/easyswoole';
