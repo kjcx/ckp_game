@@ -19,6 +19,7 @@ class Room extends Model
     use MongoTrait,CacheTrait;
 
     private $mongoTable = 'ckzc.room';
+    private $mongoListTable = 'ckzc.roomList';
     private $excelRoom;
     private $uid;
     const initRoomKey = 101;//初始化赠送的roomkey
@@ -39,7 +40,8 @@ class Room extends Model
     public function init()
     {
         $roomInfo = $this->excelRoom->getRoomByKey(self::initRoomKey);
-        $initRoom = $this->createRoom($roomInfo);
+        $this->createRoomList();
+        return $initRoom = $this->createRoom($roomInfo);
     }
 
     /**
@@ -155,6 +157,18 @@ class Room extends Model
         return false;
     }
 
+    /**
+     * 创建一个room的列表
+     */
+    private function createRoomList()
+    {
+        $listInfo = explode('.',$this->mongoListTable);
+        $data = [
+            'uid' => $this->uid,
+            'items' => []
+        ];
+        return $this->mongo->{$listInfo['0']}->{$listInfo['1']}->insertOne($data);
+    }
     /**
      * 设置room列表
      * @param $roomId mongodId
