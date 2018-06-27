@@ -50,11 +50,10 @@ class Index extends Controller
     {
 
        $NpcInfo  = new NpcInfo();
-       $data = $NpcInfo->getRedisNpcList(65);
-//        var_dump($data[113]);
-       var_dump($NpcInfo->checkNpcStatus(65,113));
-       $NpcInfo->setRedisNpcUnlock(65,113);
+       $data = $NpcInfo->setRedisNpcInit(65);
+        $list = $NpcInfo->getRedisNpcList(65);
 
+        var_dump($list);
     }
     public function rand_str()
     {

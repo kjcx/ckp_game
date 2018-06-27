@@ -63,13 +63,18 @@ class Npc extends Model
     {
         $data = Db::table($this->table)->where('Type','in',[1,2])->order('Type')->select();
         $arr = [];
+        $list = [];
         foreach ($data as $datum) {
+            $arr['NpcId'] = $datum['Id'];
+            $arr['CurrentFavorability'] = 0;//好感度
+            $arr['FavorabilityLevel'] = 0;//品质
             if($datum['Type'] == 1){
-                $arr[$datum['Id']] = 1;
+                $arr['Status'] = 1;//默认解锁
             }else{
-                $arr[$datum['Id']] =0;
+                $arr['Status'] = 0;//没解锁
             }
+            $list[] = $arr;
         }
-        return $arr;
+        return $list;
     }
 }

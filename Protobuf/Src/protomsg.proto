@@ -552,7 +552,7 @@ message FriendApplyClearReq{
 }
 //拒绝好友申请 返回
 message FriendApplyClearResult{
-    FriendInfo Info=1;  //拒绝人的信息
+    repeated FriendInfo Info=1;  //拒绝人的信息
     bool To=2;  //是否是自己发出的申请
 }
 message FriendAddBlackReq{
@@ -900,12 +900,14 @@ message AddNpcRelationAdvanceReq{
     AddNpcFavorability AddNpcFavor=1;
 }
 message AddNpcRelationAdvanceResult{
-    LoadNpcFavorability NpcFavorabilityData=1;
+    LoadNpcFavorability NpcFavorabilityFData=1;
 }
+// 增加是否解锁字段
 message LoadNpcFavorability{
     int32 NpcId=1;
     int32 CurrentFavorability=2;
     int32 FavorabilityLevel=3;
+    bool Status=4;//是否解锁
 }
 message AddNpcFavorability{
     int32 NpcId=1;

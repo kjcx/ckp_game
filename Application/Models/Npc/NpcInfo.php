@@ -16,19 +16,17 @@ class NpcInfo extends Model
 {
     public $table = 'Npc';
     public $key = 'NpcList:';
-
+    public $num = 4;//委托任务随机取4个
     public function setRedisNpcInit($Uid)
     {
         $key = $this->key . $Uid;
         $Npc = new Npc();
         $data = $Npc->getNpcInit();
-        $rs = $this->redis->hMset($key,$data);
-        if($rs){
-           return true;
-        }else{
-            return false;
+        foreach ($data as $datum) {
+            $this->redis->hSet($key,$datum['NpcId'],serialize($datum));
         }
     }
+
     /**
      * 设置解锁npcid
      * @param $Uid
@@ -42,7 +40,12 @@ class NpcInfo extends Model
         if(!$exists){
             $this->setRedisNpcInit($Uid);
         }
-        $rs = $this->redis->hSet($key,$NpcId,true);
+
+        $str = $this->redis->hGet($key,$NpcId);
+        $arr = unserialize($str);
+        $arr['Status'] = true;
+
+        $rs = $this->redis->hSet($key,$NpcId,serialize($arr));
         if($rs){
            return true;
         }else{
@@ -63,7 +66,7 @@ class NpcInfo extends Model
             $rs = $this->setRedisNpcInit($Uid);
         }
         $list = $this->redis->hGetAll($key);
-        return $list;
+        return unserialize($list);
     }
 
     /**
@@ -75,30 +78,45 @@ class NpcInfo extends Model
     public function checkNpcStatus($Uid,$NpcId)
     {
         $key = $this->key . $Uid;
-        $rs = $this->redis->hGet($key,$NpcId);
-        if($rs){
+
+        $str = $this->redis->hGet($key,$NpcId);
+        $arr = unserialize($str);
+        if($arr['Status']){
             return true;
         }else{
             return false;
         }
     }
 
-    public function getRedisNpcRand($Uid,$num)
+    /**
+     * 随机取4个居民
+     * @param $Uid
+     * @param $num
+     * @return mixed
+     */
+    public function getRedisNpcRand($Uid)
     {
-        $data = $this->getRedisNpcList($Uid);
-
+        $data = $this->getRedisHaveNpc($Uid);
+        mt_srand();
+        $keys = array_rand($data,$this->num);
+        $arr = [];
+        foreach ($keys as $item) {
+            $arr[] = $data[$item];
+        }
+        return $arr;
     }
 
     /**
-     * 已经获取的npc
+     * 已经解锁的npc
      * @param $Uid
+     * @return array
      */
     public function getRedisHaveNpc($Uid)
     {
         $data = $this->getRedisNpcList($Uid);
         $NpcIds = [];
         foreach ($data as $k=>$datum) {
-            if($datum){
+            if($datum['Status']){
                 $NpcIds[] = $k;
             }
         }

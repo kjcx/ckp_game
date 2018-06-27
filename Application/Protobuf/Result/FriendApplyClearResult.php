@@ -8,6 +8,8 @@
 
 namespace App\Protobuf\Result;
 
+use App\Models\User\Role;
+
 /**
  * 拒绝好友返回
  * Class FriendApplyClearResult 1017
@@ -17,14 +19,12 @@ class FriendApplyClearResult
 {
     public static function encode($data,$To=true)
     {
+        var_dump($data);
         $FriendApplyClearResult = new \AutoMsg\FriendApplyClearResult();
+
         $data_infos = [];
-        if(count($data) == count($data, 1)){
-            $data_infos[] = FriendInfo::encode($data);
-        }else{
-            foreach ($data as $info) {
-                $data_infos[] = FriendInfo::encode($info);
-            }
+        foreach ($data as $info) {
+            $data_infos[] = FriendInfo::encode($info);
         }
         $FriendApplyClearResult->setInfo($data_infos);
         $FriendApplyClearResult->setTo($To);

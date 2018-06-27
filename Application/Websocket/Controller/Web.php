@@ -957,12 +957,16 @@ class Web extends WebSocketController
         $FriendInfo = new FriendInfo();
         $FriendInfo->setRefuseFriend($this->uid,$data_FriendApplyClear);
         //拒绝申请返回
-        $str = FriendApplyClearResult::encode($data,true);
+        $Role = new Role();
+        $item = $Role->getRoleByUids($data_FriendApplyClear);
+
+        $str = FriendApplyClearResult::encode($item,true);
         $this->send(1017,$this->fd,$str);
         $data_info = $FriendInfo->getFriendStatus($this->uid,$data_FriendApplyClear);
         //通知申请人
         foreach ($data_info as $item) {
-            $str = FriendApplyClearResult::encode($item,false);
+            $new[] = $item;
+            $str = FriendApplyClearResult::encode($new,false);
             $this->sendByUid(1017,$item['fuid'],$str);
         }
 
@@ -2280,7 +2284,7 @@ class Web extends WebSocketController
     {
         $data = [];
         //委托任务
-
+        //1. 随机获取居民
         $str = ResidentDelegateResult::encode($data);
         $this->send(1134,$this->fd,$str);
     }

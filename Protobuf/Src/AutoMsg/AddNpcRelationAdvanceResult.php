@@ -14,9 +14,9 @@ use Google\Protobuf\Internal\GPBUtil;
 class AddNpcRelationAdvanceResult extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>.AutoMsg.LoadNpcFavorability NpcFavorabilityData = 1;</code>
+     * Generated from protobuf field <code>.AutoMsg.LoadNpcFavorability NpcFavorabilityFData = 1;</code>
      */
-    private $NpcFavorabilityData = null;
+    private $NpcFavorabilityFData = null;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -24,23 +24,23 @@ class AddNpcRelationAdvanceResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.AutoMsg.LoadNpcFavorability NpcFavorabilityData = 1;</code>
+     * Generated from protobuf field <code>.AutoMsg.LoadNpcFavorability NpcFavorabilityFData = 1;</code>
      * @return \AutoMsg\LoadNpcFavorability
      */
-    public function getNpcFavorabilityData()
+    public function getNpcFavorabilityFData()
     {
-        return $this->NpcFavorabilityData;
+        return $this->NpcFavorabilityFData;
     }
 
     /**
-     * Generated from protobuf field <code>.AutoMsg.LoadNpcFavorability NpcFavorabilityData = 1;</code>
+     * Generated from protobuf field <code>.AutoMsg.LoadNpcFavorability NpcFavorabilityFData = 1;</code>
      * @param \AutoMsg\LoadNpcFavorability $var
      * @return $this
      */
-    public function setNpcFavorabilityData($var)
+    public function setNpcFavorabilityFData($var)
     {
         GPBUtil::checkMessage($var, \AutoMsg\LoadNpcFavorability::class);
-        $this->NpcFavorabilityData = $var;
+        $this->NpcFavorabilityFData = $var;
 
         return $this;
     }

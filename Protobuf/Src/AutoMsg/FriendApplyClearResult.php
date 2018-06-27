@@ -18,9 +18,9 @@ class FriendApplyClearResult extends \Google\Protobuf\Internal\Message
     /**
      *拒绝人的信息
      *
-     * Generated from protobuf field <code>.AutoMsg.FriendInfo Info = 1;</code>
+     * Generated from protobuf field <code>repeated .AutoMsg.FriendInfo Info = 1;</code>
      */
-    private $Info = null;
+    private $Info;
     /**
      *是否是自己发出的申请
      *
@@ -36,8 +36,8 @@ class FriendApplyClearResult extends \Google\Protobuf\Internal\Message
     /**
      *拒绝人的信息
      *
-     * Generated from protobuf field <code>.AutoMsg.FriendInfo Info = 1;</code>
-     * @return \AutoMsg\FriendInfo
+     * Generated from protobuf field <code>repeated .AutoMsg.FriendInfo Info = 1;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getInfo()
     {
@@ -47,14 +47,14 @@ class FriendApplyClearResult extends \Google\Protobuf\Internal\Message
     /**
      *拒绝人的信息
      *
-     * Generated from protobuf field <code>.AutoMsg.FriendInfo Info = 1;</code>
-     * @param \AutoMsg\FriendInfo $var
+     * Generated from protobuf field <code>repeated .AutoMsg.FriendInfo Info = 1;</code>
+     * @param \AutoMsg\FriendInfo[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setInfo($var)
     {
-        GPBUtil::checkMessage($var, \AutoMsg\FriendInfo::class);
-        $this->Info = $var;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\FriendInfo::class);
+        $this->Info = $arr;
 
         return $this;
     }
