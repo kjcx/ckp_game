@@ -14,13 +14,13 @@ use Google\Protobuf\Internal\GPBUtil;
 class AccomplishResidentDelegateResult extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>map<int32, .AutoMsg.LoadResidentDelegate> ItemCount = 1;</code>
+     * Generated from protobuf field <code>int32 Spot = 1;</code>
      */
-    private $ItemCount;
+    private $Spot = 0;
     /**
-     * Generated from protobuf field <code>int32 Count = 2;</code>
+     * Generated from protobuf field <code>.AutoMsg.NpcTask NpcTask = 2;</code>
      */
-    private $Count = 0;
+    private $NpcTask = null;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -28,45 +28,45 @@ class AccomplishResidentDelegateResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>map<int32, .AutoMsg.LoadResidentDelegate> ItemCount = 1;</code>
-     * @return \Google\Protobuf\Internal\MapField
+     * Generated from protobuf field <code>int32 Spot = 1;</code>
+     * @return int
      */
-    public function getItemCount()
+    public function getSpot()
     {
-        return $this->ItemCount;
+        return $this->Spot;
     }
 
     /**
-     * Generated from protobuf field <code>map<int32, .AutoMsg.LoadResidentDelegate> ItemCount = 1;</code>
-     * @param array|\Google\Protobuf\Internal\MapField $var
+     * Generated from protobuf field <code>int32 Spot = 1;</code>
+     * @param int $var
      * @return $this
      */
-    public function setItemCount($var)
+    public function setSpot($var)
     {
-        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\LoadResidentDelegate::class);
-        $this->ItemCount = $arr;
+        GPBUtil::checkInt32($var);
+        $this->Spot = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>int32 Count = 2;</code>
-     * @return int
+     * Generated from protobuf field <code>.AutoMsg.NpcTask NpcTask = 2;</code>
+     * @return \AutoMsg\NpcTask
      */
-    public function getCount()
+    public function getNpcTask()
     {
-        return $this->Count;
+        return $this->NpcTask;
     }
 
     /**
-     * Generated from protobuf field <code>int32 Count = 2;</code>
-     * @param int $var
+     * Generated from protobuf field <code>.AutoMsg.NpcTask NpcTask = 2;</code>
+     * @param \AutoMsg\NpcTask $var
      * @return $this
      */
-    public function setCount($var)
+    public function setNpcTask($var)
     {
-        GPBUtil::checkInt32($var);
-        $this->Count = $var;
+        GPBUtil::checkMessage($var, \AutoMsg\NpcTask::class);
+        $this->NpcTask = $var;
 
         return $this;
     }

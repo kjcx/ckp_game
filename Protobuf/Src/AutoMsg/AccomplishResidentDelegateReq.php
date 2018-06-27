@@ -9,14 +9,18 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *修改
+ *
  * Generated from protobuf message <code>AutoMsg.AccomplishResidentDelegateReq</code>
  */
 class AccomplishResidentDelegateReq extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int32 ArrayId = 1;</code>
+     *位置id
+     *
+     * Generated from protobuf field <code>int32 Spot = 1;</code>
      */
-    private $ArrayId = 0;
+    private $Spot = 0;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -24,23 +28,27 @@ class AccomplishResidentDelegateReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 ArrayId = 1;</code>
+     *位置id
+     *
+     * Generated from protobuf field <code>int32 Spot = 1;</code>
      * @return int
      */
-    public function getArrayId()
+    public function getSpot()
     {
-        return $this->ArrayId;
+        return $this->Spot;
     }
 
     /**
-     * Generated from protobuf field <code>int32 ArrayId = 1;</code>
+     *位置id
+     *
+     * Generated from protobuf field <code>int32 Spot = 1;</code>
      * @param int $var
      * @return $this
      */
-    public function setArrayId($var)
+    public function setSpot($var)
     {
         GPBUtil::checkInt32($var);
-        $this->ArrayId = $var;
+        $this->Spot = $var;
 
         return $this;
     }

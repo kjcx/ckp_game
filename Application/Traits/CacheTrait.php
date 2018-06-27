@@ -39,7 +39,9 @@ trait CacheTrait
      */
     private function zsetGet($key,$start,$end,$orderBy = 'asc')
     {
+        
         if ($this->redis->exists($key)) {
+
             $data = $orderBy == 'asc' ?
                 $this->redis->zRange($key,$start,$end) :
                 $this->redis->zRevRange($key,$start,$end);
