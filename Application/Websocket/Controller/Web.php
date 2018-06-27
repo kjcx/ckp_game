@@ -109,6 +109,7 @@ use App\Protobuf\Req\UseCompostReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserBuyReq;
 use App\Protobuf\Req\UserSalesReq;
+use App\Protobuf\Result\AddNpcRelationAdvanceResult;
 use App\Protobuf\Result\AddSoilResult;
 use App\Protobuf\Result\AuctionLandResult;
 use App\Protobuf\Result\BuildLvUpResult;
@@ -2319,7 +2320,16 @@ class Web extends WebSocketController
             if($rs){
                 $Item = new Item();
                 $data_iteminfo = $Item->getInfoById($data_item['ItemId']);
-                $Friend = $data_iteminfo['Friend'];
+                $FavourValue = $data_iteminfo['FavourValue'];//好感度
+                $NpcInfo = new NpcInfo();
+                $rs = $NpcInfo->setRedisCurrentFavorability($this->uid,$data_item['NpcId'],$FavourValue);
+                $data_NpcId_Info =$NpcInfo->getRedisInfoByUidNpcId($this->uid,$data_item['NpcId']);
+                if($rs){
+                   $str = AddNpcRelationAdvanceResult::encode($data_NpcId_Info);
+                   $this->send(1133,$this->fd,$str);
+                }else{
+                    var_dump("赠送好感度失败");
+                }
             }else{
                 var_dump("删除背包失败");
             }

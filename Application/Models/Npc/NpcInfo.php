@@ -122,4 +122,42 @@ class NpcInfo extends Model
         }
         return $NpcIds;
     }
+
+    /**
+     * 通过用户id和npcid获取记录信息
+     * @param $Uid
+     * @param $NpcId
+     * @return array|mixed
+     */
+    public function getRedisInfoByUidNpcId($Uid,$NpcId)
+    {
+        $key = $this->key .$Uid;
+        $str = $this->redis->hGet($key,$NpcId);
+        $arr = unserialize($str);
+        if($arr){
+            return $arr;
+        }else{
+            return [];
+        }
+    }
+
+    /**
+     * 设置居民好感度
+     * @param $Uid
+     * @param $NpcId
+     * @param $FavourValue
+     * @return bool
+     */
+    public function setRedisCurrentFavorability($Uid,$NpcId,$FavourValue)
+    {
+        $key = $this->key . $Uid;
+        $arr = $this->getRedisInfoByUidNpcId($Uid,$NpcId);
+        $arr['CurrentFavorability'] = $arr['CurrentFavorability'] + $FavourValue;
+        $rs = $this->redis->hSet($key,unserialize($arr));
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
