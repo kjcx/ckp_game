@@ -21,6 +21,7 @@ use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Npc\NpcInfo;
+use App\Models\Npc\NpcTask;
 use App\Models\Sales\SalesItem;
 use App\Models\Mail\MailMsg;
 use App\Models\Sign\SignInfo;
@@ -49,11 +50,10 @@ class Index extends Controller
     public function index()
     {
 
-       $NpcInfo  = new NpcInfo();
-       $data = $NpcInfo->setRedisNpcInit(65);
-        $list = $NpcInfo->getRedisNpcList(65);
+        $NpcInfo = new NpcInfo();
+        $data = $NpcInfo->checkNpcStatus(65,101);
 
-        var_dump($list);
+        var_dump($data);
     }
     public function rand_str()
     {

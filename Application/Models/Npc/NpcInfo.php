@@ -66,7 +66,10 @@ class NpcInfo extends Model
             $rs = $this->setRedisNpcInit($Uid);
         }
         $list = $this->redis->hGetAll($key);
-        return unserialize($list);
+        foreach ($list as &$item) {
+            $item = unserialize($item);
+        }
+        return $list;
     }
 
     /**
