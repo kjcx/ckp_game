@@ -113,9 +113,12 @@ class Room extends Model
      */
     public function getRooms()
     {
+
         $data = [];
         $zsetKey = self::roomListKey . $this->uid;
+
         $roomIds = $this->zsetGet($zsetKey,0,-1);
+        
         if (empty($roomIds)) {
             //没有 mongo获取
             return [];

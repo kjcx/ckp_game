@@ -29,7 +29,6 @@ class NpcTask extends Model
         }
         $str = $this->redis->get($key);
         $arr = unserialize($str);
-
         return $arr;
     }
 
