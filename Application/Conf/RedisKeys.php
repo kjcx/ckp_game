@@ -18,6 +18,8 @@ return [
         'FriendInfo:uid',//好友数据
         'manorStealLog:uid',//庄园偷取日志 有序集合
         'manorStealLogDetail:uid:$id', //庄园偷取单个日志 $id为一个算法Id
+        'roomList:uid:',//住宅集合  是一个zset
+        'room:_id:mongodid',//住宅单个key string型
 
     ],
     'a' => 'dupeng',

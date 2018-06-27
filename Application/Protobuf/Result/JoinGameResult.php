@@ -10,6 +10,7 @@ namespace App\Protobuf\Result;
 use App\Models\Bank\SavingGold;
 use App\Models\Company\Company;
 use App\Models\Company\Shop;
+use App\Models\Room\Room;
 use App\Models\Staff\LottoLog;
 use App\Models\User\FriendApply;
 use App\Models\User\Role;
@@ -92,13 +93,12 @@ class JoinGameResult
         $Mails = MailResult::encode($data);
         $JoinGameResult->setMails($Mails);
         //住宅信息 TODO::
-        $data = [
-            ['uid' => $uid,'roomId' => 202,'config' => []],
-            ['uid' => $uid,'roomId' => 203,'config' => []],
-            ['uid' => $uid,'roomId' => 204,'config' => []],
-        ];
+
+        $room = new Room($uid);
+        $data = $room->getRooms();
         $roomResult = RoomListResult::encode($data);
         $JoinGameResult->setRoom($roomResult);
+
         $str = $JoinGameResult->serializeToString();
         return $str;
     }

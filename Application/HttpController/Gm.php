@@ -49,6 +49,7 @@ class Gm extends Controller
         $mysql->where('uid',$uid)->delete('ckzc_friend_apply');
         $mongo->ckzc_data->user_bag->deleteOne(['uid' => $uid]);
         $mongo->ckzc_data->manor->deleteOne(['uid' => $uid]);
+        $mongo->ckzc->room->deleteOne(['uid' => $uid]);
         $response = ['code' => 200,'msg' => '成功'];
         $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
         $this->response()->withHeader("Access-Control-Allow-Origin", "*");
