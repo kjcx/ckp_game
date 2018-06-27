@@ -52,4 +52,34 @@ class BuildingLevel extends Model
             return 0;
         }
     }
+
+    /**
+     * 验证道具是否满足
+     * @param $NeedItems
+     * @param $ShopType
+     * @return array
+     */
+    public function getNeedItems($NeedItems,$ShopType)
+    {
+        $arr = explode(';',$NeedItems);
+        $new_list = [];
+        foreach ($arr as $item) {
+            $res = explode(',',$item);
+            $ShopType = $res[0];
+            unset($res[0]);
+            $new = [];
+//            var_dump($res);
+            foreach ($res as $k =>$v) {
+                if($k % 2 == 1){
+                    $list['ItemId'] = $v;
+                }else{
+                    $list['Count'] = $v;
+                    $new[] = $list;
+//                    var_dump($list);
+                }
+            }
+            $new_list[$ShopType] = $new;
+        }
+        return $new_list[$ShopType];
+    }
 }

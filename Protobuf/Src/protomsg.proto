@@ -552,7 +552,7 @@ message FriendApplyClearReq{
 }
 //拒绝好友申请 返回
 message FriendApplyClearResult{
-    FriendInfo Info=1;  //拒绝人的信息
+    repeated FriendInfo Info=1;  //拒绝人的信息
     bool To=2;  //是否是自己发出的申请
 }
 message FriendAddBlackReq{
@@ -900,12 +900,14 @@ message AddNpcRelationAdvanceReq{
     AddNpcFavorability AddNpcFavor=1;
 }
 message AddNpcRelationAdvanceResult{
-    LoadNpcFavorability NpcFavorabilityData=1;
+    LoadNpcFavorability NpcFavorabilityFData=1;
 }
+// 增加是否解锁字段
 message LoadNpcFavorability{
     int32 NpcId=1;
     int32 CurrentFavorability=2;
     int32 FavorabilityLevel=3;
+    bool Status=4;//是否解锁
 }
 message AddNpcFavorability{
     int32 NpcId=1;
@@ -1188,11 +1190,7 @@ message OnGetMyGoodsResult{
 message ResidentDelegateReq{
 
 }
-message ResidentDelegateResult{
-    map<int32, LoadResidentDelegate> ItemCount=1;
-    int32 Count=2;
-    int32 RefCount=3;
-}
+
 message RefResidentDelegateReq{
 
 }
@@ -2258,4 +2256,45 @@ message SalesListReq{
 //交易行请求
 message SalesListResult{
     repeated DealGoodsUpdate Goods=1;//所有拍卖行商品数据集合
+}
+
+//请求解锁npc
+message UnlockNpcReq{
+	int32 NpcId=1;//NPCId;
+}
+//返回解锁npc成功
+message UnlockNpcResult{
+	int32 NpcId=1;//NPCId;
+}
+//请求npc列表
+message NpcListReq{
+
+}
+//返回npc列表
+message NpcListResult{
+	repeated NpcInfo NpcData=1;
+}
+//npc状态
+message NpcInfo{
+	int32 NpcId=1;
+    bool Status=2;
+}
+
+//返回居民委托任务
+message ResidentDelegateResult{
+    map<int32, ItemList> ItemCount=1;//完成任务所需要的道具
+    map<int32, NpcTask> NpcTaskList=2;//居民npc和任务id
+    int32 Count=3;//任务次数
+    int32 RefCount=4;//刷新次数
+
+}
+//每次委托任务道具列表
+message ItemList{
+    map<int32,int64> Item=1;
+}
+
+//居民npc和任务id
+message NpcTask{
+    int32 NpcId=1;
+    int32 TaskId=2;
 }

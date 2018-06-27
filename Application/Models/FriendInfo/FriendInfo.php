@@ -56,7 +56,7 @@ class FriendInfo extends Model
     public function setRedispassFriend($Uid,$data)
     {
         $key = $this->key . $Uid;
-        var_dump($data);
+//        var_dump($data);
         $rs = $this->redis->hSet($key,$data['Uid'],json_encode($data));
         return $rs;
     }
@@ -71,6 +71,7 @@ class FriendInfo extends Model
     {
         $key = $this->key . $Uid;
         $rs = $this->redis->hExists($key,$Fuid);
+        //在不在黑名单中
         return $rs;
     }
 

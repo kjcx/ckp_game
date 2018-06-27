@@ -13,12 +13,14 @@ use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
 use App\Models\Company\Shop;
 use App\Models\DataCenter\DataCenter;
+use App\Models\Excel\BuildingLevel;
 use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\FruitsData\FruitsData;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Npc\NpcInfo;
 use App\Models\Sales\SalesItem;
 use App\Models\Mail\MailMsg;
 use App\Models\Sign\SignInfo;
@@ -47,9 +49,11 @@ class Index extends Controller
     public function index()
     {
 
-       $rs = new Item();
-        $data = $rs->getOne();
-        var_dump($data);
+       $NpcInfo  = new NpcInfo();
+       $data = $NpcInfo->setRedisNpcInit(65);
+        $list = $NpcInfo->getRedisNpcList(65);
+
+        var_dump($list);
     }
     public function rand_str()
     {

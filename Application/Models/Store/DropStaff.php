@@ -165,7 +165,7 @@ class DropStaff extends Model
         $insert['Name'] = $xing . $data_Staff['Name'];
         $insert['EmployersDate'] = 0;
         $insert['BasicProperties'] = $arr;
-        $insert['ComprehensionTime'] = 0;//今日培训次数
+        $insert['ComprehensionTime'] = $data_Staff['Comprehension'];//总培训次数
         $insert['Quality'] = $Quality;//员工配置
         return $insert;
     }

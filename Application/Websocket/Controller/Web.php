@@ -28,8 +28,10 @@ use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
 use App\Models\Excel\Lotto;
+use App\Models\Excel\Npc;
 use App\Models\Excel\Sign;
 use App\Models\Excel\Topup;
+use App\Models\Excel\TotalRewards;
 use App\Models\Excel\Train;
 use App\Models\Excel\WsResult;
 use App\Models\FriendInfo\FriendInfo;
@@ -38,6 +40,8 @@ use App\Models\Log\Pay;
 use App\Models\Mail\MailMsg;
 use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
+use App\Models\Npc\NpcInfo;
+use App\Models\Npc\NpcTask;
 use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
 use App\Models\Sign\SignInfo;
@@ -50,6 +54,7 @@ use App\Models\User\FriendApply;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
+use App\Protobuf\Req\AddNpcRelationAdvanceReq;
 use App\Protobuf\Req\AddSoilReq;
 use App\Protobuf\Req\AuctionLandReq;
 use App\Protobuf\Req\BuildLvUpReq;
@@ -98,11 +103,13 @@ use App\Protobuf\Req\StealSemenReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TopUpGoldReq;
+use App\Protobuf\Req\UnlockNpcReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
 use App\Protobuf\Req\UseCompostReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserBuyReq;
 use App\Protobuf\Req\UserSalesReq;
+use App\Protobuf\Result\AddNpcRelationAdvanceResult;
 use App\Protobuf\Result\AddSoilResult;
 use App\Protobuf\Result\AuctionLandResult;
 use App\Protobuf\Result\BuildLvUpResult;
@@ -144,6 +151,8 @@ use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
+use App\Protobuf\Result\NpcFavorabilityResult;
+use App\Protobuf\Result\NpcListResult;
 use App\Protobuf\Result\OnGetMyGoodsResult;
 use App\Protobuf\Result\PickUpSevenDaysResult;
 use App\Protobuf\Result\RaffleFruitsResult;
@@ -153,6 +162,7 @@ use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefFitnessResult;
 use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
+use App\Protobuf\Result\ResidentDelegateResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
 use App\Protobuf\Result\RoomResult;
 use App\Protobuf\Result\SalesListResult;
@@ -167,6 +177,7 @@ use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TopUpGoldResult;
+use App\Protobuf\Result\UnlockNpcResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
 use App\Protobuf\Result\UpdateRoleInfoNameResult;
 use App\Protobuf\Result\UpgradeLandLevelReq;
@@ -950,12 +961,16 @@ class Web extends WebSocketController
         $FriendInfo = new FriendInfo();
         $FriendInfo->setRefuseFriend($this->uid,$data_FriendApplyClear);
         //拒绝申请返回
-        $str = FriendApplyClearResult::encode($data,true);
+        $Role = new Role();
+        $item = $Role->getRoleByUids($data_FriendApplyClear);
+
+        $str = FriendApplyClearResult::encode($item,true);
         $this->send(1017,$this->fd,$str);
         $data_info = $FriendInfo->getFriendStatus($this->uid,$data_FriendApplyClear);
         //通知申请人
         foreach ($data_info as $item) {
-            $str = FriendApplyClearResult::encode($item,false);
+            $new[] = $item;
+            $str = FriendApplyClearResult::encode($new,false);
             $this->sendByUid(1017,$item['fuid'],$str);
         }
 
@@ -1224,20 +1239,36 @@ class Web extends WebSocketController
             $BuildingLevel = new BuildingLevel();
             $UpdateLevel = $Level + 1;
             $data_BuildingLevel = $BuildingLevel->getInfoByLevel($UpdateLevel);
-            $UpgradeCost = $data_BuildingLevel['UpgradeCost'];
-            $data_UpgradeCost = explode(',',$UpgradeCost);
+            $UpgradeCost = $data_BuildingLevel['UpgradeCost'];//升级需要扣费
+            //所需道具
+            $data_NeedItems = $BuildingLevel->getNeedItems($data_BuildingLevel['NeedItems'],$data_Shop['ShopType']);
             $Bag = new Bag($this->uid);
-            $Count = $Bag->getCountByItemId($data_UpgradeCost[0]);
-            if($Count>= $data_UpgradeCost[1]){
-                //金币足够 执行升级动作
-                $rs = $Shop->UpdateLevel($Id,$data_BuildingLevel);
-                if($rs){
-                    $str = BuildLvUpResult::encode($this->uid);
-                    $this->send(1004,$this->fd,$str);
+            $bool = false;
+            foreach ($data_NeedItems as $data_NeedItem) {
+                $bool = $Bag->checkCountByItemId($data_NeedItem['ItemId'],$data_NeedItem['Count']);
+                if(!$bool){
+                    var_dump("道具数量不足");
+                    $this->send(1004,$this->fd,'','道具数量不足');
+                    return;
+                }
+            }
+            if($bool){
+                $data_UpgradeCost = explode(',',$UpgradeCost);
+                $Count = $Bag->getCountByItemId($data_UpgradeCost[0]);
+                if($Count>= $data_UpgradeCost[1]){
+                    //金币足够 执行升级动作
+                    $rs = $Shop->UpdateLevel($Id,$data_BuildingLevel);
+                    if($rs){
+                        $str = BuildLvUpResult::encode($Id);
+                        $this->send(1004,$this->fd,$str);
+                    }
+                }else{
+                    $this->send(1004,$this->fd,'','没有足够的金钱');
                 }
             }else{
-                $this->send(1004,$this->fd,'','没有足够的金钱');
+                return;
             }
+
         }
 
     }
@@ -2100,6 +2131,31 @@ class Web extends WebSocketController
         $day = date('d',time());
         //判断是否已经签到
         $SignInfo = new SignInfo();
+        if(in_array($data_DaySign['Day'],[101,102,103,104])){
+            //领取累计签到奖励
+            //1 判断奖励是否领取
+            $SignInfo = new SignInfo();
+            $Info = $SignInfo->getRedisRewardByUid($this->uid);
+            if(isset($Info[$data_DaySign['Day']])){
+                //已经领取
+                $this->send(1167,$this->fd,'','奖励已领取');
+            }else{
+                //领取奖励
+                $TotalRewards = new TotalRewards();
+                $D = [101=>7,102=>14,103=>21,104=>28];
+                $list = $TotalRewards->getRewardByNeedDays($D[$data_DaySign['Day']]);
+                if($list){
+                    $Bag = new Bag($this->uid);
+                    foreach ($list as $item) {
+                        $rs = $Bag->addBag($item['ItemId'],$item['Count']);
+                    }
+                    $SignInfo->setRedisRewardByUid($this->uid,$data_DaySign['Day']);
+                }
+                $str = DaySignResult::encode(['Day'=>$data_DaySign['Day'],'IsSign'=>true]);
+                $this->send(1169,$this->fd,$str);
+                return;
+            }
+        }
         if($day == $data_DaySign['Day']){
             //今日签到
             $rs = $SignInfo->checkIsSign($this->uid,$data_DaySign['Day']);
@@ -2164,8 +2220,122 @@ class Web extends WebSocketController
             $this->send(1167,$this->fd,'','奖励已领取');
         }else{
             //领取奖励
+            $TotalRewards = new TotalRewards();
+            $list = $TotalRewards->getRewardByNeedDays($data_day['Id']);
+            if($list){
+                $Bag = new Bag($this->uid);
+                foreach ($list as $item) {
+                    $rs = $Bag->addBag($item['ItemId'],$item['Count']);
+                }
+                $SignInfo->setRedisRewardByUid($this->uid,$data_day['Id']);
+            }
             $str = PickUpSevenDaysResult::encode($data_day);
             $this->send(1167,$this->fd,$str);
+        }
+    }
+
+    /**
+     * 居民人脉列表
+     * return 2024 NpcListResult
+     */
+    public function msgid_2023()
+    {
+        $data = $this->data;
+        //处理居民npc逻辑
+        //获取默认npc + 需要解锁npc
+        $NpcInfo = new NpcInfo();
+        $data = $NpcInfo->getRedisNpcList($this->uid);
+        var_dump($data);
+        $str = NpcListResult::encode($data);
+        $this->send(2024,$this->fd,$str);
+    }
+
+    /**
+     * 请求解锁npc
+     * return 2026
+     */
+    public function msgid_2025()
+    {
+        $data = $this->data;
+        $data_UnlockNpc = UnlockNpcReq::decode($data);
+        var_dump($data_UnlockNpc);
+        //处理解锁逻辑
+        $Npc = new Npc();
+        $Items = $Npc->getUnlockItemId($data_UnlockNpc['NpcId']);
+        $Bag = new Bag($this->uid);
+        $bool = false;
+        foreach ($Items as $k =>$item) {
+            $bool = $Bag->checkCountByItemId($k,$item);
+            if(!$bool){
+                //道具不满足
+                $this->send(2026,$this->fd,'','道具数量不足');
+                return;
+            }
+        }
+        if($bool){
+            $str = UnlockNpcResult::encode($data_UnlockNpc['NpcId']);
+            $this->send(2026,$this->fd,$str);
+        }else{
+            var_dump("道具数量不足");
+        }
+    }
+
+    /**
+     * 居民委托任务
+     * ResidentDelegateReq 1096
+     * return 1134 ResidentDelegateResult
+     */
+    public function msgid_1096()
+    {
+        //委托任务
+        $NpcTask = new NpcTask();
+        $data_task = $NpcTask->getRedisTask($this->uid);
+        $str = ResidentDelegateResult::encode($data_task);
+        $this->send(1134,$this->fd,$str);
+    }
+
+    /**
+     * NpcFavorabilityReq
+     * return 1037 NpcFavorabilityResult
+     */
+    public function msgid_1036()
+    {
+        $NpcInfo = new NpcInfo();
+        $data = $NpcInfo->getRedisNpcList($this->uid);
+        $str = NpcFavorabilityResult::encode($data);
+        $this->send(1037,$this->fd,$str);
+    }
+
+    /**
+     * 提升好感度
+     * return 1133 AddNpcRelationAdvanceResult
+     */
+    public function msgid_1038()
+    {
+        $data = $this->data;
+        $data_item = AddNpcRelationAdvanceReq::decode($data);
+        $Bag = new Bag($this->uid);
+        $rs = $Bag->checkCountByItemId($data_item['ItemId'],$data_item['ItemCount']);
+        if($rs){
+            $rs = $Bag->delBag($data_item['ItemId'],$data_item['ItemCount']);
+            if($rs){
+                $Item = new Item();
+                $data_iteminfo = $Item->getInfoById($data_item['ItemId']);
+                $FavourValue = $data_iteminfo['FavourValue'];//好感度
+                $NpcInfo = new NpcInfo();
+                $rs = $NpcInfo->setRedisCurrentFavorability($this->uid,$data_item['NpcId'],$FavourValue);
+                $data_NpcId_Info =$NpcInfo->getRedisInfoByUidNpcId($this->uid,$data_item['NpcId']);
+                if($rs){
+                   $str = AddNpcRelationAdvanceResult::encode($data_NpcId_Info);
+                   $this->send(1133,$this->fd,$str);
+                }else{
+                    var_dump("赠送好感度失败");
+                }
+            }else{
+                var_dump("删除背包失败");
+            }
+        }else{
+            var_dump("道具数量不足");
         }
     }
 }

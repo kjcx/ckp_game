@@ -26,7 +26,6 @@ class JoinGameResult
         var_dump($uid);
           var_dump('设置服务器时间');
         $str_role = LoadRoleInfo::encode($uid);
- var_dump('sssss');
         $JoinGameResult->setLoadRoleInfo($str_role);
         var_dump('设置服务器时间');
 
@@ -99,7 +98,7 @@ class JoinGameResult
         $data = $room->getRooms();
         $roomResult = RoomListResult::encode($data);
         $JoinGameResult->setRoom($roomResult);
-        
+
         $str = $JoinGameResult->serializeToString();
         return $str;
     }

@@ -22,6 +22,7 @@ class FriendInfo
         $Name = $data['nickname'];
         $Level = $data['level'];
         $SocialStatus = $data['shenjiazhi'];
+        var_dump($SocialStatus);
         if(isset($data['FriendStatus'])){
             $Status = $data['FriendStatus'];
         }else{

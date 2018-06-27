@@ -32,4 +32,22 @@ class LandBuildInfo extends Model
         }
         return $arr;
     }
+
+    /**
+     * 获取一条记录
+     * @param $ShopId
+     * @return array|\AutoMsg\LoadBuildInfo
+     */
+    public static function getOne($ShopId)
+    {
+        $Shop = new Shop();
+        $Staff = new Staff();
+        $data = $Shop->getInfoById($ShopId);
+
+        $arr = [];
+        $count = $Staff->getShopEmployee($data['_id']);
+        $data['Employee'] = $count;
+        $arr[] = LoadBuildInfo::encode($data);
+        return $arr;
+    }
 }
