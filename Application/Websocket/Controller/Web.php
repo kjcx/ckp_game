@@ -24,6 +24,7 @@ use App\Models\Company\Shop as CompanyShop;
 use App\Models\Company\TalentMarketInfo;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Excel\BuildingLevel;
+use App\Models\Excel\Entrust;
 use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
@@ -110,6 +111,7 @@ use App\Protobuf\Req\UseCompostReq;
 use App\Protobuf\Req\UseItemReq;
 use App\Protobuf\Req\UserBuyReq;
 use App\Protobuf\Req\UserSalesReq;
+use App\Protobuf\Result\AccomplishResidentDelegateResult;
 use App\Protobuf\Result\AddNpcRelationAdvanceResult;
 use App\Protobuf\Result\AddSoilResult;
 use App\Protobuf\Result\AuctionLandResult;
@@ -2348,18 +2350,69 @@ class Web extends WebSocketController
     public function msgid_1098()
     {
         $data = $this->data;
-        $data_TaskId = AccomplishResidentDelegateReq::decode($data);
+        $data_Spot = AccomplishResidentDelegateReq::decode($data);
         //1判断是否有任务
         $NpcTask = new NpcTask();
+
         $data_task = $NpcTask->getRedisTask($this->uid);
-        $data_task['NpcTask'];
+        var_dump($data_task);
         $Count = $data_task['Count'];
         if($Count>=1){
-
+            //判断剩余任务测试
+            if( isset($data_task['NpcTask'][$data_Spot['Spot']]['TaskId']) ){
+                //存在任务
+                $ItemList = $data_task['NpcTask'][$data_Spot['Spot']]['ItemList'];
+                //判断道具是否存在
+                $Bag = new Bag($this->uid);
+                $bool = false;
+                foreach ($ItemList as $k => $item) {
+                    $bool  = $Bag->checkCountByItemId($k,$item);
+                    if(!$bool){
+                        var_dump("道具不满足");
+                        $this->send(1135,$this->fd,'','道具数量不足');
+                        return;
+                    }
+                }
+                if($bool){
+                    //扣除道具
+                    foreach ($ItemList as $k => $item) {
+                        $rs = $Bag->delBag($k,$item);
+                        if(!$rs){
+                            var_dump("扣除道具失败");
+                            return;
+                        }
+                    }
+                    //增加奖励
+                    $TaskId = $data_task['NpcTask'][$data_Spot['Spot']]['TaskId'];
+                    $NpcId = $data_task['NpcTask'][$data_Spot['Spot']]['NpcId'];
+                    $Entrust = new Entrust();
+                    $data_Award = $Entrust->getAwardById($TaskId);
+                    foreach ($data_Award as $k => $item) {
+                        if($k == 8){
+                            //好感度 增加npc的好感度
+                            $NpcInfo = new NpcInfo();
+                            $rs = $NpcInfo->setRedisCurrentFavorability($this->uid,$NpcId,$item);
+                            if($rs){
+                                //完成任务委托点
+                                $data_newtask['Spot'] = $data_Spot['Spot'];
+                                //生成新的任务委托点
+                                $data_newtask = $NpcTask->UpdateTask($this->uid,$data_Spot['Spot']);
+                                $str = AccomplishResidentDelegateResult::encode(['NpcTask'=>$data_newtask,'Spot'=>$data_Spot['Spot']]);
+                                $this->send(1135,$this->fd,$str);
+                            }else{
+                                var_dump("增加好感度失败");
+                            }
+                        }else{
+                            $Bag->addBag($k,$item);
+                        }
+                    }
+                }
+            }else{
+                var_dump("不存在任务");
+            }
         }else{
             var_dump("本回合任务已经完成");
         }
-        //判断剩余任务测试
 
     }
 }

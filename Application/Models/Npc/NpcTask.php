@@ -18,6 +18,7 @@ class NpcTask extends Model
 
     public $expiry_time = 8 * 3600;
     public $key = 'NpcTask:';
+    public $num = [0,1,2,3,4,5,6,7,8,9];
     public function getRedisTask($Uid)
     {
         $key = $this->key . $Uid;
@@ -26,8 +27,7 @@ class NpcTask extends Model
             $arr = $this->CreateTask($Uid);//创建任务
             $this->setRedisTask($Uid,$arr);//设置过期时间
         }
-        $str = $this->redis->hGetAll($key);
-
+        $str = $this->redis->get($key);
         $arr = unserialize($str);
 
         return $arr;
@@ -44,6 +44,25 @@ class NpcTask extends Model
         $this->redis->setex($key,$this->expiry_time,serialize($arr));
     }
 
+    /**
+     * 更新redis任务
+     * @param $Uid
+     * @param $arr
+     * @return bool
+     */
+    public function setRedisUpdateTask($Uid,$arr)
+    {
+        $key = $this->key . $Uid;
+        $ttl = $this->redis->ttl($key);
+
+        $expiry_time = $this->expiry_time - $ttl;
+        $rs = $this->redis->setex($key,$expiry_time,serialize($arr));
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
     /**
      * 验证是否存在key
      * @param $Uid
@@ -70,25 +89,23 @@ class NpcTask extends Model
         $NpcInfo = new NpcInfo();
         //随机4个
         $Npc_Rand = $NpcInfo->getRedisNpcRand($Uid);
-
-        $Entrust = new Entrust();
-        $Role = new Role();
-        $Level = $Role->getLevel($Uid);
-        $Info = $Entrust->getInfoByLevel($Level);
-        $TaskId = $Info['Id'];
-        $str_num = '0,1,2,3,4,5,6,7,8,9';
-        $new_str= str_shuffle($str_num);
-        $ItemList = [];
-        $ItemList1 = $Entrust->getItemByOrderForm($Info['OrderForm']);
-        $ItemList2 = $Entrust->getItemByOrderForm($Info['OrderForm']);
-        $ItemList3 = $Entrust->getItemByOrderForm($Info['OrderForm']);
-        $ItemList4 = $Entrust->getItemByOrderForm($Info['OrderForm']);
+        $data_info1 = $this->getTaskInfoByUid($Uid);
+        $data_info2 = $this->getTaskInfoByUid($Uid);
+        $data_info3 = $this->getTaskInfoByUid($Uid);
+        $data_info4 = $this->getTaskInfoByUid($Uid);
+        $TaskId = $data_info1['TaskId'];
+        $ItemList1 = $data_info1['ItemList'];
+        $ItemList2 = $data_info1['ItemList'];
+        $ItemList3 = $data_info1['ItemList'];
+        $ItemList4 = $data_info1['ItemList'];
+        mt_srand();
+        shuffle($this->num);
         $NpcTask = [];
         //初始化4个点
-        $NpcTask[$new_str[0]] = ['NpcId'=>$Npc_Rand[0],'TaskId'=>$TaskId,'ItemList'=>$ItemList1,'Spot'=>$new_str[0]];
-        $NpcTask[$new_str[1]] = ['NpcId'=>$Npc_Rand[1],'TaskId'=>$TaskId,'ItemList'=>$ItemList2,'Spot'=>$new_str[1]];
-        $NpcTask[$new_str[2]] = ['NpcId'=>$Npc_Rand[2],'TaskId'=>$TaskId,'ItemList'=>$ItemList3,'Spot'=>$new_str[2]];
-        $NpcTask[$new_str[3]] = ['NpcId'=>$Npc_Rand[3],'TaskId'=>$TaskId,'ItemList'=>$ItemList4,'Spot'=>$new_str[3]];
+        $NpcTask[$this->num[0]] = ['NpcId'=>$Npc_Rand[0],'TaskId'=>$TaskId,'ItemList'=>$ItemList1,'Spot'=>$this->num[0]];
+        $NpcTask[$this->num[1]] = ['NpcId'=>$Npc_Rand[1],'TaskId'=>$TaskId,'ItemList'=>$ItemList2,'Spot'=>$this->num[1]];
+        $NpcTask[$this->num[2]] = ['NpcId'=>$Npc_Rand[2],'TaskId'=>$TaskId,'ItemList'=>$ItemList3,'Spot'=>$this->num[2]];
+        $NpcTask[$this->num[3]] = ['NpcId'=>$Npc_Rand[3],'TaskId'=>$TaskId,'ItemList'=>$ItemList4,'Spot'=>$this->num[3]];
 
         $Count = 10;//每个回合次数
         $RefCount = 0;//刷新次数
@@ -96,4 +113,79 @@ class NpcTask extends Model
         return ['Count'=>$Count,'RefCount'=>$RefCount,'NpcTask'=>$NpcTask];
     }
 
+    /**
+     * 更新任务
+     * @param $Uid
+     * @param $Spot
+     * @return bool
+     */
+    public function UpdateTask($Uid,$Spot)
+    {
+        //获取新的npcid
+        $NewNpcId = $this->getNewNpcId($Uid);
+        //删除完成任务的npcid
+        $data = $this->getRedisTask($Uid);
+
+        $item = $this->num;
+        foreach ($data['NpcTask'] as $k =>$datum) {
+            if(in_array($k,$item)){
+                unset($item[$k]);
+            }
+        }
+        mt_srand();
+        shuffle($item);
+        $NewSpot = $item[0];
+
+        $data['Count'] = $data['Count'] - 1;
+        unset($data['NpcTask'][$Spot]);
+        $TaskInfo = $this->getTaskInfoByUid($Uid);
+        $ItemList = $TaskInfo['ItemList'];
+        $data['NpcTask'][$NewSpot] = ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$data['NpcTask']['TaskId'],'ItmeList'=>$ItemList];
+        $rs = $this->setRedisUpdateTask($Uid,$data);
+        if($rs){
+            return ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$data['NpcTask']['TaskId'],'ItmeList'=>$ItemList];;
+        }else{
+            return false;
+        }
+
+        
+    }
+
+    /**
+     * 随机一个新的npc居民
+     * @param $Uid
+     * @return mixed
+     */
+    public function getNewNpcId($Uid)
+    {
+        $arr  = $this->getRedisTask($Uid);
+        $NpcTask = $arr['NpcTask'];
+        $data_npc = [];
+        $NpcIds = [];
+        foreach ($NpcTask as $Spot => $item) {
+            $NpcIds[] = $item['NpcId'];
+        }
+        $NpcInfo = new NpcInfo();
+        $data_npc = $NpcInfo->getRedisHaveNpc($Uid);
+        //取差集
+        $diff = array_diff($data_npc,$NpcIds);
+        mt_srand();
+        return $diff[array_rand($diff)];
+    }
+
+    /**
+     * 用过uid获取任务id
+     * @param $Uid
+     * @return array
+     */
+    public function getTaskInfoByUid($Uid)
+    {
+        $Entrust = new Entrust();
+        $Role = new Role();
+        $Level = $Role->getLevel($Uid);
+        $Info = $Entrust->getInfoByLevel($Level['level']);
+        $TaskId = $Info['Id'];
+        $ItemList = $Entrust->getItemByOrderForm($Info['OrderForm']);
+        return ['TaskId'=>$TaskId,'ItemList'=>$ItemList];
+    }
 }

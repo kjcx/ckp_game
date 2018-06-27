@@ -18,7 +18,7 @@ class AccomplishResidentDelegateReq
     public static function decode($data)
     {
         $AccomplishResidentDelegateReq = new \AutoMsg\AccomplishResidentDelegateReq();
-        $TaskId = $AccomplishResidentDelegateReq->getArrayId()
-        return ['TaskId'=>$TaskId];
+        $Spot = $AccomplishResidentDelegateReq->getSpot();
+        return ['Spot'=>$Spot];
     }
 }

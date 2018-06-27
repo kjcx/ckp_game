@@ -55,4 +55,24 @@ class Entrust extends Model
         }
         return $new;
     }
+
+    /**
+     * 任务di 获取奖励
+     * @param $Id
+     * @return array
+     */
+    public function getAwardById($Id)
+    {
+        $data = Db::table($this->table)->where('Id',$Id)->find();
+        $Award = $data['Award'];
+        $arr = explode(';',$Award);
+        $list = [];
+        foreach ($arr as $item) {
+            $res = explode(',',$item);
+            $ItemId = $res[0];
+            $Count = $res[1];
+            $list[] = ['ItemId'=>$ItemId,'Count'=>$Count];
+        }
+        return $list;
+    }
 }
