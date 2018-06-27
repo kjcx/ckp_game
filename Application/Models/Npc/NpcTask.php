@@ -27,6 +27,7 @@ class NpcTask extends Model
             $arr = $this->CreateTask($Uid);//创建任务
             $this->setRedisTask($Uid,$arr);//设置过期时间
         }
+
         $str = $this->redis->get($key);
         $arr = unserialize($str);
         return $arr;

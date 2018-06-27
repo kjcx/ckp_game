@@ -2293,6 +2293,7 @@ class Web extends WebSocketController
         //委托任务
         $NpcTask = new NpcTask();
         $data_task = $NpcTask->getRedisTask($this->uid);
+        var_dump($data_task);
         $str = ResidentDelegateResult::encode($data_task);
         $this->send(1134,$this->fd,$str);
     }
