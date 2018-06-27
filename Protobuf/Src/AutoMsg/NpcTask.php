@@ -16,13 +16,29 @@ use Google\Protobuf\Internal\GPBUtil;
 class NpcTask extends \Google\Protobuf\Internal\Message
 {
     /**
+     *npcid
+     *
      * Generated from protobuf field <code>int32 NpcId = 1;</code>
      */
     private $NpcId = 0;
     /**
+     *任务id
+     *
      * Generated from protobuf field <code>int32 TaskId = 2;</code>
      */
     private $TaskId = 0;
+    /**
+     *daoju
+     *
+     * Generated from protobuf field <code>map<int32, int64> ItemList = 3;</code>
+     */
+    private $ItemList;
+    /**
+     *位置
+     *
+     * Generated from protobuf field <code>int32 Spot = 4;</code>
+     */
+    private $Spot = 0;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -30,6 +46,8 @@ class NpcTask extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *npcid
+     *
      * Generated from protobuf field <code>int32 NpcId = 1;</code>
      * @return int
      */
@@ -39,6 +57,8 @@ class NpcTask extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *npcid
+     *
      * Generated from protobuf field <code>int32 NpcId = 1;</code>
      * @param int $var
      * @return $this
@@ -52,6 +72,8 @@ class NpcTask extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *任务id
+     *
      * Generated from protobuf field <code>int32 TaskId = 2;</code>
      * @return int
      */
@@ -61,6 +83,8 @@ class NpcTask extends \Google\Protobuf\Internal\Message
     }
 
     /**
+     *任务id
+     *
      * Generated from protobuf field <code>int32 TaskId = 2;</code>
      * @param int $var
      * @return $this
@@ -69,6 +93,58 @@ class NpcTask extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt32($var);
         $this->TaskId = $var;
+
+        return $this;
+    }
+
+    /**
+     *daoju
+     *
+     * Generated from protobuf field <code>map<int32, int64> ItemList = 3;</code>
+     * @return \Google\Protobuf\Internal\MapField
+     */
+    public function getItemList()
+    {
+        return $this->ItemList;
+    }
+
+    /**
+     *daoju
+     *
+     * Generated from protobuf field <code>map<int32, int64> ItemList = 3;</code>
+     * @param array|\Google\Protobuf\Internal\MapField $var
+     * @return $this
+     */
+    public function setItemList($var)
+    {
+        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::INT64);
+        $this->ItemList = $arr;
+
+        return $this;
+    }
+
+    /**
+     *位置
+     *
+     * Generated from protobuf field <code>int32 Spot = 4;</code>
+     * @return int
+     */
+    public function getSpot()
+    {
+        return $this->Spot;
+    }
+
+    /**
+     *位置
+     *
+     * Generated from protobuf field <code>int32 Spot = 4;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setSpot($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->Spot = $var;
 
         return $this;
     }

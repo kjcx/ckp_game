@@ -54,6 +54,7 @@ use App\Models\User\FriendApply;
 use App\Models\User\Role;
 use App\Models\User\RoleBag;
 use App\Models\User\UserAttr;
+use App\Protobuf\Req\AccomplishResidentDelegateReq;
 use App\Protobuf\Req\AddNpcRelationAdvanceReq;
 use App\Protobuf\Req\AddSoilReq;
 use App\Protobuf\Req\AuctionLandReq;
@@ -2337,5 +2338,28 @@ class Web extends WebSocketController
         }else{
             var_dump("道具数量不足");
         }
+    }
+
+    /**
+     * 请求完成委托任务
+     * AccomplishResidentDelegateReq
+     * return 1135 AccomplishResidentDelegateResult
+     */
+    public function msgid_1098()
+    {
+        $data = $this->data;
+        $data_TaskId = AccomplishResidentDelegateReq::decode($data);
+        //1判断是否有任务
+        $NpcTask = new NpcTask();
+        $data_task = $NpcTask->getRedisTask($this->uid);
+        $data_task['NpcTask'];
+        $Count = $data_task['Count'];
+        if($Count>=1){
+
+        }else{
+            var_dump("本回合任务已经完成");
+        }
+        //判断剩余任务测试
+
     }
 }

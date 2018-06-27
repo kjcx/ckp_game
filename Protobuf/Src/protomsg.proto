@@ -1198,12 +1198,13 @@ message RefResidentDelegateResult{
     map<int32, LoadResidentDelegate> ItemCount=1;
     int32 RefCount=2;
 }
+//修改
 message AccomplishResidentDelegateReq{
-    int32 ArrayId=1;
+    int32 Spot=1;//位置id
 }
 message AccomplishResidentDelegateResult{
-    map<int32, LoadResidentDelegate> ItemCount=1;
-    int32 Count=2;
+    int32 Spot=1;
+    NpcTask NpcTask=2;
 }
 message LoadResidentDelegate{
     int32 NpcId=1;
@@ -2282,19 +2283,16 @@ message NpcInfo{
 
 //返回居民委托任务
 message ResidentDelegateResult{
-    map<int32, ItemList> ItemCount=1;//完成任务所需要的道具
     map<int32, NpcTask> NpcTaskList=2;//居民npc和任务id
     int32 Count=3;//任务次数
     int32 RefCount=4;//刷新次数
+}
 
-}
-//每次委托任务道具列表
-message ItemList{
-    map<int32,int64> Item=1;
-}
 
 //居民npc和任务id
 message NpcTask{
-    int32 NpcId=1;
-    int32 TaskId=2;
+    int32 NpcId=1;//npcid
+    int32 TaskId=2;//任务id
+    map<int32,int64> ItemList=3;//daoju
+    int32 Spot=4;//位置
 }

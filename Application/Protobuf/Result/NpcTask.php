@@ -20,6 +20,8 @@ class NpcTask
         $NpcTask = new \AutoMsg\NpcTask();
         $NpcTask->setNpcId($data['NpcId']);
         $NpcTask->setTaskId($data['TaskId']);
+        $NpcTask->setSpot($data['Spot']);
+        $NpcTask->setItemList($data['ItemList']);
         return $NpcTask;
     }
 }

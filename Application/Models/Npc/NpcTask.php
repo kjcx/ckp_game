@@ -22,18 +22,14 @@ class NpcTask extends Model
     {
         $key = $this->key . $Uid;
         $bool = $this->checkExists($Uid);
-        var_dump("是否存在");
-        var_dump($bool);
         if(!$bool){
-            $arr = [];//随机任务
-            $arr = $this->checkExists($Uid);
-            $this->setRedisTask($Uid,$arr);
+            $arr = $this->CreateTask($Uid);//创建任务
+            $this->setRedisTask($Uid,$arr);//设置过期时间
         }
         $str = $this->redis->hGetAll($key);
-        var_dump($key);
-        var_dump($str);
+
         $arr = unserialize($str);
-        var_dump($arr);
+
         return $arr;
     }
 
@@ -57,8 +53,6 @@ class NpcTask extends Model
     {
         $key = $this->key . $Uid;
         $rs = $this->redis->exists($key);
-        var_dump('存在' .$key);
-        var_dump($rs);
         if($rs){
             return true;
         }else{
@@ -74,8 +68,9 @@ class NpcTask extends Model
     public function CreateTask($Uid)
     {
         $NpcInfo = new NpcInfo();
-        $Npc_rand = $NpcInfo->getRedisNpcRand($Uid);
-        var_dump($Npc_rand);
+        //随机4个
+        $Npc_Rand = $NpcInfo->getRedisNpcRand($Uid);
+
         $Entrust = new Entrust();
         $Role = new Role();
         $Level = $Role->getLevel($Uid);
@@ -83,26 +78,22 @@ class NpcTask extends Model
         $TaskId = $Info['Id'];
         $str_num = '0,1,2,3,4,5,6,7,8,9';
         $new_str= str_shuffle($str_num);
-        $nums[$new_str[0]] = $new_str[0];
-        $nums[$new_str[1]] = $new_str[1];
-        $nums[$new_str[2]] = $new_str[2];
-        $nums[$new_str[3]] = $new_str[3];
-
         $ItemList = [];
+        $ItemList1 = $Entrust->getItemByOrderForm($Info['OrderForm']);
+        $ItemList2 = $Entrust->getItemByOrderForm($Info['OrderForm']);
+        $ItemList3 = $Entrust->getItemByOrderForm($Info['OrderForm']);
+        $ItemList4 = $Entrust->getItemByOrderForm($Info['OrderForm']);
         $NpcTask = [];
-        for ($i=0;$i<10;$i++){
-            $ItemList[] = $Entrust->getItemByOrderForm($Info['OrderForm']);//10次任务
-            if(in_array($i,$nums)){
-                $NpcTask[] = ['NpcId'=>$nums[$i],'TaskId'=>$TaskId];
-            }else{
-                $NpcTask[] = ['NpcId'=>'','TaskId'=>0];
-            }
-        }
+        //初始化4个点
+        $NpcTask[$new_str[0]] = ['NpcId'=>$Npc_Rand[0],'TaskId'=>$TaskId,'ItemList'=>$ItemList1,'Spot'=>$new_str[0]];
+        $NpcTask[$new_str[1]] = ['NpcId'=>$Npc_Rand[1],'TaskId'=>$TaskId,'ItemList'=>$ItemList2,'Spot'=>$new_str[1]];
+        $NpcTask[$new_str[2]] = ['NpcId'=>$Npc_Rand[2],'TaskId'=>$TaskId,'ItemList'=>$ItemList3,'Spot'=>$new_str[2]];
+        $NpcTask[$new_str[3]] = ['NpcId'=>$Npc_Rand[3],'TaskId'=>$TaskId,'ItemList'=>$ItemList4,'Spot'=>$new_str[3]];
 
         $Count = 10;//每个回合次数
         $RefCount = 0;//刷新次数
-        return ['Count'=>$Count,'RefCount'=>$RefCount,'NpcTask'=>$NpcTask,'ItemList'=>$ItemList];
 
+        return ['Count'=>$Count,'RefCount'=>$RefCount,'NpcTask'=>$NpcTask];
     }
 
 }

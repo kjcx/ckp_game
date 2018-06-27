@@ -16,12 +16,6 @@ use Google\Protobuf\Internal\GPBUtil;
 class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
 {
     /**
-     *完成任务所需要的道具
-     *
-     * Generated from protobuf field <code>map<int32, .AutoMsg.ItemList> ItemCount = 1;</code>
-     */
-    private $ItemCount;
-    /**
      *居民npc和任务id
      *
      * Generated from protobuf field <code>map<int32, .AutoMsg.NpcTask> NpcTaskList = 2;</code>
@@ -43,32 +37,6 @@ class ResidentDelegateResult extends \Google\Protobuf\Internal\Message
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
         parent::__construct();
-    }
-
-    /**
-     *完成任务所需要的道具
-     *
-     * Generated from protobuf field <code>map<int32, .AutoMsg.ItemList> ItemCount = 1;</code>
-     * @return \Google\Protobuf\Internal\MapField
-     */
-    public function getItemCount()
-    {
-        return $this->ItemCount;
-    }
-
-    /**
-     *完成任务所需要的道具
-     *
-     * Generated from protobuf field <code>map<int32, .AutoMsg.ItemList> ItemCount = 1;</code>
-     * @param array|\Google\Protobuf\Internal\MapField $var
-     * @return $this
-     */
-    public function setItemCount($var)
-    {
-        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\ItemList::class);
-        $this->ItemCount = $arr;
-
-        return $this;
     }
 
     /**
