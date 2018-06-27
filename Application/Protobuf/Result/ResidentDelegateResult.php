@@ -21,7 +21,7 @@ class ResidentDelegateResult
         $ItemList = $data['ItemList'];
         $Count = $data['Count'];
         $RefCount = $data['RefCount'];
-        $Item = ItmeList::encode($ItemList);
+        $Item = ItemList::encode($ItemList);
         $ResidentDelegateResult->setCount($Count);
         $ResidentDelegateResult->setItemCount($Item);
         $ResidentDelegateResult->setRefCount($RefCount);

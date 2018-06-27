@@ -148,6 +148,7 @@ use App\Protobuf\Result\ModelClothesResult;
 use App\Protobuf\Result\MoneyChangeResult;
 use App\Protobuf\Result\MyLandInfoResult;
 use App\Protobuf\Result\NoBodyShopResult;
+use App\Protobuf\Result\NpcFavorabilityResult;
 use App\Protobuf\Result\NpcListResult;
 use App\Protobuf\Result\OnGetMyGoodsResult;
 use App\Protobuf\Result\PickUpSevenDaysResult;
@@ -2282,10 +2283,23 @@ class Web extends WebSocketController
      */
     public function msgid_1096()
     {
-        $data = [];
         //委托任务
-        //1. 随机获取居民
-        $str = ResidentDelegateResult::encode($data);
+        $NpcInfo = new NpcInfo();
+        $data_task = $NpcInfo->getRedisTask($this->uid);
+        $str = ResidentDelegateResult::encode($data_task);
         $this->send(1134,$this->fd,$str);
     }
+
+    /**
+     * NpcFavorabilityReq
+     * return 1037 NpcFavorabilityResult
+     */
+    public function msgid_1036()
+    {
+        $NpcInfo = new NpcInfo();
+        $data = $NpcInfo->getRedisNpcList($this->uid);
+        $str = NpcFavorabilityResult::encode($data);
+        $this->send(1037,$this->fd,$str);
+    }
+
 }
