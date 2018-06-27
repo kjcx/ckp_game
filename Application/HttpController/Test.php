@@ -66,7 +66,7 @@ class Test extends Controller
     public function index()
     {
         $room = new Room(65);
-        $data = $room->init();
+        $data = $room->test();
         var_dump($data);
     }
 }

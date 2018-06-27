@@ -9,6 +9,7 @@
 namespace App\Traits;
 
 
+use App\Utility\Redis;
 use MongoDB\BSON\ObjectId;
 
 trait CacheTrait
@@ -44,7 +45,10 @@ trait CacheTrait
                 $this->redis->zRevRange($key,$start,$end);
             return $data;
         }
-        $this->zsetLoad($key);
+        $loadRes = $this->zsetLoad($key);
+        if ($loadRes == false) {
+            return false;
+        }
         return $this->zsetGet($key,$start,$end,$orderBy);
     }
 
@@ -61,6 +65,7 @@ trait CacheTrait
                 $this->redis->zAdd($key,$data['score'],$data['key']);
             }
         }
+        return false;
     }
     /**
      * key 规则 表名:主键名:主键值
@@ -70,21 +75,36 @@ trait CacheTrait
      */
     private function zsetSet($key,$value,$score)
     {
+        $this->redis = Redis::getInstance()->getConnect();
         $dbInfo = $this->getTableInfo($key);
         $filter = $this->createFilter($key);
-        if ($this->redis->sIsMember($key,$value)) {
-            //当前key存在  更新一下 score
-
+        if ($this->redis->exists($key)) {
+            //当前zset存在
+            //更新mongo
+            if ($this->redis->zRank($key,$value) !== false) {
+                //当前key存在  更新一下 score
+                $update = [
+                    '$set' => [
+                        'items.' . $value => [
+                            'key' => $value,
+                            'score' => $score,
+                        ]
+                    ]
+                ];
+            }
+            $res = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->findOneAndUpdate($filter,$update);
         } else {
-            $update = [
-                '$push' => ['items' => [
+            //不存在
+            //创建一个mongo
+            $data = $filter;
+            $data['items'] = [
+                $value => [
                     'key' => $value,
                     'score' => $score,
-                ]]
+                ]
             ];
+            $res = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->insertOne($data);
         }
-
-        $res = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->findOneAndUpdate($filter,$update);
 
         if ($res) {
             return $this->zsetLoad($key);

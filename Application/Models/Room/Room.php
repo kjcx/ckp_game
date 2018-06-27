@@ -40,7 +40,6 @@ class Room extends Model
     public function init()
     {
         $roomInfo = $this->excelRoom->getRoomByKey(self::initRoomKey);
-        $this->createRoomList();
         return $initRoom = $this->createRoom($roomInfo);
     }
 
@@ -52,8 +51,9 @@ class Room extends Model
     {
         $zsetKey = self::roomListKey . $this->uid;
         $roomMId = $this->getRoomId($roomId);
+        $member = 'room:_id:' . $roomMId;
         if ($roomMId) {
-            return $this->zsetSet($zsetKey,$roomMId,time());
+            return $this->zsetSet($zsetKey,$member,time());
         }
         return false;
     }
@@ -91,7 +91,7 @@ class Room extends Model
     private function getRoomId($roomId)
     {
         $data = $this->collection->findOne([
-            'uid' => $this->uid,
+            'uid' => (int)$this->uid,
             'roomId' => $roomId,
         ]);
         if (!empty($data)) {
@@ -164,7 +164,7 @@ class Room extends Model
     {
         $listInfo = explode('.',$this->mongoListTable);
         $data = [
-            'uid' => $this->uid,
+            'uid' => (int)$this->uid,
             'items' => []
         ];
         return $this->mongo->{$listInfo['0']}->{$listInfo['1']}->insertOne($data);
@@ -200,7 +200,7 @@ class Room extends Model
             }
         }
         $data = [
-            'uid' => $this->uid,
+            'uid' => (int)$this->uid,
             'value' => $roomInfo['Status'],//身价
             'roomId' => $roomInfo['Key'],//roomId
             'level' => 1,//当前房屋等级
