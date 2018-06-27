@@ -94,10 +94,10 @@ class JoinGameResult
         $JoinGameResult->setMails($Mails);
         //住宅信息 TODO::
 
-//        $room = new Room($uid);
-//        $data = $room->getRooms();
-//        $roomResult = RoomListResult::encode($data);
-//        $JoinGameResult->setRoom($roomResult);
+        $room = new Room($uid);
+        $data = $room->getRooms();
+        $roomResult = RoomListResult::encode($data);
+        $JoinGameResult->setRoom($roomResult);
         $str = $JoinGameResult->serializeToString();
         return $str;
     }

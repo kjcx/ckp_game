@@ -10,6 +10,7 @@ namespace App\HttpController;
 
 use App\Models\BagInfo\Bag;
 use App\Models\Excel\Item;
+use App\Models\Room\Room;
 use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use App\Utility\Mysql;
@@ -76,6 +77,24 @@ class Gm extends Controller
 
     }
 
+    /**
+     * 初始化住宅信息
+     */
+    public function initRoom()
+    {
+        $uid = $this->request()->getRequestParam('uid');
+        $room = new Room($uid);
+        if ($room->init())
+        {
+            $response = ['code' => 200,'msg' => '成功'];
+        } else {
+            $response = ['code' => 401,'msg' => '失败'];
+
+        }
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
+        $this->response()->write(json_encode($response));
+    }
     /**
      * 加全部道具
      */
