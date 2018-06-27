@@ -18,17 +18,14 @@ class ResidentDelegateResult
     public static function encode($data)
     {
         $ResidentDelegateResult = new \AutoMsg\ResidentDelegateResult();
-        $ItemList = $data['ItemList'];
         $Count = $data['Count'];
         $RefCount = $data['RefCount'];
-        $Item = ItemList::encode($ItemList);
         $NpcTaskList = [];
         foreach ($data['NpcTask'] as $item) {
             $NpcTaskList[] = NpcTask::encode($item);
         }
         $ResidentDelegateResult->setCount($Count);
         $ResidentDelegateResult->setNpcTaskList($NpcTaskList);
-        $ResidentDelegateResult->setItemCount($Item);
         $ResidentDelegateResult->setRefCount($RefCount);
         $str = $ResidentDelegateResult->serializeToString();
         return $str;
