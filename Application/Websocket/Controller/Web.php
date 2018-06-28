@@ -2278,8 +2278,20 @@ class Web extends WebSocketController
             }
         }
         if($bool){
-            $str = UnlockNpcResult::encode($data_UnlockNpc['NpcId']);
-            $this->send(2026,$this->fd,$str);
+            foreach ($Items as $k=>$item) {
+                $bool = $Bag->delBag($k,$item);
+                if(!$bool){
+                    var_dump("扣除道具失败");
+                    $this->send(2026,$this->fd,'','道具数量不足');
+                    return;
+                }
+            }
+            if($bool){
+                $NpcInfo = new NpcInfo();
+                $rs = $NpcInfo->setRedisNpcUnlock($this->uid,$data_UnlockNpc['NpcId']);
+                $str = UnlockNpcResult::encode($data_UnlockNpc['NpcId']);
+                $this->send(2026,$this->fd,$str);
+            }
         }else{
             var_dump("道具数量不足");
         }
