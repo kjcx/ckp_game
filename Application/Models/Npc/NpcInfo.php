@@ -156,7 +156,26 @@ class NpcInfo extends Model
         $key = $this->key . $Uid;
         $arr = $this->getRedisInfoByUidNpcId($Uid,$NpcId);
         $arr['CurrentFavorability'] = $arr['CurrentFavorability'] + $FavourValue;
-        $rs = $this->redis->hSet($key,unserialize($arr));
+        $rs = $this->redis->hSet($key,$arr['NpcId'],unserialize($arr));
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 更新npc品质加1级
+     * @param $Uid
+     * @param $NpcId
+     * @return bool
+     */
+    public function setRedisUpdateFavorabilityLevel($Uid,$NpcId)
+    {
+        $key = $this->key . $Uid;
+        $arr = $this->getRedisInfoByUidNpcId($Uid,$NpcId);
+        $arr['FavorabilityLevel'] = $arr['FavorabilityLevel'] + 1;
+        $rs = $this->redis->hSet($key,$arr['NpcId'],unserialize($arr));
         if($rs){
             return true;
         }else{

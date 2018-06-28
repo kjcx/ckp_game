@@ -25,6 +25,7 @@ use App\Models\Company\TalentMarketInfo;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Excel\BuildingLevel;
 use App\Models\Excel\Entrust;
+use App\Models\Excel\Favour;
 use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
@@ -89,6 +90,7 @@ use App\Protobuf\Req\HarvestPlantReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
+use App\Protobuf\Req\NpcRelationAdvanceReq;
 use App\Protobuf\Req\PickUpSevenDaysReq;
 use App\Protobuf\Req\ReadMailReq;
 use App\Protobuf\Req\RefDropShopReq;
@@ -2413,6 +2415,68 @@ class Web extends WebSocketController
             }
         }else{
             var_dump("本回合任务已经完成");
+        }
+
+    }
+
+    /**
+     * NpcRelationAdvanceReq
+     * return 1038 NpcRelationAdvanceResult
+     */
+    public function msgid_1037()
+    {
+        $data = $this->data;
+        $data_Npc = NpcRelationAdvanceReq::decode($data);
+        //提升品质
+        //获取当前品质，获取升级品质好感度是否满足  获取升级品质道具是否满足
+        $NpcInfo = new NpcInfo();
+        $info = $NpcInfo->getRedisInfoByUidNpcId($this->uid,$data_Npc['NpcId']);
+        $FavorabilityLevel = $info['FavorabilityLevel'];//品质
+        $CurrentFavorability = $info['CurrentFavorability'];//好感度
+        $Favour = new Favour();
+        $Favour_Info = $Favour->getItem($data_Npc['NpcId'],$FavorabilityLevel);
+        //判断好感度是否满足
+        $Favour_Info['FriendValue'];
+        if($CurrentFavorability >=$Favour_Info['FriendValue']){
+            //判断道具是否满足
+            $ItemList = $Favour_Info['ItemList'];
+            $Bag = new Bag($this->uid);
+            $bool = true;
+            foreach ($ItemList as $k=>$item) {
+                $bool = $Bag->checkCountByItemId($k,$item);
+                if(!$bool){
+                    $this->send(1038,$this->fd,'',"道具数量不足");
+                    var_dump("道具不满足");
+                    return;
+                }
+                if($bool ){
+                    //道具满足
+                    //扣除道具
+                    foreach ($ItemList as $k=>$item) {
+                        $rs = $Bag->delBag($k,$item);
+                        if(!$rs){
+                            var_dump("扣除道具失败");
+                        }
+                    }
+                    //设置升级品质
+                    $rs = $NpcInfo->setRedisUpdateFavorabilityLevel($this->uid,$data_Npc['NpcId']);
+                    if($rs){
+                        //升级成功 + 身价值
+                        $Status = $Favour_Info['Status'];
+                        $Role = new Role();
+                        $rs = $Role->updateShenjiazhi($this->uid,$Status);
+                        if($rs){
+                            $info = $NpcInfo->getRedisInfoByUidNpcId($this->uid,$data_Npc['NpcId']);
+                            $str = AddNpcRelationAdvanceResult::encode($info);
+                            $this->send(1038,$this->fd,$str);
+                        }else{
+                            var_dump("身价值增加失败");
+                        }
+                    }
+                }
+            }
+        }else{
+            var_dump("好感度不满足");
         }
 
     }
