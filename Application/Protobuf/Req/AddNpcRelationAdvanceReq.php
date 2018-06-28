@@ -20,14 +20,12 @@ class AddNpcRelationAdvanceReq
 {
     public static function decode($data)
     {
+
         $AddNpcRelationAdvanceReq = new \AutoMsg\AddNpcRelationAdvanceReq();
         $AddNpcRelationAdvanceReq->mergeFromString($data);
-        $str = $AddNpcRelationAdvanceReq->getAddNpcFavor();
-        $AddNpcFavorability = new AddNpcFavorability();
-        $AddNpcFavorability->mergeFromString($str);
-        $NpcId = $AddNpcFavorability->getNpcId();
-        $ItemcCount = $AddNpcFavorability->getItemCount();
-        $ItemId = $AddNpcFavorability->getItemId();
-        return ['NpcId'=>$NpcId,'ItemId'=>$ItemId,'ItemCount'=>$ItemcCount];
+        $NpcId = $AddNpcRelationAdvanceReq->getAddNpcFavor()->getNpcId();
+        $ItemId = $AddNpcRelationAdvanceReq->getAddNpcFavor()->getItemId();
+        $ItemCount = $AddNpcRelationAdvanceReq->getAddNpcFavor()->getItemCount();
+        return ['NpcId'=>$NpcId,'ItemId'=>$ItemId,'ItemCount'=>$ItemCount];
     }
 }   

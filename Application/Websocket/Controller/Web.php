@@ -2320,6 +2320,7 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_item = AddNpcRelationAdvanceReq::decode($data);
+        var_dump($data_item);
         $Bag = new Bag($this->uid);
         $rs = $Bag->checkCountByItemId($data_item['ItemId'],$data_item['ItemCount']);
         if($rs){

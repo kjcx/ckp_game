@@ -18,10 +18,12 @@ class LoadNpcFavorability
     public static function encode($data)
     {
         $LoadNpcFavorability = new \AutoMsg\LoadNpcFavorability();
-        $LoadNpcFavorability->setNpcId($data['NpcId']);
-        $LoadNpcFavorability->setCurrentFavorability($data['CurrentFavorability']);//CurrentFavorability
-        $LoadNpcFavorability->setFavorabilityLevel($data['FavorabilityLevel']);//品质
-        $LoadNpcFavorability->setStatus($data['Status']);//解锁状态
+        if($data){
+            $LoadNpcFavorability->setNpcId((int)$data['NpcId']);
+            $LoadNpcFavorability->setCurrentFavorability((int)$data['CurrentFavorability']);//CurrentFavorability
+            $LoadNpcFavorability->setFavorabilityLevel((int)$data['FavorabilityLevel']);//品质
+            $LoadNpcFavorability->setStatus($data['Status']);//解锁状态
+        }
         return $LoadNpcFavorability;
     }
 }

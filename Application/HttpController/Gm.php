@@ -98,7 +98,7 @@ class Gm extends Controller
     /**
      * 加全部道具
      */
-    public function addAllItem()
+    public function msgid_1036()
     {
 
         $uid = $this->request()->getRequestParam('uid');

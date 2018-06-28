@@ -156,8 +156,9 @@ class NpcInfo extends Model
         $key = $this->key . $Uid;
         $arr = $this->getRedisInfoByUidNpcId($Uid,$NpcId);
         $arr['CurrentFavorability'] = $arr['CurrentFavorability'] + $FavourValue;
-        $rs = $this->redis->hSet($key,$arr['NpcId'],unserialize($arr));
-        if($rs){
+        $rs = $this->redis->hSet($key,$arr['NpcId'],serialize($arr));
+        var_dump($rs);
+        if($rs>=0){
             return true;
         }else{
             return false;
