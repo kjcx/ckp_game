@@ -83,17 +83,16 @@ trait CacheTrait
         if ($this->redis->exists($key)) {
             //当前zset存在
             //更新mongo
-            if ($this->redis->zRank($key,$value) !== false) {
-                //当前key存在  更新一下 score
-                $update = [
-                    '$set' => [
-                        'items.' . $value => [
-                            'key' => $value,
-                            'score' => $score,
-                        ]
+            //当前key存在  更新一下 score
+            $update = [
+                '$set' => [
+                    'items.' . $value => [
+                        'key' => $value,
+                        'score' => $score,
                     ]
-                ];
-            }
+                ]
+            ];
+
             $res = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->findOneAndUpdate($filter,$update);
         } else {
             //不存在
@@ -120,7 +119,6 @@ trait CacheTrait
     private function createFilter($key)
     {
         $keyInfo = explode(':',$key);
-
         if ($keyInfo['1'] == '_id') {
             $filter = ['_id' => new ObjectId($keyInfo['2'])];
         } else {

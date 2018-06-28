@@ -74,9 +74,9 @@ class Room extends Model
      */
     private function transformRoomData($roomInfo)
     {
-        $configsPosition = array_column($roomInfo['config'],'position'); //配置位置信息
-        $configsItem = array_column($roomInfo['config'],'item'); //配置家具信息
-        $configs = array_combine($configsPosition,$configsItem);
+        $configsItems = array_column($roomInfo['config'],'item'); //配置家具信息
+        $configsLevel = array_column($roomInfo['config'],'level'); //配置家具等级
+        $configs = array_combine($configsItems,$configsLevel);
         $data = [
             'uid' => $roomInfo['uid'],
             'roomId' => $roomInfo['roomId'],
