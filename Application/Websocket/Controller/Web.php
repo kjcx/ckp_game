@@ -2490,6 +2490,7 @@ class Web extends WebSocketController
             }
         }else{
             var_dump("好感度不满足");
+            $this->send(1038,$this->fd,'','当前好感度不足，无法进阶');
         }
 
     }
