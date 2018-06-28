@@ -21,7 +21,11 @@ class NpcTask
         $NpcTask->setNpcId($data['NpcId']);
         $NpcTask->setTaskId($data['TaskId']);
         $NpcTask->setSpot($data['Spot']);
-        $NpcTask->setItemList($data['ItemList']);
+        $ItemList= [];
+        foreach ($data['ItemList'] as $datum) {
+            $ItemList[$datum['ItemId']] = $datum['Count'];
+        }
+        $NpcTask->setItemList($ItemList);
         return $NpcTask;
     }
 }
