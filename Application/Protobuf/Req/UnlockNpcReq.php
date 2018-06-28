@@ -18,6 +18,7 @@ class UnlockNpcReq
     public static function decode($data)
     {
         $UnlockNpcReq = new \AutoMsg\UnlockNpcReq();
+        $UnlockNpcReq->mergeFromString($data);
         $NpcId = $UnlockNpcReq->getNpcId();
         return ['NpcId'=>$NpcId];
     }
