@@ -85,7 +85,7 @@ Class EasySwooleEvent implements EventInterface {
 
         });
 
-        ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
+//        ProcessManager::getInstance()->addProcess('redis_sub',Subscribe::class); //添加redis订阅进程
 
 //        ProcessManager::getInstance()->addProcess('socket_exist',Subscribe::class); //websocket 心跳检测
 
