@@ -33,7 +33,48 @@ trait CacheTrait
         return unserialize($data);
     }
 
+    /**
+     * 更新string 或者设置string
+     * key 规则 表名:主键名:主键值
+     * @param $key
+     * @param $value
+     */
+    private function stringSet($key,$value)
+    {
+        $filter = $this->createFilter($key);
+        $dbInfo = $this->getTableInfo($key);
+        $data = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->findOne($filter);
+        if (empty($data)) {
+            //没有  插入
+            if (array_key_exists('_id',$value)) {
+                $value['_id'] = new ObjectId($value['_id']);
+            }
+            $res = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->insertOne($value);
+            if (!$res) {
+                return false;
+            }
+        } else {
+            //有 更新
+            $res = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->findOneAndUpdate($filter,$value);
+            if (!$res) {
+                return false;
+            }
+        }
+        return $this->stringLoad($key);
+    }
 
+    /**
+     * 加载一个string
+     */
+    private function stringLoad($key)
+    {
+        $filter = $this->createFilter($key);
+        $dbInfo = $this->getTableInfo($key);
+        $data = $this->mongo->{$dbInfo['db']}->{$dbInfo['table']}->findOne($filter);
+        $data = $this->objectToArray($data);
+        return $this->redis->set($key,serialize($data));
+
+    }
     /**
      * key 规则 表名:主键名:主键值
      */

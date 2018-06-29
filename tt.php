@@ -5,14 +5,35 @@
  * Date: 2018/6/27
  * Time: 下午1:27
  */
-
+use MongoDB\BSON\ObjectId;
+$t1 = microtime(true);
 $redis = new Redis();
 $redis->connect('127.0.0.1','6379');
-$arr = $redis->get('room:_id:5b32f45d9a8920411603b615');
-$arr = unserialize($arr);
-$configsPosition = array_column($arr['config'],'position'); //配置位置信息
-$configsItem = array_column($arr['config'],'item'); //配置家具信息
+$redis->select(3);
+$Id = 2;
+for ($i = 1; $i < 1000; $i++) {
+    $redis->hSet('bag:36',$i,serialize(['Count'=>10000000,'Id'=>$i]));
 
-echo '<pre>';
-print_r(array_combine($configsPosition,$configsItem));
-exit;
+}
+//for ($i = 0; $i < 200000; $i++) {
+//    $mId = (string)(new ObjectId());
+//    $key = 'test:_id:' . $mId;
+//    $value = createData($mId);
+//    $redis->set($key,json_encode($value));
+//    //写队列
+//    $task = 'test|string|set|' . $key;
+//    $redis->lPush('DataList',$task);
+//    echo "入队成功 \n";
+//}
+//
+//
+//$t2 = microtime(true);
+//echo '耗时'.round($t2-$t1,3).'秒';
+//function createData($mId)
+//{
+//    $data = [
+//        '_id' => $mId,
+//        'key' => 123
+//    ];
+//    return $data;
+//}
