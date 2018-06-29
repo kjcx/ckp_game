@@ -25,6 +25,7 @@ use App\Models\Company\TalentMarketInfo;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Excel\BuildingLevel;
 use App\Models\Excel\Entrust;
+use App\Models\Excel\Favour;
 use App\Models\Excel\GameConfig;
 use App\Models\Excel\Item;
 use App\Models\Excel\LandInfo;
@@ -90,6 +91,7 @@ use App\Protobuf\Req\HarvestPlantReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
+use App\Protobuf\Req\NpcRelationAdvanceReq;
 use App\Protobuf\Req\PickUpSevenDaysReq;
 use App\Protobuf\Req\ReadMailReq;
 use App\Protobuf\Req\RefDropShopReq;
@@ -105,6 +107,8 @@ use App\Protobuf\Req\SoldOutReq;
 use App\Protobuf\Req\StealSemenReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
+use App\Protobuf\Req\TalkIngGroupChangeReq;
+use App\Protobuf\Req\TalkingGroupReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UnlockNpcReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
@@ -180,6 +184,8 @@ use App\Protobuf\Result\StealSemenResult;
 use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
+use App\Protobuf\Result\TalkIngGroupChangeResult;
+use App\Protobuf\Result\TalkingGroupResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UnlockNpcResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
@@ -2278,8 +2284,20 @@ class Web extends WebSocketController
             }
         }
         if($bool){
-            $str = UnlockNpcResult::encode($data_UnlockNpc['NpcId']);
-            $this->send(2026,$this->fd,$str);
+            foreach ($Items as $k=>$item) {
+                $bool = $Bag->delBag($k,$item);
+                if(!$bool){
+                    var_dump("扣除道具失败");
+                    $this->send(2026,$this->fd,'','道具数量不足');
+                    return;
+                }
+            }
+            if($bool){
+                $NpcInfo = new NpcInfo();
+                $rs = $NpcInfo->setRedisNpcUnlock($this->uid,$data_UnlockNpc['NpcId']);
+                $str = UnlockNpcResult::encode($data_UnlockNpc['NpcId']);
+                $this->send(2026,$this->fd,$str);
+            }
         }else{
             var_dump("道具数量不足");
         }
@@ -2320,6 +2338,7 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_item = AddNpcRelationAdvanceReq::decode($data);
+        var_dump($data_item);
         $Bag = new Bag($this->uid);
         $rs = $Bag->checkCountByItemId($data_item['ItemId'],$data_item['ItemCount']);
         if($rs){
@@ -2417,5 +2436,128 @@ class Web extends WebSocketController
             var_dump("本回合任务已经完成");
         }
 
+    }
+
+    /**
+     * 提升品质
+     * NpcRelationAdvanceReq
+     * return 1038 NpcRelationAdvanceResult
+     */
+    public function msgid_1037()
+    {
+        $data = $this->data;
+        $data_Npc = NpcRelationAdvanceReq::decode($data);
+        //提升品质
+        //获取当前品质，获取升级品质好感度是否满足  获取升级品质道具是否满足
+        $NpcInfo = new NpcInfo();
+        $info = $NpcInfo->getRedisInfoByUidNpcId($this->uid,$data_Npc['NpcId']);
+        $FavorabilityLevel = $info['FavorabilityLevel'];//品质
+        $CurrentFavorability = $info['CurrentFavorability'];//好感度
+        $Favour = new Favour();
+        $Favour_Info = $Favour->getItem($data_Npc['NpcId'],$FavorabilityLevel);
+        //判断好感度是否满足
+        $Favour_Info['FriendValue'];
+        if($CurrentFavorability >=$Favour_Info['FriendValue']){
+            //判断道具是否满足
+            $ItemList = $Favour_Info['ItemList'];
+            $Bag = new Bag($this->uid);
+            $bool = true;
+            foreach ($ItemList as $k=>$item) {
+                $bool = $Bag->checkCountByItemId($k,$item);
+                if(!$bool){
+                    $this->send(1038,$this->fd,'',"道具数量不足");
+                    var_dump("道具不满足");
+                    return;
+                }
+                if($bool ){
+                    //道具满足
+                    //扣除道具
+                    foreach ($ItemList as $k=>$item) {
+                        $rs = $Bag->delBag($k,$item);
+                        if(!$rs){
+                            var_dump("扣除道具失败");
+                        }
+                    }
+                    //设置升级品质
+                    $rs = $NpcInfo->setRedisUpdateFavorabilityLevel($this->uid,$data_Npc['NpcId']);
+                    if($rs){
+                        //升级成功 + 身价值
+                        $Status = $Favour_Info['Status'];
+                        $Role = new Role();
+                        $rs = $Role->updateShenjiazhi($this->uid,$Status);
+                        if($rs){
+                            $info = $NpcInfo->getRedisInfoByUidNpcId($this->uid,$data_Npc['NpcId']);
+                            $str = AddNpcRelationAdvanceResult::encode($info);
+                            $this->send(1038,$this->fd,$str);
+                        }else{
+                            var_dump("身价值增加失败");
+                        }
+                    }
+                }
+            }
+        }else{
+            var_dump("好感度不满足");
+            $this->send(1038,$this->fd,'','当前好感度不足，无法进阶');
+        }
+    }
+
+    /**
+     * 谈判团换任
+     * TalkIngGroupChangeReq
+     * return 1158 TalkIngGroupChangeResult
+     */
+    public function msgid_1114()
+    {
+        $data = $this->data;
+        $data_TalkIng = TalkIngGroupChangeReq::decode($data);
+        var_dump($data_TalkIng);
+        //换人
+        //把原来人置空 信任设置上
+        $Staff = new Staff();
+        $rs = $Staff->CancelAppointed($this->uid,$data_TalkIng['DownId']);
+        if($rs){
+            $rs = $Staff->setTalkGroupStaff($this->uid,$data_TalkIng['UpId']);
+            if($rs){
+                $str = TalkIngGroupChangeResult::ecode($data_TalkIng);
+                $this->send(1158,$this->fd,$str);
+            }else{
+                var_dump("设置失败");
+            }
+        }
+
+    }
+
+    /**
+     * 谈判团任命请求 TalkingGroupReq
+     * return 1157 TalkingGroupResult
+     */
+    public function msgid_1115()
+    {
+        $data = $this->data;
+        $data_TalkingGroup = TalkingGroupReq::decode($data);
+        //判断是否替换
+        $Replace = $data_TalkingGroup['Replace'];
+        $Staff = new Staff();
+        if($Replace){
+            //替换原来谈判团员工
+            $Staff_Down = $Staff->getTalkGroupStaffs($this->uid);
+            $bool = $Staff->CancelAppointedAll($this->uid);
+
+        }else{
+            //无需替换
+            $bool = true;
+            $Staff_Down = [];
+        }
+        if($bool){
+            $rs = $Staff->setTalkGroupStaffs($this->uid,$data_TalkingGroup['StaffId']);
+            if($rs){
+                $str = TalkingGroupResult::encode(['Ids'=>$data_TalkingGroup['StaffId'],'DownId'=>$Staff_Down]);
+                $this->send(1157,$this->fd,$str);
+            }else{
+                var_dump("批量设置谈判团员工失败");
+            }
+        }else{
+            var_dump("取消所有谈判团员工失败");
+        }
     }
 }

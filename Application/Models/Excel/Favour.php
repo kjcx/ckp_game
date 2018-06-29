@@ -32,7 +32,7 @@ class Favour extends Model
      */
     public function getItem($NpcId,$Quality)
     {
-        $data = Db::table($this->table)->where('Id',$NpcId)->where('Quality',$Quality)->find();
+        $data = Db::table($this->table)->where('NpcId',$NpcId)->where('Quality',$Quality)->find();
         if($data){
             $Item = $data['Item'];
             $arr = explode(';',$Item);

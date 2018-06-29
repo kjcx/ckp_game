@@ -1618,21 +1618,25 @@ message ScoreShopBuyResult{
     int32 Count=2;
     map<int32, int32> BuyInfo=3;
 }
+//修改int=》string
 message TalkingGroupReq{
-    repeated int32 Ids=1;
+    repeated string Ids=1;
     bool Replace=2;
 }
+//修改int=》string
 message TalkingGroupResult{
-    repeated int32 Ids=1;
-    repeated int32 DownId=2;
+    repeated string Ids=1;
+    repeated string DownId=2;
 }
+//修改类型int=》string
 message TalkIngGroupChangeReq{
-    int32 UpId=1;
-    int32 DownId=2;
+    string UpId=1;
+    string DownId=2;
 }
+//修改类型int=》string
 message TalkIngGroupChangeResult{
-    int32 UpId=1;
-    int32 DownId=2;
+    string UpId=1;
+    string DownId=2;
 }
 message TalkingGroupPKReq{
     string RoleId=1;

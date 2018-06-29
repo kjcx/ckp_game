@@ -9,18 +9,20 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *修改类型int=》string
+ *
  * Generated from protobuf message <code>AutoMsg.TalkIngGroupChangeResult</code>
  */
 class TalkIngGroupChangeResult extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int32 UpId = 1;</code>
+     * Generated from protobuf field <code>string UpId = 1;</code>
      */
-    private $UpId = 0;
+    private $UpId = '';
     /**
-     * Generated from protobuf field <code>int32 DownId = 2;</code>
+     * Generated from protobuf field <code>string DownId = 2;</code>
      */
-    private $DownId = 0;
+    private $DownId = '';
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -28,8 +30,8 @@ class TalkIngGroupChangeResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 UpId = 1;</code>
-     * @return int
+     * Generated from protobuf field <code>string UpId = 1;</code>
+     * @return string
      */
     public function getUpId()
     {
@@ -37,21 +39,21 @@ class TalkIngGroupChangeResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 UpId = 1;</code>
-     * @param int $var
+     * Generated from protobuf field <code>string UpId = 1;</code>
+     * @param string $var
      * @return $this
      */
     public function setUpId($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkString($var, True);
         $this->UpId = $var;
 
         return $this;
     }
 
     /**
-     * Generated from protobuf field <code>int32 DownId = 2;</code>
-     * @return int
+     * Generated from protobuf field <code>string DownId = 2;</code>
+     * @return string
      */
     public function getDownId()
     {
@@ -59,13 +61,13 @@ class TalkIngGroupChangeResult extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 DownId = 2;</code>
-     * @param int $var
+     * Generated from protobuf field <code>string DownId = 2;</code>
+     * @param string $var
      * @return $this
      */
     public function setDownId($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkString($var, True);
         $this->DownId = $var;
 
         return $this;

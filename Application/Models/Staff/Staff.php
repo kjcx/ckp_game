@@ -23,6 +23,7 @@ class Staff extends Model
 {
     public $table = 'ckzc.Staff';
     public $key = 'TodayTrainNum:';
+    public $TalkGroupName = 'TalkGroup';
     /**
      * 创建员工
      * @param $Uid 用户id
@@ -101,7 +102,7 @@ class Staff extends Model
         $ShopId = $data['ShopId'];
         if($data['ComeOutInEmployee'] == 1){
             //调出
-            $rs =  Db::table($this->table)->where('Uid',$Uid)->where('_id','in',$NpcCardIds)->update(['ShopId'=>""]);
+            $rs =  Db::table($this->table)->where('Uid',$Uid)->where('_id','in',$NpcCardIds)->update(['ShopId'=>"",'Appointed'=>false]);
         }else{
             //调入
             $count = $this->getShopStaffCountByShopId($ShopId);//当前数量
@@ -109,7 +110,7 @@ class Staff extends Model
             $Shop = new Shop();
             $data_Shop = $Shop->getInfoById($ShopId);//店铺信息
             if($data_Shop['EmployeeLimit'] >= ($count + $new_count)){
-                $rs =  Db::table($this->table)->where('Uid',$Uid)->where('_id','in',$NpcCardIds)->update(['ShopId'=>$ShopId]);
+                $rs =  Db::table($this->table)->where('Uid',$Uid)->where('_id','in',$NpcCardIds)->update(['ShopId'=>$ShopId,'Appointed'=>true]);
             }else{
 //                var_dump("员工数量超出");
                 return false;
@@ -258,6 +259,88 @@ class Staff extends Model
             return true;
         }else{
             return false;
+        }
+    }
+
+    /**
+     * 设置员工为谈判团任职
+     * @param $Uid
+     * @param $StaffId
+     * @return bool
+     */
+    public function setTalkGroupStaff($Uid,$StaffId)
+    {
+        $ShopId = $this->TalkGroupName;
+        $rs = Db::table($this->table)->where('_id',(string)$StaffId)->update(['ShopId'=>$ShopId,'Appointed'=>true]);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * 批量设置员工为谈判团任职
+     * @param $Uid
+     * @param $StaffIds
+     * @return bool
+     */
+    public function setTalkGroupStaffs($Uid,$StaffIds)
+    {
+        $ShopId = $this->TalkGroupName;
+        $rs = Db::table($this->table)->where('_id','in',$StaffIds)->update(['ShopId'=>$ShopId,'Appointed'=>true]);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * 取消职位
+     * @param $Uid
+     * @param $StaffId
+     * @return bool
+     */
+    public function CancelAppointed($Uid,$StaffId)
+    {
+        $rs = Db::table($this->table)->where('_id',(string)$StaffId)->update(['ShopId'=>'','Appointed'=>false]);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 取消所有谈判团员工
+     * @param $Uid
+     * @return bool
+     */
+    public function CancelAppointedAll($Uid)
+    {
+        $rs = Db::table($this->table)->where('Uid',$Uid)->where('ShopId',$this->TalkGroupName)->update(['ShopId'=>'','Appointed'=>false]);
+        if($rs){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 批量获取谈判团员工
+     * @param $Uid
+     * @return array
+     */
+    public function getTalkGroupStaffs($Uid)
+    {
+        $data  = Db::table($this->table)->field('_id')->where('Uid',$Uid)->where('ShopId',$this->TalkGroupName)->select();
+        if($data){
+            $StaffId = [];
+            foreach ($data as $datum) {
+                $StaffId[] = (string)$datum['_id'];
+            }
+            return $StaffId;
+        }else{
+            return [];
         }
     }
 }

@@ -21,8 +21,8 @@ class ResidentDelegateResult
         $Count = $data['Count'];
         $RefCount = $data['RefCount'];
         $NpcTaskList = [];
-        foreach ($data['NpcTask'] as $item) {
-            $NpcTaskList[] = NpcTask::encode($item);
+        foreach ($data['NpcTask'] as $k=>$item) {
+            $NpcTaskList[$k] = NpcTask::encode($item);
         }
         $ResidentDelegateResult->setCount($Count);
         $ResidentDelegateResult->setNpcTaskList($NpcTaskList);

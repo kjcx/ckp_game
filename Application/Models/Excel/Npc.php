@@ -32,7 +32,7 @@ class Npc extends Model
      */
     public function getUnlockItemId($NpcId)
     {
-        $data = Db::table($this->table)->where('Id',$NpcId)->find();
+        $data = Db::table($this->table)->where('Id',(int)$NpcId)->find();
         $UnlockItemId = $data['UnlockItemId'];
         $arr = explode(';',$UnlockItemId);
         $list = [];
