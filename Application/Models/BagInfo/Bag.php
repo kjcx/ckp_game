@@ -14,22 +14,19 @@ use App\Event\BagDelEvent;
 use App\Event\UserEvent;
 use App\Models\Model;
 use App\Models\User\Role;
-use App\Traits\MongoTrait;
-use EasySwoole\Core\Swoole\Task\TaskManager;
-use think\Db;
 use App\Models\Excel\Item;
+use App\Utility\Cache;
 
 class Bag extends Model
 {
-    use MongoTrait;
-
     private $uid;
-    private $bagInfo;
-    private $mongoTable = 'ckzc_data.user_bag';
     private $item; //item类为了验证信息   依赖
     private $initData; //初始化信息
     private $MaxCellNumber;
     private $GoldType = [1,2,6];//金币变化通知
+    private $cache;
+    private $bagListKey;//背包列表 key
+    private $bagKeyPrefix; //背包详情 前缀 key
 
     public function __construct(int $uid)
     {
@@ -39,16 +36,38 @@ class Bag extends Model
         $this->item = new Item();
         $this->initData = new Init();
         $this->MaxCellNumber = 999;
-        $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作
+        $this->cache = Cache::getInstance();
+        $this->init();
     }
 
     /**
-     * 切库
-     * @param $database
+     * 初始化类
      */
-    private function switchDatabase(String $database = 'ckzc_data')
+    public function init()
     {
-        Db::setConfig(['database' => $database]); //切库
+        $this->bagListKey = 'bagList:uid:' . $this->uid;
+        $this->bagKeyPrefix = 'bag:uid:' . $this->uid . ':item:';
+    }
+    /**
+     * 加载背包 就用一回 把背包加载到redis中
+     */
+    public function loadBag()
+    {
+        $bagData = $this->getBag();
+        $bagListKey = 'bagList:uid:' . $this->uid;
+        if (!empty($bagData['data'])) {
+            foreach ($bagData['data'] as $key => $data) {
+                if (!empty($data)) {
+                    $data = (array)$data;
+                    $bagKey = 'bag:item:' . $data['id'] . ':uid:' . $this->uid;
+                    $data['uid'] = $this->uid;
+                    $this->cache->stringSet($bagKey,$data);
+                    $this->cache->hashSet($bagListKey,$data['id'],$bagKey);
+                }
+            }
+        }
+        echo 'ok';
+
     }
     /**
      * 获取背包信息
@@ -56,10 +75,20 @@ class Bag extends Model
      */
     public function getBag()
     {
-        var_dump("getBag");
-        $data = $this->collection->findOne(['uid' => $this->uid]);
-
-        if (!empty($data) && isset($data['data'])) {
+        $bagList = $this->cache->client()->hGetAll($this->bagListKey);
+        $data = [
+            'uid' => $this->uid,
+            'data' => []
+        ];
+        if (!empty($bagList)) {
+            foreach ($bagList as $bag) {
+                $bagData = $this->cache->stringGet($bag);
+                if (isset($bagData['OnSpace'])) {
+                    $data['data'][$bagData['id']] = $bagData;
+                }
+            }
+        }
+        if (!empty($data['data'])) {
             $data['MaxCellNumber'] = $this->MaxCellNumber;
             $data['CurUsedCell'] = array_sum(array_column((array)$data['data'],'OnSpace'));
             $data['Furnitrues'] = []; //家居 TODO::
@@ -88,75 +117,72 @@ class Bag extends Model
         $initData['item']; //初始道具
         $initData['coin']; //初始创客币
         $initData['gold']; //初始金币
-        $goldBindData = $this->item->getItemByid($initData['goldBind']['id']);
-        $itemData = $this->item->getItemByid($initData['item']['id']);
-        $coinData = $this->item->getItemByid($initData['coin']['id']);
-        $goldData = $this->item->getItemByid($initData['gold']['id']);
-        $bagData = [
-            $goldBindData['Id'] => [
-                'id' => $goldBindData['Id'],
-                'OnSpace' => $this->getOnSpace($goldBindData['Id'],$initData['goldBind']['count']),
-                'CurCount' => $initData['goldBind']['count']
-            ],
-            $itemData['Id'] => [
-                'id' => $itemData['Id'],
-                'OnSpace' => $this->getOnSpace($itemData['Id'],$initData['item']['count']),
-                'CurCount' => $initData['item']['count']
-            ],
-            $coinData['Id'] => [
-                'id' => $coinData['Id'],
-                'OnSpace' => $this->getOnSpace($coinData['Id'],$initData['coin']['count']),
-                'CurCount' => $initData['coin']['count']
-            ],
-            $goldData['Id'] => [
-                'id' => $goldData['Id'],
-                'OnSpace' => $this->getOnSpace($goldData['Id'],$initData['gold']['count']),
-                'CurCount' => $initData['gold']['count']
-            ],
-        ];
-        $bagInfo = [
-            'uid' => $this->uid,
-            'data' => $bagData
-        ];
-        $res = $this->collection->insertOne($bagInfo);
-        if ($res->isAcknowledged()) {
-            return true;
-        }
-        return false;
+
+        $goldBind = $this->createBagItem($initData['goldBind']['id'],$initData['goldBind']['count']);
+        $this->cache->stringSet($goldBind['key'],$goldBind['data']);
+        $this->cache->hashSet($this->bagListKey,$goldBind['data']['id'],$goldBind['key']);
+
+        $item = $this->createBagItem($initData['item']['id'],$initData['item']['count']);
+        $this->cache->stringSet($item['key'],$item['data']);
+        $this->cache->hashSet($this->bagListKey,$item['data']['id'],$item['key']);
+
+        $coin = $this->createBagItem($initData['coin']['id'],$initData['coin']['count']);
+        $this->cache->stringSet($coin['key'],$coin['data']);
+        $this->cache->hashSet($this->bagListKey,$coin['data']['id'],$coin['key']);
+
+        $gold = $this->createBagItem($initData['gold']['id'],$initData['gold']['count']);
+        $this->cache->stringSet($gold['key'],$gold['data']);
+        $this->cache->hashSet($this->bagListKey,$gold['data']['id'],$gold['key']);
+
+        return true;
     }
 
+    /**
+     * 创建背包详情的数据
+     * @param $itemId
+     * @param $num
+     * @return array
+     */
+    private function createBagItem($itemId,$num)
+    {
+        $item = $this->item->getItemByid($itemId);
+        $data = [
+            'id' => $item['Id'],
+            'uid' => $this->uid,
+            'OnSpace' => $this->getOnSpace($item['Id'],$num),
+            'CurCount' => $num
+        ];
+        return ['key' => $this->bagKeyPrefix . $item['Id'],'data' => $data];
 
-     /**
+    }
+
+    /**
      * 获取背包的单个商品
      * @param $itemId
      * @return array
      */
     public function getBagByItemId($itemId)
     {
-        $data = $this->collection->findOne(['uid' => $this->uid]);
-
-        if (isset($data['data'][$itemId])) {
-            return $data['data'][$itemId];
-        }
-        return [];
+        $data = $this->cache->stringGet($this->bagKeyPrefix . $itemId);
+        return $data;
     }
 
+    /**
+     * @param $itemIds
+     * @return array
+     */
     public  function getBagByItemIds($itemIds)
     {
-        $data = $this->getBag();
-        $items = $data['data'];
-        var_dump($items);
-        if($items){
-            $arr = [];
-            foreach ($itemIds as $id) {
-                if(isset($items[$id]['CurCount'])){
-                    $arr[$id] = $items[$id]['CurCount'];
-                }else{
-                    $arr[$id] = 0;
-                }
+        $arr = [];
+        foreach ($itemIds as $itemId) {
+            $bagData = $this->getBagByItemId($itemId);
+            if(isset($bagData['CurCount'])) {
+                $arr[$itemId] = $bagData['CurCount'];
+            } else {
+                $arr[$itemId] = 0;
             }
-            return $arr;
         }
+        return $arr;
     }
 
     /**
@@ -221,6 +247,7 @@ class Bag extends Model
 
         $data = [
             'CurCount' => $num,
+            'uid' => $this->uid,
             'OnSpace' => $onSpace,
             'id' => $itemId
         ];
@@ -229,21 +256,26 @@ class Bag extends Model
         if ($value !== false) {
             $this->updateStatus($value);
         }
-        if(in_array($itemId,$this->GoldType)){
-            $UserEvent = new UserEvent($this->uid);
-            $UserEvent->GoldChangedResultEvent();
-        } else {
-            if ($onPush) {
-                $eventData = ['uid' => $this->uid,'evenFunc' => 'pushChange','item' => [$data['id'] => $data['CurCount']]];
-                event(BagAddEvent::class,$eventData);
+
+        $setRes = $this->cache->stringSet($this->bagKeyPrefix . $itemId,$data);
+        if ($setRes) {
+            //加入背包列表
+            $res = $this->cache->hashSet($this->bagListKey,$itemId,$this->bagKeyPrefix . $itemId);
+            if ($res) {
+                //推送
+                if(in_array($itemId,$this->GoldType)){
+                    $UserEvent = new UserEvent($this->uid);
+                    $UserEvent->GoldChangedResultEvent();
+                } else {
+                    if ($onPush) {
+                        $eventData = ['uid' => $this->uid,'evenFunc' => 'pushChange','item' => [$data['id'] => $data['CurCount']]];
+                        event(BagAddEvent::class,$eventData);
+                    }
+                }
+                return true;
             }
         }
-        $result = $this->collection->findOneAndUpdate(['uid' => $this->uid],[
-            '$set' => [
-                'data.' . $itemId => $data
-            ]
-        ]);
-        return empty($result) ? false : true;
+        return false;
     }
 
     /**
@@ -270,22 +302,30 @@ class Bag extends Model
         $data = [
             'CurCount' => $num,
             'OnSpace' => $onSpace,
+            'uid' => $this->uid,
             'id' => $itemId
         ];
+        $key = $this->bagKeyPrefix . $itemId;
         if ($num == 0 && !in_array($itemId,$this->GoldType)) {
-            //不是金钱类型的 unset掉
-            $update['$unset'] = [
-                'data.' . $itemId => 1
-            ];
+            //不是金钱类型的 删掉这个key
+            $delRes = $this->cache->stringDel($key);
+            if ($delRes) {
+                $hashRes = $this->cache->hashHdel($this->bagListKey,$itemId);
+                if (!$hashRes) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else {
-            $update['$set'] = [
-                'data.' . $itemId => $data
-            ];
+            $setRes = $this->cache->stringSet($key,$data);
+            if (!$setRes) {
+                return false;
+            }
         }
 
         $value = $this->getGoodsStatus((array)$itemData,2,$num);
 
-        $result = $this->collection->findOneAndUpdate($filter,$update);
         //更新身价
         if ($value !== false) {
             $this->updateStatus($value);
@@ -295,11 +335,9 @@ class Bag extends Model
             $UserEvent->GoldChangedResultEvent();
         } else {
             $eventData = ['uid' => $this->uid,'item' => [$data['id'] => $data['CurCount']]];
-//            TaskManager::async(function ()use($eventData){
-                event(BagDelEvent::class,$eventData);
-//            });
+            event(BagDelEvent::class,$eventData);
         }
-        return empty($result) ? false : true;
+        return true;
 
     }
     /**

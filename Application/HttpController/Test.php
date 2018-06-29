@@ -11,6 +11,7 @@ namespace App\HttpController;
 
 use App\Event\RoleCreateEvent;
 use App\Models\BagInfo\Bag;
+use App\Models\BagInfo\BagNew;
 use App\Models\Excel\WsResult;
 use App\Models\Item\ItemBak;
 use App\Models\Manor\Land;
@@ -19,6 +20,7 @@ use App\Models\Store\DropStore;
 use App\Models\Store\Seed;
 use App\Models\Store\ShopConfig;
 use App\Protobuf\Result\ShopAllResult;
+use App\Utility\Cache;
 use App\Utility\Redis;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 
@@ -65,8 +67,7 @@ class Test extends Controller
 
     public function index()
     {
-        $room = new Room(65);
-        $data = $room->test();
-        var_dump($data);
+        $bagNew = new BagNew(87);
+        var_dump($bagNew->initBag());
     }
 }

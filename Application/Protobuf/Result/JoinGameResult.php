@@ -90,9 +90,10 @@ class JoinGameResult
         $MailMsg = new \App\Models\Mail\MailMsg();
         $data = $MailMsg->getRedisMailByUid($uid);
 
+        var_dump($data);
         $Mails = MailResult::encode($data);
         $JoinGameResult->setMails($Mails);
-        //住宅信息 TODO::
+        //住宅信息
 
         $room = new Room($uid);
         $data = $room->getRooms();

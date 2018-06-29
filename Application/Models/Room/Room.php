@@ -9,6 +9,8 @@
 namespace App\Models\Room;
 
 
+use App\Models\BagInfo\Bag;
+use App\Models\Excel\Star;
 use App\Models\Model;
 use App\Traits\CacheTrait;
 use App\Traits\MongoTrait;
@@ -21,6 +23,7 @@ class Room extends Model
     private $mongoTable = 'ckzc.room';
     private $mongoListTable = 'ckzc.roomList';
     private $excelRoom;
+    private $star;
     private $uid;
     const initRoomKey = 101;//初始化赠送的roomkey
     const roomListKey = 'roomList:uid:';//房间列表的key
@@ -29,6 +32,7 @@ class Room extends Model
     {
         $this->uid = $uid;
         $this->excelRoom = new ExcelRoom();
+        $this->star = new Star();
         $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作
         parent::__construct();
     }
@@ -43,6 +47,64 @@ class Room extends Model
         return $initRoom = $this->createRoom($roomInfo);
     }
 
+    /**
+     * 家具升星
+     * @param $itemId
+     */
+    public function upgradeFurniture($itemId)
+    {
+        $roomInfo = $this->getUseRoom(false);//获取当前入住的住宅信息
+        $furniture = '';
+        foreach ($roomInfo['config'] as $config) {
+            if ($config['item'] == $itemId) {
+                //当前要升级的家具
+                $furniture = $config;
+                break;
+            }
+        }
+        $shouldLevel = $furniture['level'] + 1;
+        //查找升级需要使用的材料
+        //读表
+        $upgradeData = $this->star->getFieldByStarLv($shouldLevel);
+        $bag = new Bag((int)$this->uid);
+        $needItem = explode(';',$upgradeData['NeedItem']);
+        $newNeedItem = [];
+        foreach ($needItem as $v) {
+            $temp = explode(',',$v);
+            $newNeedItem[$temp['0']] = $temp;
+        }
+        $bagData = $bag->getBag();
+        //判断是否数量足够
+        //NotEnoughItem 道具数量不足
+        $upgradeItems = array_column($newNeedItem,'0');
+        $needBagData = [];
+        foreach ($bagData as $bagV) {
+            if (isset($bagV['id']) && in_array($bagV['id'],$upgradeItems)) {
+                //判断数量
+                if ($bagV['CurCount'] < $newNeedItem[$bagV['id']]['1']) {
+                    //道具数量不足
+                    return ['error' => true, 'msg' => 'NotEnoughItem'];
+                }
+            }
+        }
+        //减道具
+        //更新身价值
+//        $bag->
+        //升级
+        //完成
+
+
+//        $bag->getCountByItemId();
+    }
+
+
+    /**
+     *住宅升级 todo::
+     */
+    public function upgradeRoom($roomId)
+    {
+        $roomMId = $this->getRoomId($roomId);
+    }
     /**
      * 设置使用的住宅
      * 入住
@@ -60,15 +122,24 @@ class Room extends Model
     /**
      *获取当前正在使用的住宅
      */
-    public function getUseRoom()
+    public function getUseRoom($transform = true)
     {
         $zsetKey = self::roomListKey . $this->uid;
         $useRoomId = $this->zsetGet($zsetKey,0,0,'desc');
         $roomInfo = $this->getRoomByRoomId($useRoomId['0']);
-        $roomInfo = $this->transformRoomData($roomInfo);//转换房屋信息
+        if ($transform) {
+            $roomInfo = $this->transformRoomData($roomInfo);//转换房屋信息
+        }
         return $roomInfo;
     }
 
+    /**
+     * 更新房屋的信息
+     */
+    private function updateRoom()
+    {
+
+    }
     /**
      * 转换房屋信息 前台需要的
      */
@@ -116,7 +187,7 @@ class Room extends Model
 
         $data = [];
         $zsetKey = self::roomListKey . $this->uid;
-
+        $data['0'] = 1;
         $roomIds = $this->zsetGet($zsetKey,0,-1);
         
         if (empty($roomIds)) {
@@ -127,6 +198,7 @@ class Room extends Model
             $roomInfo = $this->stringGet($key);
             $data[] = $this->transformRoomData($roomInfo);
         }
+        unset($data['0']);
         return $data;
     }
 

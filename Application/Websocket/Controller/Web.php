@@ -82,6 +82,7 @@ use App\Protobuf\Req\FriendApplyReq;
 use App\Protobuf\Req\FriendRemoveBlackReq;
 use App\Protobuf\Req\FriendRemoveReq;
 use App\Protobuf\Req\FriendSearchReq;
+use App\Protobuf\Req\FurnitureStarReq;
 use App\Protobuf\Req\GetMailItemsReq;
 use App\Protobuf\Req\GetMapReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
@@ -2123,9 +2124,10 @@ class Web extends WebSocketController
     /**
      *家具升星
      */
-    public function msgid_1059()
+    public function msgid_1109()
     {
-        
+        $data = FurnitureStarReq::decode($this->data);
+        var_dump($data);
     }
     /**
      * 签到请求

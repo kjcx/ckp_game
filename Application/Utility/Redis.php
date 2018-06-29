@@ -18,6 +18,7 @@ class Redis
     private $connect;
     private $pConnect;
 
+
     public function __construct()
     {
         $this->connect = new \Redis();

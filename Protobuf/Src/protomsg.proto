@@ -622,8 +622,7 @@ message FurnitureStarReq{
     int32 Id=1;
 }
 message FurnitureStarResult{
-    map<int64, LoadRoleBagInfo> Furnitures=1;
-    map<int32, int64> Items=2;
+    map<int32, int64> Item=2;
 }
 message AddFurnReq{
     map<int32, int32> Items=1;

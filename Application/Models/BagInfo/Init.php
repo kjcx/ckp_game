@@ -31,7 +31,6 @@ class Init extends Model
      */
     public function getInitData()
     {
-        $mongoConf = Config::getInstance()->getConf('MONGO');
         $data = $this->collection->findOne(['Id.value' => '1']);
         return $data;
     }
