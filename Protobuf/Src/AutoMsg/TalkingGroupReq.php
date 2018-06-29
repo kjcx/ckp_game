@@ -9,12 +9,14 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
+ *修改int=》string
+ *
  * Generated from protobuf message <code>AutoMsg.TalkingGroupReq</code>
  */
 class TalkingGroupReq extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>repeated int32 Ids = 1;</code>
+     * Generated from protobuf field <code>repeated string Ids = 1;</code>
      */
     private $Ids;
     /**
@@ -28,7 +30,7 @@ class TalkingGroupReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 Ids = 1;</code>
+     * Generated from protobuf field <code>repeated string Ids = 1;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getIds()
@@ -37,13 +39,13 @@ class TalkingGroupReq extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>repeated int32 Ids = 1;</code>
-     * @param int[]|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>repeated string Ids = 1;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setIds($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::INT32);
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
         $this->Ids = $arr;
 
         return $this;

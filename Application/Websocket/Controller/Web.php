@@ -106,6 +106,8 @@ use App\Protobuf\Req\SoldOutReq;
 use App\Protobuf\Req\StealSemenReq;
 use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
+use App\Protobuf\Req\TalkIngGroupChangeReq;
+use App\Protobuf\Req\TalkingGroupReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UnlockNpcReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
@@ -181,6 +183,8 @@ use App\Protobuf\Result\StealSemenResult;
 use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
+use App\Protobuf\Result\TalkIngGroupChangeResult;
+use App\Protobuf\Result\TalkingGroupResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UnlockNpcResult;
 use App\Protobuf\Result\UpdateRoleInfoIconResult;
@@ -2433,6 +2437,7 @@ class Web extends WebSocketController
     }
 
     /**
+     * 提升品质
      * NpcRelationAdvanceReq
      * return 1038 NpcRelationAdvanceResult
      */
@@ -2492,6 +2497,65 @@ class Web extends WebSocketController
             var_dump("好感度不满足");
             $this->send(1038,$this->fd,'','当前好感度不足，无法进阶');
         }
+    }
 
+    /**
+     * 谈判团换任
+     * TalkIngGroupChangeReq
+     * return 1158 TalkIngGroupChangeResult
+     */
+    public function msgid_1114()
+    {
+        $data = $this->data;
+        $data_TalkIng = TalkIngGroupChangeReq::decode($data);
+        var_dump($data_TalkIng);
+        //换人
+        //把原来人置空 信任设置上
+        $Staff = new Staff();
+        $rs = $Staff->CancelAppointed($this->uid,$data_TalkIng['DownId']);
+        if($rs){
+            $rs = $Staff->setTalkGroupStaff($this->uid,$data_TalkIng['UpId']);
+            if($rs){
+                $str = TalkIngGroupChangeResult::ecode($data_TalkIng);
+                $this->send(1158,$this->fd,$str);
+            }else{
+                var_dump("设置失败");
+            }
+        }
+
+    }
+
+    /**
+     * 谈判团任命请求 TalkingGroupReq
+     * return 1157 TalkingGroupResult
+     */
+    public function msgid_1115()
+    {
+        $data = $this->data;
+        $data_TalkingGroup = TalkingGroupReq::decode($data);
+        //判断是否替换
+        $Replace = $data_TalkingGroup['Replace'];
+        $Staff = new Staff();
+        if($Replace){
+            //替换原来谈判团员工
+            $Staff_Down = $Staff->getTalkGroupStaffs($this->uid);
+            $bool = $Staff->CancelAppointedAll($this->uid);
+
+        }else{
+            //无需替换
+            $bool = true;
+            $Staff_Down = [];
+        }
+        if($bool){
+            $rs = $Staff->setTalkGroupStaffs($this->uid,$data_TalkingGroup['StaffId']);
+            if($rs){
+                $str = TalkingGroupResult::encode(['Ids'=>$data_TalkingGroup['StaffId'],'DownId'=>$Staff_Down]);
+                $this->send(1157,$this->fd,$str);
+            }else{
+                var_dump("批量设置谈判团员工失败");
+            }
+        }else{
+            var_dump("取消所有谈判团员工失败");
+        }
     }
 }
