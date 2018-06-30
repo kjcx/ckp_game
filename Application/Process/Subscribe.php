@@ -22,11 +22,12 @@ class Subscribe extends AbstractProcess
         $dataCenter = new DataCenter();
         $dataCenter->init();
         $this->redis = Redis::getInstance()->getConnect();
-        $gloableChannel = Config::getInstance()->getConf('rediskeys.gloable');
-        $this->redis->subscribe(array_column($gloableChannel,'0'),function ($redis, $chan, $msg) use ($gloableChannel) {
-            $gloableChannel[$chan]['1']($msg);
-
-        }); //监控的频道 和回调
+        $gloableChannel = Config::getInstance()->getConf('rediskeys');
+        var_dump($gloableChannel);
+//        $this->redis->subscribe(array_column($gloableChannel,'0'),function ($redis, $chan, $msg) use ($gloableChannel) {
+//            $gloableChannel[$chan]['1']($msg);
+//
+//        }); //监控的频道 和回调
 
     }
 
