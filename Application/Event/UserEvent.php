@@ -53,8 +53,9 @@ class UserEvent extends Event
         var_dump($data_Item);
         var_dump($data_Item['CurCount']);
         $data = GoldChangedResult::encode([2=>$data_Item['CurCount']]);
-        $str = \App\Protobuf\Result\MsgBaseSend::encode(1065,$data);
-        ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);
+//        $str = \App\Protobuf\Result\MsgBaseSend::encode(1065,$data);
+        push(1065,$this->uid,$data);
+//        ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);
     }
 
     public function MailResultEvent($data)
@@ -64,7 +65,9 @@ class UserEvent extends Event
         $Mail = MailMsg::encode($data);
         $MailResult->setMail($Mail);
         $str = $MailResult->serializeToString();
-        $str = \App\Protobuf\Result\MsgBaseSend::encode(1089,$str);
+//        $str = \App\Protobuf\Result\MsgBaseSend::encode(1089,$str);
+        push(1089,$this->uid,$data);
+
         ServerManager::getInstance()->getServer()->push($this->fd,$str,WEBSOCKET_OPCODE_BINARY);
     }
 }

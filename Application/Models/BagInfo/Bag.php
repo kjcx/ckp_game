@@ -157,6 +157,13 @@ class Bag extends Model
     }
 
     /**
+     *
+     */
+    private function updateBagItem()
+    {
+
+    }
+    /**
      * 获取背包的单个商品
      * @param $itemId
      * @return array
@@ -249,7 +256,7 @@ class Bag extends Model
             'CurCount' => $num,
             'uid' => $this->uid,
             'OnSpace' => $onSpace,
-            'id' => $itemId
+            'id' => (int)$itemId
         ];
         $value = $this->getGoodsStatus((array)$itemData,1,$num);
         //更新身价
@@ -257,25 +264,30 @@ class Bag extends Model
             $this->updateStatus($value);
         }
 
+        $bagKeyIsSet = $this->cache->client()->exists($this->bagKeyPrefix . $itemId);
         $setRes = $this->cache->stringSet($this->bagKeyPrefix . $itemId,$data);
-        if ($setRes) {
-            //加入背包列表
-            $res = $this->cache->hashSet($this->bagListKey,$itemId,$this->bagKeyPrefix . $itemId);
-            if ($res) {
-                //推送
-                if(in_array($itemId,$this->GoldType)){
-                    $UserEvent = new UserEvent($this->uid);
-                    $UserEvent->GoldChangedResultEvent();
-                } else {
-                    if ($onPush) {
-                        $eventData = ['uid' => $this->uid,'evenFunc' => 'pushChange','item' => [$data['id'] => $data['CurCount']]];
-                        event(BagAddEvent::class,$eventData);
-                    }
-                }
-                return true;
+        if (!$bagKeyIsSet) {
+            if ($setRes) {
+                $res = $this->cache->hashSet($this->bagListKey,$itemId,$this->bagKeyPrefix . $itemId);
+            } else {
+                return false;
             }
+        } else {
+            $res = $setRes;
         }
-        return false;
+        if ($res) {
+            if(in_array($itemId,$this->GoldType)){
+                $UserEvent = new UserEvent($this->uid);
+                $UserEvent->GoldChangedResultEvent();
+            } else {
+                if ($onPush) {
+                    $eventData = ['uid' => $this->uid,'evenFunc' => 'pushChange','item' => [$data['id'] => $data['CurCount']]];
+                    event(BagAddEvent::class,$eventData);
+                }
+            }
+            return true;
+        }
+
     }
 
     /**
@@ -295,8 +307,6 @@ class Bag extends Model
         if ($num < 0) {
             return false;
         }
-        $filter = ['uid' => $this->uid]; //条件
-        $update = [];
 //        需要验证可以叠加数量  进行创建新的格子
         $onSpace = $this->getOnSpace($itemId,$num);
         $data = [
@@ -340,6 +350,19 @@ class Bag extends Model
         return true;
 
     }
+
+    /**
+     * 批量减道具
+     * @param $items [['Id' => num]]
+     */
+    public function batchDelBag($items)
+    {
+        foreach ($items as $itemKey => $item) {
+            $this->delBag($itemKey,$item);
+        }
+//        $eventData = ['uid' => $this->uid,'evenFunc' => 'pushBag'];
+//        event(BagAddEvent::class,$eventData);
+    }
     /**
      * 获取商品占格数量
      * @param $itemId
@@ -349,7 +372,8 @@ class Bag extends Model
     private function getOnSpace($itemId,$num)
     {
         $itemInfo = $this->item->getItemByid($itemId);
-        if (!empty($itemInfo) && isset($itemInfo['Count'])) {
+        $count = (int)$itemInfo['Count'];
+        if (!empty($itemInfo) && $count > 0) {
             $space = ceil($num / $itemInfo['Count']);
             return $space == 0 ? 1 : $space;
         }

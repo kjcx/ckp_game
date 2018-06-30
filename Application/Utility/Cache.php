@@ -98,7 +98,7 @@ class Cache
     {
         $res = $this->writeConnect->zAdd($key,$score,$member);
         if ($res) {
-            return $this->pushQueue($key,'zset','add');
+            return $this->pushQueue($key,'zset','set');
         }
         return false;
     }
@@ -163,9 +163,15 @@ class Cache
     /**
      * key的规则 指定的key类型 必须是 表名:主键:主键值 后面可以随意发挥 但是必须用:分割
      * @param $key
+     * @param $index
+     * @param $value
+     * @return bool|int
      */
     public function hashSet($key,$index,$value)
     {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
         $res = $this->writeConnect->hSet($key,$index,$value);
         if ($res) {
             return $this->pushQueue($key,'hash','set');
@@ -284,6 +290,7 @@ class Cache
         }
         return $delRes;
     }
+
     /**
      * 观察多个keys
      */

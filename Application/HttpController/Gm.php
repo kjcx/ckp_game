@@ -137,6 +137,24 @@ class Gm extends Controller
     }
 
     /**
+     * 加全部道具
+     */
+    public function addAllItem()
+    {
+        $items = $this->getAllItem();
+        $uid = $this->request()->getRequestParam('uid');
+        $bag = new Bag($uid);
+
+        foreach ($items as $item) {
+            $bag->addBag($item['Id'],100,false);
+        }
+        $response = ['code' => 200,'msg' => '成功'];
+
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
+        $this->response()->write(json_encode($response));
+    }
+    /**
      * 加道具
      */
     public function addItem()
@@ -146,8 +164,8 @@ class Gm extends Controller
         $num = $this->request()->getRequestParam('num');
 
         $bag = new Bag($uid);
-
-        if ($bag->addBag($itemId,$num))
+        $res = $bag->addBag($itemId,$num);
+        if ($res)
         {
             $response = ['code' => 200,'msg' => '成功'];
         } else {

@@ -45,8 +45,8 @@ class BagAddListen implements EventSubscriberInterface
      */
     private function pushBag($event)
     {
-//        $dataString = AddItemResult::encode($event->data['uid']);
-//        push(1053,$event->data['uid'],$dataString);
+        $dataString = AddItemResult::encode($event->data['uid']);
+        push(1053,$event->data['uid'],$dataString);
 
     }
     /**

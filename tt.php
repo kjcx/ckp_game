@@ -5,15 +5,12 @@
  * Date: 2018/6/27
  * Time: 下午1:27
  */
-use MongoDB\BSON\ObjectId;
-$t1 = microtime(true);
 $redis = new Redis();
 $redis->connect('127.0.0.1','6379');
 $redis->select(3);
 $Id = 2;
 for ($i = 1; $i < 1000; $i++) {
-    $redis->hSet('bag:36',$i,serialize(['Count'=>10000000,'Id'=>$i]));
-
+    $redis->set('','','');
 }
 //for ($i = 0; $i < 200000; $i++) {
 //    $mId = (string)(new ObjectId());

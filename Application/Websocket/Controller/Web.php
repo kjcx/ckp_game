@@ -99,6 +99,7 @@ use App\Protobuf\Req\RefFitnessReq;
 use App\Protobuf\Req\RefStaffReq;
 use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\RoomReq;
+use App\Protobuf\Req\RoomUpdateReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
@@ -173,6 +174,7 @@ use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\ResidentDelegateResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
 use App\Protobuf\Result\RoomResult;
+use App\Protobuf\Result\RoomUpdateResult;
 use App\Protobuf\Result\SalesListResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
@@ -2122,6 +2124,7 @@ class Web extends WebSocketController
     }
 
     /**
+     * todo::
      *家具升星
      */
     public function msgid_1109()
@@ -2558,6 +2561,21 @@ class Web extends WebSocketController
             }
         }else{
             var_dump("取消所有谈判团员工失败");
+        }
+    }
+
+    /**
+     * 购买住宅
+     */
+    public function msgid_1119()
+    {
+        $data = RoomUpdateReq::decode($this->data);
+        $room = new Room($this->uid);
+        $res = $room->buyRoom($data['roomId']);
+        if (isset($res['error'])) {
+            $this->send(1163,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1163,$this->fd,RoomUpdateResult::encode($res));
         }
     }
 }

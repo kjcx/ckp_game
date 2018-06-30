@@ -67,7 +67,10 @@ class Test extends Controller
 
     public function index()
     {
-        $bagNew = new BagNew(87);
-        var_dump($bagNew->initBag());
+//        $bagNew = new BagNew(87);
+//        var_dump($bagNew->initBag());
+        $room = new Room('85');
+        $data = $room->buyRoom(202);
+        var_dump($data);
     }
 }

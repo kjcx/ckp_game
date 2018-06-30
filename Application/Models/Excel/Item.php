@@ -9,17 +9,19 @@
 namespace App\Models\Excel;
 
 use App\Models\Model;
-use App\Models\Store\DropStore;
+use App\Utility\Cache;
 use think\Db;
 
 class Item extends Model
 {
     private $table = 'ckzc.Excel_Item';
-    public function insert($arr)
-    {
-        Db::table($this->table)->insert($arr);
-    }
+    private $cache;
+    private $key = 'config:item:';
 
+    public function __construct()
+    {
+        $this->cache = Cache::getInstance();
+    }
     public function getOne()
     {
         return Db::table($this->table)->find();
@@ -31,11 +33,14 @@ class Item extends Model
      */
     public function getInfoById($Id)
     {
-        $data = Db::table($this->table)->where(['Id'=>$Id])->find();
-        if($data){
+        $key = $this->key . $Id;
+        $data = $this->cache->stringGet($key);
+        if (!$data) {
+            $data = Db::table($this->table)->where(['Id'=>(int)$Id])->find();
+            $data = $this->objectToArray($data);
+            $this->cache->stringSet($key,$data);
+        } else {
             return $data;
-        }else{
-            return false;
         }
     }
     /**
@@ -45,7 +50,10 @@ class Item extends Model
      */
     public function getItemIds(array $ids)
     {
-        $data = Db::table($this->table)->where('Id','in',$ids)->select();
+        $data = [];
+        foreach ($ids as $id) {
+            $data[] = $this->getInfoById($id);
+        }
 
         return $data ? $data : false;
     }
@@ -57,19 +65,10 @@ class Item extends Model
      */
     public function getItemById($id)
     {
-        $data = Db::table($this->table)->where(['Id'=>(int)$id])->find();
-        var_dump($data);
+        $data = $this->getInfoById($id);
         return $data;
     }
 
-    /**
-     * @param $id
-     */
-    public function getItemAttrById($id)
-    {
-        $item = $this->getItemById($id);
-
-    }
     /**
      * 获取道具使用效果
      * @param $id
@@ -174,5 +173,14 @@ class Item extends Model
         $Count = $new[$ItemId];
 
         return [$ItemId=>$Count];
+    }
+
+    /**
+     * 对象转数组
+     */
+    private function objectToArray($obj)
+    {
+        $data = json_encode($obj);
+        return json_decode($data,true);
     }
 }
