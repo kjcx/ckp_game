@@ -933,6 +933,7 @@ class Web extends WebSocketController
             $str = FriendApplyResult::encode($data_role,true);
             $this->send(1011,$this->fd,$str);
             //2 给被申请人通知
+            $data_role = $Role->getRole($this->uid);
             $arr[] = $data_role;
             $str_other = FriendAddResult::encode($arr,0);
             $this->sendByUid(1011,$data_FriendApply['RoleId'],$str_other);
