@@ -404,12 +404,15 @@ class Web extends WebSocketController
         //redis查询token是否存在
         $Account = new Account();
         $uid = $Account->getToken($token);
-
         if($uid){
+            var_dump("data2");
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $dataCenter->saveClient($this->fd,$uid);
+            var_dump("data1");
             //登录成功
             $data = \App\Protobuf\Result\ConnectingResult::encode($uid);
+
+            var_dump($data);
            $this->send(1057,$this->fd,$data);
         }else{
             $data = \App\Protobuf\Result\ConnectingResult::encode(36);
@@ -926,8 +929,8 @@ class Web extends WebSocketController
             //申请成功 1给申请人回复成功
 //            获取申请人信息
             $Role = new Role();
-            $data_role = $Role->getRole($this->uid);
-            $str = FriendApplyResult::encode($data_role,$this->uid);
+            $data_role = $Role->getRole($data_FriendApply['RoleId']);
+            $str = FriendApplyResult::encode($data_role,true);
             $this->send(1011,$this->fd,$str);
             //2 给被申请人通知
             $arr[] = $data_role;

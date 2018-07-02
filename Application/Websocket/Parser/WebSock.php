@@ -35,7 +35,6 @@ class WebSock implements ParserInterface
         $msgId = $baseMessage->getMsgId();
         $command->setControllerClass(Web::class);
         var_dump("msgid_".$msgId);
-        var_dump(111222333);
         var_dump('msgid_' . $msgId);
         $command->setAction('msgid_' . $msgId);
 //        $command->setAction('msgid_1004');

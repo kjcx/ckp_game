@@ -9,10 +9,20 @@ namespace App\Models\User;
 use App\Models\BagInfo\Bag;
 use App\Models\Excel\Character;
 use App\Models\Model;
+use App\Utility\Cache;
 
 class Role extends Model
 {
     private $table = 'ckzc_role';
+    public $cache;
+    public $RoleInfoKey = 'RoleInfo:';
+    public function __construct()
+    {
+        parent::__construct();
+        $this->cache = Cache::getInstance();
+    }
+
+
     public function getRole($uid)
     {
         $arr = $this->mysql->where("uid",$uid)->getOne($this->table);
@@ -65,12 +75,15 @@ class Role extends Model
         $rs = $this->mysql->insert($this->table,$data);
         var_dump($rs);
         if($rs){
+            $this->CreateRedisRole($data);
 //            $arr['rid'] = $rs;//角色id
 //            $arr['uid'] = $data['uid'];//用户id
 //            $arr['maxsum'] = 999;//背包最大数量
 //            $arr['usesum'] = 0;//已使用
 //            $arr['items'] = json_encode([]);//已获取道具数量
 //            $res = $this->createRoleBag($arr);
+
+            
             $Bag = new Bag($uid);
 
             $res = $Bag->initBag();
@@ -282,4 +295,16 @@ class Role extends Model
     }
 
     /**这些都是GM命令 高能 慎入**/
+    /**
+     * 创建redis用户数据
+     * @param $data
+     */
+    public function CreateRedisRole($data)
+    {
+        $Uid = $data['uid'];
+        $key = $this->RoleInfoKey . $Uid;
+
+        $rs = $this->cache->client()->hMset($key,$data);
+        var_dump($rs);
+    }
 }

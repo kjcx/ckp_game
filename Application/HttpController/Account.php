@@ -24,7 +24,7 @@ class Account extends Controller
         //游戏查询app_token 看看是否存在
         $Account = new \App\Models\User\Account();
         $rs = $Account->check_app_token($key);
-        var_dump($rs);
+        var_dump("check_app_token" . $key .'=>' .$rs);
         if($rs){
             $uid = $rs['id'];
         }else{

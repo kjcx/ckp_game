@@ -68,7 +68,7 @@ class Account extends Model
     {
         $token = md5($uid . rand(10000,99999) . rand(10000,99999). microtime() );
         //插入到
-         $rs = $this->redis->set($token,$uid);
+         $rs = $this->redis->setex($token,600,$uid);
          if($rs){
              return $token;
          }else{
