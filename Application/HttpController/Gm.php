@@ -178,6 +178,25 @@ class Gm extends Controller
     }
 
     /**
+     *初始化背包
+     */
+    public function initBag()
+    {
+        $uid = $this->request()->getRequestParam('uid');
+        $bag = new Bag($uid);
+        $res = $bag->initBag();
+        if ($res)
+        {
+            $response = ['code' => 200,'msg' => '成功'];
+        } else {
+            $response = ['code' => 401,'msg' => '失败'];
+
+        }
+        $this->response()->withHeader("Content-Type","application/json; charset=utf-8");
+        $this->response()->withHeader("Access-Control-Allow-Origin", "*");
+        $this->response()->write(json_encode($response));
+    }
+    /**
      * 获取所有的商品
      */
     private function getAllItem()
