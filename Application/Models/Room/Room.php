@@ -193,7 +193,9 @@ class Room extends Model
         $zsetKey = self::roomListKey . $this->uid;
         $room = $this->getRoomByRoomId($roomId);
         if ($room) {
-            return $this->cache->zsetZadd($zsetKey,$roomId,time());
+            if ($this->cache->zsetZadd($zsetKey,$roomId,time())) {
+                return $this->transformRoomData($room);
+            }
         }
         return false;
     }
