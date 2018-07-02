@@ -2289,6 +2289,7 @@ message ResidentDelegateResult{
     map<int32, NpcTask> NpcTaskList=2;//居民npc和任务id
     int32 Count=3;//任务次数
     int32 RefCount=4;//刷新次数
+    int32 NextTime=5;//剩余委托时间
 }
 
 
