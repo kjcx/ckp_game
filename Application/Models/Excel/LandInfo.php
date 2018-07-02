@@ -52,19 +52,21 @@ class LandInfo extends Model
         return $num;
     }
     /**
-     * 初始化
+     * 每天创建新土地
      */
-    public function init()
+    public  function init_Land()
     {
         //今日0晨
         $today = strtotime(date('Y-m-d',time()));
-        for ($j=1;$j<=20;$j++){
+        $data_price = $this->getBiddingPrice();
+        $Gold = $data_price['Count'];
+        for ($j=0;$j<20;$j++){
             for ($i=0;$i<20;$i++){
                 $day = $today +  86400 * ($j-1);
-                $data[] = ['Pos'=>($j * 1000 + $i),'Gold'=>300,'AuctionRole'=>[],'Date'=>date('Y-m-d',$day),'Today'=>$day];
+                $data[] = ['Pos'=>($j * 1000 + $i),'Gold'=>$Gold,'AuctionRole'=>[],'Date'=>date('Y-m-d',$day),'Today'=>$day,'Day'=>($j+1),'Id'=>$j,'Status'=>0];
             }
         }
-        Db::table('Excel_LandInfo')->insertAll($data);
+        Db::table($this->table)->insertAll($data);
     }
 
     /**

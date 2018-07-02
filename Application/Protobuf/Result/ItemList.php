@@ -15,10 +15,10 @@ namespace App\Protobuf\Result;
  */
 class ItemList
 {
-    public static function encode($ItmeList)
+    public static function encode($data)
     {
-        $ItmeList = new \AutoMsg\ItemList();
-        $ItmeList->setItem($ItmeList);
-        return $ItmeList;
+        $ItemList = new \AutoMsg\ItemList();
+        $ItemList->setItem($data);
+        return $ItemList;
     }
 }

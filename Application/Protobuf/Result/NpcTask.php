@@ -17,6 +17,8 @@ class NpcTask
 {
     public static function encode($data)
     {
+        var_dump("NpcTask");
+        var_dump($data);
         $NpcTask = new \AutoMsg\NpcTask();
         $NpcTask->setNpcId($data['NpcId']);
         $NpcTask->setTaskId($data['TaskId']);
