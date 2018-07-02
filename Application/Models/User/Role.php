@@ -157,9 +157,11 @@ class Role extends Model
         $Name = $data['Name'];
         $Search  = $data['Search'];
         if($Search){//搜索
-            $data = $this->mysql->where('uid',$uid,'not in')->where('nickname',"%$Name%",'like')->get($this->table);
+//            $data = $this->mysql->where('uid',$uid,'not in')->where('nickname',"%$Name%",'like')->get($this->table);
+            $data = $this->mysql->where('uid',$uid,'<>')->where('nickname',"%$Name%",'like')->get($this->table);
         }else{//推荐
-            $data = $this->mysql->where('uid',$uid,'not in')->orderBy("RAND ()")->get($this->table,5);
+            $data = $this->mysql->where('uid',$uid,'<>')->orderBy("RAND ()")->get($this->table,5);
+//            $data = $this->mysql->where('uid',$uid,'not in')->orderBy("RAND ()")->get($this->table,5);
         }
         return $data;
     }
