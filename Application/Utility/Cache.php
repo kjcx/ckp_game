@@ -351,7 +351,7 @@ class Cache
         $conf = Config::getInstance()->getConf("REDIS_SERVER");
         $this->writeConnect->connect($conf['host'],$conf['port']);
         if (!empty($conf['auth'])) {
-            $this->readConnect->auth($conf['auth']);
+            $this->writeConnect->auth($conf['auth']);
         }
         $this->writeConnect->select($conf['dbname']);
     }
