@@ -31,7 +31,7 @@ class NpcTask extends Model
         $str = $this->redis->get($key);
         $arr = unserialize($str);
         $ttl = $this->redis->ttl($key);
-        $arr['NextTime'] = $ttl;
+        $arr['NextTime'] = time() - (8 * 3600 - $ttl);
         return $arr;
     }
 
