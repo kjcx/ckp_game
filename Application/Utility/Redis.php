@@ -53,19 +53,21 @@ class Redis
     {
         $conf = Config::getInstance()->getConf("REDIS_SERVER");
         $this->connect->connect($conf['host'],$conf['port']);
-        $this->connect->select($conf['dbname']);
         if (!empty($conf['auth'])) {
             $this->connect->auth($conf['auth']);
         }
+        $this->connect->select($conf['dbname']);
+
+
     }
 
     private function pConnect()
     {
         $conf = Config::getInstance()->getConf("REDIS_SERVER");
         $this->connect->pconnect($conf['host'],$conf['port']);
-        $this->connect->select($conf['dbname']);
         if (!empty($conf['auth'])) {
             $this->connect->auth($conf['auth']);
         }
+        $this->connect->select($conf['dbname']);
     }
 }
