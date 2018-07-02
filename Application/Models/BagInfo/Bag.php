@@ -76,6 +76,7 @@ class Bag extends Model
     public function getBag()
     {
         $bagList = $this->cache->client()->hGetAll($this->bagListKey);
+        var_dump($bagList);
         $data = [
             'uid' => $this->uid,
             'data' => []
