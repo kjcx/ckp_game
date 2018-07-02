@@ -2117,11 +2117,11 @@ class Web extends WebSocketController
      */
     public function msgid_1042()
     {
-//        $data = RoomReq::decode($this->data);
-//        $room = new Room($data['uid']);
-//        $roomData = $room->getUseRoom();
-//        $string = RoomResult::encode($roomData);
-//        $this->send(1042,$this->fd,$string);
+        $data = RoomReq::decode($this->data);
+        $room = new Room($data['uid']);
+        $roomData = $room->getUseRoom();
+        $string = RoomResult::encode($roomData);
+        $this->send(1042,$this->fd,$string);
     }
 
     /**

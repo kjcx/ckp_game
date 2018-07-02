@@ -183,8 +183,9 @@ class Gm extends Controller
     public function initBag()
     {
         $uid = $this->request()->getRequestParam('uid');
-        $bag = new Bag($uid);
+        $bag = new Bag((int)$uid);
         $res = $bag->initBag();
+        var_dump($res);
         if ($res)
         {
             $response = ['code' => 200,'msg' => '成功'];
