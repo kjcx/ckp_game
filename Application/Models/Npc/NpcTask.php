@@ -30,6 +30,8 @@ class NpcTask extends Model
 
         $str = $this->redis->get($key);
         $arr = unserialize($str);
+        $ttl = $this->redis->ttl($key);
+        $arr['NextTime'] = $ttl;
         return $arr;
     }
 
@@ -143,7 +145,7 @@ class NpcTask extends Model
         unset($data['NpcTask'][$Spot]);
         $TaskInfo = $this->getTaskInfoByUid($Uid);
         $ItemList = $TaskInfo['ItemList'];
-        $data['NpcTask'][$NewSpot] = ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$OldTaskId,'ItmeList'=>$ItemList];
+        $data['NpcTask'][$NewSpot] = ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$OldTaskId,'ItemList'=>$ItemList];
         $rs = $this->setRedisUpdateTask($Uid,$data);
         if($rs){
             return ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$OldTaskId,'ItemList'=>$ItemList];;

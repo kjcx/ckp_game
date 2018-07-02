@@ -20,6 +20,7 @@ class ResidentDelegateResult
         $ResidentDelegateResult = new \AutoMsg\ResidentDelegateResult();
         $Count = $data['Count'];
         $RefCount = $data['RefCount'];
+        $NextTime = $data['NextTime'];
         $NpcTaskList = [];
         foreach ($data['NpcTask'] as $k=>$item) {
             $NpcTaskList[$k] = NpcTask::encode($item);
@@ -27,6 +28,7 @@ class ResidentDelegateResult
         $ResidentDelegateResult->setCount($Count);
         $ResidentDelegateResult->setNpcTaskList($NpcTaskList);
         $ResidentDelegateResult->setRefCount($RefCount);
+        $ResidentDelegateResult->setNextTime($NextTime);
         $str = $ResidentDelegateResult->serializeToString();
         return $str;
     }
