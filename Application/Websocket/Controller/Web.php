@@ -2383,6 +2383,7 @@ class Web extends WebSocketController
         $Count = $data_task['Count'];
         var_dump("data_task");
         var_dump($data_Spot);
+        var_dump($data_task);
 
         if($Count>=1){
             //判断剩余任务测试
