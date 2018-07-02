@@ -929,12 +929,10 @@ class Web extends WebSocketController
             $data_role = $Role->getRole($this->uid);
             $str = FriendApplyResult::encode($data_role,$this->uid);
             $this->send(1011,$this->fd,$str);
-            if(!$Is_Black){
-                //2 给被申请人通知
-                $arr[] = $data_role;
-                $str_other = FriendAddResult::encode($arr,0);
-                $this->sendByUid(1011,$data_FriendApply['RoleId'],$str_other);
-            }
+            //2 给被申请人通知
+            $arr[] = $data_role;
+            $str_other = FriendAddResult::encode($arr,0);
+            $this->sendByUid(1011,$data_FriendApply['RoleId'],$str_other);
         }else{
             $str = FriendApplyResult::encode('',$this->uid,true,true);
             $this->send(1011,$this->fd,$str);
