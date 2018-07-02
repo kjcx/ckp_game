@@ -21,8 +21,6 @@ class Model
     {
         $this->mysql = Mysql::getInstance()->getConnect();
         $this->redis = Redis::getInstance()->getConnect();
-        $dbConf =  $dbConf = Config::getInstance()->getConf('REDIS_SERVER');
-        $this->redis->select($dbConf['dbname']);
         $dbConf =  $dbConf = Config::getInstance()->getConf('MONGO');
         // 全局初始化
         Db::setConfig($dbConf);

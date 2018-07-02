@@ -341,18 +341,18 @@ class Cache
     {
         $conf = Config::getInstance()->getConf("REDIS_SLAVE");
         $this->readConnect->connect($conf['host'],$conf['port']);
-        $this->readConnect->select($conf['dbname']);
         if (!empty($conf['auth'])) {
             $this->readConnect->auth($conf['auth']);
         }
+        $this->readConnect->select($conf['dbname']);
     }
     private function writeConnect()
     {
         $conf = Config::getInstance()->getConf("REDIS_SERVER");
         $this->writeConnect->connect($conf['host'],$conf['port']);
-        $this->writeConnect->select($conf['dbname']);
         if (!empty($conf['auth'])) {
             $this->readConnect->auth($conf['auth']);
         }
+        $this->writeConnect->select($conf['dbname']);
     }
 }

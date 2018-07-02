@@ -56,6 +56,9 @@ class Redis
         if (!empty($conf['auth'])) {
             $this->connect->auth($conf['auth']);
         }
+        $this->connect->select($conf['dbname']);
+
+
     }
 
     private function pConnect()
@@ -65,5 +68,6 @@ class Redis
         if (!empty($conf['auth'])) {
             $this->connect->auth($conf['auth']);
         }
+        $this->connect->select($conf['dbname']);
     }
 }
