@@ -127,11 +127,14 @@ class NpcTask extends Model
         $data = $this->getRedisTask($Uid);
 
         $item = $this->num;
+        $OldTaskId = '';
         foreach ($data['NpcTask'] as $k =>$datum) {
             if(in_array($k,$item)){
                 unset($item[$k]);
+                $OldTaskId = $datum['TaskId'];
             }
         }
+
         mt_srand();
         shuffle($item);
         $NewSpot = $item[0];
@@ -140,10 +143,10 @@ class NpcTask extends Model
         unset($data['NpcTask'][$Spot]);
         $TaskInfo = $this->getTaskInfoByUid($Uid);
         $ItemList = $TaskInfo['ItemList'];
-        $data['NpcTask'][$NewSpot] = ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$data['NpcTask']['TaskId'],'ItmeList'=>$ItemList];
+        $data['NpcTask'][$NewSpot] = ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$OldTaskId,'ItmeList'=>$ItemList];
         $rs = $this->setRedisUpdateTask($Uid,$data);
         if($rs){
-            return ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$data['NpcTask']['TaskId'],'ItmeList'=>$ItemList];;
+            return ['NpcId'=>$NewNpcId,'Spot'=>$NewSpot,'TaskId'=>$OldTaskId,'ItemList'=>$ItemList];;
         }else{
             return false;
         }

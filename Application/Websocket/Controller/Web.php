@@ -2117,11 +2117,11 @@ class Web extends WebSocketController
      */
     public function msgid_1042()
     {
-        $data = RoomReq::decode($this->data);
-        $room = new Room($data['uid']);
-        $roomData = $room->getUseRoom();
-        $string = RoomResult::encode($roomData);
-        $this->send(1042,$this->fd,$string);
+//        $data = RoomReq::decode($this->data);
+//        $room = new Room($data['uid']);
+//        $roomData = $room->getUseRoom();
+//        $string = RoomResult::encode($roomData);
+//        $this->send(1042,$this->fd,$string);
     }
 
     /**
@@ -2387,8 +2387,10 @@ class Web extends WebSocketController
         $NpcTask = new NpcTask();
 
         $data_task = $NpcTask->getRedisTask($this->uid);
-        var_dump($data_task);
         $Count = $data_task['Count'];
+        var_dump("data_task");
+        var_dump($data_Spot);
+
         if($Count>=1){
             //判断剩余任务测试
             if( isset($data_task['NpcTask'][$data_Spot['Spot']]['TaskId']) ){
@@ -2398,17 +2400,18 @@ class Web extends WebSocketController
                 $Bag = new Bag($this->uid);
                 $bool = false;
                 foreach ($ItemList as $k => $item) {
-                    $bool  = $Bag->checkCountByItemId($k,$item);
+                    $bool  = $Bag->checkCountByItemId($item['ItemId'],$item['Count']);
                     if(!$bool){
                         var_dump("道具不满足");
                         $this->send(1135,$this->fd,'','道具数量不足');
                         return;
                     }
                 }
+                var_dump($bool);
                 if($bool){
                     //扣除道具
                     foreach ($ItemList as $k => $item) {
-                        $rs = $Bag->delBag($k,$item);
+                        $rs = $Bag->delBag($item['ItemId'],$item['Count']);
                         if(!$rs){
                             var_dump("扣除道具失败");
                             return;
@@ -2417,13 +2420,16 @@ class Web extends WebSocketController
                     //增加奖励
                     $TaskId = $data_task['NpcTask'][$data_Spot['Spot']]['TaskId'];
                     $NpcId = $data_task['NpcTask'][$data_Spot['Spot']]['NpcId'];
+
                     $Entrust = new Entrust();
                     $data_Award = $Entrust->getAwardById($TaskId);
+
                     foreach ($data_Award as $k => $item) {
-                        if($k == 8){
+                        if($item['ItemId'] == 8){
                             //好感度 增加npc的好感度
                             $NpcInfo = new NpcInfo();
-                            $rs = $NpcInfo->setRedisCurrentFavorability($this->uid,$NpcId,$item);
+                            $rs = $NpcInfo->setRedisCurrentFavorability($this->uid,$NpcId,$item['Count']);
+                            var_dump("设置好感度" . $rs);
                             if($rs){
                                 //完成任务委托点
                                 $data_newtask['Spot'] = $data_Spot['Spot'];
@@ -2435,12 +2441,12 @@ class Web extends WebSocketController
                                 var_dump("增加好感度失败");
                             }
                         }else{
-                            $Bag->addBag($k,$item);
+                            $Bag->addBag($item['ItemId'],$item['Count']);
                         }
                     }
                 }
             }else{
-                var_dump("不存在任务");
+                var_dump("不存在委托任务");
             }
         }else{
             var_dump("本回合任务已经完成");

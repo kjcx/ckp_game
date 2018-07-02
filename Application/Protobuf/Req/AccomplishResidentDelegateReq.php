@@ -18,6 +18,7 @@ class AccomplishResidentDelegateReq
     public static function decode($data)
     {
         $AccomplishResidentDelegateReq = new \AutoMsg\AccomplishResidentDelegateReq();
+        $AccomplishResidentDelegateReq->mergeFromString($data);
         $Spot = $AccomplishResidentDelegateReq->getSpot();
         return ['Spot'=>$Spot];
     }
