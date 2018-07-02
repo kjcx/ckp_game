@@ -98,6 +98,7 @@ use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefFitnessReq;
 use App\Protobuf\Req\RefStaffReq;
 use App\Protobuf\Req\RequestManorReq;
+use App\Protobuf\Req\RoomLiveReq;
 use App\Protobuf\Req\RoomReq;
 use App\Protobuf\Req\RoomUpdateReq;
 use App\Protobuf\Req\SavingGoldReq;
@@ -174,6 +175,7 @@ use App\Protobuf\Result\RefStaffResult;
 use App\Protobuf\Result\RequestManorResult;
 use App\Protobuf\Result\ResidentDelegateResult;
 use App\Protobuf\Result\RoleAuctionShopResult;
+use App\Protobuf\Result\RoomLiveResult;
 use App\Protobuf\Result\RoomResult;
 use App\Protobuf\Result\RoomUpdateResult;
 use App\Protobuf\Result\SalesListResult;
@@ -2599,6 +2601,21 @@ class Web extends WebSocketController
             $this->send(1163,$this->fd,'',$res['msg'],12);
         }  else {
             $this->send(1163,$this->fd,RoomUpdateResult::encode($res));
+        }
+    }
+
+    /**
+     * 住宅入住
+     */
+    public function msgid_1166()
+    {
+        $data = RoomLiveReq::deocode($this->data);
+        $room = new Room($this->uid);
+        $res = $room->setUseRoom($data['roomId']);
+        if (isset($res['error'])) {
+            $this->send(1226,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1226,$this->fd,RoomLiveResult::encode($res));
         }
     }
 }
