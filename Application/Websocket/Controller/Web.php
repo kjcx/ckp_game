@@ -144,6 +144,7 @@ use App\Protobuf\Result\FriendRemoveBlackResult;
 use App\Protobuf\Result\FriendRemoveResult;
 use App\Protobuf\Result\FriendSearchResult;
 use App\Protobuf\Result\FruitsDataResult;
+use App\Protobuf\Result\FurnitureStarResult;
 use App\Protobuf\Result\GetAuctionLandResult;
 use App\Protobuf\Result\GetMailItemsResult;
 use App\Protobuf\Result\GetMapResult;
@@ -2130,7 +2131,13 @@ class Web extends WebSocketController
     public function msgid_1109()
     {
         $data = FurnitureStarReq::decode($this->data);
-        var_dump($data);
+        $room = new Room($this->uid);
+        $res = $room->upgradeFurniture($data['id']);
+        if (isset($res['error'])) {
+            $this->send(1148,$this->fd,'',$res['msg'],12);
+        }  else {
+            $this->send(1148,$this->fd,FurnitureStarResult::encode($res));
+        }
     }
     /**
      * 签到请求

@@ -114,6 +114,7 @@ class Room extends Model
         $roomInfo['value'] += $upgradeData['Status'];
         $updateRoomRes = $this->updateRoom($roomInfo['roomId'],$roomInfo);
         if ($updateRoomRes) {
+            return [$itemId => $shouldLevel];
             return true;
         }
         //完成
