@@ -22,7 +22,7 @@ class ConnectingResult
         $role_data = $Role->getRole($uid);
         var_dump($role_data);
         if($role_data){
-            $RoleLists->setRoleId($role_data['id']);
+            $RoleLists->setRoleId($uid);
         }
         $role[] = $RoleLists;
         $ConnectingResult->setRoleLists($role);

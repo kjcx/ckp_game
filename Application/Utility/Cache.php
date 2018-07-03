@@ -37,7 +37,6 @@ class Cache
      */
     public function client($handle = 'read')
     {
-        var_dump($handle);
         if ($handle == 'read') {
             return $this->readConnect;
         }
@@ -180,6 +179,14 @@ class Cache
         return false;
     }
 
+    public function hashMset($key,$arr)
+    {
+        $res = $this->writeConnect->hMset($key,$arr);
+        if($res){
+            return $this->pushQueue($key,'hash','set');
+        }
+        return false;
+    }
     /**
      * 实现 hDel
      * @param $key

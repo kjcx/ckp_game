@@ -6,8 +6,10 @@
  * Time: 下午5:22
  */
 namespace App\Models\User;
-use App\Models\BagInfo\Item;
+
+use App\Models\Excel\Item;
 use App\Models\Model;
+use App\Utility\Cache;
 
 /**
  * 用户属性
@@ -17,20 +19,29 @@ use App\Models\Model;
 class UserAttr extends Model
 {
     private $table = 'ckzc_userattr';
-    public  function setUserAttr($uid,$ids)
+    public $UserAttr = 'UserAttr:Uid:';
+    public $cache;
+    public function __construct()
     {
+        parent::__construct();
+        $this->cache = Cache::getInstance();
+    }
+
+    public  function setUserAttr($Uid,$ids)
+    {
+
         foreach ($ids as $id) {
             $ids[] = (int)$id;
         }
         $bool = true;
-        $data_user_attr_id = $this->getUserAttrId($uid);
+        $data_user_attr_id = $this->getUserAttrId($Uid);
         if(!$data_user_attr_id){
             $bool = false;
             $data_user_attr_id = [];
         }
         //判断道具部位
         $item = new Item();
-        $data_item = $item->getItemByIds($ids);
+        $data_item = $item->getItemIds($ids);
         $now_Status = 0;//现在就时装身价值
         //根据Parts 判断部位
         foreach ($data_item as $v) {
@@ -39,12 +50,15 @@ class UserAttr extends Model
             $data_user_attr_id[$type] = $v['Id'];
 
         }
-        $data['uid'] = $uid;
+        $key = $this->UserAttr . $Uid;
+        $arr = $this->cache->hashMset($key,$data_user_attr_id);
+        return $arr;
+        $data['uid'] = $Uid;
         $data['user_attr_id'] = json_encode($data_user_attr_id);
         $data['update_time'] = time();
         $data['status'] = 1;
         if($bool){
-            $rs = $this->mysql->where('uid',$uid)->update($this->table,$data);
+            $rs = $this->mysql->where('uid',$Uid)->update($this->table,$data);
             return true;
         }else{
             return $this->mysql->insert($this->table,$data);
@@ -65,11 +79,14 @@ class UserAttr extends Model
 
     /**
      * 获取属性id
-     * @param $uid
+     * @param $Uid
      * @return mixed
      */
-    public function getUserAttrId($uid)
+    public function getUserAttrId($Uid)
     {
+        $key = $this->UserAttr . $Uid;
+        $arr = $this->redis->hGetAll($key);
+        return $arr;
         $data = $this->getUserAttr($uid);
         $user_attr_id = json_decode($data['user_attr_id'],1);
         return $user_attr_id;
@@ -92,6 +109,4 @@ class UserAttr extends Model
             return $arr[$Parts];
         }
     }
-
-
 }

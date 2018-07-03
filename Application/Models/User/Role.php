@@ -10,34 +10,47 @@ use App\Models\BagInfo\Bag;
 use App\Models\Excel\Character;
 use App\Models\Model;
 use App\Utility\Cache;
+use MongoDB\BSON\ObjectId;
 
 class Role extends Model
 {
     private $table = 'ckzc_role';
     public $cache;
-    public $RoleInfoKey = 'RoleInfo:';
+    public $RoleInfoKey = 'RoleInfo:uid:';
+    public $RoleUserName = 'RoleUserName';
+    public $Member = 'Member';
     public function __construct()
     {
         parent::__construct();
         $this->cache = Cache::getInstance();
     }
 
-
-    public function getRole($uid)
+    /**
+     * 获取角色信息
+     * @param $Uid
+     * @return array
+     */
+    public function getRole($Uid)
     {
-        $arr = $this->mysql->where("uid",$uid)->getOne($this->table);
+        $key = $this->RoleInfoKey . $Uid;
+        $arr = $this->cache->client()->hGetAll($key);
         return $arr;
+//        $arr = $this->mysql->where("uid",$Uid)->getOne($this->table);
+//        return $arr;
     }
 
     /**
      * 通过id获取角色信息
-     * @param $id
+     * @param $Uid
      * @return array
      */
-    public function getRoleById($id)
+    public function getRoleById($Uid)
     {
-        $arr = $this->mysql->where('id',$id)->getOne($this->table);
+        $key = $this->RoleInfoKey . $Uid;
+        $arr = $this->redis->hGetAll($key);
         return $arr;
+//        $arr = $this->mysql->where('id',$id)->getOne($this->table);
+//        return $arr;
     }
     /**
      * 创建角色
@@ -68,33 +81,25 @@ class Role extends Model
         ];
         $Avatars = explode(',',$Avatar);
         $UserAttr = new UserAttr();
-        $UserAttr->setUserAttr($uid,$Avatars);
-        
-        //后期事务
+        $rs = $UserAttr->setUserAttr($uid,$Avatars);
+        var_dump("创建属性". $rs);
         //创建默认角色
-        $rs = $this->mysql->insert($this->table,$data);
-        var_dump($rs);
-        if($rs){
+        $info = $this->getRole($uid);
+        if(!$info){
             $this->CreateRedisRole($data);
-//            $arr['rid'] = $rs;//角色id
-//            $arr['uid'] = $data['uid'];//用户id
-//            $arr['maxsum'] = 999;//背包最大数量
-//            $arr['usesum'] = 0;//已使用
-//            $arr['items'] = json_encode([]);//已获取道具数量
-//            $res = $this->createRoleBag($arr);
-
-            
             $Bag = new Bag($uid);
-
             $res = $Bag->initBag();
-            var_dump($res);
             if($res){
                 return $rs;
             }else{
-                return false;
+                if($Bag->getBag()){
+                    return true;
+                }else{
+                    return false;
+                }
             }
         }else{
-            return false;
+            return true;
         }
     }
 
@@ -301,10 +306,19 @@ class Role extends Model
      */
     public function CreateRedisRole($data)
     {
+        var_dump("CreateRedisRole");
+        var_dump($data);
         $Uid = $data['uid'];
-        $key = $this->RoleInfoKey . $Uid;
-
-        $rs = $this->cache->client()->hMset($key,$data);
+        $UserName = $data['nickname'];
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $MongoId = new ObjectId();
+        $this->cache->hashSet($this->RoleUserName,$UserName,$Uid);
+        $MongoId = new ObjectId();
+        $this->cache->setSadd($this->Member,$Uid);
+        $rs = $this->cache->hashMset($RoleInfoKey,$data);
         var_dump($rs);
+        $rs = $this->mysql->insert($this->table,$data);
     }
+
+
 }
