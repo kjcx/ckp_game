@@ -12,10 +12,13 @@ namespace App\Models\Room;
 use App\Models\BagInfo\Bag;
 use App\Models\Excel\Star;
 use App\Models\Model;
+use App\Models\User\Role;
+use App\Models\User\UserAttr;
 use App\Traits\CacheTrait;
 use App\Traits\MongoTrait;
 use App\Models\Excel\Room as ExcelRoom;
 use App\Utility\Cache;
+use MongoDB\BSON\ObjectId;
 
 class Room extends Model
 {
@@ -24,22 +27,30 @@ class Room extends Model
     private $mongoTable = 'ckzc.room';
     private $mongoListTable = 'ckzc.roomList';
     private $excelRoom;
+    private $role;
+    private $roomKey;
     private $star;
     private $uid;
     private $cache;
-    private $roomKey;
     const initRoomKey = 101;//初始化赠送的roomkey
     const roomListKey = 'roomList:uid:';//房间列表的key
     const roomValue = 'social_status';//房间身价值
+    const roomLogList = 'roomLogList:uid:';//拜访升级记录 列表
+    const roomLog = 'roomLog:_id:';//拜访升级记录 详情
+    const Visit = 1; //拜访
+    const BuyRoom = 2; //购买住宅
+    const FurnitureStarUp = 3; //家具升星
+    const logTimeOut = 604800;//日志保存时间 7天
 
     public function __construct($uid)
     {
         $this->uid = $uid;
         $this->excelRoom = new ExcelRoom();
         $this->star = new Star();
+        $this->role = new Role();//角色对象
         $this->collection = $this->getMongoClient(); //并非所有的类都要进行这样的操作
         $this->cache = Cache::getInstance();
-        $this->roomKey = 'room:uid:' . $this->uid . ':roomId:';
+        $this->roomKey = 'room:uid:' . $this->uid . ':roomId:';//room单个key
         parent::__construct();
     }
 
@@ -50,7 +61,13 @@ class Room extends Model
     public function init()
     {
         $roomInfo = $this->excelRoom->getRoomByKey(self::initRoomKey);
-        return $initRoom = $this->createRoom($roomInfo);
+
+        $initRoom = $this->createRoom($roomInfo);
+        if ($initRoom != false) {
+            //更新身价值
+            $this->updateValue($initRoom['value']);
+            return true;
+        }
     }
 
     /**
@@ -105,7 +122,7 @@ class Room extends Model
         $bag->delBag($gold['0'],$gold['1']);
         //更新身价值
         $updateValueRes = $this->updateValue($upgradeData['Status']);
-        if ($updateValueRes) {
+        if ($updateValueRes == false) {
             return ['error' => true,'msg' => 'Error'];
         }
 //        $bag->
@@ -114,29 +131,15 @@ class Room extends Model
         $roomInfo['value'] += $upgradeData['Status'];
         $updateRoomRes = $this->updateRoom($roomInfo['roomId'],$roomInfo);
         if ($updateRoomRes) {
+            //加记录
+            $roleInfo = $this->role->getRole($this->uid);
+            $this->addLog(self::FurnitureStarUp,$this->uid,$roleInfo['nickname'],$upgradeData['Status']);
             return [$itemId => $shouldLevel];
-            return true;
         }
         //完成
         return false;
     }
 
-    /**
-     * todo::暂时不能卖
-     * 出售住宅
-     * @param $roomId
-     * @return array|bool
-     */
-    public function sellRoom($roomId)
-    {
-        $room = $this->getRoomByRoomId($roomId);
-        if ($room == false) {
-            //没有该住宅
-            return ['error' => true,'msg' => 'RoomNotHave'];
-        }
-
-        return [];
-    }
 
     /**
      * 购买住宅
@@ -177,7 +180,12 @@ class Room extends Model
         $bag->delBag($gold['0'],$gold['1']);
         //创建住宅
         $createRes = $this->createRoom($roomInfo);
-        if ($createRes) {
+        //更新身价值
+        if ($createRes != false) {
+            //更新身价值
+            $updateValueRes = $this->updateValue($createRes['value']);//
+            $roleInfo = $this->role->getRole($this->uid);
+            $this->addLog(self::BuyRoom,$this->uid,$roleInfo['nickname'],$createRes['value']);
             $roomInfo = $this->getRoomByRoomId($roomId);
             return $this->transformRoomData($roomInfo);
         }
@@ -205,7 +213,7 @@ class Room extends Model
     public function getUseRoom($transform = true)
     {
         $zsetKey = self::roomListKey . $this->uid;
-        $useRoomId = $this->cache->client()->zRevRange($zsetKey,0,0);
+        $useRoomId = $this->cache->client('write')->zRevRange($zsetKey,0,0);
         $roomInfo = $this->getRoomByRoomId($useRoomId['0']);
         if ($transform) {
             $roomInfo = $this->transformRoomData($roomInfo);//转换房屋信息
@@ -213,6 +221,24 @@ class Room extends Model
         return $roomInfo;
     }
 
+    /**
+     * 获取日志
+     */
+    public function getLog()
+    {
+        $hashKey = self::roomLogList . $this->uid;
+        $keys = $this->cache->client()->hGetAll($hashKey);
+        $data = [];
+        foreach ($keys as $k => $key) {
+            $item = $this->cache->stringGet($key);
+            if ($item == false) {
+                $this->cache->hashHdel($hashKey,$k);
+            } else {
+                $data[] = $item;
+            }
+        }
+        return $data;
+    }
     /**
      * 转换房屋信息 前台需要的
      */
@@ -230,6 +256,54 @@ class Room extends Model
         return $data;
     }
 
+    /**
+     *     string RoleId=1;头像
+    string Icon=2;姓名
+    string Name=3;性别
+    int32 Sex=4;vip级别
+    string VipLevel=5;vip级别
+    int64 SocialStatus=6;身价
+    repeated int32 Avatar=7;avatar信息
+    int64 RoomPraiseTime=8;房间的点赞数
+    int32 Achieve=9;称号
+    int32 VipId=10;天使玩家与先锋玩家
+     */
+
+    /**
+     * 拜访住宅
+     * @param $toRoleId 要拜访人的uid
+     */
+    public function visitRoom($visitId,$toRoleId)
+    {
+        $this->uid = $toRoleId;
+        $roleInfo = $this->role->getRole($visitId);
+        $this->addLog(self::Visit,$visitId,$roleInfo['nickname'],0);//增加拜访记录
+        $visitInfo = $this->role->getRole($toRoleId);
+        $attr = new UserAttr();
+//        $avatar = $attr->getUserAttr($toRoleId);
+        $avatar = [
+            "Body" => 1145,
+            "Head" => 1144,
+            "Pants" => 1146
+        ];//todo 等待修改
+        $avatar = array_values($avatar);
+        $visitinfo = [
+            'RoleId' => $visitInfo['uid'],
+            'Icon' => $visitInfo['icon'],
+            'Name' => $visitInfo['nickname'],
+            'Sex' => $visitInfo['sex'],
+            'VipLevel' => $visitInfo['vip'],
+            'SocialStatus' => $visitInfo['shenjiazhi'],
+            'Avatar' => $avatar,
+            'RoomPraiseTime' => 100,//房间点赞数
+            'Achieve' => $visitInfo['nickname'],//称号
+            'VipId' => $visitInfo['nickname'],//vip id 天使玩家与先锋玩家
+        ];
+        return [
+            'room' => $this->getUseRoom(),
+            'visitinfo' => $visitinfo
+        ];
+    }
     /**
      * 更新住宅信息
      * @param $roomId
@@ -252,7 +326,10 @@ class Room extends Model
         $zsetKey = self::roomListKey . $this->uid;
         $oldValue = $this->cache->client()->zScore($zsetKey,self::roomValue);
         $score = $oldValue + $value;
-        return $this->cache->zsetZadd($zsetKey,self::roomValue,$score);
+        $role = new Role();
+        $role->updateShenjiazhi($this->uid,$value);
+        $this->cache->zsetZadd($zsetKey,self::roomValue,$score);
+        return $role->getShenjiazhi($this->uid);
     }
     /**
      * 获得room信息
@@ -303,8 +380,7 @@ class Room extends Model
             //放入住宅列表
             if ($res) {
                 $this->setRoomList($data['roomId'],true);
-                $this->updateValue($data['value']);
-                return true;
+                return $data;
             }
             return false;
         }
@@ -350,6 +426,33 @@ class Room extends Model
             'config' => $configs//房屋配置
         ];
         return $data;
+    }
+
+    /**
+     * 拜访记录
+     * 购买记录
+     * 家具升星记录
+     * @param $type
+     * @param $roleId
+     * @param $roleName
+     * @param $value
+     */
+    private function addLog($type,$roleId,$roleName,$value)
+    {
+        $key = self::roomLog . (string)(new ObjectId());//详情key
+        $hashKey = self::roomLogList . $this->uid; //列表key
+        //定义数据
+        $data = [
+            'roleName' => (string)$roleName,//角色名字
+            'roleId' => (string)$roleId,//角色id
+            'time' => 1,//次数
+            'type' => (int)$type,//日志类型
+            'value' => (int)$value,//身价值
+            'unixTime' => time(),//操作时间
+        ];
+        $this->cache->stringSet($key,$data,self::logTimeOut);
+        $this->cache->hashSet($hashKey,time(),$key);
+        return true;
     }
 
 }

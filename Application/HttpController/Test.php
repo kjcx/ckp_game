@@ -69,8 +69,8 @@ class Test extends Controller
     {
 //        $bagNew = new BagNew(87);
 //        var_dump($bagNew->initBag());
-        $room = new Room('85');
-        $data = $room->buyRoom(202);
+        $room = new Room('34');
+        $data = $room->getUseRoom();
         var_dump($data);
     }
 }

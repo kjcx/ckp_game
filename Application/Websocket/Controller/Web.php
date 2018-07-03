@@ -101,6 +101,7 @@ use App\Protobuf\Req\RequestManorReq;
 use App\Protobuf\Req\RoomLiveReq;
 use App\Protobuf\Req\RoomReq;
 use App\Protobuf\Req\RoomUpdateReq;
+use App\Protobuf\Req\RoomVisitReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
@@ -178,6 +179,8 @@ use App\Protobuf\Result\RoleAuctionShopResult;
 use App\Protobuf\Result\RoomLiveResult;
 use App\Protobuf\Result\RoomResult;
 use App\Protobuf\Result\RoomUpdateResult;
+use App\Protobuf\Result\RoomVisitInfoResult;
+use App\Protobuf\Result\RoomVisitResult;
 use App\Protobuf\Result\SalesListResult;
 use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
@@ -2619,5 +2622,28 @@ class Web extends WebSocketController
         }  else {
             $this->send(1226,$this->fd,RoomLiveResult::encode($res));
         }
+    }
+
+    /**
+     * 拜访住宅
+     */
+    public function msgid_1046()
+    {
+        $data = RoomVisitReq::decode($this->data);
+        $room = new Room($this->uid);
+        $res = $room->visitRoom($this->uid,$data['uid']);
+        $this->send(1046,$this->fd,RoomVisitResult::encode($res));
+
+    }
+
+    /**
+     * 获取住宅日志
+     */
+    public function msgid_1059()
+    {
+        $room = new Room($this->uid);
+        $log = $room->getLog();
+        $string = RoomVisitInfoResult::encode($log);
+        $this->send(1087,$this->fd,$string);
     }
 }
