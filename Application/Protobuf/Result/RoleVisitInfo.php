@@ -13,6 +13,7 @@ class RoleVisitInfo
 {
     public static function encodeObj($data)
     {
+        var_dump($data);
         $obj = new \AutoMsg\RoleVisitInfo();
         $obj->setRoleId($data['RoleId']);
         $obj->setIcon($data['Icon']);

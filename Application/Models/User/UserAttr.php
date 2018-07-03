@@ -70,11 +70,11 @@ class UserAttr extends Model
      * @param $uid
      * @return array
      */
-    public function getUserAttr($uid)
+    public function getUserAttr($Uid)
     {
-        $data = $this->mysql->where('uid',$uid)->getOne($this->table);
-
-        return $data;
+        $key = $this->UserAttr . $Uid;
+        $arr = $this->redis->hGetAll($key);
+        return $arr;
     }
 
     /**
