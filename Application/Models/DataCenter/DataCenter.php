@@ -12,6 +12,7 @@ use App\Utility\Cache;
 use EasySwoole\Config;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use App\Models\Model;
+use MongoDB\BSON\ObjectId;
 
 class DataCenter extends Model
 {
@@ -24,7 +25,7 @@ class DataCenter extends Model
     public function __construct()
     {
         parent::__construct();
-        $this->dataCenterKey = Config::getInstance()->getConf('rediskeys.data_center');
+        $this->dataCenterKey = Config::getInstance()->getConf('rediskeys.data_center') . ':_id:5b3b63899a89201500501ba1';
         $this->serverHash = Config::getInstance()->getConf('SERVER_CONF.server_hash'); //设置机器hash
         $this->cache = Cache::getInstance();
         $this->dataCenterServer = 'dataCenterHash:serverHash:' . $this->serverHash;//当前机器的hash列表
