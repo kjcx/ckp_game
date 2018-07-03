@@ -31,7 +31,8 @@ class Init extends Model
      */
     public function getInitData()
     {
-        $data = $this->collection->findOne(['Id.value' => '1']);
+        $data = $this->collection->findOne();
+        var_dump($data);
         return $data;
     }
 }

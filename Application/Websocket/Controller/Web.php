@@ -405,7 +405,7 @@ class Web extends WebSocketController
             var_dump("data2");
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $dataCenter->saveClient($this->fd,$uid);
-            var_dump("data1");
+            var_dump("data1". $uid);
             //登录成功
             $data = \App\Protobuf\Result\ConnectingResult::encode($uid);
 

@@ -2616,5 +2616,17 @@ return [
         'msgid' =>'2026',
         'desc'=>'返回解锁npc',
     ],
+    [
+        'type'=>'send',
+        'message'=>'PkRankingReq',
+        'msgid'=>'2027',
+        'desc'=>'pk排行榜请求'
+    ],
+    [
+        'type'=>'rec',
+        'message'=>'PkRankingResult',
+        'msgid'=>'2028',
+        'desc'=>'pk排行榜返回'
+    ]
 
 ];

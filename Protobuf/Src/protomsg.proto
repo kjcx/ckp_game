@@ -2299,3 +2299,19 @@ message NpcTask{
     map<int32,int64> ItemList=3;//daoju
     int32 Spot=4;//位置
 }
+
+//pk排行帮请求
+message PkRankingReq{
+
+}
+//pk排行榜返回
+message PkRankingResult{
+ map<int32 PkRankingInfo> PkRanking=1;
+}
+//排行榜详情
+message PkRankingInfo{
+ int32 Ranking =1;//名次
+ string Name=2;//玩家名词
+ int32 Shenjiazhi=3;//身价值
+ int32 Score=4;//积分
+}

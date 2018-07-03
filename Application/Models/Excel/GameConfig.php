@@ -14,7 +14,7 @@ use think\Db;
 
 class GameConfig extends Model
 {
-    public $table = 'ckzc.GameConfig';
+    public $table = 'ckzc.Excel__GameConfig';
     public function getConfig($name)
     {
         $data = Db::table($this->table)->where(['_id'=>$name])->find();
