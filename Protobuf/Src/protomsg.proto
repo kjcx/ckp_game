@@ -1275,7 +1275,6 @@ message RoomVisitReq{
 message RoomVisitResult{
     RoomResult Room=1;
     RoleVisitInfo Role=2;
-    repeated LoadRoleBagInfo Furnitures=3;
 }
 message RoleVisitInfo{
     string RoleId=1;
