@@ -280,12 +280,7 @@ class Room extends Model
         $this->addLog(self::Visit,$visitId,$roleInfo['nickname'],0);//增加拜访记录
         $visitInfo = $this->role->getRole($toRoleId);
         $attr = new UserAttr();
-//        $avatar = $attr->getUserAttr($toRoleId);
-        $avatar = [
-            "Body" => 1145,
-            "Head" => 1144,
-            "Pants" => 1146
-        ];//todo 等待修改
+        $avatar = $attr->getUserAttr($toRoleId);
         $avatar = array_values($avatar);
         $visitinfo = [
             'RoleId' => $visitInfo['uid'],
@@ -296,7 +291,7 @@ class Room extends Model
             'SocialStatus' => $visitInfo['shenjiazhi'],
             'Avatar' => $avatar,
             'RoomPraiseTime' => 100,//房间点赞数
-            'Achieve' => $visitInfo['nickname'],//称号
+            'Achieve' => 1,//称号 todo
             'VipId' => $visitInfo['nickname'],//vip id 天使玩家与先锋玩家
         ];
         return [
