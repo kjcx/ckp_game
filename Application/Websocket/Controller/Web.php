@@ -44,6 +44,7 @@ use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Npc\NpcInfo;
 use App\Models\Npc\NpcTask;
+use App\Models\Pk\PkInfo;
 use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
 use App\Models\Sign\SignInfo;
@@ -167,6 +168,7 @@ use App\Protobuf\Result\NpcFavorabilityResult;
 use App\Protobuf\Result\NpcListResult;
 use App\Protobuf\Result\OnGetMyGoodsResult;
 use App\Protobuf\Result\PickUpSevenDaysResult;
+use App\Protobuf\Result\PkRankingResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RandManorResult;
 use App\Protobuf\Result\ReadMailResult;
@@ -225,8 +227,8 @@ class Web extends WebSocketController
         $msgid = $request->getAction();
         if($msgid != 'msgid_1004' ){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
-            var_dump($dataCenter->getUidByFd($this->fd));
             $this->uid = $dataCenter->getUidByFd($this->fd);
+            var_dump($this->uid);
         }
         parent::__construct($client, $request, $response);
 
@@ -2641,5 +2643,18 @@ class Web extends WebSocketController
         $log = $room->getLog();
         $string = RoomVisitInfoResult::encode($log);
         $this->send(1087,$this->fd,$string);
+    }
+
+    /**
+     * pk排行榜
+     * return 2028 PkRankingResult
+     */
+    public  function msgid_2027()
+    {
+        //查询排行榜前10名和自己排名
+        $PkInfo = new PkInfo();
+        $data = $PkInfo->getRanking($this->uid);
+        $str = PkRankingResult::encode($data);
+        $this->send(2028,$this->fd,$str);
     }
 }

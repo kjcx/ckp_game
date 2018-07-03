@@ -120,7 +120,8 @@ Class EasySwooleEvent implements EventInterface {
         $Conf  = Config::getInstance();
         $files = File::scanDir($ConfPath);
         foreach ($files as $file) {
-            $data = require_once $file;
+            $data = require ($file);
+            var_dump($data);
             $Conf->setConf(strtolower(basename($file, '.php')), (array)$data);
         }
     }
