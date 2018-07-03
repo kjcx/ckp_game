@@ -58,7 +58,7 @@ class DataCenter extends Model
      */
     private function userOnline($uid,$fd)
     {
-        $value = json_encode(['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd]);
+        $value = ['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd];
         //设置到总的数据中心 以uid为hash的index
         if ($this->cache->hashSet($this->dataCenterKey,$uid,$value)) {
             //设置到当前机器的用户中心
