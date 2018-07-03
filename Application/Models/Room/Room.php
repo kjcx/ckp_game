@@ -292,7 +292,7 @@ class Room extends Model
             'Avatar' => $avatar,
             'RoomPraiseTime' => 100,//房间点赞数
             'Achieve' => 1,//称号 todo
-            'VipId' => $visitInfo['nickname'],//vip id 天使玩家与先锋玩家
+            'VipId' => 1,//vip id 天使玩家与先锋玩家 todo
         ];
         return [
             'room' => $this->getUseRoom(),
