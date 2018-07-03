@@ -41,8 +41,8 @@ class FriendInfo extends Model
     {
         $key = $this->key . $Uid;
         foreach ($Fuids as $fuid) {
-            $rs = $this->redis->hSet($key,$fuid,json_encode(['Uid'=>$fuid,'FriendStatus'=>3,'ApplyTime'=>time()]));
-            $rs = $this->redis->hSet($this->key.$fuid,$Uid,json_encode(['Uid'=>$Uid,'FriendStatus'=>3,'ApplyTime'=>time()]));
+            $rs = $this->redis->hSet($key,$fuid,serialize(['Uid'=>$fuid,'FriendStatus'=>3,'ApplyTime'=>time()]));
+            $rs = $this->redis->hSet($this->key.$fuid,$Uid,serialize(['Uid'=>$Uid,'FriendStatus'=>3,'ApplyTime'=>time()]));
         }
         return $rs;
     }
@@ -57,7 +57,7 @@ class FriendInfo extends Model
     {
         $key = $this->key . $Uid;
 //        var_dump($data);
-        $rs = $this->redis->hSet($key,$data['Uid'],json_encode($data));
+        $rs = $this->redis->hSet($key,$data['Uid'],serialize($data));
         return $rs;
     }
 
@@ -70,9 +70,15 @@ class FriendInfo extends Model
     public function checkIsFriend($Uid,$Fuid)
     {
         $key = $this->key . $Uid;
-        $rs = $this->redis->hExists($key,$Fuid);
-        //在不在黑名单中
-        return $rs;
+        $str = $this->redis->hGet($key,$Fuid);
+        if($str){
+            $arr = unserialize($str);
+            if($arr['FriendStatus'] ==1){
+                return true;
+            }
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -90,7 +96,7 @@ class FriendInfo extends Model
             $data_role = $Role->getRoleByUids($Uids);
             if($data_role){
                 foreach ($data_role as &$item) {
-                    $arr = json_decode($data_Friend[$item['uid']],true);
+                    $arr = unserialize($data_Friend[$item['uid']]);
                     $item['FriendStatus'] = $arr['FriendStatus'];
                     $item['ApplyTime'] = $arr['ApplyTime'];
                     if(isset($arr['AddTime'])){
@@ -115,8 +121,17 @@ class FriendInfo extends Model
     public function getFriendUid($Uid)
     {
         $key = $this->key . $Uid;
-        $data = $this->redis->hKeys($key);
-        return $data;
+        //获取所有已经是好友的uid
+        $data = $this->redis->hGetAll($key);
+        $Uids = [];
+        foreach ($data as $uid => $datum) {
+            $arr = unserialize($datum);
+            if($arr['FriendStatus'] == 1){
+                $Uids[] = $uid;
+            }
+        }
+//        $data = $this->redis->hKeys($key);
+        return $Uids;
     }
 
     /**
@@ -136,7 +151,7 @@ class FriendInfo extends Model
         $data = $this->getRedisFriend($Uid);
 
         foreach ($Fuids as $fuid) {
-            $arr = json_decode($data[$fuid],true);
+            $arr = unserialize($data[$fuid]);
             $arr['FriendStatus'] = 1;
             $arr['AddTime'] = time();//通过时间
             $bool = $this->setRedispassFriend($Uid,$arr);
@@ -166,7 +181,7 @@ class FriendInfo extends Model
         $data = $Role->getRoleByUids($data_Friend);
 //        var_dump($data);
         foreach ($data as &$datum) {
-            $arr = json_decode($info[$datum['uid']],true);
+            $arr = unserialize($info[$datum['uid']]);
 //            var_dump($arr);
             $datum['FriendStatus'] = $arr['FriendStatus'];
             $item['AddTime'] = time();
@@ -192,7 +207,7 @@ class FriendInfo extends Model
             $arr = [];
             $data_role_new = $data_role;
             $str = $data[$fuid];
-            $arr = json_decode($str,true);
+            $arr = unserialize($str);
             $data_role_new['FriendStatus'] = $arr['FriendStatus'];
             $data_role_new['ApplyTime'] = $arr['ApplyTime'];
             if(isset($arr['AddTime'])) {
@@ -219,7 +234,7 @@ class FriendInfo extends Model
         $data = $this->getRedisFriend($Uid);
 
         foreach ($Fuids as $fuid) {
-            $arr = json_decode($data[$fuid],true);
+            $arr = unserialize($data[$fuid]);
             $arr['FriendStatus'] = 4;//拒绝
             $arr['AddTime'] = time();//通过时间
             $bool = $this->setRedispassFriend($Uid,$arr);
@@ -253,12 +268,12 @@ class FriendInfo extends Model
     public function SearchFriend($Uid,$data)
     {
         $uids = $this->getFriendUid($Uid);
-//        var_dump($uids);
+
         $uids[] = $Uid;
         $Role = new Role();
         $Name = $data['Name'];
         $Search  = $data['Search'];
-        $data = $Role->SearchFriend($uids,$data);
+        $data = $Role->SearchFriend($Uid,$data);
 //        var_dump($data);
         return $data;
     }
@@ -273,7 +288,7 @@ class FriendInfo extends Model
     {
         $key = $this->key . $Uid;
         $arr = ['Uid'=>$Fuid,'FriendStatus'=>5,'ApplyTime'=>time()];
-        $rs = $this->redis->hSet($key,$Fuid,json_encode($arr));
+        $rs = $this->redis->hSet($key,$Fuid,serialize($arr));
         return $rs;
     }
 
@@ -289,11 +304,30 @@ class FriendInfo extends Model
 
         $Uids = [];
         foreach ($data_Friend as $item) {
-            $arr = json_decode($item,true);
+            $arr = unserialize($item);
             if($arr['FriendStatus'] == $Status){
                 $Uids[] = $arr['Uid'];
             }
         }
         return $Uids;
+    }
+
+    /**
+     * 获取2个人之间的好友关系
+     * @param $Uid
+     * @param $Fuid
+     * @return int
+     */
+    public function getFriendStatusByFuid($Uid,$Fuid)
+    {
+        $key = $this->key . $Uid;
+        $str = $this->redis->hGet($key,$Fuid);
+        if($str){
+            $arr = unserialize($str);
+            return $arr['FriendStatus'];
+        }else{
+            return 0;
+        }
+
     }
 }

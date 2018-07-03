@@ -14,11 +14,13 @@ class ConnectingResult
 
     public static function encode($uid)
     {
+
         $ConnectingResult = new \AutoMsg\ConnectingResult();
         $role = $ConnectingResult->getRoleLists();
         $RoleLists = new RoleLists();
         $Role = new Role();
         $role_data = $Role->getRole($uid);
+        var_dump($role_data);
         if($role_data){
             $RoleLists->setRoleId($role_data['id']);
         }
