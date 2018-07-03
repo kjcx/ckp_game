@@ -228,6 +228,7 @@ class Web extends WebSocketController
         if($msgid != 'msgid_1004' ){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $this->uid = $dataCenter->getUidByFd($this->fd);
+            var_dump('12121212');
             var_dump($this->uid);
         }
         parent::__construct($client, $request, $response);
