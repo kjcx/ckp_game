@@ -18,5 +18,6 @@ class Index extends AbstractRpcService
     {
         // TODO: Implement index() method.
         $this->response()->setResult('this is b index');
+        return true;
     }
 }

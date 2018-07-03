@@ -17,6 +17,7 @@ class G extends AbstractRpcService
     {
         // TODO: Implement index() method.
         $this->response()->setArgs([12,3]);
+        var_dump('Rpc success');
     }
 }
 
