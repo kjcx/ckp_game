@@ -25,6 +25,7 @@ class DataCenter extends Model
     {
         parent::__construct();
         $this->dataCenterKey = Config::getInstance()->getConf('rediskeys.data_center');
+
         $this->serverHash = Config::getInstance()->getConf('SERVER_CONF.server_hash'); //设置机器hash
         $this->cache = Cache::getInstance();
         $this->dataCenterServer = 'dataCenterHash:serverHash:' . $this->serverHash;//当前机器的hash列表
@@ -60,7 +61,7 @@ class DataCenter extends Model
     {
         $value = json_encode(['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd]);
         //设置到总的数据中心 以uid为hash的index
-        if ($this->cache->hashSet($this->dataCenterKey,$uid,$value)) {
+        if ($this->cache->hashSet($this->dataCenterKey,$uid,$value)!==false) {
             //设置到当前机器的用户中心
             if ($this->cache->hashSet($this->dataCenterServer,$fd,$value)) {
                 //以 FD作为index
