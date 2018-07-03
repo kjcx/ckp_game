@@ -440,10 +440,9 @@ class Room extends Model
         $data = [
             'roleName' => (string)$roleName,//角色名字
             'roleId' => (string)$roleId,//角色id
-            'time' => 1,//次数
+            'time' => time(),//操作时间
             'type' => (int)$type,//日志类型
             'value' => (int)$value,//身价值
-            'unixTime' => time(),//操作时间
         ];
         $this->cache->stringSet($key,$data,self::logTimeOut);
         $this->cache->hashSet($hashKey,time(),$key);
