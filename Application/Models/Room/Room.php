@@ -213,7 +213,7 @@ class Room extends Model
     public function getUseRoom($transform = true)
     {
         $zsetKey = self::roomListKey . $this->uid;
-        $useRoomId = $this->cache->client()->zRevRange($zsetKey,0,0);
+        $useRoomId = $this->cache->client('write')->zRevRange($zsetKey,0,0);
         $roomInfo = $this->getRoomByRoomId($useRoomId['0']);
         if ($transform) {
             $roomInfo = $this->transformRoomData($roomInfo);//转换房屋信息
