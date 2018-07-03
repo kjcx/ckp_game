@@ -18,6 +18,7 @@ use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
 use EasySwoole\Core\Component\Di;
+use EasySwoole\Core\Component\Rpc\Server;
 use EasySwoole\Core\Component\SysConst;
 use EasySwoole\Core\Swoole\EventHelper;
 use EasySwoole\Core\Swoole\Process\ProcessManager;
@@ -103,11 +104,10 @@ Class EasySwooleEvent implements EventInterface {
             var_dump('fd'.'-'.$fd);
         });
 
-
-//        RpcServer::getInstance()->addService('A',9505)
-//            ->addService('B',9506,'password123')
-//            ->attach();
-
+//创建rpc服务
+        Server::getInstance()->addService('A',9999)
+                    ->addService('192.168.31.119',9503,'password123')
+                    ->attach();
 
     }
 

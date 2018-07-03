@@ -243,13 +243,7 @@ class Web extends WebSocketController
      */
     public function pp()
     {
-        $dataCenter = new DataCenter();
-        $fds = $dataCenter->getMyFd(); //获取我所有的Fd
-        foreach ($fds as $fd) {
-            $massTemplate = new Mass(['fd' => $fd,'data' => 11,]);
-            TaskManager::async($massTemplate);
-        }
-//        $this->response()->write();
+
     }
 
     /**
@@ -465,6 +459,7 @@ class Web extends WebSocketController
     public function msgid_1012()
     {
 
+        var_dump('sdsdsdsssss');
         //加入游戏
         var_dump(21);
         $data = JoinGameResult::encode(['uid'=>$this->uid]);

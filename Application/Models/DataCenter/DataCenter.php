@@ -8,6 +8,7 @@
  */
 namespace App\Models\DataCenter;
 
+use App\Utility\Cache;
 use EasySwoole\Config;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use App\Models\Model;
@@ -17,13 +18,16 @@ class DataCenter extends Model
 
     private $dataCenterKey;
     private $serverHash;
+    private $cache;
+    private $dataCenterServer;
 
     public function __construct()
     {
         parent::__construct();
         $this->dataCenterKey = Config::getInstance()->getConf('rediskeys.data_center');
         $this->serverHash = Config::getInstance()->getConf('SERVER_CONF.server_hash'); //设置机器hash
-        $this->setDataCenter(); //设置数据中心
+        $this->cache = Cache::getInstance();
+        $this->dataCenterServer = 'dataCenterHash:serverHash:' . $this->serverHash;//当前机器的hash列表
     }
 
     /**
@@ -31,22 +35,8 @@ class DataCenter extends Model
      */
     public function init()
     {
-        var_dump("intintintint");
-        $key = 'dataCenter:*';
-        $keys = $this->redis->keys($key);
-        foreach ($keys as $k) {
-            $this->redis->del($k);
-        }
-        $this->redis->del($this->dataCenterKey);
-    }
-    /**
-     * 设置数据中心
-     */
-    private function setDataCenter() : void
-    {
-        if ( !$this->redis->exists($this->dataCenterKey) )
-        {
-            $this->redis->sAdd($this->dataCenterKey,'init');
+        if ($this->cache->client('write')->exists($this->dataCenterServer)) {
+            $this->cache->hashDel($this->dataCenterServer);
         }
     }
 
@@ -57,7 +47,7 @@ class DataCenter extends Model
      */
     private function checkUserIsOnline($uid) : bool
     {
-        if ($this->redis->sIsMember($this->dataCenterKey,$uid)) {
+        if ($this->cache->client('write')->hGet($this->dataCenterKey,$uid)) {
             return true;
         }
         return false;
@@ -66,30 +56,29 @@ class DataCenter extends Model
     /**
      *设置用户上线  向在线集合中加入uid
      */
-    private function userOnline($uid) : bool
+    private function userOnline($uid,$fd)
     {
-        return $this->redis->sAdd($this->dataCenterKey,$uid);
+        $value = json_encode(['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd]);
+        //设置到总的数据中心 以uid为hash的index
+        if ($this->cache->hashSet($this->dataCenterKey,$uid,$value)) {
+            //设置到当前机器的用户中心
+            if ($this->cache->hashSet($this->dataCenterServer,$fd,$value)) {
+                //以 FD作为index
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * 用户下线
      */
-    private function userOffline($uid)
+    private function userOffline($uid,$fd)
     {
-        return $this->redis->sRem($this->dataCenterKey,$uid);
-    }
-    /**
-     *删除用户连接信息
-     * @param $uid
-     */
-    private function delUserClientInfo($uid)
-    {
-
-        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':' . $uid . ':*');
-        foreach ($keys as $key) {
-            $this->redis->del($key);
-        }
-
+        //删总的hash
+        $this->cache->hashHdel($this->dataCenterKey,$uid);
+        //删当前机器的hash
+        return $this->cache->hashHdel($this->dataCenterServer,$fd);
     }
 
     /**
@@ -100,20 +89,8 @@ class DataCenter extends Model
      */
     public function saveClient($fd,$uid) : bool
     {
+        return $this->userOnline($uid,$fd);
 
-        if ( !$this->checkUserIsOnline($uid) )
-        {
-            $this->userOnline($uid);
-        }
-
-        $this->delUserClientInfo($uid);
-        if ($this->redis
-            ->set('dataCenter:' . $this->serverHash . ':' . $uid . ':' . $fd,
-                serialize(['serverHash' => $this->serverHash,'uid' => $uid ,'fd' => $fd])))
-        {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -125,25 +102,10 @@ class DataCenter extends Model
     {
         $clientInfo = $this->getClientInfoByFd($fd);
         if (!empty($clientInfo)) {
-
-            $this->userOffline($clientInfo['uid']);
-            $this->delUserClientInfo($clientInfo['uid']);
+            $this->userOffline($clientInfo['uid'],$fd);
             return true;
         }
         return false;
-    }
-    /**
-     * 获取所有 当前机器的fd信息
-     */
-    public function getMyFd() : array
-    {
-        //机器号 下面的所有连接信息
-        $fds = $this->redis->keys('dataCenter:' . $this->serverHash . ':*:*');
-
-        foreach ($fds as $key => $fd) {
-            $fds[$key] = unserialize($this->redis->get($fd));
-        }
-        return $fds;
     }
 
     /**
@@ -153,9 +115,9 @@ class DataCenter extends Model
      */
     public function getClientInfoByFd($fd) : array
     {
-        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':*:' . $fd);
-        if ($keys) {
-            return unserialize($this->redis->get($keys['0']));
+        $clientInfo = $this->cache->client('write')->hGet($this->dataCenterServer,$fd);
+        if (!empty($clientInfo)) {
+            return json_decode($clientInfo,true);
         }
         return [];
     }
@@ -167,12 +129,9 @@ class DataCenter extends Model
      */
     public function getUidByFd($fd) : int
     {
-        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':*:' . $fd);
-//        var_dump($keys);
-        if ($keys) {
-//            return unserialize($this->redis->get($keys['0']))['uid'];
-            $arr =  unserialize($this->redis->get($keys['0']));
-            return $arr['uid'];
+        $clientInfo = $this->getClientInfoByFd($fd);
+        if ($clientInfo) {
+            return $clientInfo['uid'];
         }
         return '';
     }
@@ -184,11 +143,11 @@ class DataCenter extends Model
      */
     public function getFdByUid($uid)
     {
-        $keys = $this->redis->keys('dataCenter:' . $this->serverHash . ':' . $uid. ':*');
-        if ($keys) {
-//            return unserialize($this->redis->get($keys['0']))['uid'];
-            $arr =  unserialize($this->redis->get($keys['0']));
-            return $arr['fd'];
+
+        $clientInfo = $this->cache->client('write')->hGet($this->dataCenterKey,$uid);
+        $clientInfo = json_decode($clientInfo,true);
+        if (!empty($clientInfo)) {
+            return $clientInfo['fd'];
         }
         return '';
     }
