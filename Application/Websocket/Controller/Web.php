@@ -154,6 +154,7 @@ use App\Protobuf\Result\GetAuctionLandResult;
 use App\Protobuf\Result\GetMailItemsResult;
 use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
+use App\Protobuf\Result\GetRankingResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\GrowPlantsResult;
 use App\Protobuf\Result\HarvestPlanResult;
@@ -2752,6 +2753,6 @@ class Web extends WebSocketController
      */
     public function msgid_1095()
     {
-
+        $this->send(1131,$this->fd,GetRankingResult::encode(1));
     }
 }
