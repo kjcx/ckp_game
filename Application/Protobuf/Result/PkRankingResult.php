@@ -17,6 +17,7 @@ class PkRankingResult
 {
     public static function encode($data)
     {
+        var_dump($data);
         $PkRankingResult = new \AutoMsg\PkRankingResult();
         $PkRankings = [];
         if($PkRankings){
@@ -24,7 +25,8 @@ class PkRankingResult
                 $PkRankings[] = PkRankingInfo::encode($datum);
             }
         }
-        $str = $PkRankingResult->setPkRanking($PkRankings);
+        $PkRankingResult->setPkRanking($PkRankings);
+        $str = $PkRankingResult->serializeToString();
         return $str;
     }
 }

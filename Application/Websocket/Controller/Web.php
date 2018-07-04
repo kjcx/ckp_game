@@ -2655,6 +2655,7 @@ class Web extends WebSocketController
         //查询排行榜前10名和自己排名
         $PkInfo = new PkInfo();
         $data = $PkInfo->getRanking($this->uid);
+        var_dump($data);
         $str = PkRankingResult::encode($data);
         $this->send(2028,$this->fd,$str);
     }

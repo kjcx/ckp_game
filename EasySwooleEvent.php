@@ -104,10 +104,12 @@ Class EasySwooleEvent implements EventInterface {
             var_dump('fd'.'-'.$fd);
         });
 
-//创建rpc服务
-        Server::getInstance()->addService('A',9999)
-                    ->addService('192.168.31.119',9503,'password123')
-                    ->attach();
+        //创建rpc服务
+//        Server::getInstance()->addService('A',9502,'password123','192.168.31.119')
+//                    ->attach();
+        // TODO: Implement mainServerCreate() method.
+        Server::getInstance()->addService('A',9502)
+            ->attach();
 
     }
 
