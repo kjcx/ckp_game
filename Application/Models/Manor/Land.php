@@ -166,8 +166,9 @@ class Land extends Model
     {
         $itemInfo = $this->item->getItemById($seedId);
         $itemInfo['Harvest'] = explode(',',$itemInfo['Harvest']);
-        $max = ($itemInfo['Harvest']['1']) * (1 + $profit);
-        $num = mt_rand(1,ceil($max));
+        $min = ($itemInfo['Harvest']['1']) * (1 + $profit);
+        $max = ($itemInfo['Harvest']['2']) * (1 + $profit);
+        $num = mt_rand($min,ceil($max));
         return ['crop' => $itemInfo['Harvest']['0'],'num' => $num];
     }
     /**

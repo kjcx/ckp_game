@@ -104,12 +104,6 @@ Class EasySwooleEvent implements EventInterface {
             var_dump('fd'.'-'.$fd);
         });
 
-
-//        Server::getInstance()->addService('A',9502)
-  //          ->addService('B',9503,'password123')
-    //        ->attach();
-
-        //创建rpc服务
 //        Server::getInstance()->addService('A',9502,'password123','192.168.31.119')
 //                    ->attach();
         // TODO: Implement mainServerCreate() method.
@@ -127,7 +121,7 @@ Class EasySwooleEvent implements EventInterface {
         $Conf  = Config::getInstance();
         $files = File::scanDir($ConfPath);
         foreach ($files as $file) {
-            $data = require ($file);
+            $data = require_once $file;
             $Conf->setConf(strtolower(basename($file, '.php')), (array)$data);
         }
     }

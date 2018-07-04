@@ -22,7 +22,6 @@ class FruitsDataResult
         $data = [];
         $FruitsData = new FruitsData();
         $arr = $FruitsData->getFruitsData(['Uid'=>$uid]);
-        var_dump($arr);
         $LoadFruits = [];
         foreach ($arr as $k =>$item) {
 //            $LoadFruits[$k] = LoadFruits::encode($item);

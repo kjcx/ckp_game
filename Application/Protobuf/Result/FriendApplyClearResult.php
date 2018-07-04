@@ -19,7 +19,6 @@ class FriendApplyClearResult
 {
     public static function encode($data,$To=true)
     {
-        var_dump($data);
         $FriendApplyClearResult = new \AutoMsg\FriendApplyClearResult();
 
         $data_infos = [];

@@ -20,7 +20,6 @@ class ConnectingResult
         $RoleLists = new RoleLists();
         $Role = new Role();
         $role_data = $Role->getRole($uid);
-        var_dump("role_data" . $role_data);
         if($role_data){
             $RoleLists->setRoleId($uid);
         }

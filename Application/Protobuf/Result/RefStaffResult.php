@@ -22,7 +22,6 @@ class RefStaffResult
         $RefStaffResult = new \AutoMsg\RefStaffResult();
         $LoadRefStaff = [];
         foreach ($data_Staff as $item){
-            var_dump($item);
             $LoadRefStaff[] = LoadRefStaff::encode($item);
         }
 

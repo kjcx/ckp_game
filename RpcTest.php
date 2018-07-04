@@ -16,7 +16,12 @@ $ServiceManager->updateServiceNode(new \EasySwoole\Core\Component\Rpc\Common\Ser
     [
         'serviceName'=>'A',
 <<<<<<< HEAD
+<<<<<<< HEAD
         'port'=>9502
+=======
+        'address'=>'192.168.31.119',
+        'port'=>9999
+>>>>>>> a13c1afd374c9ee45e9a008bc981383be5b538b3
 =======
         'port'=>9502,
         'encryptToken'=>'123',

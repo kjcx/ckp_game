@@ -18,7 +18,7 @@ use think\Db;
  */
 class BuildingLevel extends Model
 {
-    private $table = 'ckzc.BuildingLevel';
+    private $table = 'ckzc.Excel_BuildingLevel';
     public function insert($arr)
     {
         Db::table($this->table)->insert($arr);

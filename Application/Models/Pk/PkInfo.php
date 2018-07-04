@@ -30,21 +30,22 @@ class PkInfo extends Model
     public function getRanking($Uid)
     {
         $key = $this->Pk;
-        $arr = $this->cache->client()->zRange($key,0,9);
-
+        $arr = $this->cache->client()->zRevRange($key,0,9,'WITHSCORES');
         $MyRank = $this->getUserRank($Uid);
         $Role = new Role();
         $i = 1;
         $list = [];
         foreach ($arr as $k => $v) {
             //获取用户信息
-            $info = $Role->getRole($v);
+            $info = $Role->getRole($k);
             $Name = $info['nickname'];
             $Shenjiazhi = $info['shenjiazhi'];
-            $Score = $k;
+
+            $Score = $v;
             $Ranking =$i;
-            $i++;
             $list[$i] = ['Ranking'=>$Ranking,'Name'=>$Name,'Shenjiazhi'=>$Shenjiazhi,'Score'=>$Score];
+            $i++;
+
         }
         $UserInfo = $Role->getRole($Uid);
         $Score = $this->getUserScore($Uid);
@@ -78,7 +79,6 @@ class PkInfo extends Model
     {
         $key = $this->Pk;
         $num = $this->cache->client()->zRank($key,$Uid);
-        var_dump($num);
         return $num;
     }
 
