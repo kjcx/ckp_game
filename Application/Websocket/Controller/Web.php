@@ -927,8 +927,16 @@ class Web extends WebSocketController
                 $data = $Company->CreateCompany($data_Create);
                 if($data){
                     //创建成功
-                    $str = CreateCompanyResult::encode($this->uid);
-                    $this->send(1059,$this->fd,$str);
+                    //扣除营业执照
+                    $Bag = new Bag($this->uid);
+                    $rs = $Bag->delBag(151,1);
+                    if($rs){
+                        $str = CreateCompanyResult::encode($this->uid);
+                        $this->send(1059,$this->fd,$str);
+                    }else{
+                        var_dump("扣除营业执照失败");
+                    }
+
                 }
             }
 
