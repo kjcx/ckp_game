@@ -32,8 +32,12 @@ class LoadRoleInfo
         $LoadRoleInfo->setLevel($Level);
         $LoadRoleInfo->setSocialStatus(20000);
         $UserAttr = new UserAttr();
+
         $user_attr_ids = $UserAttr->getUserAttrId($uid);
+
         $LoadRoleInfo->setAvatar($user_attr_ids);//装扮属性
+       // var_dump($LoadRoleInfo);
+
 //        $LoadRoleInfo->set
         $str = $LoadRoleInfo->serializeToString();
         return $LoadRoleInfo;
