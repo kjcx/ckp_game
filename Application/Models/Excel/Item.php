@@ -38,7 +38,7 @@ class Item extends Model
         if (!$data) {
             $data = Db::table($this->table)->where(['Id'=>(int)$Id])->find();
             $data = $this->objectToArray($data);
-            $this->cache->stringSet($key,$data);
+            $this->cache->stringSet($key,$data,null,false);
         } else {
             return $data;
         }

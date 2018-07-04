@@ -19,8 +19,6 @@ class FriendApplyResult
 {
     public static function encode($data,$To=true,$Applyed=false)
     {
-        var_dump("FriendApplyResult");
-        var_dump($data);
         $FriendApplyResult = new \AutoMsg\FriendApplyResult();
         $Info = [];
         if($data){

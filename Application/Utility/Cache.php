@@ -65,14 +65,16 @@ class Cache
      * set指定的key类型 必须是 表名:主键:主键值 后面可以随意发挥 但是必须用:分割
      * @param $key
      * @param $data
-     * @param int $ttl
+     * @param null $ttl
+     * @param bool $queue
+     * @return bool|int
      */
-    public function stringSet($key,$data,$ttl = null)
+    public function stringSet($key,$data,$ttl = null,$queue = true)
     {
         $value = json_encode($data);
         $setRes = $this->writeConnect->set($key,$value,$ttl);
         if ($setRes) {
-            if ($ttl == null) {
+            if ($ttl == null && $queue == true) {
                 //需要持久化
                 return $this->pushQueue($key,'string'); //推送持久化队列
             }
@@ -93,30 +95,35 @@ class Cache
 
     /**
      * set指定的key类型 必须是 表名:主键:主键值 后面可以随意发挥 但是必须用:分割
+     * @param $key
+     * @param $member
+     * @param $score
+     * @param bool $queue
+     * @return int
      */
-    public function zsetZadd($key,$member,$score)
+    public function zsetZadd($key,$member,$score,$queue = true)
     {
-        $res = $this->writeConnect->zAdd($key,$score,$member);
-        if ($res) {
+        $this->writeConnect->zAdd($key,$score,$member);
+        if ($queue) {
             return $this->pushQueue($key,'zset','set');
         }
-        return false;
+        return true;
     }
 
     /**
      * zrem  实现的是zset的zrem
      * @param $key
-     * @param $score
      * @param $member
-     * @return bool|int
+     * @param bool $queue
+     * @return int
      */
-    public function zsetZrem($key,$member)
+    public function zsetZrem($key,$member,$queue = true)
     {
         $res = $this->writeConnect->zRem($key,$member);
-        if ($res) {
+        if ($res && $queue) {
             return $this->pushQueue($key,'zset','del');
         }
-        return false;
+        return $res;
     }
 
 
@@ -125,15 +132,16 @@ class Cache
      * @param $key
      * @param $start
      * @param $end
-     * @return bool|int
+     * @param bool $queue
+     * @return int
      */
-    public function zsetZremrangebyrank($key,$start,$end)
+    public function zsetZremrangebyrank($key,$start,$end,$queue = true)
     {
         $res = $this->writeConnect->zRemRangeByRank($key,$start,$end);
-        if ($res) {
+        if ($res && $queue) {
             return $this->pushQueue($key,'zset','del');
         }
-        return false;
+        return $res;
     }
 
     /**
@@ -141,15 +149,16 @@ class Cache
      * @param $key
      * @param $start
      * @param $end
-     * @return bool|int
+     * @param bool $queue
+     * @return int
      */
-    public function zsetZremrangebyscore($key,$start,$end)
+    public function zsetZremrangebyscore($key,$start,$end,$queue = true)
     {
         $res = $this->writeConnect->zRemRangeByScore($key,$start,$end);
-        if ($res) {
+        if ($res && $queue) {
             return $this->pushQueue($key,'zset','del');
         }
-        return false;
+        return $res;
     }
 
     /**
@@ -165,43 +174,51 @@ class Cache
      * @param $key
      * @param $index
      * @param $value
-     * @return bool|int
+     * @param bool $queue
+     * @return int
      */
-    public function hashSet($key,$index,$value)
+    public function hashSet($key,$index,$value,$queue = true)
     {
         if (is_array($value)) {
             $value = json_encode($value);
         }
-
-        $res = $this->writeConnect->hSet($key,$index,$value);
-        var_dump($res);
-        if ($res) {
+        $this->writeConnect->hSet($key,$index,$value);
+        if ($queue) {
             return $this->pushQueue($key,'hash','set');
         }
-        return false;
+        return true;
     }
 
-    public function hashMset($key,$arr)
+    /**
+     * 实现hash mset
+     * @param $key
+     * @param $arr
+     * @param bool $queue
+     * @return bool|int
+     */
+    public function hashMset($key,$arr,$queue = true)
     {
-        $res = $this->writeConnect->hMset($key,$arr);
-        if($res){
+        $this->writeConnect->hMset($key,$arr);
+        if($queue){
             return $this->pushQueue($key,'hash','set');
         }
-        return false;
+        return true;
     }
+
     /**
      * 实现 hDel
      * @param $key
-     * @param $index 要删除的索引
-     * @return bool|int
+     * @param $index
+     * @param bool $queue
+     * @return int
      */
-    public function hashHdel($key,$index)
+    public function hashHdel($key,$index,$queue = true)
     {
         $res = $this->writeConnect->hDel($key,$index);
-        if ($res) {
+        if ($res && $queue) {
             return $this->pushQueue($key,'hash','del');
         }
-        return false;
+        return $res;
     }
     /**
      * 直接删除整个key  不是删除其中一个index  别用错了
@@ -216,45 +233,48 @@ class Cache
      * set add
      * @param $key
      * @param $value
-     * @return bool|int
+     * @param bool $queue
+     * @return int
      */
-    public function setSadd($key,$value)
+    public function setSadd($key,$value,$queue = true)
     {
-        $res = $this->writeConnect->sAdd($key,$value);
-        if ($res) {
+        $this->writeConnect->sAdd($key,$value);
+        if ($queue) {
             return $this->pushQueue($key,'set','set');
         }
-        return false;
+        return true;
     }
 
     /**
      * set spop
      * @param $key
-     * @return bool|string
+     * @param bool $queue
+     * @return string
      */
-    public function setSpop($key)
+    public function setSpop($key,$queue = true)
     {
         $res = $this->writeConnect->sPop($key);
-        if ($res) {
+        if ($res && $queue) {
             $this->pushQueue($key,'set','del');
             return $res;
         }
-        return false;
+        return $res;
     }
 
     /**
      * set sRem
      * @param $key
      * @param $member
-     * @return bool|int
+     * @param bool $queue
+     * @return int
      */
-    public function setSrem($key,$member)
+    public function setSrem($key,$member,$queue = true)
     {
         $res = $this->writeConnect->sRem($key,$member);
-        if ($res) {
+        if ($res && $queue) {
             return $this->pushQueue($key,'set','del');
         }
-        return false;
+        return $res;
     }
     /**
      * list 暂时使用不到 先不实现

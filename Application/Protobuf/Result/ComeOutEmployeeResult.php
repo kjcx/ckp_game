@@ -24,7 +24,6 @@ class ComeOutEmployeeResult
         $Staff = new Staff();
         $ShopStaffCount = $Staff->getShopStaffCountByShopId($ShopId);
         $ComeOutEmployeeResult->setBuildShopId($ShopId);//店铺id
-        var_dump("ShopStaffCount" . $ShopStaffCount . 'ShopId' .$ShopId);
         $ComeOutEmployeeResult->setBuildShopStaffCount($ShopStaffCount);//店铺员工数量
         $data_Staff = $Staff->getShopStaffByNpcIds($data['NpcCardId']);
 //        var_dump("ShopStaffCount:" . $ShopStaffCount);

@@ -61,9 +61,10 @@ class DataCenter extends Model
     {
         $value = ['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd];
         //设置到总的数据中心 以uid为hash的index
-        if ($this->cache->hashSet($this->dataCenterKey,$uid,$value)) {
+
+        if ($this->cache->hashSet($this->dataCenterKey,$uid,$value,false)) {
             //设置到当前机器的用户中心
-            if ($this->cache->hashSet($this->dataCenterServer,$fd,$value)) {
+            if ($this->cache->hashSet($this->dataCenterServer,$fd,$value,false)) {
                 //以 FD作为index
                 return true;
             }
@@ -77,9 +78,9 @@ class DataCenter extends Model
     private function userOffline($uid,$fd)
     {
         //删总的hash
-        $this->cache->hashHdel($this->dataCenterKey,$uid);
+        $this->cache->hashHdel($this->dataCenterKey,$uid,false);
         //删当前机器的hash
-        return $this->cache->hashHdel($this->dataCenterServer,$fd);
+        return $this->cache->hashHdel($this->dataCenterServer,$fd,false);
     }
 
     /**
@@ -128,7 +129,7 @@ class DataCenter extends Model
      * @param $fd
      * @return int
      */
-    public function getUidByFd($fd) : int
+    public function getUidByFd($fd)
     {
         $clientInfo = $this->getClientInfoByFd($fd);
         if ($clientInfo) {
