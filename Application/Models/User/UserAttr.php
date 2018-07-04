@@ -16,9 +16,11 @@ use App\Models\Model;
  */
 class UserAttr extends Model
 {
+
     private $table = 'ckzc_userattr';
     public  function setUserAttr($uid,$ids)
     {
+
         foreach ($ids as $id) {
             $ids[] = (int)$id;
         }
@@ -48,6 +50,7 @@ class UserAttr extends Model
             return true;
         }else{
             return $this->mysql->insert($this->table,$data);
+            echo("sadfasdfa");
         }
     }
 

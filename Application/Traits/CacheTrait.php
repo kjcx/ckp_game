@@ -159,6 +159,7 @@ trait CacheTrait
      */
     private function createFilter($key)
     {
+
         $keyInfo = explode(':',$key);
         if ($keyInfo['1'] == '_id') {
             $filter = ['_id' => new ObjectId($keyInfo['2'])];
