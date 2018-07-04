@@ -11,10 +11,11 @@ namespace App\Protobuf\Result;
 
 class RankingResult
 {
-    public static function encode($data)
+    public static function encode($data,$type)
     {
         $obj = new \AutoMsg\RankingResult();
-        $obj->setLoadRanking();
+        $ranking = LoadRanking::encodeObj($data,$type);
+        $obj->setLoadRanking($ranking);
         return $obj->serializeToString();
     }
 }
