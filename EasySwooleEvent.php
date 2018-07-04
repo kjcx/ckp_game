@@ -19,7 +19,6 @@ use App\Websocket\Parser\WebSock;
 use EasySwoole\Core\Component\Rpc\Server;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
 use EasySwoole\Core\Component\Di;
-use EasySwoole\Core\Component\Rpc\Server;
 use EasySwoole\Core\Component\SysConst;
 use EasySwoole\Core\Swoole\EventHelper;
 use EasySwoole\Core\Swoole\Process\ProcessManager;
