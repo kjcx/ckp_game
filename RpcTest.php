@@ -14,8 +14,8 @@ require 'vendor/autoload.php';
 $ServiceManager = \EasySwoole\Core\Component\Rpc\Server::getInstance();
 $ServiceManager->updateServiceNode(new \EasySwoole\Core\Component\Rpc\Common\ServiceNode(
     [
-        'serviceName'=>'192.168.31.119',
-        'port'=>9999
+        'serviceName'=>'A',
+        'port'=>9502
     ]
 ));
 //
@@ -32,7 +32,7 @@ $ServiceManager->updateServiceNode(new \EasySwoole\Core\Component\Rpc\Common\Ser
 $client = new \EasySwoole\Core\Component\Rpc\Client();
 
 //调用A服务中G服务组的index行为
-$client->addCall('192.168.31.119','G','index')->setFailCall(function(\EasySwoole\Core\Component\Rpc\Client\ServiceResponse $response){
+$client->addCall('A','G','index')->setFailCall(function(\EasySwoole\Core\Component\Rpc\Client\ServiceResponse $response){
     var_dump('11fail',$response);
 })->setSuccessCall(function (\EasySwoole\Core\Component\Rpc\Client\ServiceResponse $response){
     var_dump('11success',$response);

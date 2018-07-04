@@ -16,6 +16,7 @@ use App\Process\Subscribe;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
+use EasySwoole\Core\Component\Rpc\Server;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
 use EasySwoole\Core\Component\Di;
 use EasySwoole\Core\Component\SysConst;
@@ -104,9 +105,9 @@ Class EasySwooleEvent implements EventInterface {
         });
 
 
-//        RpcServer::getInstance()->addService('A',9505)
-//            ->addService('B',9506,'password123')
-//            ->attach();
+        Server::getInstance()->addService('A',9502)
+            ->addService('B',9503,'password123')
+            ->attach();
 
 
     }
