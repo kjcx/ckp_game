@@ -1346,13 +1346,14 @@ class Web extends WebSocketController
             $data_BuildingLevel = $BuildingLevel->getInfoByLevel($UpdateLevel);
             $UpgradeCost = $data_BuildingLevel['UpgradeCost'];//升级需要扣费
             //所需道具
+            var_dump("所需道具$UpdateLevel".$data_BuildingLevel['NeedItems']);
             $data_NeedItems = $BuildingLevel->getNeedItems($data_BuildingLevel['NeedItems'],$data_Shop['ShopType']);
             $Bag = new Bag($this->uid);
             $bool = false;
             foreach ($data_NeedItems as $data_NeedItem) {
                 $bool = $Bag->checkCountByItemId($data_NeedItem['ItemId'],$data_NeedItem['Count']);
                 if(!$bool){
-                    var_dump("道具数量不足");
+                    var_dump("道具数量不足" .$data_NeedItem['ItemId']. $data_NeedItem['Count']);
                     $this->send(1004,$this->fd,'','道具数量不足');
                     return;
                 }
@@ -1364,6 +1365,15 @@ class Web extends WebSocketController
                     //金币足够 执行升级动作
                     $rs = $Shop->UpdateLevel($Id,$data_BuildingLevel);
                     if($rs){
+                        //扣除道具
+                        foreach ($data_NeedItems as $data_NeedItem) {
+                            $bool = $Bag->delBag($data_NeedItem['ItemId'],$data_NeedItem['Count']);
+                            if(!$bool){
+                                var_dump("道具数量不足1");
+                                $this->send(1004,$this->fd,'','道具数量不足');
+                                return;
+                            }
+                        }
                         $str = BuildLvUpResult::encode($Id);
                         $this->send(1004,$this->fd,$str);
                     }
@@ -2732,7 +2742,6 @@ class Web extends WebSocketController
         //查询排行榜前10名和自己排名
         $PkInfo = new PkInfo();
         $data = $PkInfo->getRanking($this->uid);
-        var_dump($data);
         $str = PkRankingResult::encode($data);
         $this->send(2028,$this->fd,$str);
     }

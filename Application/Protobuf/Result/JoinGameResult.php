@@ -51,7 +51,6 @@ class JoinGameResult
         $DayCountInfo = DayCountInfo::encode();
         $JoinGameResult->setDayCountInfo($DayCountInfo);
 
-         var_dump('123456');
         //好友
 //        $FriendApply = new FriendApply();
 //        $data_Friends = $FriendApply->getFriendApply($uid);
