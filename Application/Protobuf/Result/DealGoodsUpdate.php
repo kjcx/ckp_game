@@ -18,7 +18,6 @@ class DealGoodsUpdate
     public static function encode($data)
     {
         $DealGoodsUpdate = new \AutoMsg\DealGoodsUpdate();
-        var_dump((string)$data['_id']);
         $DealGoodsUpdate->setId((string)$data['_id']);//记录id
         $DealGoodsUpdate->setItemId($data['ItemId']);//道具id
         $DealGoodsUpdate->setCount($data['Count']);//道具数量

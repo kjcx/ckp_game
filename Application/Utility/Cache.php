@@ -103,11 +103,11 @@ class Cache
      */
     public function zsetZadd($key,$member,$score,$queue = true)
     {
-        $res = $this->writeConnect->zAdd($key,$score,$member);
-        if ($res && $queue) {
+        $this->writeConnect->zAdd($key,$score,$member);
+        if ($queue) {
             return $this->pushQueue($key,'zset','set');
         }
-        return $res;
+        return true;
     }
 
     /**
@@ -182,11 +182,11 @@ class Cache
         if (is_array($value)) {
             $value = json_encode($value);
         }
-        $res = $this->writeConnect->hSet($key,$index,$value);
-        if ($res && $queue) {
+        $this->writeConnect->hSet($key,$index,$value);
+        if ($queue) {
             return $this->pushQueue($key,'hash','set');
         }
-        return $res;
+        return true;
     }
 
     /**
@@ -198,11 +198,11 @@ class Cache
      */
     public function hashMset($key,$arr,$queue = true)
     {
-        $res = $this->writeConnect->hMset($key,$arr);
-        if($res && $queue){
+        $this->writeConnect->hMset($key,$arr);
+        if($queue){
             return $this->pushQueue($key,'hash','set');
         }
-        return $res;
+        return true;
     }
 
     /**
@@ -238,11 +238,11 @@ class Cache
      */
     public function setSadd($key,$value,$queue = true)
     {
-        $res = $this->writeConnect->sAdd($key,$value);
-        if ($res && $queue) {
+        $this->writeConnect->sAdd($key,$value);
+        if ($queue) {
             return $this->pushQueue($key,'set','set');
         }
-        return $res;
+        return true;
     }
 
     /**

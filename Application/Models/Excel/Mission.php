@@ -31,9 +31,7 @@ class Mission extends Model
      */
     public function getMissionByLevel($level='0')
     {
-        var_dump(333);
         $data =  Db::table($this->table)->where('Level','<=',(string)$level)->select();
-        var_dump($data);
         return $data;
     }
 }

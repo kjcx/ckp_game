@@ -61,7 +61,9 @@ class DataCenter extends Model
     {
         $value = ['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd];
         //设置到总的数据中心 以uid为hash的index
-        if ($this->cache->hashSet($this->dataCenterKey,$uid,$value,false)) {
+        $res = $this->cache->hashSet($this->dataCenterKey,$uid,$value,false);
+        var_dump($res);
+        if ($res) {
             //设置到当前机器的用户中心
             if ($this->cache->hashSet($this->dataCenterServer,$fd,$value,false)) {
                 //以 FD作为index
@@ -128,7 +130,7 @@ class DataCenter extends Model
      * @param $fd
      * @return int
      */
-    public function getUidByFd($fd) : int
+    public function getUidByFd($fd)
     {
         $clientInfo = $this->getClientInfoByFd($fd);
         if ($clientInfo) {

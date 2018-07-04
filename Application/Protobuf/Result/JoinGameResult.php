@@ -22,36 +22,27 @@ class JoinGameResult
         $uid = $arr['uid'];
         $JoinGameResult = new \AutoMsg\JoinGameResult();
         //设置角色信息
-        var_dump("设置角色信息");
-        var_dump($uid);
-          var_dump('设置服务器时间');
         $str_role = LoadRoleInfo::encode($uid);
         $JoinGameResult->setLoadRoleInfo($str_role);
-        var_dump('设置服务器时间');
 
 
         //设置服务器时间
         $LoadServerConfig = LoadServerConfig::encode();
         $JoinGameResult->setServerConfig($LoadServerConfig);
         //设置任务信息
-        var_dump("设置任务信息");
         $MissionResult = MissionResult::encode();
 
         $JoinGameResult->setMission($MissionResult);
-         var_dump('背包信息');
         //背包信息
-        var_dump('背包信息');
         $LoadBagInfo = LoadBagInfo::encode($uid);
         $JoinGameResult->setRoleBag($LoadBagInfo);
         //技能列表
         $SkillResult = SkillResult::encode();
         $JoinGameResult->setSkillResult($SkillResult);
-         var_dump('每日充值限额');
         //每日充值限额
         $DayCountInfo = DayCountInfo::encode();
         $JoinGameResult->setDayCountInfo($DayCountInfo);
 
-         var_dump('123456');
         //好友
 //        $FriendApply = new FriendApply();
 //        $data_Friends = $FriendApply->getFriendApply($uid);
@@ -59,7 +50,6 @@ class JoinGameResult
 //        var_dump($data_Friends);
         $FriendInfo = new \App\Models\FriendInfo\FriendInfo();
         $data_Friends = $FriendInfo->getFriendInfoByUid($uid);
-        var_dump("好友");
         $Friend = FriendListResult::encode($data_Friends);
         $JoinGameResult->setFriend($Friend);
         //公司
@@ -89,7 +79,6 @@ class JoinGameResult
         $MailMsg = new \App\Models\Mail\MailMsg();
         $data = $MailMsg->getRedisMailByUid($uid);
 
-        var_dump($data);
         $Mails = MailResult::encode($data);
         $JoinGameResult->setMails($Mails);
         //住宅信息

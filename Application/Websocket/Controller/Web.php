@@ -94,6 +94,7 @@ use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
 use App\Protobuf\Req\NpcRelationAdvanceReq;
 use App\Protobuf\Req\PickUpSevenDaysReq;
+use App\Protobuf\Req\RankingReq;
 use App\Protobuf\Req\ReadMailReq;
 use App\Protobuf\Req\RefDropShopReq;
 use App\Protobuf\Req\RefFitnessReq;
@@ -405,14 +406,14 @@ class Web extends WebSocketController
         $Account = new Account();
         $uid = $Account->getToken($token);
         if($uid){
-            var_dump("data2");
             $dataCenter = new \App\Models\DataCenter\DataCenter();
-            $dataCenter->saveClient($this->fd,$uid);
-            var_dump("data1". $uid);
+            var_dump($this->fd);
+            var_dump($uid);
+            $r = $dataCenter->saveClient($this->fd,$uid);
+            var_dump($r);
             //登录成功
             $data = \App\Protobuf\Result\ConnectingResult::encode($uid);
 
-            var_dump($data);
            $this->send(1057,$this->fd,$data);
         }else{
             $data = \App\Protobuf\Result\ConnectingResult::encode(36);
@@ -462,11 +463,8 @@ class Web extends WebSocketController
     public function msgid_1012()
     {
 
-        var_dump('sdsdsdsssss');
         //加入游戏
-        var_dump(21);
         $data = JoinGameResult::encode(['uid'=>$this->uid]);
-        var_dump(12);
         $this->send(1066,$this->fd,$data);
         //通知好友用户上线
         $str = FriendOnlineResult::encode(['Uid'=>$this->uid,'Online'=>true]);
@@ -753,9 +751,7 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         echo '111111';
-        var_dump($data);
         $data_send_msg = \App\Protobuf\Req\SendMsgToChannelReq::decode($data);
-        var_dump($data_send_msg);
     }
 
     /**
@@ -765,7 +761,6 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_MissionId = \App\Protobuf\Req\MissionFirstCompleteReq::decode($data);
-        var_dump($data_MissionId);
         //任务id
         $str = MissionFirstCompleteResult::encode($data_MissionId);
         $this->send(1202,$this->fd,$str);
@@ -783,7 +778,6 @@ class Web extends WebSocketController
         $data_bag = $Bag->checkBagHasItemById($data_UseItem['ItemId']);
 
         if($data_bag){
-            var_dump("道具存在");
             if ($data_bag['CurCount'] >= $data_UseItem['Count']){
                 //1 获取礼包规则
                 $Item = new \App\Models\Excel\Item();
@@ -795,17 +789,13 @@ class Web extends WebSocketController
 //                增加经验：4，经验值
 //                打开UI：5，UI名字
 //                    6掉落库
-                var_dump($data_item);
                 $bool = false;
                 foreach ($data_item as $ItemId=>$CurCount) {
                     $bool = $Bag->addBag($ItemId,$CurCount);
                 }
-                var_dump('使用礼包');
-                var_dump($bool);
                 if($bool){
                     //使用成功 扣除礼包
                     $rs = $Bag->delBag($data_UseItem['ItemId'],$data_UseItem['Count']);
-                    var_dump('使用成功 扣除礼包');
 
                     if($rs){
                         $ids[] =  $data_UseItem['ItemId'];
@@ -822,7 +812,6 @@ class Web extends WebSocketController
                 $this->send(1078,$this->fd,'','道具数量不足');
             }
         }else{
-            var_dump("背包中没有该道具");
             //道具不存在
             $this->send(1078,$this->fd,'','背包中没有该道具');
         }
@@ -2656,5 +2645,23 @@ class Web extends WebSocketController
         $data = $PkInfo->getRanking($this->uid);
         $str = PkRankingResult::encode($data);
         $this->send(2028,$this->fd,$str);
+    }
+
+    /**
+     * 请求排行榜
+     * return 1132
+     */
+    public function msgid_1094()
+    {
+        $data = RankingReq::decode($this->data);
+
+    }
+
+    /**
+     * 获得个人排行榜
+     */
+    public function msgid_1095()
+    {
+
     }
 }
