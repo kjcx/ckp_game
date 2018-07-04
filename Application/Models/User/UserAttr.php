@@ -18,6 +18,7 @@ use App\Utility\Cache;
  */
 class UserAttr extends Model
 {
+
     private $table = 'ckzc_userattr';
     public $UserAttr = 'UserAttr:Uid:';
     public $cache;
@@ -62,6 +63,7 @@ class UserAttr extends Model
             return true;
         }else{
             return $this->mysql->insert($this->table,$data);
+            echo("sadfasdfa");
         }
     }
 

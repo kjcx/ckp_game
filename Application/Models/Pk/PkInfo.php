@@ -48,8 +48,13 @@ class PkInfo extends Model
         }
         $UserInfo = $Role->getRole($Uid);
         $Score = $this->getUserScore($Uid);
-        $list[$MyRank] = ['Ranking'=>$MyRank,'Name'=>$UserInfo['nickname'],'Shenjiazhi'=>$UserInfo['shenjiazhi'],'Score'=>$Score];
-        return $list;
+        if($Score){
+            $list[$MyRank] = ['Ranking'=>$MyRank,'Name'=>$UserInfo['nickname'],'Shenjiazhi'=>$UserInfo['shenjiazhi'],'Score'=>$Score];
+            return $list;
+        }else{
+            return [];
+        }
+
     }
 
     /**

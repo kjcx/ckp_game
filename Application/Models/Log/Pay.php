@@ -42,7 +42,17 @@ class Pay extends Model
      */
     public function getFirstRecharge($Uid)
     {
+
         $rs = Db::table($this->table)->where('Uid',$Uid)->find();
-        return $rs;
+        var_dump("用户ID".$Uid);
+
+        //如果存在，不是第一次充值，返回false
+        if($rs){
+            return false;
+        }else{
+            return true;
+        }
+
+
     }
 }

@@ -2020,6 +2020,7 @@ message LoadCompanyInfo{
     int32 StaffNumber=6;
     int32 ShopNumber=7;
     int64 CompanyValue=8;
+    repeated string TalkGroupId=9;//谈判团id
 }
 message LoadDepartMentInfo{
     FinanceInfo FinanceInfo=1;
