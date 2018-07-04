@@ -172,7 +172,9 @@ class Cache
         if (is_array($value)) {
             $value = json_encode($value);
         }
+
         $res = $this->writeConnect->hSet($key,$index,$value);
+        var_dump($res);
         if ($res) {
             return $this->pushQueue($key,'hash','set');
         }

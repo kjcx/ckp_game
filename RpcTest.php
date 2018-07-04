@@ -15,7 +15,13 @@ $ServiceManager = \EasySwoole\Core\Component\Rpc\Server::getInstance();
 $ServiceManager->updateServiceNode(new \EasySwoole\Core\Component\Rpc\Common\ServiceNode(
     [
         'serviceName'=>'A',
+<<<<<<< HEAD
         'port'=>9502
+=======
+        'port'=>9502,
+        'encryptToken'=>'123',
+        'address'=>'192.168.31.232'
+>>>>>>> 9457fa0f1d3757ea18c9a0c7cd596bab8f1b1a24
     ]
 ));
 //
@@ -38,13 +44,6 @@ $client->addCall('A','G','index')->setFailCall(function(\EasySwoole\Core\Compone
     var_dump('11success',$response);
 });
 
-//
-////调用B服务中c服务组的index行为
-//$client->addCall('B','Index','index')->setFailCall(function(\EasySwoole\Core\Component\Rpc\Client\ServiceResponse $response){
-//    var_dump('55fail',$response);
-//})->setSuccessCall(function (\EasySwoole\Core\Component\Rpc\Client\ServiceResponse $response){
-//    var_dump('55success',$response);
-//});
 
 //执行调用
 $client->call();

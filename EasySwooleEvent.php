@@ -19,6 +19,7 @@ use App\Websocket\Parser\WebSock;
 use EasySwoole\Core\Component\Rpc\Server;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
 use EasySwoole\Core\Component\Di;
+use EasySwoole\Core\Component\Rpc\Server;
 use EasySwoole\Core\Component\SysConst;
 use EasySwoole\Core\Swoole\EventHelper;
 use EasySwoole\Core\Swoole\Process\ProcessManager;
@@ -105,10 +106,16 @@ Class EasySwooleEvent implements EventInterface {
         });
 
 
-        Server::getInstance()->addService('A',9502)
-            ->addService('B',9503,'password123')
-            ->attach();
+//        Server::getInstance()->addService('A',9502)
+  //          ->addService('B',9503,'password123')
+    //        ->attach();
 
+        //创建rpc服务
+//        Server::getInstance()->addService('A',9502,'password123','192.168.31.119')
+//                    ->attach();
+        // TODO: Implement mainServerCreate() method.
+        Server::getInstance()->addService('A',9502)
+            ->attach();
 
     }
 
@@ -121,7 +128,7 @@ Class EasySwooleEvent implements EventInterface {
         $Conf  = Config::getInstance();
         $files = File::scanDir($ConfPath);
         foreach ($files as $file) {
-            $data = require_once $file;
+            $data = require ($file);
             $Conf->setConf(strtolower(basename($file, '.php')), (array)$data);
         }
     }

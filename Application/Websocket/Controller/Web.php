@@ -44,6 +44,7 @@ use App\Models\Manor\Land;
 use App\Models\LandInfo\MyLandInfo;
 use App\Models\Npc\NpcInfo;
 use App\Models\Npc\NpcTask;
+use App\Models\Pk\PkInfo;
 use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
 use App\Models\Sign\SignInfo;
@@ -167,6 +168,7 @@ use App\Protobuf\Result\NpcFavorabilityResult;
 use App\Protobuf\Result\NpcListResult;
 use App\Protobuf\Result\OnGetMyGoodsResult;
 use App\Protobuf\Result\PickUpSevenDaysResult;
+use App\Protobuf\Result\PkRankingResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RandManorResult;
 use App\Protobuf\Result\ReadMailResult;
@@ -226,6 +228,8 @@ class Web extends WebSocketController
         if($msgid != 'msgid_1004' ){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $this->uid = $dataCenter->getUidByFd($this->fd);
+            var_dump('12121212');
+            var_dump($this->uid);
         }
         parent::__construct($client, $request, $response);
 
@@ -243,13 +247,7 @@ class Web extends WebSocketController
      */
     public function pp()
     {
-        $dataCenter = new DataCenter();
-        $fds = $dataCenter->getMyFd(); //获取我所有的Fd
-        foreach ($fds as $fd) {
-            $massTemplate = new Mass(['fd' => $fd,'data' => 11,]);
-            TaskManager::async($massTemplate);
-        }
-//        $this->response()->write();
+
     }
 
     /**
@@ -465,6 +463,7 @@ class Web extends WebSocketController
     public function msgid_1012()
     {
 
+        var_dump('sdsdsdsssss');
         //加入游戏
         var_dump(21);
         $data = JoinGameResult::encode(['uid'=>$this->uid]);
@@ -650,6 +649,7 @@ class Web extends WebSocketController
      */
     public function msgid_1165()
     {
+        /*
         $data_pay = CKApiReq::decode($this->data);
         $Id = $data_pay['PayParams']['Id'];
         $Pwd = $data_pay['PayParams']['Pwd'];
@@ -684,7 +684,75 @@ class Web extends WebSocketController
                 $this->send(1224,$this->fd,$data,'APP余额不足');
             }
         }
+//*/
 
+        $data_pay = CKApiReq::decode($this->data);
+        $Id = $data_pay['PayParams']['Id'];
+        $Pwd = $data_pay['PayParams']['Pwd'];
+
+        //获取充值的id
+        $Topup = new Topup();
+        $data_Topup = $Topup->findById($Id);
+
+        //判断app余额是否足够
+        $Account = new Account();
+
+        $res = $Account->payByApp($this->uid,$data_Topup['Gold'],$Pwd,'game_recharge');
+
+        //$res['cdode']=400，测试时改为：200
+        $res['code']=200;
+
+        if($res['code'] == 200){
+
+            //充值成功
+            $Pay = new Pay();
+
+            //本次充值的总金额：充值金额+首充奖励
+            $totalsum = $data_Topup['Gold'];
+
+            //是否是首次充值
+            //如果是首次充值，基本充值金额+首充奖励；如果不是，只有充值金额
+            if($Pay->getFirstRecharge($this->uid)){
+
+                echo("是首次充值：奖励100");
+                var_dump($data_Topup['Gold']."+100");
+
+                 $totalsum += 100;
+
+                var_dump("充值总金额：".$totalsum);
+
+            }elseif(!$Pay->getFirstRecharge($this->uid)){
+                echo("不是首次充值");
+            }
+
+            //背包金额增加
+            $Bag = new Bag($this->uid);
+            //金币ID：2
+            $rs = $Bag->addBag(2,$totalsum);
+            //$Bag->delBag(2,30000);
+
+
+            if($rs){
+                $Pay->create(['Uid'=>$this->uid,'Gold'=>$totalsum,'CreateTime'=>time()]);
+
+                //返回充值成功
+                $data  = CkPayResult::encode(true);
+                $this->send(1224,$this->fd,$data);
+
+            }
+
+        }else {
+            //充值失败
+            $data = CkPayResult::encode(false);
+            $WsResult = new WsResult();
+            if ($res['datas']['error'] == '您输入的密码有误') {
+//                $data_ws = $WsResult->getOne('APP支付密码不对');
+                $this->send(1224, $this->fd, $data, 'APP支付密码不对');
+            } elseif ($res['datas']['error'] == '余额不足！！！') {
+//                $data_ws = $WsResult->getOne('APP余额不足');
+                $this->send(1224, $this->fd, $data, 'APP余额不足');
+            }
+        }
     }
 
     /**
@@ -859,8 +927,16 @@ class Web extends WebSocketController
                 $data = $Company->CreateCompany($data_Create);
                 if($data){
                     //创建成功
-                    $str = CreateCompanyResult::encode($this->uid);
-                    $this->send(1059,$this->fd,$str);
+                    //扣除营业执照
+                    $Bag = new Bag($this->uid);
+                    $rs = $Bag->delBag(151,1);
+                    if($rs){
+                        $str = CreateCompanyResult::encode($this->uid);
+                        $this->send(1059,$this->fd,$str);
+                    }else{
+                        var_dump("扣除营业执照失败");
+                    }
+
                 }
             }
 
@@ -2645,5 +2721,19 @@ class Web extends WebSocketController
         $log = $room->getLog();
         $string = RoomVisitInfoResult::encode($log);
         $this->send(1087,$this->fd,$string);
+    }
+
+    /**
+     * pk排行榜
+     * return 2028 PkRankingResult
+     */
+    public  function msgid_2027()
+    {
+        //查询排行榜前10名和自己排名
+        $PkInfo = new PkInfo();
+        $data = $PkInfo->getRanking($this->uid);
+        var_dump($data);
+        $str = PkRankingResult::encode($data);
+        $this->send(2028,$this->fd,$str);
     }
 }

@@ -2020,6 +2020,7 @@ message LoadCompanyInfo{
     int32 StaffNumber=6;
     int32 ShopNumber=7;
     int64 CompanyValue=8;
+    repeated string TalkGroupId=9;//谈判团id
 }
 message LoadDepartMentInfo{
     FinanceInfo FinanceInfo=1;
@@ -2306,12 +2307,12 @@ message PkRankingReq{
 }
 //pk排行榜返回
 message PkRankingResult{
- map<int32 PkRankingInfo> PkRanking=1;
+    map<int32,PkRankingInfo> PkRanking=1;
 }
 //排行榜详情
 message PkRankingInfo{
- int32 Ranking =1;//名次
- string Name=2;//玩家名词
- int32 Shenjiazhi=3;//身价值
- int32 Score=4;//积分
+     int32 Ranking =1;//名次
+     string Name=2;//玩家名词
+     int32 Shenjiazhi=3;//身价值
+     int32 Score=4;//积分
 }
