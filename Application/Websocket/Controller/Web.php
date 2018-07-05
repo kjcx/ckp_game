@@ -2744,7 +2744,8 @@ class Web extends WebSocketController
     {
         $data = RankingReq::decode($this->data);
         $rankList = new RankList();
-        $res = $rankList->getData();
+        $res = $rankList->getData($data['ranKingType']);
+
         $this->send(1132,$this->fd,RankingResult::encode($res,$data['ranKingType']));
     }
 
