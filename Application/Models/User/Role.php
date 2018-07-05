@@ -125,7 +125,7 @@ class Role extends Model
     public function updateIcon($Uid,$icon)
     {
         $RoleInfoKey = $this->RoleInfoKey . $Uid;
-        $rs = $this->cache->hashMset($RoleInfoKey,'icon',$icon);
+        $rs = $this->cache->hashset($RoleInfoKey,'icon',$icon);
         return true;
 //        $rs = $this->mysql->where('uid',$Uid)->update($this->table,['icon'=>$icon]);
         if($rs){
@@ -144,7 +144,7 @@ class Role extends Model
     {
 
         $RoleInfoKey = $this->RoleInfoKey . $Uid;
-        $rs = $this->cache->hashMset($RoleInfoKey,'nickname',$nickname);
+        $rs = $this->cache->hashset($RoleInfoKey,'nickname',$nickname);
 
 //        $rs = $this->mysql->where('uid',$Uid)->update($this->table,['nickname'=>$nickname]);
         if($rs!==faslse){
