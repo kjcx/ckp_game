@@ -41,7 +41,7 @@ class LoadRefStaff
             $GameConfig = new GameConfig();
             $MaxTrainTime = $GameConfig->getMaxTrainTime();
             $LoadRefStaff->setComprehensionTime($ComprehensionTime - $data['TrainNum']);//总剩余可培训次数
-            $LoadRefStaff->setAppointed(false);//是否已任职字段 不需要这个字段目前
+            $LoadRefStaff->setAppointed($Appointed);//是否已任职字段 不需要这个字段目前
             $LoadRefStaff->setBasicProperties($BasicProperties);//基础属性：
             $LoadRefStaff->setLevelUpTime($LevelUpTime);//升级次数
             $LoadRefStaff->setTodayTrainNum($MaxTrainTime - $data['TodayTrainNum']);//今日剩余培训次数
