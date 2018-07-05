@@ -239,7 +239,7 @@ class Land extends Model
                     'manor.' . ($landId - 1) . '.PhasesStatus' => self::SeedlingStage
                 ]
             ];
-            $filter = ['uid' => $this->getUid()];
+            $filter = ['uid' => (int)$this->getUid()];
             $result = $this->collection->findOneAndUpdate($filter,$update);
             if ($result) {
                 $this->getBag()->delBag($semenId,1);
@@ -248,7 +248,7 @@ class Land extends Model
             }
         }
         //地块未开发
-        return ['error' => true,'msg' => 'SoilNotExploit'];
+        return ['error' => true,'msg' => 'Error'];
     }
 
     /**

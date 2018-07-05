@@ -294,7 +294,6 @@ class Web extends WebSocketController
         $data = HarvestPlantReq::decode($this->data);
         $land = new Land($this->uid);
         $res = $land->harvest($data['landId']);
-        var_dump($res);
         if (isset($res['error'])){
             $this->send(1086,$this->fd,0,$res['msg'],12);
         } else {
@@ -2745,7 +2744,6 @@ class Web extends WebSocketController
         $data = RankingReq::decode($this->data);
         $rankList = new RankList();
         $res = $rankList->getData($data['ranKingType']);
-
         $this->send(1132,$this->fd,RankingResult::encode($res,$data['ranKingType']));
     }
 
