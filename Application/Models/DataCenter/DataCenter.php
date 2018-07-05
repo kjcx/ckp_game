@@ -12,7 +12,6 @@ use App\Utility\Cache;
 use EasySwoole\Config;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use App\Models\Model;
-use MongoDB\BSON\ObjectId;
 
 class DataCenter extends Model
 {

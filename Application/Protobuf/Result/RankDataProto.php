@@ -18,10 +18,11 @@ class RankDataProto
         $obj->setName($data['name']);
         $obj->setRoleId($data['uid']);
         $obj->setRank($data['rank']);
-        $obj->setValue($data['value']);
-        $obj->setValue1($data['value1']);
-        $obj->setValue2($data['value2']);
-        $obj->setValue3($data['value3']);
+        $obj->setWin($data['win']);
+        $obj->setCommerceName($data['commercename']);
+        $obj->setPKPingCount($data['pkcount']);
+        $obj->setLevel($data['level']);
+        $obj->setIncome($data['income']);
         return $obj;
     }
 }
