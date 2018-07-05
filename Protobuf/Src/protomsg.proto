@@ -611,7 +611,7 @@ message BuyFurnitureReq{
 }
 message BuyFurnitureResult{
     map<int64, LoadRoleBagInfo> Furnitures=1;
-}
+}reqFruitsDataResult
 message SellFurnitureReq{
     repeated int32 Id=1;
 }
@@ -2316,4 +2316,13 @@ message PkRankingInfo{
      string Name=2;//玩家名词
      int32 Shenjiazhi=3;//身价值
      int32 Score=4;//积分
+}
+
+//修改签名请求
+message SignNameReq{
+    string Desc =1;
+}
+//修改签名返回
+message SignNameResult{
+    string Desc =1;
 }

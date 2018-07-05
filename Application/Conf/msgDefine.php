@@ -2627,6 +2627,18 @@ return [
         'message'=>'PkRankingResult',
         'msgid'=>'2028',
         'desc'=>'pk排行榜返回'
+    ],
+    [
+        'type'=>'send',
+        'message'=>'SignNameReq',
+        'msgid'=>'2029',
+        'desc'=>'修改签名请求'
+    ],
+    [
+        'type'=>'rec',
+        'message'=>'SignNameResult',
+        'msgid'=>'2030',
+        'desc'=>'修改签名返回'
     ]
 
 ];

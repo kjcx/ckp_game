@@ -107,6 +107,7 @@ use App\Protobuf\Req\RoomVisitReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
+use App\Protobuf\Req\SignNameReq;
 use App\Protobuf\Req\SignReq;
 use App\Protobuf\Req\SoldOutReq;
 use App\Protobuf\Req\StealSemenReq;
@@ -189,6 +190,7 @@ use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SeedShopPingResult;
 use App\Protobuf\Result\SellItemResult;
+use App\Protobuf\Result\SignNameResult;
 use App\Protobuf\Result\SignResult;
 use App\Protobuf\Result\SoldOutResult;
 use App\Protobuf\Result\StealSemenResult;
@@ -2750,6 +2752,26 @@ class Web extends WebSocketController
      */
     public function msgid_1095()
     {
+
+    }
+
+    /**
+     * 修改签名请求
+     * return 2030 SignNameResult
+     */
+    public function msgid_2029()
+    {
+        $data = $this->data;
+        $data_SignName = SignNameReq::decode($data);
+        //修改签名
+        $Role = new Role();
+        $rs = $Role->updateRoleName($this->uid,$data_SignName['Desc']);
+        if($rs){
+            $str = SignNameResult::encode($data_SignName['Desc']);
+            $this->send(2030,$this->fd,$str);
+        }else{
+            var_dump("修改个性签名失败");
+        }
 
     }
 }

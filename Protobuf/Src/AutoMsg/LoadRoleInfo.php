@@ -273,11 +273,8 @@ class LoadRoleInfo extends \Google\Protobuf\Internal\Message
      */
     public function setAvatar($var)
     {
-
         $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::INT32);
-
         $this->Avatar = $arr;
-        var_dump($this->Avatar);
 
         return $this;
     }

@@ -189,6 +189,15 @@ class Cache
         return true;
     }
 
+    public function hashHINCRBY($key,$index,$value,$queue = true)
+    {
+        $this->writeConnect->HINCRBY($key,$index,$value);
+        if($queue){
+            return $this->pushQueue($key,'hash','set');
+        }
+        return true;
+    }
+
     /**
      * 实现hash mset
      * @param $key

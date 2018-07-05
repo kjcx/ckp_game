@@ -436,3 +436,5 @@ UnlockNpcReq,UnlockNpcReq.proto,send,2025,解锁npc
 UnlockNpcResult,UnlockNpcResult.proto,rec,2026,返回解锁npc
 PkRankingReq,PkRankingReq.proto,send,2027,pk排行榜请求
 PkRankingResult,PkRankingResult.proto,rec,2028,pk排行榜返回
+SignNameReq,SignNameReq.proto,send,2029,修改签名请求
+SignNameResult,SignNameResult.proto,rec,2030,修改签名返回

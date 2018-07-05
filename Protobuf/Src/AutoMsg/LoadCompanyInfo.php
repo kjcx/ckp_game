@@ -45,6 +45,18 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>int64 CompanyValue = 8;</code>
      */
     private $CompanyValue = 0;
+    /**
+     *谈判团id
+     *
+     * Generated from protobuf field <code>repeated string TalkGroupId = 9;</code>
+     */
+    private $TalkGroupId;
+    /**
+     *居民id
+     *
+     * Generated from protobuf field <code>repeated string NpcId = 10;</code>
+     */
+    private $NpcId;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -223,6 +235,58 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt64($var);
         $this->CompanyValue = $var;
+
+        return $this;
+    }
+
+    /**
+     *谈判团id
+     *
+     * Generated from protobuf field <code>repeated string TalkGroupId = 9;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getTalkGroupId()
+    {
+        return $this->TalkGroupId;
+    }
+
+    /**
+     *谈判团id
+     *
+     * Generated from protobuf field <code>repeated string TalkGroupId = 9;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setTalkGroupId($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
+        $this->TalkGroupId = $arr;
+
+        return $this;
+    }
+
+    /**
+     *居民id
+     *
+     * Generated from protobuf field <code>repeated string NpcId = 10;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getNpcId()
+    {
+        return $this->NpcId;
+    }
+
+    /**
+     *居民id
+     *
+     * Generated from protobuf field <code>repeated string NpcId = 10;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setNpcId($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
+        $this->NpcId = $arr;
 
         return $this;
     }
