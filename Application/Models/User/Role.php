@@ -163,8 +163,10 @@ class Role extends Model
      */
     public function updateSignName($Uid,$Desc)
     {
+        var_dump($Desc);
         $RoleInfoKey = $this->RoleInfoKey . $Uid;
-        $rs = $this->cache->hashMset($RoleInfoKey,'sign',$Desc);
+        $rs = $this->cache->hashset($RoleInfoKey,'sign',$Desc);
+        var_dump($Desc);
         return true;
     }
 

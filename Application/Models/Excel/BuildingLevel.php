@@ -82,4 +82,55 @@ class BuildingLevel extends Model
         }
         return $new_list[$ShopType];
     }
+
+    /**
+     * 根据等级获取店铺产出
+     * @param $Level
+     * @return array
+     */
+    public function getPunitiveGolds($Level)
+    {
+        $data = $this->getInfoByLevel($Level);
+        $arr =$data['PunitiveGolds'];
+        $res = explode(',',$arr);
+        return ['ItemId'=>$res[0],'Count'=>$res[1]];
+    }
+
+    /**
+     * 获取非绑金
+     * @param $Level
+     */
+    public function getDistributionGolds($Level)
+    {
+        $data = $this->getInfoByLevel($Level);
+        $arr =$data['DistributionGolds'];
+        rand(0,0.001);
+    }
+
+    /**
+     * 获取随机数量
+     * @param $Level
+     * @return mixed
+     */
+    public function getRand($Level)
+    {
+        $data = Db::table($this->table)->where('Id','>=',1)->select();
+
+        $new = [];
+        foreach ($data as $datum) {
+            $DistributionGolds = $datum['DistributionGolds'];
+            $res = explode(',',$DistributionGolds);
+            $num = $res[2] * 1000;
+            for ($i=0;$i<$num;$i++){
+                array_push($new,$datum['Id']);
+            }
+        }
+        mt_srand();
+        $Id =  $new[array_rand($new)];
+        if($Id == $Level){
+            return ['ItemId'=>$res[0],'Count'=>$res[1]];
+        }else{
+            return [];
+        }
+    }
 }

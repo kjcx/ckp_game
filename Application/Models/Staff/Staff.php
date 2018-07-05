@@ -12,6 +12,7 @@ namespace App\Models\Staff;
 use App\Models\Company\Shop;
 use App\Models\Model;
 use App\Models\Store\DropStaff;
+use App\Models\User\Role;
 use think\Db;
 
 /**
@@ -342,5 +343,33 @@ class Staff extends Model
         }else{
             return [];
         }
+    }
+
+    /**
+     * 通过店铺id计算员工加成
+     * @param $Uid
+     * @param $ShopId
+     * @return float|int
+     */
+    public function getStaffCustomerAddtionByShopId($Uid,$ShopId)
+    {
+        $data = $this->getShopStaffByShopId($ShopId);
+        $Role = new Role();
+        $info = $Role->getLevel($Uid);
+        $level = $info['level'];
+        $zong = 0;
+        if($data){
+            foreach ($data as $datum) {
+                $sum = 0;
+                foreach ($datum['BasicProperties'] as $basicProperty) {
+                    $sum += $basicProperty;
+                }
+                $a = sqrt($sum);
+                $b = 1+ sqrt($level);
+                $c  = $a * $b;
+                $zong += round($c,3);;
+            }
+        }
+        return $zong;
     }
 }

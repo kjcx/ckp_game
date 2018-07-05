@@ -90,6 +90,7 @@ use App\Protobuf\Req\GetMapReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
 use App\Protobuf\Req\GrowPlantsReq;
 use App\Protobuf\Req\HarvestPlantReq;
+use App\Protobuf\Req\HarvestPublicShopReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
@@ -416,8 +417,6 @@ class Web extends WebSocketController
         $uid = $Account->getToken($token);
         if($uid){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
-            var_dump($this->fd);
-            var_dump($uid);
             $r = $dataCenter->saveClient($this->fd,$uid);
             var_dump($r);
             //登录成功
@@ -1202,11 +1201,34 @@ class Web extends WebSocketController
         $data_Consume = ConsumeReq::decode($data);
         var_dump($data_Consume);
         $ConsumeResult = new ConsumeResult();
-        $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid);
+        foreach ($data_Consume as $item){
+            $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$item);
+        }
         $str = \App\Protobuf\Result\ConsumeResult::encode($data_ConsumeResult);
         $this->send(1040,$this->fd,$str);
     }
 
+    /**
+     * 收取公共地图的金币
+     * HarvestPublicShopReq
+     * return 1197 收取公共地图的金币
+     */
+    public function msgid_1145()
+    {
+        $data = $this->data;
+        $data_Harvest = HarvestPublicShopReq::decode($data);
+        $ConsumeResult = new ConsumeResult();
+//        string ShopId=1;店铺id
+//    int32 HarvestDate=2;收获时间
+//    int32 Surplus=3;（上个版本的字段目前没用）
+//    map<int32, int64> ItemCount=4;产出的道具
+//    int32 ItmeDate=5;道具产出时间
+//    int64 Money=6;产出的钱
+//    int32 MoneyType=7;产出的钱的类型（可能是金币可能是钞票）
+        foreach ($data_Harvest as $item) {
+            $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$item);
+        }
+    }
     /**
      * 加载所有员工
      * return 1118
@@ -2760,9 +2782,10 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_SignName = SignNameReq::decode($data);
+        var_dump($data_SignName);
         //修改签名
         $Role = new Role();
-        $rs = $Role->updateRoleName($this->uid,$data_SignName['Desc']);
+        $rs = $Role->updateSignName($this->uid,$data_SignName['Desc']);
         if($rs){
             $str = SignNameResult::encode($data_SignName['Desc']);
             $this->send(2030,$this->fd,$str);
@@ -2814,4 +2837,5 @@ class Web extends WebSocketController
         }
 
     }
+
 }
