@@ -11,19 +11,27 @@ namespace App\Models\Npc;
 
 use App\Models\Excel\Npc;
 use App\Models\Model;
+use App\Utility\Cache;
 
 class NpcInfo extends Model
 {
     public $table = 'Npc';
-    public $key = 'NpcList:';
+    public $key = 'NpcList:uid';
     public $num = 4;//委托任务随机取4个
+    public $cache;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->cache = Cache::getInstance();
+    }
+
     public function setRedisNpcInit($Uid)
     {
         $key = $this->key . $Uid;
         $Npc = new Npc();
         $data = $Npc->getNpcInit();
         foreach ($data as $datum) {
-            $this->redis->hSet($key,$datum['NpcId'],serialize($datum));
+            $this->cache->hashSet($key,$datum['NpcId'],serialize($datum));
         }
     }
 
@@ -36,16 +44,16 @@ class NpcInfo extends Model
     public function setRedisNpcUnlock($Uid,$NpcId)
     {
         $key = $this->key . $Uid;
-        $exists = $this->redis->exists($key);
+        $exists = $this->cache->client()->exists($key);
         if(!$exists){
             $this->setRedisNpcInit($Uid);
         }
 
-        $str = $this->redis->hGet($key,$NpcId);
+        $str = $this->cache->client()->hGet($key,$NpcId);
         $arr = unserialize($str);
         $arr['Status'] = true;
 
-        $rs = $this->redis->hSet($key,$NpcId,serialize($arr));
+        $rs = $this->cache->hashSet($key,$NpcId,serialize($arr));
         if($rs){
            return true;
         }else{
@@ -61,11 +69,11 @@ class NpcInfo extends Model
     public function getRedisNpcList($Uid)
     {
         $key  = $this->key .$Uid;
-        $exists = $this->redis->exists($key);
+        $exists = $this->cache->client()->exists($key);
         if(!$exists){
             $rs = $this->setRedisNpcInit($Uid);
         }
-        $list = $this->redis->hGetAll($key);
+        $list = $this->cache->client()->hGetAll($key);
         foreach ($list as &$item) {
             $item = unserialize($item);
         }
@@ -82,7 +90,7 @@ class NpcInfo extends Model
     {
         $key = $this->key . $Uid;
 
-        $str = $this->redis->hGet($key,$NpcId);
+        $str = $this->cache->client()->hGet($key,$NpcId);
         $arr = unserialize($str);
         if($arr['Status']){
             return true;
@@ -135,7 +143,7 @@ class NpcInfo extends Model
     public function getRedisInfoByUidNpcId($Uid,$NpcId)
     {
         $key = $this->key .$Uid;
-        $str = $this->redis->hGet($key,$NpcId);
+        $str = $this->cache->client()->hGet($key,$NpcId);
         $arr = unserialize($str);
         if($arr){
             return $arr;
@@ -156,7 +164,7 @@ class NpcInfo extends Model
         $key = $this->key . $Uid;
         $arr = $this->getRedisInfoByUidNpcId($Uid,$NpcId);
         $arr['CurrentFavorability'] = $arr['CurrentFavorability'] + $FavourValue;
-        $rs = $this->redis->hSet($key,$arr['NpcId'],serialize($arr));
+        $rs = $this->cache->hashSet($key,$arr['NpcId'],serialize($arr));
         var_dump($rs);
         if($rs>=0){
             return true;
@@ -176,11 +184,68 @@ class NpcInfo extends Model
         $key = $this->key . $Uid;
         $arr = $this->getRedisInfoByUidNpcId($Uid,$NpcId);
         $arr['FavorabilityLevel'] = $arr['FavorabilityLevel'] + 1;
-        $rs = $this->redis->hSet($key,$arr['NpcId'],serialize($arr));
+        $rs = $this->cache->hashSet($key,$arr['NpcId'],serialize($arr));
         if($rs){
             return true;
         }else{
             return false;
         }
+    }
+
+    /**
+     * 获取已经任职npcid
+     * @param $Uid
+     * @return array
+     */
+    public function getRedisNpcAppointed($Uid)
+    {
+        $arr = $this->getRedisNpcList($Uid);
+        $DownId = [];
+        foreach ($arr as $item) {
+            if($item['Appointed']){
+                $DownId[] = $item['NpcId'];
+            }
+        }
+        return $DownId;
+    }
+
+    /**
+     * 取消npc任职
+     * @param $Uid
+     * @param $DownId
+     * @return bool
+     */
+    public function CancelAppointedAll($Uid,$DownId)
+    {
+        if($DownId){
+            $key = $this->key . $Uid;
+            foreach ($DownId as $item) {
+                $str = $this->cache->client()->hGet($key,$item);
+                $arr = unserialize($str);
+                $arr['Appointed'] = false;
+                $this->cache->hashSet($key,$item,serialize($arr));
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 设置居民任职
+     * @param $Uid
+     * @param $Ids
+     * @return bool
+     */
+    public function setRedisNpcAppointed($Uid,$Ids)
+    {
+        if($Ids){
+            $key = $this->key . $Uid;
+            foreach ($Ids as $id) {
+                $str = $this->cache->client()->hGet($key,$id);
+                $arr = unserialize($str);
+                $arr['Appointed'] = true;
+                $this->cache->hashSet($key,$id,serialize($arr));
+            }
+        }
+        return true;
     }
 }

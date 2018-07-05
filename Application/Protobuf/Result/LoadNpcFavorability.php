@@ -23,6 +23,7 @@ class LoadNpcFavorability
             $LoadNpcFavorability->setCurrentFavorability((int)$data['CurrentFavorability']);//CurrentFavorability
             $LoadNpcFavorability->setFavorabilityLevel((int)$data['FavorabilityLevel']);//品质
             $LoadNpcFavorability->setStatus($data['Status']);//解锁状态
+            $LoadNpcFavorability->setAppointed($data['Appointed']);//是否任职
         }
         return $LoadNpcFavorability;
     }

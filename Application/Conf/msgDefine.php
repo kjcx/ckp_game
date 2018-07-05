@@ -2629,16 +2629,40 @@ return [
         'desc'=>'pk排行榜返回'
     ],
     [
-        'type'=>'send',
-        'message'=>'SignNameReq',
-        'msgid'=>'2029',
-        'desc'=>'修改签名请求'
+    'type'=>'send',
+    'message'=>'SignNameReq',
+    'msgid'=>'2029',
+    'desc'=>'修改签名请求'
     ],
     [
         'type'=>'rec',
         'message'=>'SignNameResult',
         'msgid'=>'2030',
         'desc'=>'修改签名返回'
+    ],
+    [
+        'type'=>'send',
+        'message'=>'TalkingGroupResidentReq',
+        'msgid'=>'2031',
+        'desc'=>'谈判团任居民任命请求'
+    ],
+    [
+        'type'=>'rec',
+        'message'=>'TalkingGroupResidentResult',
+        'msgid'=>'2032',
+        'desc'=>'谈判团任居民任命返回'
+    ],
+    [
+        'type'=>'send',
+        'message'=>'TalkIngGroupResidentChangeReq',
+        'msgid'=>'2033',
+        'desc'=>'谈判团任居民任命请求'
+    ],
+    [
+        'type'=>'rec',
+        'message'=>'TalkIngGroupResidentChangeResult',
+        'msgid'=>'2034',
+        'desc'=>'谈判团任居民任命返回'
     ]
 
 ];

@@ -20,8 +20,10 @@ class NpcInfo
         $NpcInfo = new \AutoMsg\NpcInfo();
         $NpcId = $data['NpcId'];
         $Status = $data['Status'];
+        $Appointed = $data['Appointed'];
         $NpcInfo->setNpcId($NpcId);
         $NpcInfo->setStatus($Status);
+        $NpcInfo->setAppointed($Appointed);
         return $NpcInfo;
     }
 }

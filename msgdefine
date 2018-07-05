@@ -438,3 +438,7 @@ PkRankingReq,PkRankingReq.proto,send,2027,pk排行榜请求
 PkRankingResult,PkRankingResult.proto,rec,2028,pk排行榜返回
 SignNameReq,SignNameReq.proto,send,2029,修改签名请求
 SignNameResult,SignNameResult.proto,rec,2030,修改签名返回
+TalkingGroupResidentReq,TalkingGroupResidentReq.proto,send,2031,谈判团任居民任命请求
+TalkingGroupResidentResult,TalkingGroupResidentResult.proto,rec,2032,谈判团任居民任命返回
+TalkIngGroupResidentChangeReq,TalkIngGroupResidentChangeReq.proto,send,2033,谈判团任居民任命请求
+TalkIngGroupResidentChangeResult,TalkIngGroupResidentChangeResult.proto,rec,2034,谈判团任居民任命返回

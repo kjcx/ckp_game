@@ -68,6 +68,7 @@ class Npc extends Model
             $arr['NpcId'] = $datum['Id'];
             $arr['CurrentFavorability'] = 0;//好感度
             $arr['FavorabilityLevel'] = 0;//品质
+            $arr['Appointed'] = false;//是否任职
             if($datum['Type'] == 1){
                 $arr['Status'] = 1;//默认解锁
             }else{

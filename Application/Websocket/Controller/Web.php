@@ -116,6 +116,8 @@ use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TalkIngGroupChangeReq;
 use App\Protobuf\Req\TalkingGroupReq;
+use App\Protobuf\Req\TalkIngGroupResidentChangeReq;
+use App\Protobuf\Req\TalkingGroupResidentReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UnlockNpcReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
@@ -201,6 +203,8 @@ use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TalkIngGroupChangeResult;
+use App\Protobuf\Result\TalkIngGroupResidentChangeResult;
+use App\Protobuf\Result\TalkingGroupResidentResult;
 use App\Protobuf\Result\TalkingGroupResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UnlockNpcResult;
@@ -2350,7 +2354,7 @@ class Web extends WebSocketController
     }
 
     /**
-     * 居民人脉列表
+     * 居民人脉列表 废弃
      * return 2024 NpcListResult
      */
     public function msgid_2023()
@@ -2775,6 +2779,49 @@ class Web extends WebSocketController
             $this->send(2030,$this->fd,$str);
         }else{
             var_dump("修改个性签名失败");
+        }
+
+    }
+
+    /**
+     * 谈判团居民任命
+     * return 2032 TalkingGroupResidentResult
+     */
+    public function msgid_2031()
+    {
+        $data = $this->data;
+        $data_Resident = TalkingGroupResidentReq::decode($data);
+        //换下来的居民
+        $NpcInfo = new NpcInfo();
+        $DownId = $NpcInfo->getRedisNpcAppointed($this->uid);
+        //换人
+        $rs = $NpcInfo->CancelAppointedAll($this->uid,$DownId);
+        $rs = $NpcInfo->setRedisNpcAppointed($this->uid,$data_Resident['Ids']);
+        if($rs){
+            $str = TalkingGroupResidentResult::encode(['Ids'=>$data_Resident['Ids'],'DownId'=>$DownId]);
+            $this->send(2032,$this->fd,$str);
+        }else{
+            var_dump("设置团判团居民失败");
+        }
+    }
+
+    /**
+     * 更改居民
+     * return 2034 TalkIngGroupResidentChangeResult
+     */
+    public function msgid_2033()
+    {
+        $data = $this->data;
+        $data_Resident = TalkIngGroupResidentChangeReq::decode($data);
+        //更改
+        $NpnInfo = new NpcInfo();
+        $rs = $NpnInfo->CancelAppointedAll($this->uid,[$data_Resident['DownId']]);
+        $rs = $NpnInfo->setRedisNpcAppointed($this->uid,[$data_Resident['UpId']]);
+        if($rs){
+            $str = TalkIngGroupResidentChangeResult::encode($data);
+            $this->send(2034,$this->fd,$str);
+        }else{
+            var_dump("设置任职失败");
         }
 
     }

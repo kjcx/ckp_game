@@ -110,7 +110,7 @@ class Staff extends Model
             $Shop = new Shop();
             $data_Shop = $Shop->getInfoById($ShopId);//店铺信息
             if($data_Shop['EmployeeLimit'] >= ($count + $new_count)){
-                $rs =  Db::table($this->table)->where('Uid',$Uid)->where('_id','in',$NpcCardIds)->update(['ShopId'=>$ShopId,'Appointed'=>true]);
+                $rs =  Db::table($this->table)->where('Uid',$Uid)->where('_id','in',$NpcCardIds)->update(['ShopId'=>$ShopId,'Appointed'=>false]);
             }else{
 //                var_dump("员工数量超出");
                 return false;
@@ -270,7 +270,7 @@ class Staff extends Model
      */
     public function setTalkGroupStaff($Uid,$StaffId)
     {
-        $ShopId = $this->TalkGroupName;
+        $ShopId = $this->TalkGroupName .$Uid;
         $rs = Db::table($this->table)->where('_id',(string)$StaffId)->update(['ShopId'=>$ShopId,'Appointed'=>true]);
         if($rs){
             return true;
@@ -286,7 +286,7 @@ class Staff extends Model
      */
     public function setTalkGroupStaffs($Uid,$StaffIds)
     {
-        $ShopId = $this->TalkGroupName;
+        $ShopId = $this->TalkGroupName . $Uid;
         $rs = Db::table($this->table)->where('_id','in',$StaffIds)->update(['ShopId'=>$ShopId,'Appointed'=>true]);
         if($rs){
             return true;
@@ -332,7 +332,7 @@ class Staff extends Model
      */
     public function getTalkGroupStaffs($Uid)
     {
-        $data  = Db::table($this->table)->field('_id')->where('Uid',$Uid)->where('ShopId',$this->TalkGroupName)->select();
+        $data  = Db::table($this->table)->field('_id')->where('Uid',$Uid)->where('ShopId',$this->TalkGroupName . $Uid)->select();
         if($data){
             $StaffId = [];
             foreach ($data as $datum) {
