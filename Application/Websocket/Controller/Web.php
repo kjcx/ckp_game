@@ -90,6 +90,7 @@ use App\Protobuf\Req\GetMapReq;
 use App\Protobuf\Req\GetPraiseRoleIdReq;
 use App\Protobuf\Req\GrowPlantsReq;
 use App\Protobuf\Req\HarvestPlantReq;
+use App\Protobuf\Req\HarvestPublicShopReq;
 use App\Protobuf\Req\LoansReq;
 use App\Protobuf\Req\MoneyChangeReq;
 use App\Protobuf\Req\NoBodyShopReq;
@@ -108,6 +109,7 @@ use App\Protobuf\Req\RoomVisitReq;
 use App\Protobuf\Req\SavingGoldReq;
 use App\Protobuf\Req\SeedShopPingReq;
 use App\Protobuf\Req\SellItemReq;
+use App\Protobuf\Req\SignNameReq;
 use App\Protobuf\Req\SignReq;
 use App\Protobuf\Req\SoldOutReq;
 use App\Protobuf\Req\StealSemenReq;
@@ -115,6 +117,8 @@ use App\Protobuf\Req\TalentFireReq;
 use App\Protobuf\Req\TalentHireReq;
 use App\Protobuf\Req\TalkIngGroupChangeReq;
 use App\Protobuf\Req\TalkingGroupReq;
+use App\Protobuf\Req\TalkIngGroupResidentChangeReq;
+use App\Protobuf\Req\TalkingGroupResidentReq;
 use App\Protobuf\Req\TopUpGoldReq;
 use App\Protobuf\Req\UnlockNpcReq;
 use App\Protobuf\Req\UpdateRoleInfoNameReq;
@@ -192,6 +196,7 @@ use App\Protobuf\Result\SavingGoldResult;
 use App\Protobuf\Result\ScoreShopResult;
 use App\Protobuf\Result\SeedShopPingResult;
 use App\Protobuf\Result\SellItemResult;
+use App\Protobuf\Result\SignNameResult;
 use App\Protobuf\Result\SignResult;
 use App\Protobuf\Result\SoldOutResult;
 use App\Protobuf\Result\StealSemenResult;
@@ -199,6 +204,8 @@ use App\Protobuf\Result\TalentFireResult;
 use App\Protobuf\Result\TalentHireResult;
 use App\Protobuf\Result\TalentRefreshResult;
 use App\Protobuf\Result\TalkIngGroupChangeResult;
+use App\Protobuf\Result\TalkIngGroupResidentChangeResult;
+use App\Protobuf\Result\TalkingGroupResidentResult;
 use App\Protobuf\Result\TalkingGroupResult;
 use App\Protobuf\Result\TopUpGoldResult;
 use App\Protobuf\Result\UnlockNpcResult;
@@ -217,6 +224,7 @@ use EasySwoole\Core\Socket\Client\WebSocket;
 use EasySwoole\Core\Socket\Common\CommandBean;
 use EasySwoole\Core\Swoole\ServerManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use App\Models\Excel\GameGifts;
 
 class Web extends WebSocketController
 {
@@ -407,8 +415,6 @@ class Web extends WebSocketController
         $uid = $Account->getToken($token);
         if($uid){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
-            var_dump($this->fd);
-            var_dump($uid);
             $r = $dataCenter->saveClient($this->fd,$uid);
             var_dump($r);
             //登录成功
@@ -646,43 +652,7 @@ class Web extends WebSocketController
      */
     public function msgid_1165()
     {
-        /*
-        $data_pay = CKApiReq::decode($this->data);
-        $Id = $data_pay['PayParams']['Id'];
-        $Pwd = $data_pay['PayParams']['Pwd'];
-        //获取充值的id
-        $Topup = new Topup();
-        $data_Topup = $Topup->findById($Id);
-        //判断app余额是否足够
-        $Account = new Account();
-        $res = $Account->payByApp($this->uid,$data_Topup['Gold'],$Pwd,'game_recharge');
-        if($res['code'] == 200){
-            //充值成功
-            //背包金额增加
-            $Bag = new Bag($this->uid);
-            $rs = $Bag->addBag(2,$data_Topup['Gold']);
-            if($rs){
-                $Pay = new Pay();
-                $Pay->create(['Uid'=>$this->uid,'Gold'=>$data_Topup['Gold'],'CreateTime'=>time()]);
-                //返回充值成功
-                $data  = CkPayResult::encode(true);
-                $this->send(1224,$this->fd,$data);
-            }
-
-        }else{
-            //充值失败
-            $data  = CkPayResult::encode(false);
-            $WsResult = new WsResult();
-            if($res['datas']['error'] == '您输入的密码有误'){
-//                $data_ws = $WsResult->getOne('APP支付密码不对');
-                $this->send(1224,$this->fd,$data,'APP支付密码不对');
-            }elseif ($res['datas']['error'] == '余额不足！！！'){
-//                $data_ws = $WsResult->getOne('APP余额不足');
-                $this->send(1224,$this->fd,$data,'APP余额不足');
-            }
-        }
-//*/
-
+        var_dump($this->uid);
         $data_pay = CKApiReq::decode($this->data);
         $Id = $data_pay['PayParams']['Id'];
         $Pwd = $data_pay['PayParams']['Pwd'];
@@ -695,59 +665,83 @@ class Web extends WebSocketController
         $Account = new Account();
 
         $res = $Account->payByApp($this->uid,$data_Topup['Gold'],$Pwd,'game_recharge');
+
 
         //$res['cdode']=400，测试时改为：200
         $res['code']=200;
 
-        if($res['code'] == 200){
+        if($res['code'] == 200) {
 
             //充值成功
             $Pay = new Pay();
 
-            //本次充值的总金额：充值金额+首充奖励
-            $totalsum = $data_Topup['Gold'];
+            //背包金额增加
+            $Bag = new Bag($this->uid);
 
             //是否是首次充值
             //如果是首次充值，基本充值金额+首充奖励；如果不是，只有充值金额
-            if($Pay->getFirstRecharge($this->uid)){
+            if ($Pay->getFirstRecharge($this->uid)) {
+                var_dump($Pay->getFirstRecharge($this->uid));
+                echo("是首次充值：奖励");
+                //本次充值的总金额：充值金额+首充奖励
+                //获取首充奖励数据
+                $gamegifts = new GameGifts();
+                $ft = $gamegifts->FirstTopup();
 
-                echo("是首次充值：奖励100");
-                var_dump($data_Topup['Gold']."+100");
+                //如果是金币（ID=2），充值金额+首充奖励
+                foreach ($ft as $k => $value) {
+                    //if ($k == 2) {
+                    //    $ft[$k] = $value + $data_Topup['Gold'];
+                    // }
 
-                 $totalsum += 100;
+                }
+                //删除金币项目
+                unset($ft[2]);
 
-                var_dump("充值总金额：".$totalsum);
-
-            }elseif(!$Pay->getFirstRecharge($this->uid)){
-                echo("不是首次充值");
-            }
-
-            //背包金额增加
-            $Bag = new Bag($this->uid);
-            //金币ID：2
-            $rs = $Bag->addBag(2,$totalsum);
-            //$Bag->delBag(2,30000);
+                //批量增加道具
+                $Bag->batchAddBag($ft);
 
 
-            if($rs){
-                $Pay->create(['Uid'=>$this->uid,'Gold'=>$totalsum,'CreateTime'=>time()]);
+                $awardgold = $gamegifts->FirstTopupGold();
 
-                //返回充值成功
-                $data  = CkPayResult::encode(true);
-                $this->send(1224,$this->fd,$data);
+                var_dump($awardgold);
 
-            }
+                //如果是首次充值，基本充值金额+首充奖励
+                $awardgold += $data_Topup['Gold'];
+                $rs = $Bag->addBag(2, $awardgold);
+                //减少金币
+                //$Bag->delBag(2,62500);
+                if ($rs) {
+                    $Pay->create(['Uid' => $this->uid, 'Gold' => $awardgold, 'CreateTime' => time()]);
+                    //返回充值成功
+                    $data = CkPayResult::encode(true);
+                    $this->send(1224, $this->fd, $data);
 
-        }else {
-            //充值失败
-            $data = CkPayResult::encode(false);
-            $WsResult = new WsResult();
-            if ($res['datas']['error'] == '您输入的密码有误') {
+
+                } else {
+                    echo("不是首次充值");
+                    //金币ID：2
+                    $rs = $Bag->addBag(2, $data_Topup['Gold']);
+                    //减少金币
+                    //$Bag->delBag(2,62500);
+                    if ($rs) {
+                        $Pay->create(['Uid' => $this->uid, 'Gold' => $data_Topup['Gold'], 'CreateTime' => time()]);
+                        //返回充值成功
+                        $data = CkPayResult::encode(true);
+                        $this->send(1224, $this->fd, $data);
+                    }
+                }
+            } else {
+                //充值失败
+                $data = CkPayResult::encode(false);
+                $WsResult = new WsResult();
+                if ($res['datas']['error'] == '您输入的密码有误') {
 //                $data_ws = $WsResult->getOne('APP支付密码不对');
-                $this->send(1224, $this->fd, $data, 'APP支付密码不对');
-            } elseif ($res['datas']['error'] == '余额不足！！！') {
+                    $this->send(1224, $this->fd, $data, 'APP支付密码不对');
+                } elseif ($res['datas']['error'] == '余额不足！！！') {
 //                $data_ws = $WsResult->getOne('APP余额不足');
-                $this->send(1224, $this->fd, $data, 'APP余额不足');
+                    $this->send(1224, $this->fd, $data, 'APP余额不足');
+                }
             }
         }
     }
@@ -1205,11 +1199,34 @@ class Web extends WebSocketController
         $data_Consume = ConsumeReq::decode($data);
         var_dump($data_Consume);
         $ConsumeResult = new ConsumeResult();
-        $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid);
+        foreach ($data_Consume as $item){
+            $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$item);
+        }
         $str = \App\Protobuf\Result\ConsumeResult::encode($data_ConsumeResult);
         $this->send(1040,$this->fd,$str);
     }
 
+    /**
+     * 收取公共地图的金币
+     * HarvestPublicShopReq
+     * return 1197 收取公共地图的金币
+     */
+    public function msgid_1145()
+    {
+        $data = $this->data;
+        $data_Harvest = HarvestPublicShopReq::decode($data);
+        $ConsumeResult = new ConsumeResult();
+//        string ShopId=1;店铺id
+//    int32 HarvestDate=2;收获时间
+//    int32 Surplus=3;（上个版本的字段目前没用）
+//    map<int32, int64> ItemCount=4;产出的道具
+//    int32 ItmeDate=5;道具产出时间
+//    int64 Money=6;产出的钱
+//    int32 MoneyType=7;产出的钱的类型（可能是金币可能是钞票）
+        foreach ($data_Harvest as $item) {
+            $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$item);
+        }
+    }
     /**
      * 加载所有员工
      * return 1118
@@ -2346,7 +2363,7 @@ class Web extends WebSocketController
     }
 
     /**
-     * 居民人脉列表
+     * 居民人脉列表 废弃
      * return 2024 NpcListResult
      */
     public function msgid_2023()
@@ -2753,4 +2770,69 @@ class Web extends WebSocketController
     {
         $this->send(1131,$this->fd,GetRankingResult::encode(1));
     }
+
+    /**
+     * 修改签名请求
+     * return 2030 SignNameResult
+     */
+    public function msgid_2029()
+    {
+        $data = $this->data;
+        $data_SignName = SignNameReq::decode($data);
+        var_dump($data_SignName);
+        //修改签名
+        $Role = new Role();
+        $rs = $Role->updateSignName($this->uid,$data_SignName['Desc']);
+        if($rs){
+            $str = SignNameResult::encode($data_SignName['Desc']);
+            $this->send(2030,$this->fd,$str);
+        }else{
+            var_dump("修改个性签名失败");
+        }
+
+    }
+
+    /**
+     * 谈判团居民任命
+     * return 2032 TalkingGroupResidentResult
+     */
+    public function msgid_2031()
+    {
+        $data = $this->data;
+        $data_Resident = TalkingGroupResidentReq::decode($data);
+        //换下来的居民
+        $NpcInfo = new NpcInfo();
+        $DownId = $NpcInfo->getRedisNpcAppointed($this->uid);
+        //换人
+        $rs = $NpcInfo->CancelAppointedAll($this->uid,$DownId);
+        $rs = $NpcInfo->setRedisNpcAppointed($this->uid,$data_Resident['Ids']);
+        if($rs){
+            $str = TalkingGroupResidentResult::encode(['Ids'=>$data_Resident['Ids'],'DownId'=>$DownId]);
+            $this->send(2032,$this->fd,$str);
+        }else{
+            var_dump("设置团判团居民失败");
+        }
+    }
+
+    /**
+     * 更改居民
+     * return 2034 TalkIngGroupResidentChangeResult
+     */
+    public function msgid_2033()
+    {
+        $data = $this->data;
+        $data_Resident = TalkIngGroupResidentChangeReq::decode($data);
+        //更改
+        $NpnInfo = new NpcInfo();
+        $rs = $NpnInfo->CancelAppointedAll($this->uid,[$data_Resident['DownId']]);
+        $rs = $NpnInfo->setRedisNpcAppointed($this->uid,[$data_Resident['UpId']]);
+        if($rs){
+            $str = TalkIngGroupResidentChangeResult::encode($data);
+            $this->send(2034,$this->fd,$str);
+        }else{
+            var_dump("设置任职失败");
+        }
+
+    }
+
 }

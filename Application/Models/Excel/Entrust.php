@@ -27,7 +27,7 @@ class Entrust extends Model
      */
     public function getInfoByLevel($Level)
     {
-        $data = Db::table($this->table)->where('RoleLv',$Level)->find();
+        $data = Db::table($this->table)->where('RoleLv',(int)$Level)->find();
         if($data){
             return $data;
         }else{

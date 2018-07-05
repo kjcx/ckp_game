@@ -907,6 +907,7 @@ message LoadNpcFavorability{
     int32 CurrentFavorability=2;
     int32 FavorabilityLevel=3;
     bool Status=4;//是否解锁
+    bool Appointed=5;//是否任职
 }
 message AddNpcFavorability{
     int32 NpcId=1;
@@ -2284,6 +2285,8 @@ message NpcListResult{
 message NpcInfo{
 	int32 NpcId=1;
     bool Status=2;
+    bool Appointed=3;//在职谈判团
+
 }
 
 //返回居民委托任务
@@ -2317,4 +2320,34 @@ message PkRankingInfo{
      string Name=2;//玩家名词
      int32 Shenjiazhi=3;//身价值
      int32 Score=4;//积分
+}
+
+//修改签名请求
+message SignNameReq{
+    string Desc =1;
+}
+//修改签名返回
+message SignNameResult{
+    string Desc =1;
+}
+
+//谈判团任居民任命请求
+message TalkingGroupResidentReq{
+    repeated int32 Ids=1;//任命
+    bool Replace=2;//是否是替换掉所有人
+}
+//谈判团居民任命返回
+message TalkingGroupResidentResult{
+    repeated int32 Ids=1;//任命返回
+    repeated int32 DownId=2;//如果是换任，这里有值 否则为nul
+}
+//谈判团换任
+message TalkIngGroupResidentChangeReq{
+    int32 UpId=1;//即将上任的员工
+    int32 DownId=2;//即将下岗的员工
+}
+//谈判团换任返回
+message TalkIngGroupResidentChangeResult{
+    int32 UpId=1;//上任的员工
+    int32 DownId=2;//下岗的员工
 }

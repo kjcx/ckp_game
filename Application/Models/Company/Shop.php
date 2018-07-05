@@ -71,7 +71,7 @@ class Shop extends Model
 //        $dataCompany['Area'] = 2;//私有的2 土地竞拍的1
         //员工上线人数
         $BuildingLevel = new BuildingLevel();
-        $data_BuildingLevel = $BuildingLevel->getInfoByLevel(1);
+        $data_BuildingLevel = $BuildingLevel->getInfoByLevel();
 //        var_dump($data_BuildingLevel);
         $dataCompany['EmployeeLimit'] = $data_BuildingLevel['ClerkNums'];//员工上线
         $dataCompany['GoldStock'] = $data_BuildingLevel['GoldStock'];//金币库存上线
@@ -265,6 +265,22 @@ class Shop extends Model
         return true;
     }
 
+    /**
+     * 获取经理id
+     * @param $ShopId
+     * @return int
+     */
+    public function getMaster($ShopId)
+    {
+        $where['_id'] = new ObjectId($ShopId);
+        $data = Db::table($this->table)->where($where)->find();
+        if($data['Master']){
+            return $data['Master'][0];
+        }else{
+            return false;
+        }
+
+    }
     /**
      * 验证店铺主管数量
      * @param $ShopId

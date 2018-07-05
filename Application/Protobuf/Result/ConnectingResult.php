@@ -24,6 +24,7 @@ class ConnectingResult
             $RoleLists->setRoleId($uid);
         }
         $role[] = $RoleLists;
+
         $ConnectingResult->setRoleLists($role);
         $data  = $ConnectingResult->serializeToString();
         return $data;

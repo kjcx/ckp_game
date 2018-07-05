@@ -49,9 +49,8 @@ class Index extends Controller
      */
     public function index()
     {
-       $NpcTask = new NpcTask();
-       $data = $NpcTask->getRedisTask(53);
-        var_dump($data);
+        $NpcTask = new BuildingLevel();
+        var_dump($NpcTask->getRand());
     }
     public function rand_str()
     {

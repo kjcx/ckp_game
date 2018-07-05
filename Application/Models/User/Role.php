@@ -17,8 +17,8 @@ class Role extends Model
     private $table = 'ckzc_role';
     public $cache;
     public $RoleInfoKey = 'RoleInfo:uid:';
-    public $RoleUserName = 'RoleUserName';
-    public $Member = 'Member';
+    public $RoleUserName = 'RoleUserName:_id:RoleUserName';
+    public $Member = 'Member:_id:Member';
     public function __construct()
     {
         parent::__construct();
@@ -86,18 +86,21 @@ class Role extends Model
         //创建默认角色
         $info = $this->getRole($uid);
         if(!$info){
-            $this->CreateRedisRole($data);
-            $Bag = new Bag($uid);
-            $res = $Bag->initBag();
-            if($res){
-                return $rs;
-            }else{
-                if($Bag->getBag()){
-                    return true;
+            $rs = $this->CreateRedisRole($data);
+            if($rs!==false){
+                $Bag = new Bag($uid);
+                $res = $Bag->initBag();
+                if($res){
+                    return $rs;
                 }else{
-                    return false;
+                    if($Bag->getBag()){
+                        return true;
+                    }else{
+                        return false;
+                    }
                 }
             }
+
         }else{
             return true;
         }
@@ -115,13 +118,16 @@ class Role extends Model
 
     /**
      * 修改用户头像
-     * @param $uid 用户id
+     * @param $Uid 用户id
      * @param $icon 头像id
      * @return bool
      */
-    public function updateIcon($uid,$icon)
+    public function updateIcon($Uid,$icon)
     {
-        $rs = $this->mysql->where('uid',$uid)->update($this->table,['icon'=>$icon]);
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $rs = $this->cache->hashset($RoleInfoKey,'icon',$icon);
+        return true;
+//        $rs = $this->mysql->where('uid',$Uid)->update($this->table,['icon'=>$icon]);
         if($rs){
             return true;
         }else{
@@ -130,24 +136,54 @@ class Role extends Model
     }
     /**
      * 修改昵称
-     * @param $uid
+     * @param $Uid
      * @param $nickname
      * @return bool
      */
-    public function updateRoleName($uid,$nickname)
+    public function updateRoleName($Uid,$nickname)
     {
-        $rs = $this->mysql->where('uid',$uid)->update($this->table,['nickname'=>$nickname]);
-        if($rs){
+
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $rs = $this->cache->hashset($RoleInfoKey,'nickname',$nickname);
+
+//        $rs = $this->mysql->where('uid',$Uid)->update($this->table,['nickname'=>$nickname]);
+        if($rs!==faslse){
             //改名扣费
-            $Bag = new Bag($uid);
+            $Bag = new Bag($Uid);
             $Bag->delBag(2,5000);
         }
         return $rs;
     }
 
-    public function updateShenjiazhi($uid,$shenjia)
+    /**
+     * 修改签名
+     * @param $Uid
+     * @param $Desc
+     * @return bool
+     */
+    public function updateSignName($Uid,$Desc)
     {
-        $this->mysql->where('uid',$uid)->update($this->table,['shenjiazhi'=>$this->mysql->inc($shenjia)]);
+        var_dump($Desc);
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $rs = $this->cache->hashset($RoleInfoKey,'sign',$Desc);
+        var_dump($Desc);
+        return true;
+    }
+
+    /**
+     * 更新身价值
+     * @param $Uid
+     * @param $shenjia
+     * @return bool
+     */
+    public function updateShenjiazhi($Uid,$shenjia)
+    {
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $rs = $this->cache->hashHINCRBY($RoleInfoKey,'shenjiazhi',$shenjia);
+        $value = $this->getShenjiazhi($Uid);
+        updateRank($Uid,$value,1);//更新身价到队列
+        return true;
+
     }
 
     /**
@@ -157,7 +193,9 @@ class Role extends Model
      */
     public function checkNickName($nickname)
     {
-        $res = $this->mysql->where('nickname',$nickname)->getOne($this->table);
+        $RoleUserName = $this->RoleUserName;
+        $res = $this->cache->client()->hGet($RoleUserName,$nickname);
+//        $res = $this->mysql->where('nickname',$nickname)->getOne($this->table);
         if($res){
             return true;
         }else{
@@ -176,14 +214,41 @@ class Role extends Model
         $Search  = $data['Search'];
         if($Search){//搜索
 //            $data = $this->mysql->where('uid',$uid,'not in')->where('nickname',"%$Name%",'like')->get($this->table);
-            $data = $this->mysql->where('uid',$uid,'<>')->where('nickname',"%$Name%",'like')->get($this->table);
+//            $data = $this->mysql->where('uid',$uid,'<>')->where('nickname',"%$Name%",'like')->get($this->table);
+            $search_uid = $this->getRoleUserName($Name);
+            if($search_uid){
+                $data = $this->getRole($search_uid);
+            }else{
+                $data = [];
+            }
         }else{//推荐
-            $data = $this->mysql->where('uid',$uid,'<>')->orderBy("RAND ()")->get($this->table,5);
-//            $data = $this->mysql->where('uid',$uid,'not in')->orderBy("RAND ()")->get($this->table,5);
+//            $data = $this->mysql->where('uid',$uid,'<>')->orderBy("RAND ()")->get($this->table,5);
+            $Uids = $this->sRandMember(5);
+            if(in_array($uid,$Uids)){
+                $uid_new  = $this->sRandMember(1);
+                $Uids[] = $uid_new[0];
+            }
+
+            $data = $this->getRoleByUids($Uids);
         }
         return $data;
     }
 
+    /**
+     * 按用户昵称搜索
+     * @param $UserName
+     * @return string
+     */
+    public function getRoleUserName($UserName)
+    {
+        $RoleUserName = $this->RoleUserName;
+        $Uid = $this->cache->client()->hGet($RoleUserName,$UserName);
+        if ($Uid){
+            return $Uid;
+        }else{
+            return '';
+        }
+    }
     /**
      * 获得金币
      * @param $uid
@@ -201,38 +266,56 @@ class Role extends Model
      * @param $uid 用户id
      * @return array
      */
-    public function getLevel($uid)
+    public function getLevel($Uid)
     {
-        $data = $this->mysql->where('uid',$uid)->getOne($this->table,'level');
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $data['level'] = $this->cache->client()->hGet($RoleInfoKey,'level');
+        return $data;
+        $data = $this->mysql->where('uid',$Uid)->getOne($this->table,'level');
         return $data;
     }
 
     /**
      * 随机获取用户
-     * $param $IsFree 是否免费
+     * $param $IsFree 是否免费(待完善)
      */
     public function getListByRand($IsFree)
     {
         if($IsFree){
-            $data = $this->mysql->orderBy("RAND()")->get($this->table,5);
+            $data = $this->sRandMember(5);
+//            $data = $this->mysql->orderBy("RAND()")->get($this->table,5);
         }else{
             //获取之前生成的
-            $data = $this->mysql->orderBy("RAND()")->get($this->table,5);
+//            $data = $this->mysql->orderBy("RAND()")->get($this->table,5);
+            $data = $this->sRandMember(5);
         }
         return $data;
     }
 
     /**
+     * 随机获取用户id
+     * @param $count
+     * @return array|string
+     */
+    public function sRandMember($count)
+    {
+        $Uids = $this->cache->client()->sRandMember($this->Member,$count);
+        return $Uids;
+    }
+    /**
      * 通过id数组获取用户
      * @param $uids
      * @return bool
      */
-    public function getRoleByUids($uids)
+    public function getRoleByUids($Uids)
     {
-        if(empty($uids)){
+        if(empty($Uids)){
             return false;
         }else{
-            $data = $this->mysql->where('uid',$uids,'in')->get($this->table);
+            foreach ($Uids as $uid) {
+                $data[] = $this->getRole($uid);
+            }
+//            $data = $this->mysql->where('uid',$uids,'in')->get($this->table);
             if($data){
                 return $data;
             }else{
@@ -250,7 +333,10 @@ class Role extends Model
      */
     public function setShopid($MasterUiD,$Id)
     {
-        $rs = $this->mysql->where('uid',$MasterUiD)->update($this->table,['shopid'=>$Id]);
+        $RoleInfoKey = $this->RoleInfoKey;
+        $rs = $this->cache->client()->hSet($RoleInfoKey,'shopid',$Id);
+        return true;
+//        $rs = $this->mysql->where('uid',$MasterUiD)->update($this->table,['shopid'=>$Id]);
         if($rs){
             return true;
         }else{
@@ -263,9 +349,10 @@ class Role extends Model
      * @param $uid
      * @return mixed
      */
-    public function getShenjiazhi($uid)
+    public function getShenjiazhi($Uid)
     {
-        $info = $this->getRole($uid);
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $info = $this->cache->client()->hGet($RoleInfoKey,'shenjiazhi');
         return $info['shenjiazhi'];
     }
 
@@ -282,42 +369,45 @@ class Role extends Model
      * 更新等级
      * @param $uid
      * @param $level
+     * @return bool
      */
     public function updateLevel($uid,$level)
     {
-        return $this->mysql->where('uid',$uid)->update($this->table,['level' => $level]);
+        $rs =  $this->mysql->where('uid',$uid)->update($this->table,['level' => $level]);
+        return true;
     }
 
     /**
      * 更新等级
-     * @param $uid
+     * @param $Uid
      * @param $exp
      * @return bool
      */
-    public function updateExp($uid,$exp)
+    public function updateExp($Uid,$exp)
     {
-        return $this->mysql->where('uid',$uid)->update($this->table,['exp' => $exp]);
+        $RoleInfoKey = $this->RoleInfoKey . $Uid;
+        $this->cache->client()->hSet($RoleInfoKey,'exp',$exp);
+        return true;
+        return $this->mysql->where('uid',$Uid)->update($this->table,['exp' => $exp]);
     }
 
     /**这些都是GM命令 高能 慎入**/
     /**
      * 创建redis用户数据
      * @param $data
+     * @return bool
      */
     public function CreateRedisRole($data)
     {
-        var_dump("CreateRedisRole");
-        var_dump($data);
         $Uid = $data['uid'];
         $UserName = $data['nickname'];
         $RoleInfoKey = $this->RoleInfoKey . $Uid;
-        $MongoId = new ObjectId();
         $this->cache->hashSet($this->RoleUserName,$UserName,$Uid);
-        $MongoId = new ObjectId();
         $this->cache->setSadd($this->Member,$Uid);
         $rs = $this->cache->hashMset($RoleInfoKey,$data);
-        var_dump($rs);
+        return true;
         $rs = $this->mysql->insert($this->table,$data);
+
     }
 
 

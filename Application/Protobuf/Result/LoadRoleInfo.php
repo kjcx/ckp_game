@@ -22,6 +22,7 @@ class LoadRoleInfo
         $Icon = $arr['icon'];
         $Exp = $arr['exp'];
         $Level = $arr['level'];
+        $Desc = $arr['sign'];
         $LoadRoleInfo = new \AutoMsg\LoadRoleInfo();
         $LoadRoleInfo->setName($Name);
         $LoadRoleInfo->setRoleId($RoleId);
@@ -30,6 +31,7 @@ class LoadRoleInfo
         $LoadRoleInfo->setExp($Exp);
         $LoadRoleInfo->setLevel($Level);
         $LoadRoleInfo->setSocialStatus(20000);
+        $LoadRoleInfo->setDesc($Desc);
         $UserAttr = new UserAttr();
 
         $user_attr_ids = $UserAttr->getUserAttrId($uid);

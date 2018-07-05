@@ -148,6 +148,7 @@ class Execl extends Controller
         $GameEnum = new GameEnum();
         $WsResult = new WsResult();
         $data = $GameEnum->find(['type'=>'WsResult']);
+
         foreach ($data['list'] as $datum) {
             $WsResult->insert($datum);
         }

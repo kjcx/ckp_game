@@ -278,8 +278,10 @@ class Bag extends Model
         }
         if ($res) {
             if(in_array($itemId,$this->GoldType)){
-                $UserEvent = new UserEvent($this->uid);
-                $UserEvent->GoldChangedResultEvent();
+                if ($onPush) {
+                    $UserEvent = new UserEvent($this->uid);
+                    $UserEvent->GoldChangedResultEvent();
+                }
             } else {
                 if ($onPush) {
                     $eventData = ['uid' => $this->uid,'evenFunc' => 'pushChange','item' => [$data['id'] => $data['CurCount']]];

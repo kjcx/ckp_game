@@ -17,12 +17,11 @@ class PkRankingResult
 {
     public static function encode($data)
     {
-        var_dump($data);
         $PkRankingResult = new \AutoMsg\PkRankingResult();
         $PkRankings = [];
-        if($PkRankings){
-            foreach ($data as $datum) {
-                $PkRankings[] = PkRankingInfo::encode($datum);
+        if($data){
+            foreach ($data as $k=>$datum) {
+                $PkRankings[$k] = PkRankingInfo::encode($datum);
             }
         }
         $PkRankingResult->setPkRanking($PkRankings);

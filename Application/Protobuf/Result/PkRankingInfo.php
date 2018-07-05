@@ -17,6 +17,8 @@ class PkRankingInfo
 {
     public static function encode($data)
     {
+        var_dump('Ranking');
+        var_dump($data['Ranking']);
         $PkRankingInfo = new \AutoMsg\PkRankingInfo();
         $PkRankingInfo->setRanking($data['Ranking']);
         $PkRankingInfo->setName($data['Name']);
