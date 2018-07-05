@@ -1018,13 +1018,14 @@ message RankdataListProto{
 }
 message RankDataProto{
     int32 Rank=1;
-    int64 Value=2;
-    int32 Value1=3;
-    int32 Value2=4;
-    int32 Value3=5;
+    int32 Level=2;
+    int32 Income=3;
+    string CommerceName=4;
+    string Win=5;
     string RoleId=6;
     string Name=7;
     string Icon=8;
+    int32 PKPingCount=9;
 }
 message RedPacketProtocol{
 

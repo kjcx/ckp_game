@@ -12,7 +12,6 @@ use App\Utility\Cache;
 use EasySwoole\Config;
 use EasySwoole\Core\Swoole\Coroutine\PoolManager;
 use App\Models\Model;
-use MongoDB\BSON\ObjectId;
 
 class DataCenter extends Model
 {
@@ -21,11 +20,13 @@ class DataCenter extends Model
     private $serverHash;
     private $cache;
     private $dataCenterServer;
+    private $serverIp;
 
     public function __construct()
     {
         parent::__construct();
         $this->dataCenterKey = Config::getInstance()->getConf('rediskeys.data_center') . ':_id:5b3b63899a89201500501ba1';
+        $this->serverIp = Config::getInstance()->getConf('SERVER_CONF.server_address');
         $this->serverHash = Config::getInstance()->getConf('SERVER_CONF.server_hash'); //设置机器hash
         $this->cache = Cache::getInstance();
         $this->dataCenterServer = 'dataCenterHash:serverHash:' . $this->serverHash;//当前机器的hash列表
@@ -46,12 +47,13 @@ class DataCenter extends Model
      * @param $uid
      * @return bool
      */
-    private function checkUserIsOnline($uid) : bool
+    private function checkUserIsOnline($uid)
     {
-        if ($this->cache->client('write')->hGet($this->dataCenterKey,$uid)) {
-            return true;
+        $clientInfo  = $this->cache->client('write')->hGet($this->dataCenterKey,$uid);
+        if ($clientInfo == false) {
+            return false;
         }
-        return false;
+        return $clientInfo;
     }
 
     /**
@@ -59,9 +61,13 @@ class DataCenter extends Model
      */
     private function userOnline($uid,$fd)
     {
-        $value = ['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd];
+        $value = ['serverHash' => $this->serverHash,'uid' => $uid,'fd' => $fd,'serverIp' => $this->serverIp];
         //设置到总的数据中心 以uid为hash的index
-
+        $checkOnline = $this->checkUserIsOnline($uid);
+        if ($checkOnline) {
+            //在线 踢下线
+            //todo::踢下线操作
+        }
         if ($this->cache->hashSet($this->dataCenterKey,$uid,$value,false)) {
             //设置到当前机器的用户中心
             if ($this->cache->hashSet($this->dataCenterServer,$fd,$value,false)) {
@@ -135,7 +141,7 @@ class DataCenter extends Model
         if ($clientInfo) {
             return $clientInfo['uid'];
         }
-        return '';
+        return false;
     }
 
     /**

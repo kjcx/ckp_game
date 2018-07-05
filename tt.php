@@ -7,7 +7,12 @@
  */
 $redis = new Redis();
 $redis->connect('127.0.0.1','6379');
-$redis->select(1);
-$value = ['uid' => 115,'fd' => 25 ,'serverHash' => 1];
-$redis->hSet('datacenter','115',json_encode($value));
+$task = '';
+$keys = $redis->keys('bagList:uid:*');
 
+foreach ($keys as $key) {
+    $task = "bagList|hash|set|{$key}|1";
+    $redis->lPush('DataList',$task);
+}
+
+echo 'ok';

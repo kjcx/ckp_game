@@ -45,6 +45,7 @@ use App\Models\LandInfo\MyLandInfo;
 use App\Models\Npc\NpcInfo;
 use App\Models\Npc\NpcTask;
 use App\Models\Pk\PkInfo;
+use App\Models\Rank\RankList;
 use App\Models\Room\Room;
 use App\Models\Sales\SalesItem;
 use App\Models\Sign\SignInfo;
@@ -154,6 +155,7 @@ use App\Protobuf\Result\GetAuctionLandResult;
 use App\Protobuf\Result\GetMailItemsResult;
 use App\Protobuf\Result\GetMapResult;
 use App\Protobuf\Result\GetPraiseRoleIdResult;
+use App\Protobuf\Result\GetRankingResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\GrowPlantsResult;
 use App\Protobuf\Result\HarvestPlanResult;
@@ -173,6 +175,7 @@ use App\Protobuf\Result\PickUpSevenDaysResult;
 use App\Protobuf\Result\PkRankingResult;
 use App\Protobuf\Result\RaffleFruitsResult;
 use App\Protobuf\Result\RandManorResult;
+use App\Protobuf\Result\RankingResult;
 use App\Protobuf\Result\ReadMailResult;
 use App\Protobuf\Result\RefDropShopResult;
 use App\Protobuf\Result\RefFitnessResult;
@@ -231,8 +234,6 @@ class Web extends WebSocketController
         if($msgid != 'msgid_1004' ){
             $dataCenter = new \App\Models\DataCenter\DataCenter();
             $this->uid = $dataCenter->getUidByFd($this->fd);
-            var_dump('12121212');
-            var_dump($this->uid);
         }
         parent::__construct($client, $request, $response);
 
@@ -2744,7 +2745,10 @@ class Web extends WebSocketController
     public function msgid_1094()
     {
         $data = RankingReq::decode($this->data);
+        $rankList = new RankList();
+        $res = $rankList->getData($data['ranKingType']);
 
+        $this->send(1132,$this->fd,RankingResult::encode($res,$data['ranKingType']));
     }
 
     /**
@@ -2752,7 +2756,7 @@ class Web extends WebSocketController
      */
     public function msgid_1095()
     {
-
+        $this->send(1131,$this->fd,GetRankingResult::encode(1));
     }
 
     /**

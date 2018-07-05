@@ -16,9 +16,9 @@ use App\Process\Subscribe;
 use App\Utility\MysqlPool;
 use App\Utility\RedisPool;
 use App\Websocket\Parser\WebSock;
+use EasySwoole\Core\Component\Rpc\Server;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
 use EasySwoole\Core\Component\Di;
-use EasySwoole\Core\Component\Rpc\Server;
 use EasySwoole\Core\Component\SysConst;
 use EasySwoole\Core\Swoole\EventHelper;
 use EasySwoole\Core\Swoole\Process\ProcessManager;
@@ -104,18 +104,11 @@ Class EasySwooleEvent implements EventInterface {
             var_dump('fd'.'-'.$fd);
         });
 
-<<<<<<< HEAD
-//创建rpc服务
-        Server::getInstance()->addService('A',9999,'')
-                    ->attach();
-=======
-        //创建rpc服务
 //        Server::getInstance()->addService('A',9502,'password123','192.168.31.119')
 //                    ->attach();
         // TODO: Implement mainServerCreate() method.
         Server::getInstance()->addService('A',9502)
             ->attach();
->>>>>>> 9457fa0f1d3757ea18c9a0c7cd596bab8f1b1a24
 
     }
 
@@ -128,11 +121,7 @@ Class EasySwooleEvent implements EventInterface {
         $Conf  = Config::getInstance();
         $files = File::scanDir($ConfPath);
         foreach ($files as $file) {
-<<<<<<< HEAD
             $data = require_once $file;
-=======
-            $data = require ($file);
->>>>>>> 9457fa0f1d3757ea18c9a0c7cd596bab8f1b1a24
             $Conf->setConf(strtolower(basename($file, '.php')), (array)$data);
         }
     }
