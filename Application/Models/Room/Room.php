@@ -229,14 +229,17 @@ class Room extends Model
         $hashKey = self::roomLogList . $this->uid;
         $keys = $this->cache->client()->hGetAll($hashKey);
         $data = [];
-        foreach ($keys as $k => $key) {
-            $item = $this->cache->stringGet($key);
-            if ($item == false) {
-                $this->cache->hashHdel($hashKey,$k);
-            } else {
-                $data[] = $item;
+        if (!empty($keys)) {
+            foreach ($keys as $k => $key) {
+                $item = $this->cache->stringGet($key);
+                if ($item == false) {
+                    $this->cache->hashHdel($hashKey,$k);
+                } else {
+                    $data[] = $item;
+                }
             }
         }
+
         return $data;
     }
     /**
@@ -311,7 +314,6 @@ class Room extends Model
         return $this->cache->stringSet($roomKey,$data);
     }
     /**
-     * todo::触发事件
      * 更新当前用户的住宅身价值
      * @param $value
      */

@@ -14,6 +14,8 @@ use App\Models\Model;
 use App\Models\User\Role;
 use App\Traits\MongoTrait;
 use App\Traits\UserTrait;
+use App\Utility\Cache;
+use MongoDB\BSON\ObjectId;
 
 class Land extends Model
 {
@@ -27,8 +29,19 @@ class Land extends Model
     const MatureStage = 3;//成熟期
     const Compost = 163;//肥料
 
+    //日志
+    const Visit = 1;//拜访
+    const LandLevelUp = 2;//升级土地
+    const AddLand = 3;//购买新土地
+    const StealStuff = 4;//偷取农作物
+
+    const landLogList = 'landLogList:uid:';//记录列表
+    const landLog = 'landLog:_id:';//记录详情
+    const logTimeOut = 172800;//日志时间
+
     public $mongoTable = 'ckzc_data.manor';
     private $item;
+    private $cache;
 
     public function __construct($uid)
     {
@@ -37,6 +50,7 @@ class Land extends Model
         $this->setRoleInfo();
         $this->collection = $this->getMongoClient();
         $this->item = new \App\Models\Excel\Item();
+        $this->cache = Cache::getInstance();
     }
 
     /**
@@ -90,10 +104,15 @@ class Land extends Model
             }
             $landInfo['name'] = $roleInfo['nickname'];
             $landInfo['time'] = time();
+            if ($this->uid != $uid) {
+                //拜访别人
+                $this->addLog(self::Visit,$this->uid,$uid,[]);
+            }
             return $landInfo;
         }
 
     }
+
     /**
      * 获得地块详情
      */
@@ -182,7 +201,7 @@ class Land extends Model
         if ($this->getUid() != $uid) {
             return ['error' => true,'msg' => 'OneselfEradicate'];
         }
-        $filter = ['uid' => $this->getUid()];
+        $filter = ['uid' => (int)$this->getUid()];
         $update = ['$set' => [
             'manor.' . ($landId - 1) . '.PlantDate' => 0,
             'manor.' . ($landId - 1) . '.SemenId' => 0,
@@ -306,8 +325,7 @@ class Land extends Model
         //更新地块
         $updateRes = $this->uploadLand($landId);
         if ($updateRes) {
-            //更新身价值 TODO::地块身价值
-
+            $this->addLog(self::AddLand,$this->getUid(),$this->getUid(),[]);
             return $landId;
         }
         return ['error' => true,'msg' => 'NotEnoughMoney'];
@@ -367,8 +385,9 @@ class Land extends Model
         ]);
         //更新身价值
         if ($res) {
-            //TODO::还没做更新身价值
-
+            $role = new Role();
+            $role->updateShenjiazhi($this->uid,$upgradeLandInfo['Status']);
+            $this->addLog(self::LandLevelUp,$this->getUid(),$this->getUid(),[]);
             return $lands['manor'][$landId - 1];
         }
 
@@ -427,6 +446,7 @@ class Land extends Model
     public function randLand()
     {
         $data = $this->mysql->orderBy("RAND()")->getOne('ckzc_role','uid');
+        $this->addLog(self::Visit,$this->getUid(),$data['uid'],[]);//增加拜访记录
         return $this->getLand($data['uid']);
 //        return $this->getLand(36);
     }
@@ -495,23 +515,69 @@ class Land extends Model
                 }
             }
         }
+        $logData = [];
+        foreach ($stealLand as $v) {
+            $logData[$v['Id']] = $v['Count'];
+        }
         $res = $this->collection->findOneAndUpdate($filter,$update);
-        return empty($res) ? false : $stealLand;
+        if (!empty($res)) {
+            $this->addLog(self::StealStuff,$this->uid,$uid,$logData);//增加拜访记录
+            return $stealLand;
+        }
+        return false;
     }
 
     /**
-     * todo::偷取写入内容还没确定
-     * 偷取日志功能 可以是偷取日志 也可以是收获日志
-     * @param $uid 被偷取的uid
-     * @param $stealId 偷取人的uid
+     * 获取日志
      */
-    private function stealLog($uid,$stealId)
+    public function getLog()
     {
-        $str = time() . mt_rand(1,9999);//生成唯一的key
-        $stringKey = 'manorStealLogDetail:' . $uid . ':' . substr(md5($str), 8, 16);
-        $value = 'xxx偷了你的菜';
-        $this->redis->set($stringKey,$value,60 * 60 * 24 *2); //保留48小时
-        $key = 'manorStealLog:' . $uid;
-        $this->redis->zAdd($key,time(),$stringKey);
+        $hashKey = self::landLogList . $this->uid;
+        $keys = $this->cache->client()->hGetAll($hashKey);
+        $data = [];
+        if (!empty($keys)) {
+            foreach ($keys as $k => $key) {
+                $item = $this->cache->stringGet($key);
+                if ($item == false) {
+                    $this->cache->hashHdel($hashKey,$k);
+                } else {
+                    $data[] = $item;
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * @param $type
+     * @param $roleId 拜访人的id 如果是升级之类的日志  和下面是一样的
+     * @param $visite 被拜访人的id
+     * @param $value 数组 [itemid => num]
+     * @return bool
+     */
+    private function addLog($type,$roleId,$visiteId,$value)
+    {
+        $key = self::landLog . (string)(new ObjectId());//详情key
+        $hashKey = self::landLogList . $visiteId; //列表key
+        $role = new Role();
+        if ($roleId == $visiteId) {
+            $roleInfo = $this->roleInfo;
+        } else {
+            $roleInfo = $role->getRole($roleId);
+        }
+        //定义数据
+        $data = [
+            'uid' => $roleId,
+            'name' => $roleInfo['nickname'],
+            'time' => time(),
+            'type' => $type,
+            'value1' => 5,
+            'value2' => 6,
+            'itmecount' => $value,
+            'status' => 8
+        ];
+        $this->cache->stringSet($key,$data,self::logTimeOut);
+        $this->cache->hashSet($hashKey,time(),$key);
+        return true;
     }
 }
