@@ -54,7 +54,7 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     /**
      *居民id
      *
-     * Generated from protobuf field <code>repeated string NpcId = 10;</code>
+     * Generated from protobuf field <code>repeated int32 NpcId = 10;</code>
      */
     private $NpcId;
 
@@ -268,7 +268,7 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     /**
      *居民id
      *
-     * Generated from protobuf field <code>repeated string NpcId = 10;</code>
+     * Generated from protobuf field <code>repeated int32 NpcId = 10;</code>
      * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getNpcId()
@@ -279,13 +279,13 @@ class LoadCompanyInfo extends \Google\Protobuf\Internal\Message
     /**
      *居民id
      *
-     * Generated from protobuf field <code>repeated string NpcId = 10;</code>
-     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * Generated from protobuf field <code>repeated int32 NpcId = 10;</code>
+     * @param int[]|\Google\Protobuf\Internal\RepeatedField $var
      * @return $this
      */
     public function setNpcId($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::INT32);
         $this->NpcId = $arr;
 
         return $this;

@@ -66,8 +66,6 @@ class JoinGameResult
 //        居民
             $NpcInfo = new \App\Models\Npc\NpcInfo();
             $NpcId = $NpcInfo->getRedisNpcAppointed($uid);
-            var_dump("npcidnpcid");
-            var_dump($NpcId);
             $data_Company['NpcId'] = $NpcId;
         }
         $CompanyInfo = LoadCompanyInfo::encode($data_Company);

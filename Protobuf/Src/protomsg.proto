@@ -2023,7 +2023,7 @@ message LoadCompanyInfo{
     int32 ShopNumber=7;
     int64 CompanyValue=8;
     repeated string TalkGroupId=9;//谈判团id
-    repeated string NpcId=10;//居民id
+    repeated int32 NpcId=10;//居民id
 }
 message LoadDepartMentInfo{
     FinanceInfo FinanceInfo=1;
