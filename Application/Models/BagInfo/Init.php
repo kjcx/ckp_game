@@ -32,7 +32,6 @@ class Init extends Model
     public function getInitData()
     {
         $data = $this->collection->findOne();
-        var_dump($data);
         return $data;
     }
 }

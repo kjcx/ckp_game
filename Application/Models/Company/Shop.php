@@ -407,11 +407,13 @@ class Shop extends Model
     /**
      * 更新店铺收获时间
      * @param $ShopId
+     * @param $PurchaseItmeDate
+     * @param $OutputGoldDate
      * @return int|string
      */
-    public function setPurchaseItmeDate($ShopId)
+    public function setPurchaseItmeDate($ShopId,$PurchaseItmeDate,$OutputGoldDate)
     {
-        $rs = Db::table($this->table)->where('ShopId',$ShopId)->update(['PurchaseItmeDate'=>time()]);
+        $rs = Db::table($this->table)->where('ShopId',$ShopId)->update(['PurchaseItmeDate'=>$PurchaseItmeDate,'OutputGoldDate'=>$OutputGoldDate]);
         return $rs;
     }
 }

@@ -42,7 +42,6 @@ class MailMsg extends Model
         $data['SenderIcon'] = $GameConfig->getMailNpcHead();
         $data['SenderName'] = $GameConfig->getMailNpcName();
         $data['SenderId'] = 'system';
-
         var_dump($data);
         $rs = Db::table($this->table)->insert($data);
         if($rs){
@@ -51,7 +50,6 @@ class MailMsg extends Model
             $data['_id'] = $Id;
             //通知用户 如果在线
             $UserEvent = new UserEvent($data['Uid']);
-
             $UserEvent->MailResultEvent($data);
 
             $this->setRedisMail($data['Uid'],$data);

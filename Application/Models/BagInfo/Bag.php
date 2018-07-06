@@ -134,7 +134,6 @@ class Bag extends Model
         $gold = $this->createBagItem($initData['gold']['id'],$initData['gold']['count']);
         $this->cache->stringSet($gold['key'],$gold['data']);
         $this->cache->hashSet($this->bagListKey,$gold['data']['id'],$gold['key']);
-
         return true;
     }
 

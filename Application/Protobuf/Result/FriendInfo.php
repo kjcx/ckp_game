@@ -19,46 +19,48 @@ class FriendInfo
     {
 
         $FriendInfo = new \AutoMsg\FriendInfo();
-        $Name = $data['nickname'];
-        $Level = $data['level'];
-        $SocialStatus = $data['shenjiazhi'];
-        if(isset($data['FriendStatus'])){
-            $Status = $data['FriendStatus'];
-        }else{
-            $Status = 3;
-        }
-        if(isset($data['AddTime'])){
-            $AddTime = $data['AddTime'];
-        }else{
-            $AddTime = time();
-        }
-
-        if(isset($data['ApplyTime'])){
-            $ApplyTime = $data['ApplyTime'];
-        }else{
-            if($Status == 1){
-                $ApplyTime = time();
+        if($data){
+            $Name = $data['nickname'];
+            $Level = $data['level'];
+            $SocialStatus = $data['shenjiazhi'];
+            if(isset($data['FriendStatus'])){
+                $Status = $data['FriendStatus'];
             }else{
-                $ApplyTime = 0;
+                $Status = 3;
+            }
+            if(isset($data['AddTime'])){
+                $AddTime = $data['AddTime'];
+            }else{
+                $AddTime = time();
             }
 
+            if(isset($data['ApplyTime'])){
+                $ApplyTime = $data['ApplyTime'];
+            }else{
+                if($Status == 1){
+                    $ApplyTime = time();
+                }else{
+                    $ApplyTime = 0;
+                }
+
+            }
+            $Icon = $data['icon'];
+            $RoleId = $data['uid'];
+            $ShopId = $data['shopid'];// 打工店铺
+            $VIP = $data['vip'];
+            $WorkCompany = 'KJCX';//打工公司
+            $FriendInfo->setName($Name);
+            $FriendInfo->setLevel((int)$Level);
+            $FriendInfo->setSocialStatus($SocialStatus);
+            $FriendInfo->setStatus($Status);
+            $FriendInfo->setAddTime($AddTime);
+            $FriendInfo->setApplyTime($ApplyTime);
+            $FriendInfo->setIcon($Icon);
+            $FriendInfo->setRoleId($RoleId);
+            $FriendInfo->setShopId($ShopId);
+            $FriendInfo->setVIP($VIP);
+            $FriendInfo->setWorkCompany($WorkCompany);
         }
-        $Icon = $data['icon'];
-        $RoleId = $data['uid'];
-        $ShopId = $data['shopid'];// 打工店铺
-        $VIP = $data['vip'];
-        $WorkCompany = 'KJCX';//打工公司
-        $FriendInfo->setName($Name);
-        $FriendInfo->setLevel((int)$Level);
-        $FriendInfo->setSocialStatus($SocialStatus);
-        $FriendInfo->setStatus($Status);
-        $FriendInfo->setAddTime($AddTime);
-        $FriendInfo->setApplyTime($ApplyTime);
-        $FriendInfo->setIcon($Icon);
-        $FriendInfo->setRoleId($RoleId);
-        $FriendInfo->setShopId($ShopId);
-        $FriendInfo->setVIP($VIP);
-        $FriendInfo->setWorkCompany($WorkCompany);
         return $FriendInfo;
     }
 }

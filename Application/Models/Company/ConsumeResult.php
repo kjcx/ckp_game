@@ -11,6 +11,7 @@ namespace App\Models\Company;
 
 use App\Models\Excel\BuildingLevel;
 use App\Models\Excel\Drop;
+use App\Models\Excel\GameConfig;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\Model;
 use App\Models\Staff\Staff;
@@ -37,15 +38,21 @@ class ConsumeResult extends Model
         $Shop = new Shop();
         $data_shop = $Shop->getInfoById($ShopId);
 
-        $PurchaseItmeDate = $data_shop['PurchaseItmeDate'];
-        $cishu = (time() - $PurchaseItmeDate) % (2 * 3600);
+        $PurchaseItmeDate = $data_shop['PurchaseItmeDate'];//道具收获时间
+        $OutputGoldDate = $data_shop['OutputGoldDate'];//金币收获时候
+
+        $GameConfig = new GameConfig();
+        $ItemInterval = $GameConfig->getItemInterval();//店铺道具产出间隔
+        $GoldInterval = $GameConfig->getGoldInterval();//金币产出时间
+        $Gold_num = (time() - $OutputGoldDate) % ($GoldInterval * 60);
+        $Item_num = (time() - $PurchaseItmeDate) % ($ItemInterval * 60);
         $num = $this->getAllCustomerAddtion($Uid,$ShopId);
         $BuildingLevel = new BuildingLevel();
 
         $data_item = $BuildingLevel->getInfoByLevel($data_shop['Level']);
         $Count = floor($data_item['GoldStock'] * (1 + $num/500));//金币
 
-        $Gold = $Count * $num;
+        $Gold = $Count * $Gold_num;//金币时间
 
         $ShopType = $data_shop['ShopType'];
         $Field = $this->type[$ShopType];
@@ -54,7 +61,7 @@ class ConsumeResult extends Model
         $arr = explode(';',$str);
         $list = [];
         $Gold2 = [];
-        for ($i=0;$i<$cishu;$i++){
+        for ($i=0;$i<$Item_num;$i++){
             //计算非绑金收益
             $data_rand_item = $BuildingLevel->getRand($data_shop['Level']);//非绑金
             if($data_rand_item){
@@ -94,7 +101,8 @@ class ConsumeResult extends Model
         if($Gold2){
             $list[$Gold2[2]] = $Gold2['Count'];
         }
-        return ['ShopId'=>$ShopId,'ItemCount'=>$list,'PurchaseItmeDate'=>($PurchaseItmeDate + $cishu * 2 *3600)];
+
+        return ['ShopId'=>$ShopId,'ItemCount'=>$list,'PurchaseItmeDate'=>($PurchaseItmeDate + $Item_num * 60),'OutputGoldDate'=>$OutputGoldDate + $Gold_num *60];
     }
 
     /**

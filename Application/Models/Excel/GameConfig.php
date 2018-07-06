@@ -124,5 +124,23 @@ class GameConfig extends Model
         return $MaxTrainTime;
     }
 
+    /**
+     * 店铺道具产出间隔（分钟
+     */
+    public function getItemInterval()
+    {
+        $data_GameConfig = $this->getInfoByField('ItemInterval');
+        $ItemInterval = $data_GameConfig['value'];
+        return $ItemInterval;
+    }
 
+    /**
+     * 店铺金币（绑金和非绑金）产出间隔（分钟
+     */
+    public function getGoldInterval()
+    {
+        $data_GameConfig = $this->getInfoByField('GoldInterval');
+        $GoldInterval = $data_GameConfig['value'];
+        return $GoldInterval;
+    }
 }

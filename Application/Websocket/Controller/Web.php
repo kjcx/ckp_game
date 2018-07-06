@@ -1223,7 +1223,7 @@ class Web extends WebSocketController
         $Shop = new \App\Models\Company\Shop();
         foreach ($data_Harvest as $ShopId) {
             $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$ShopId);
-            $Shop->setPurchaseItmeDate($ShopId,$data_ConsumeResult['PurchaseItmeDate']);//设置收获时间
+            $Shop->setPurchaseItmeDate($ShopId,$data_ConsumeResult['PurchaseItmeDate'],$data_ConsumeResult['OutputGoldDate']);//设置收获时间
             $list[] = $data_ConsumeResult;
         }
         $str = HarvestPublicShopResult::encode($list);

@@ -76,16 +76,13 @@ class JoinGameResult
         }
         $CompanyInfo = LoadCompanyInfo::encode($data_Company);
         $JoinGameResult->setCompanyInfo($CompanyInfo);
-        var_dump(1);
         //店铺
         $MapInfo = GetMapResult::encode($uid,2);//店铺
         $JoinGameResult->setMapInfo($MapInfo);
-        var_dump(2);
         //店铺主管信息
         $Shop = new Shop();
         $TalentDatas = $Shop->getMasterByUid($uid);
         $JoinGameResult->setTalentDatas($TalentDatas);
-        var_dump(3);
         //招聘抽奖
         $TypeCountStaff = TypeCountStaffResult::encode($uid);
         $JoinGameResult->setTypeCountStaff($TypeCountStaff);

@@ -26,13 +26,13 @@ class LoadConsumeData
         foreach ($ItemCount as $item) {
             $map[$item['ItemId']] = $item['Count'];
         }
-//        $HarvestDate = $data['HarvestDate'];
+        $HarvestDate = $data['OutputGoldDate'];
         $ItmeDate = $data['PurchaseItmeDate'];
         $LoadConsumeData->setShopId($ShopId);//店铺id
 //        $LoadConsumeData->setMoney($Money);//产出的钱
 //        $LoadConsumeData->setMoneyType($MoneyType);//产出的钱的类型
         $LoadConsumeData->setItemCount($map);//产出的道具
-//        $LoadConsumeData->setHarvestDate($HarvestDate);//收获时间
+        $LoadConsumeData->setHarvestDate($HarvestDate);//设置金币收获时间
         $LoadConsumeData->setItmeDate($ItmeDate);//道具产出时间
         return $LoadConsumeData;
     }

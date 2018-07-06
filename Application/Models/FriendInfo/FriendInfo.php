@@ -268,14 +268,17 @@ class FriendInfo extends Model
     public function SearchFriend($Uid,$data)
     {
         $uids = $this->getFriendUid($Uid);
-
         $uids[] = $Uid;
         $Role = new Role();
         $Name = $data['Name'];
         $Search  = $data['Search'];
         $data = $Role->SearchFriend($Uid,$data);
-//        var_dump($data);
-        return $data;
+        if($data){
+            return [$data];
+        }else{
+            return [];
+        }
+
     }
 
     /**
@@ -330,4 +333,6 @@ class FriendInfo extends Model
         }
 
     }
+
+
 }

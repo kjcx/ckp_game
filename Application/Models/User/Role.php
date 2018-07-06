@@ -91,7 +91,7 @@ class Role extends Model
                 $Bag = new Bag($uid);
                 $res = $Bag->initBag();
                 if($res){
-                    return $rs;
+                    return true;
                 }else{
                     if($Bag->getBag()){
                         return true;
@@ -221,19 +221,18 @@ class Role extends Model
             }else{
                 $data = [];
             }
+            return [$data];
         }else{//推荐
-//            $data = $this->mysql->where('uid',$uid,'<>')->orderBy("RAND ()")->get($this->table,5);
             $Uids = $this->sRandMember(5);
             if(in_array($uid,$Uids)){
                 $uid_new  = $this->sRandMember(1);
                 $Uids[] = $uid_new[0];
             }
-
             $data = $this->getRoleByUids($Uids);
+            var_dump($data);
+            return $data;
         }
-        return $data;
     }
-
     /**
      * 按用户昵称搜索
      * @param $UserName

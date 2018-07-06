@@ -52,6 +52,8 @@ class UserAttr extends Model
 
         }
         $key = $this->UserAttr . $Uid;
+        var_dump("data_user_attr_id");
+        var_dump($data_user_attr_id);
         $arr = $this->cache->hashMset($key,$data_user_attr_id);
         return $arr;
         $data['uid'] = $Uid;
@@ -105,7 +107,6 @@ class UserAttr extends Model
         $arr['3'] = 'Pants';
         $arr['4'] = 'Parts';
         if(stripos(',',$Parts)){
-            //
             return $arr['2'];
         }else{
             return $arr[$Parts];
