@@ -19,8 +19,12 @@ class TalkingGroupResidentReq
     {
         $TalkingGroupResidentReq = new \AutoMsg\TalkingGroupResidentReq();
         $TalkingGroupResidentReq->mergeFromString($data);
-        $Ids = $TalkingGroupResidentReq->getIds();
+        $Ids = $TalkingGroupResidentReq->getIds()->getIterator();
         $Replace = $TalkingGroupResidentReq->getReplace();
-        return ['Ids'=>$Ids,'$Replace'=>$Replace];
+        $new = [];
+        foreach ($Ids as $id) {
+            $new[] = $id;
+        }
+        return ['Ids'=>$new,'Replace'=>$Replace];
     }
 }

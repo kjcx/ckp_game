@@ -12,6 +12,7 @@ use App\Models\Company\Company;
 use App\Models\Company\Shop;
 use App\Models\Room\Room;
 use App\Models\Staff\LottoLog;
+use App\Models\Staff\Staff;
 use App\Models\User\FriendApply;
 use App\Models\User\Role;
 
@@ -55,6 +56,17 @@ class JoinGameResult
         //公司
         $Company = new Company();
         $data_Company = $Company->getCompany($uid);
+        if($data_Company){
+            //查询谈判团npc 和居民
+            $Staff = new Staff();
+//            npc
+            $TalkGroupId = $Staff->getTalkingGroupNpc($uid);
+            $data_Company['TalkGroupId'] = $TalkGroupId;
+//        居民
+            $NpcInfo = new \App\Models\Npc\NpcInfo();
+            $NpcId = $NpcInfo->getRedisNpcAppointed($uid);
+            $data_Company['NpcId'] = $NpcId;
+        }
         $CompanyInfo = LoadCompanyInfo::encode($data_Company);
         $JoinGameResult->setCompanyInfo($CompanyInfo);
         //店铺

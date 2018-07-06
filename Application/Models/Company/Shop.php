@@ -272,7 +272,7 @@ class Shop extends Model
      */
     public function getMaster($ShopId)
     {
-        $where['_id'] = new ObjectId($ShopId);
+        $where['_id'] = $ShopId;
         $data = Db::table($this->table)->where($where)->find();
         if($data['Master']){
             return $data['Master'][0];

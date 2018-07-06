@@ -10,9 +10,12 @@ namespace App\Models\Company;
 
 
 use App\Models\Excel\BuildingLevel;
+use App\Models\Excel\Drop;
 use App\Models\FriendInfo\FriendInfo;
 use App\Models\Model;
 use App\Models\Staff\Staff;
+use App\Models\Store\DropStaff;
+use App\Models\Store\DropStore;
 use App\Models\User\Role;
 use think\Db;
 
@@ -36,11 +39,33 @@ class ConsumeResult extends Model
         $Shop = new Shop();
         $data_shop = $Shop->getInfoById($ShopId);
         $data_item = $BuildingLevel->getInfoByLevel($data_shop['Level']);
-        $Count = floor($data_item['Count'] * (1 + $num/500));
+        $Count = floor($data_item['GoldStock'] * (1 + $num/500));//金币
         $ShopType = $data_shop['ShopType'];
-        $data_rand_item = $BuildingLevel->getRand($data_shop['Level']);
+        $data_rand_item = $BuildingLevel->getRand($data_shop['Level']);//非绑金
         $Field = $this->type[$ShopType];
-        return ['ItemId'=>$data_item['ItemId'],'Count'=>$Count];
+        //读取对应的字段
+        $str = $data_item[$Field];
+        $arr = explode(';',$str);
+        $new = [];
+        foreach ($arr as $item) {
+            $res = explode(',',$item);
+            $DropId = $res[0];
+            $num = $res[1];
+            for($i=0;$i<$num;$i++){
+                $new[] = $DropId;
+            }
+        }
+        mt_srand();
+        $DropId = $new[array_rand($new)];
+        $Drop = new Drop();
+        $data_drop = $Drop->getRandDropLib($DropId);//道具
+        if($Count){
+            $data_drop[6] = $Count;
+        }
+        if($data_rand_item){
+            $data_drop[$data_rand_item['ItemId']] = $data_rand_item['Count'];
+        }
+        return ['ShopId'=>$ShopId,'ItemCount'=>$data_drop,'ItmeDate'=>time()];
     }
 
     /**

@@ -49,7 +49,7 @@ class Staff extends Model
             //2 获取掉落库信息
             $Info = $DropStaff->getDropLibInfo($arr);
             //3 随机获取 员工id
-            $arr = $DropStaff->getRadnDropLib($Info);
+            $arr = $DropStaff->getRandDropLib($Info);
             //4. 获取员工信息
             $StaffInfo = $DropStaff->getStaffInfo($arr);
             //5 插入数据库
@@ -371,5 +371,21 @@ class Staff extends Model
             }
         }
         return $zong;
+    }
+
+    /**
+     * 获取谈判团npc
+     * @param $Uid
+     * @return array
+     */
+    public function getTalkingGroupNpc($Uid)
+    {
+        $ShopId  = $this->TalkGroupName . $Uid;
+        $data = Db::table($this->table)->where('Uid',$Uid)->where('ShopId',$ShopId)->select();
+        $NpcIds = [];
+        foreach ($data as $datum) {
+            $NpcIds[] = (string)$datum['_id'];
+        }
+        return $NpcIds;
     }
 }

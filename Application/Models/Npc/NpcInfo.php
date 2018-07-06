@@ -199,9 +199,9 @@ class NpcInfo extends Model
      */
     public function getRedisNpcAppointed($Uid)
     {
-        $arr = $this->getRedisNpcList($Uid);
+        $data = $this->getRedisNpcList($Uid);
         $DownId = [];
-        foreach ($arr as $item) {
+        foreach ($data as $item) {
             if($item['Appointed']){
                 $DownId[] = $item['NpcId'];
             }
@@ -221,6 +221,7 @@ class NpcInfo extends Model
             $key = $this->key . $Uid;
             foreach ($DownId as $item) {
                 $str = $this->cache->client()->hGet($key,$item);
+                var_dump($str);
                 $arr = unserialize($str);
                 $arr['Appointed'] = false;
                 $this->cache->hashSet($key,$item,serialize($arr));
@@ -237,15 +238,21 @@ class NpcInfo extends Model
      */
     public function setRedisNpcAppointed($Uid,$Ids)
     {
+        var_dump($Ids);
         if($Ids){
             $key = $this->key . $Uid;
             foreach ($Ids as $id) {
                 $str = $this->cache->client()->hGet($key,$id);
+                var_dump($str);
                 $arr = unserialize($str);
                 $arr['Appointed'] = true;
+                var_dump($key);
                 $this->cache->hashSet($key,$id,serialize($arr));
+                var_dump($id);
+
             }
         }
         return true;
     }
+
 }

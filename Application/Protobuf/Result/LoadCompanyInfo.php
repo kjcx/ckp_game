@@ -23,6 +23,8 @@ class LoadCompanyInfo
             $Desc = $data['Desc'];
             $Icon = $data['Icon'];
             $Level = $data['Level'];
+            $NpcId = $data['NpcId'];//谈判团助战
+            $TalkGroupId = $data['TalkGroupId'];//谈判团队伍
             $ClientValue = $data['ClientValue']?:0;
 //            var_dump('ClientValueClientValue');
             $ShopNumber = $data['ShopNumber']?:0;
@@ -38,6 +40,8 @@ class LoadCompanyInfo
             $LoadCompanyInfo->setStaffNumber($StaffNumber);//当前员工数量
             $LoadCompanyInfo->setCompanyValue($CompanyValue);//公司身价
             $LoadCompanyInfo->setCreateTime($CreateTime);//创建时间
+            $LoadCompanyInfo->setNpcId($NpcId);
+            $LoadCompanyInfo->setTalkGroupId($TalkGroupId);
         }
         return $LoadCompanyInfo;
     }

@@ -351,8 +351,8 @@ class Role extends Model
     public function getShenjiazhi($Uid)
     {
         $RoleInfoKey = $this->RoleInfoKey . $Uid;
-        $info = $this->cache->client()->hGet($RoleInfoKey,'shenjiazhi');
-        return $info['shenjiazhi'];
+        $data['shenjiazhi'] = $this->cache->client()->hGet($RoleInfoKey,'shenjiazhi');
+        return $data;
     }
 
     /**这些都是GM命令 高能 慎入**/

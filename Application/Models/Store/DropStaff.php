@@ -121,7 +121,7 @@ class DropStaff extends Model
      * @param $DropLib
      * @return array
      */
-    public function getRadnDropLib($DropLib)
+    public function getRandDropLib($DropLib)
     {
         $arr = explode(';',$DropLib);
         foreach ($arr as $item) {

@@ -16,6 +16,7 @@ use App\Models\Trade\Shop;
 use App\Traits\MongoTrait;
 use EasySwoole\Config;
 use EasySwoole\Core\Component\Di;
+use think\Db;
 
 class DropStore extends Model
 {
@@ -37,7 +38,6 @@ class DropStore extends Model
         $this->collection = $this->getMongoClient();
         $this->setDiscount(); //设置折扣信息
     }
-
 
 
     /**

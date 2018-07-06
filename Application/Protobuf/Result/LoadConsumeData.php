@@ -8,23 +8,31 @@
 
 namespace App\Protobuf\Result;
 
-
+/**
+ * 店铺产出道具
+ * Class LoadConsumeData
+ * @package App\Protobuf\Result
+ */
 class LoadConsumeData
 {
     public static function encode($data)
     {
         $LoadConsumeData = new \AutoMsg\LoadConsumeData();
         $ShopId = $data['ShopId'];
-        $Money = $data['Money'];
-        $MoneyType = $data['MoneyType'];
+//        $Money = $data['Money'];
+//        $MoneyType = $data['MoneyType'];
         $ItemCount = $data['ItemCount'];
+        $map = [];
+        foreach ($ItemCount as $item) {
+            $map[$item['ItemId']] = $item['Count'];
+        }
         $HarvestDate = $data['HarvestDate'];
         $ItmeDate = $data['ItmeDate'];
         $LoadConsumeData->setShopId($ShopId);//店铺id
-        $LoadConsumeData->setMoney($Money);//产出的钱
-        $LoadConsumeData->setMoneyType($MoneyType);//产出的钱的类型
-        $LoadConsumeData->setItemCount($ItemCount);//产出的道具
-        $LoadConsumeData->setHarvestDate($HarvestDate);//收获时间
+//        $LoadConsumeData->setMoney($Money);//产出的钱
+//        $LoadConsumeData->setMoneyType($MoneyType);//产出的钱的类型
+        $LoadConsumeData->setItemCount($map);//产出的道具
+//        $LoadConsumeData->setHarvestDate($HarvestDate);//收获时间
         $LoadConsumeData->setItmeDate($ItmeDate);//道具产出时间
         return $LoadConsumeData;
     }

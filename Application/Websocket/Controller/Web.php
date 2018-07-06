@@ -162,6 +162,7 @@ use App\Protobuf\Result\GetRankingResult;
 use App\Protobuf\Result\GetTalentListResult;
 use App\Protobuf\Result\GrowPlantsResult;
 use App\Protobuf\Result\HarvestPlanResult;
+use App\Protobuf\Result\HarvestPublicShopResult;
 use App\Protobuf\Result\JoinGameResult;
 use App\Protobuf\Result\LoadStaffResult;
 use App\Protobuf\Result\ManorVisitInfoResult;
@@ -1218,16 +1219,12 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_Harvest = HarvestPublicShopReq::decode($data);
         $ConsumeResult = new ConsumeResult();
-//        string ShopId=1;店铺id
-//    int32 HarvestDate=2;收获时间
-//    int32 Surplus=3;（上个版本的字段目前没用）
-//    map<int32, int64> ItemCount=4;产出的道具
-//    int32 ItmeDate=5;道具产出时间
-//    int64 Money=6;产出的钱
-//    int32 MoneyType=7;产出的钱的类型（可能是金币可能是钞票）
+        $data_ConsumeResult = [];
         foreach ($data_Harvest as $item) {
-            $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$item);
+            $data_ConsumeResult[] = $ConsumeResult->getConsumeResult($this->uid,$item);
         }
+        $str = HarvestPublicShopResult::encode($data_ConsumeResult);
+        $this->send(1197,$this->fd,$str);
     }
     /**
      * 加载所有员工
@@ -2805,9 +2802,15 @@ class Web extends WebSocketController
         $data_Resident = TalkingGroupResidentReq::decode($data);
         //换下来的居民
         $NpcInfo = new NpcInfo();
-        $DownId = $NpcInfo->getRedisNpcAppointed($this->uid);
+        if($data_Resident['Replace']){
+            $DownId = $NpcInfo->getRedisNpcAppointed($this->uid);
+        }else{
+            $DownId = [];
+        }
+
         //换人
         $rs = $NpcInfo->CancelAppointedAll($this->uid,$DownId);
+
         $rs = $NpcInfo->setRedisNpcAppointed($this->uid,$data_Resident['Ids']);
         if($rs){
             $str = TalkingGroupResidentResult::encode(['Ids'=>$data_Resident['Ids'],'DownId'=>$DownId]);

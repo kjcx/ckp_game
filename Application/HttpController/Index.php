@@ -11,6 +11,7 @@ use App\Event\ChangeItemEvent;
 use App\Event\ChangeItemSubscriber;
 use App\Event\ItemEvent;
 use App\Models\BagInfo\Bag;
+use App\Models\Company\ConsumeResult;
 use App\Models\Company\Shop;
 use App\Models\DataCenter\DataCenter;
 use App\Models\Excel\BuildingLevel;
@@ -49,8 +50,8 @@ class Index extends Controller
      */
     public function index()
     {
-        $NpcTask = new BuildingLevel();
-        var_dump($NpcTask->getRand());
+        $a = new ConsumeResult();
+        $a->getConsumeResult(112,'5b3c8c86eb836f321b121843');
     }
     public function rand_str()
     {
