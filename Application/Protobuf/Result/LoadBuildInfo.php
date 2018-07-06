@@ -54,6 +54,7 @@ class LoadBuildInfo
         $LoadBuildInfo->setIncome($Income);//店铺身价
         $LoadBuildInfo->setRoleName($RoleName);
         $LoadBuildInfo->setRoleId($Uid);
+//        $LoadBuildInfo->setOutputGoldDate();
         if(is_array($data['Master'])){
             $Master = $data['Master'];
         }else{

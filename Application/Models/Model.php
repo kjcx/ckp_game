@@ -26,8 +26,4 @@ class Model
         Db::setConfig($dbConf);
 
     }
-
-
-
-
 }

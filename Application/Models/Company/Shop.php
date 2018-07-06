@@ -63,6 +63,7 @@ class Shop extends Model
         $dataCompany['ShopType'] = $data['ShopType'];
         $Building = new Building();
         $data_Building = $Building->getType($data['ShopType']);
+
         $dataCompany['Name'] = $data_Building['Name'];
         $dataCompany['Income'] = $data_Building['Income'];//身价
         $dataCompany['OutputItem'] = $data_Building['OutputItem'];//可能掉落的道具
@@ -71,8 +72,8 @@ class Shop extends Model
 //        $dataCompany['Area'] = 2;//私有的2 土地竞拍的1
         //员工上线人数
         $BuildingLevel = new BuildingLevel();
-        $data_BuildingLevel = $BuildingLevel->getInfoByLevel();
-//        var_dump($data_BuildingLevel);
+        $data_BuildingLevel = $BuildingLevel->getInfoByLevel($dataCompany['Level']);
+        var_dump($data_BuildingLevel);
         $dataCompany['EmployeeLimit'] = $data_BuildingLevel['ClerkNums'];//员工上线
         $dataCompany['GoldStock'] = $data_BuildingLevel['GoldStock'];//金币库存上线
         $dataCompany['ItemStock'] = $data_BuildingLevel['ItemStock'];//道具库存上线
@@ -84,6 +85,7 @@ class Shop extends Model
         $dataCompany['Master'] = [];//初始化经理
         $dataCompany['LeaderTime'] = 0;//雇佣开始时间
         $dataCompany['CurExtendLv'] = 0;//扩展等级
+        var_dump($dataCompany);
         $rs = Db::table($this->table)->insert($dataCompany);
         if($rs){
             if($data['AreaId'] == 1){//私有地区
@@ -157,9 +159,7 @@ class Shop extends Model
         $res = $this->getShopTypeMoney($ShopType);
         $Bag = new Bag($uid);
         if($res){
-//            var_dump($res['Type'] . "=>" .$res['Count']);
             $count = $Bag->getCountByItemId($res['Type']);
-//            var_dump("定期用户余额" .$count );
             if($count >= $res['Count']){
                 //允许创建
                 return true;

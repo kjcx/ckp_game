@@ -1162,7 +1162,7 @@ class Web extends WebSocketController
             return;
         }
         //1. 验证级别
-
+        var_dump("验证级别");
         $rs = $Shop->CheckLevel($this->uid,$data_CreateBuild['ShopType']);
         if(!$rs){
             var_dump("级别不够");
@@ -1170,6 +1170,7 @@ class Web extends WebSocketController
             return;
         }
         //2.验证金币是否满足
+        var_dump("验证金币是否满足");
         $rs = $Shop->CheckMoney($this->uid,$data_CreateBuild['ShopType']);
         if(!$rs){
             var_dump("没有足够的金钱");
@@ -1181,6 +1182,7 @@ class Web extends WebSocketController
             var_dump("店铺位置已经存在店铺");
         }else{
             $rs = $Shop->create($this->uid,$data_CreateBuild);
+            var_dump("创建店铺");
             if($rs){
                 $str = CreateBuildResult::encode($this->uid,$data_CreateBuild);
                 $this->send(1058,$this->fd,$str);
