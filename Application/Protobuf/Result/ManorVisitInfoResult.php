@@ -13,10 +13,10 @@ class ManorVisitInfoResult
 {
     public static function encode($data)
     {
-        $visits = $data['visits'] = [];
+        $visits = [];
         $obj = new \AutoMsg\ManorVisitInfoResult();
-        if (!empty($data['visits'])) {
-            foreach ($data['visits'] as $value) {
+        if (!empty($data)) {
+            foreach ($data as $value) {
                 $visits[] = ManorVisitInfoRes::encode($value);
             }
         }

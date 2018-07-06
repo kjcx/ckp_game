@@ -180,7 +180,8 @@ class Role extends Model
     {
         $RoleInfoKey = $this->RoleInfoKey . $Uid;
         $rs = $this->cache->hashHINCRBY($RoleInfoKey,'shenjiazhi',$shenjia);
-        $this->mysql->where('uid',$Uid)->update($this->table,['shenjiazhi'=>$this->mysql->inc($shenjia)]);
+        $value = $this->getShenjiazhi($Uid);
+        updateRank($Uid,$value,1);//更新身价到队列
         return true;
 
     }

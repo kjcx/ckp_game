@@ -16,14 +16,11 @@ use App\Utility\Cache;
 class RankList extends Model
 {
     private $cache;
-    private $rankListKeys = [
-        1 => 'rankList:type:1',
-        2 => 'rankList:type:2',
-        3 => 'rankList:type:3',
-        4 => 'rankList:type:4',
-        5 => 'rankList:type:5',
-    ];
+    private $rankListKeys = [];//排行榜key
+    private $rankListQueue = [];//排行榜队列
+    private $rankType = [1,2,3,4,5];
     private $role;
+
     const Income = 1;//身价排行榜
     const CompanyLv = 2;//公司级别排行榜
     const GoldCount = 3;//持有创客币数量排行榜
@@ -36,6 +33,10 @@ class RankList extends Model
     {
         $this->cache = Cache::getInstance();
         $this->role = new Role();
+        foreach ($this->rankType as $type) {
+            $this->rankListKeys[$type] = 'rankList:type:' . $type;
+            $this->rankListQueue[$type] = 'rankQueue:type:' . $type;
+        }
     }
 
     /**
@@ -74,6 +75,28 @@ class RankList extends Model
         return $data;
     }
 
+    /**
+     * 设置排行榜到队列中
+     * 因为排行榜不是实时更新 并且排行榜添加的时候可能非常耗费cpu 所以推送到队列中 定时 没人时候执行
+     * @param $uid
+     * @param $type
+     * @param $score
+     * @return bool
+     */
+    public function setRankToQueue($uid,$type,$score)
+    {
+        if (!isset($this->rankListQueue[$type])) {
+            //没有排行榜类型 返回false
+            return false;
+        }
+        $this->cache->hashSet($this->rankListQueue[$type],$uid,$score,false);
+        return true;
+    }
+    /**
+     * 测试使用
+     * @param $type
+     * @return array|bool
+     */
     public function getData($type)
     {
         //结构体的bug

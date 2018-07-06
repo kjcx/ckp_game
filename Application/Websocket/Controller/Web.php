@@ -299,11 +299,9 @@ class Web extends WebSocketController
      */
     public function msgid_1056()
     {
-        //TODO::
         $data = HarvestPlantReq::decode($this->data);
         $land = new Land($this->uid);
         $res = $land->harvest($data['landId']);
-        var_dump($res);
         if (isset($res['error'])){
             $this->send(1086,$this->fd,0,$res['msg'],12);
         } else {
@@ -1503,24 +1501,23 @@ class Web extends WebSocketController
      */
     public function msgid_1053()
     {
-        var_dump(1);
         $data = RequestManorReq::decode($this->data);
-        var_dump($data['userId']);
-        $land = new Land($data['userId']);
-        $landInfo = $land->getLand();
+        $land = new Land($this->uid);
+        $landInfo = $land->getLand($data['userId']);
         $string = RequestManorResult::encode($landInfo);
         $this->send(1082,$this->fd,$string);
     }
 
     /**
      * 拜访记录
-     * TODO::init
      * ManorVisitInfoResult
      */
     public function msgid_1148()
     {
-        $data = [];
-        $string = ManorVisitInfoResult::encode();
+
+        $land = new Land($this->uid);
+        $res = $land->getLog();
+        $string = ManorVisitInfoResult::encode($res);
         $this->send(1201,$this->fd,$string);
 
 //        $this->send(1082,$this->fd,'');
@@ -2133,6 +2130,7 @@ class Web extends WebSocketController
         $data = StealSemenReq::decode($this->data);
         $land = new Land($this->uid);
         $res = $land->steal($data['uid'],$data['landIds']);
+
         if ($res == false) {
             $this->send(1091,$this->fd,'',$res['msg'],12);
         }  else {
@@ -2759,7 +2757,6 @@ class Web extends WebSocketController
         $data = RankingReq::decode($this->data);
         $rankList = new RankList();
         $res = $rankList->getData($data['ranKingType']);
-
         $this->send(1132,$this->fd,RankingResult::encode($res,$data['ranKingType']));
     }
 

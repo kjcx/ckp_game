@@ -67,6 +67,9 @@ class Test extends Controller
 
     public function index()
     {
+        $land = new Land(115);
+        $res = $land->getLog();
+        var_dump($res);
 
     }
 }

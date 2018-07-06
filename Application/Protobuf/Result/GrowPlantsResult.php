@@ -13,6 +13,7 @@ class GrowPlantsResult
 {
     public static function encode($data)
     {
+        var_dump($data);
         $obj = new \AutoMsg\GrowPlantsResult();
         $obj->setLoadManor(LoadManorData::encode($data));
         return $obj->serializeToString();

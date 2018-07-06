@@ -38,3 +38,13 @@ if (!function_exists('push')) {
         });
     }
 }
+/**
+ * 更新排行榜
+ */
+if (!function_exists('updateRank')) {
+    function updateRank($uid,$score,$type)
+    {
+        $rank = new \App\Models\Rank\RankList();
+        return $rank->setRankToQueue($uid,$type,$score);
+    }
+}
