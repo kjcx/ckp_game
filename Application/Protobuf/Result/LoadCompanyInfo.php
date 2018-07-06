@@ -23,7 +23,13 @@ class LoadCompanyInfo
             $Desc = $data['Desc'];
             $Icon = $data['Icon'];
             $Level = $data['Level'];
+            if(!isset($data['NpcId'])){
+               $data['NpcId'] = [];//谈判团助战
+            }
             $NpcId = $data['NpcId'];//谈判团助战
+            if(!isset($data['TalkGroupId'])){
+                $data['TalkGroupId'] = [];
+            }
             $TalkGroupId = $data['TalkGroupId'];//谈判团队伍
             $ClientValue = $data['ClientValue']?:0;
 //            var_dump('ClientValueClientValue');
@@ -33,8 +39,7 @@ class LoadCompanyInfo
             $CreateTime = $data['CreateTime'];//时间戳
             $LoadCompanyInfo->setName($Name);
             $LoadCompanyInfo->setDesc($Desc);//公司描述
-//        $LoadCompanyInfo->setIcon($Icon);//公司图标
-////        $LoadCompanyInfo->setLevel($Level);//公司级别
+
             $LoadCompanyInfo->setClientValue($ClientValue);//客流量
             $LoadCompanyInfo->setShopNumber($ShopNumber);// 店铺数量
             $LoadCompanyInfo->setStaffNumber($StaffNumber);//当前员工数量

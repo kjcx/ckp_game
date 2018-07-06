@@ -21,7 +21,6 @@ class LandBuildInfo extends Model
         $Shop = new Shop();
         $Staff = new Staff();
         $data = $Shop->getAllShop($uid,$Area);
-
         $arr = [];
         if($data){
             foreach ($data as $datum) {

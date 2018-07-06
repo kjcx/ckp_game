@@ -62,21 +62,30 @@ class JoinGameResult
             $Staff = new Staff();
 //            npc
             $TalkGroupId = $Staff->getTalkingGroupNpc($uid);
+            if(!$TalkGroupId){
+                $TalkGroupId = [];
+            }
             $data_Company['TalkGroupId'] = $TalkGroupId;
 //        居民
             $NpcInfo = new \App\Models\Npc\NpcInfo();
             $NpcId = $NpcInfo->getRedisNpcAppointed($uid);
+            if(!$NpcId){
+                $NpcId = [];
+            }
             $data_Company['NpcId'] = $NpcId;
         }
         $CompanyInfo = LoadCompanyInfo::encode($data_Company);
         $JoinGameResult->setCompanyInfo($CompanyInfo);
+        var_dump(1);
         //店铺
         $MapInfo = GetMapResult::encode($uid,2);//店铺
         $JoinGameResult->setMapInfo($MapInfo);
+        var_dump(2);
         //店铺主管信息
         $Shop = new Shop();
         $TalentDatas = $Shop->getMasterByUid($uid);
         $JoinGameResult->setTalentDatas($TalentDatas);
+        var_dump(3);
         //招聘抽奖
         $TypeCountStaff = TypeCountStaffResult::encode($uid);
         $JoinGameResult->setTypeCountStaff($TypeCountStaff);

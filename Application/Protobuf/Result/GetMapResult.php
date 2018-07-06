@@ -30,6 +30,7 @@ class GetMapResult
     {
         $GetMapResult = new \AutoMsg\GetMapResult();
         $LandBuildInfo = LandBuildInfo::encode($uid,$Area);
+        var_dump($LandBuildInfo);
         $GetMapResult->setLoadBuildInfo($LandBuildInfo);
 
         if($Area == 2){
