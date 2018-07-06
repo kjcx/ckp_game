@@ -56,6 +56,7 @@ class JoinGameResult
         //公司
         $Company = new Company();
         $data_Company = $Company->getCompany($uid);
+        var_dump("公司数据" . $data_Company);
         if($data_Company){
             //查询谈判团npc 和居民
             $Staff = new Staff();
@@ -65,6 +66,8 @@ class JoinGameResult
 //        居民
             $NpcInfo = new \App\Models\Npc\NpcInfo();
             $NpcId = $NpcInfo->getRedisNpcAppointed($uid);
+            var_dump("npcidnpcid");
+            var_dump($NpcId);
             $data_Company['NpcId'] = $NpcId;
         }
         $CompanyInfo = LoadCompanyInfo::encode($data_Company);

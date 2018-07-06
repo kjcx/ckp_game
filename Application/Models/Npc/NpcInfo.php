@@ -16,7 +16,7 @@ use App\Utility\Cache;
 class NpcInfo extends Model
 {
     public $table = 'Npc';
-    public $key = 'NpcList:uid';
+    public $key = 'NpcList:uid:';
     public $num = 4;//委托任务随机取4个
     public $cache;
     public function __construct()
@@ -206,6 +206,8 @@ class NpcInfo extends Model
                 $DownId[] = $item['NpcId'];
             }
         }
+        var_dump("getRedisNpcAppointed");
+        var_dump($DownId);
         return $DownId;
     }
 
