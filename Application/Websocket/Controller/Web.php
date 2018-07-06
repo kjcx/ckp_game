@@ -1219,11 +1219,14 @@ class Web extends WebSocketController
         $data = $this->data;
         $data_Harvest = HarvestPublicShopReq::decode($data);
         $ConsumeResult = new ConsumeResult();
-        $data_ConsumeResult = [];
-        foreach ($data_Harvest as $item) {
-            $data_ConsumeResult[] = $ConsumeResult->getConsumeResult($this->uid,$item);
+        $list = [];
+        $Shop = new \App\Models\Company\Shop();
+        foreach ($data_Harvest as $ShopId) {
+            $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$ShopId);
+            $Shop->setPurchaseItmeDate($ShopId,$data_ConsumeResult['PurchaseItmeDate']);//设置收获时间
+            $list[] = $data_ConsumeResult;
         }
-        $str = HarvestPublicShopResult::encode($data_ConsumeResult);
+        $str = HarvestPublicShopResult::encode($list);
         $this->send(1197,$this->fd,$str);
     }
     /**
@@ -2746,7 +2749,8 @@ class Web extends WebSocketController
         //查询排行榜前10名和自己排名
         $PkInfo = new PkInfo();
         $data = $PkInfo->getRanking($this->uid);
-        $str = PkRankingResult::encode($data);
+        $Count = 1;
+        $str = PkRankingResult::encode($data,$Count);
         $this->send(2028,$this->fd,$str);
     }
 

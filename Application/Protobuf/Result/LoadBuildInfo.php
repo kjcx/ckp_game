@@ -37,7 +37,7 @@ class LoadBuildInfo
         $RoleName= $data['RoleName']?:'';//
         $Uid= $data['Uid'];//
 //        $CustomerAddtion= $data['CustomerAddtion'];//
-
+        $PurchaseItmeDate = $data['PurchaseItmeDate'];//上一次收获时间
         $LoadBuildInfo->setBuildId($BuildId);//店铺id
         $LoadBuildInfo->setPos($Pos);//店铺坐标
         $LoadBuildInfo->setBuildType($BuildType);//店铺类型
@@ -54,6 +54,7 @@ class LoadBuildInfo
         $LoadBuildInfo->setIncome($Income);//店铺身价
         $LoadBuildInfo->setRoleName($RoleName);
         $LoadBuildInfo->setRoleId($Uid);
+
 //        $LoadBuildInfo->setOutputGoldDate();
         if(is_array($data['Master'])){
             $Master = $data['Master'];
@@ -62,8 +63,10 @@ class LoadBuildInfo
         }
 
         $LoadBuildInfo->setMaster($Master);//店铺主管列表
-        $LoadBuildInfo->setItemOutput([1=>2]);//店铺主管列表
-        $PurchaseItmeDate = 0;
+        //计算当前时间和上次产出时间时间价格
+
+        $LoadBuildInfo->setItemOutput();//产出道具
+
         $LoadBuildInfo->setPurchaseItmeDate($PurchaseItmeDate);//店铺产出的道具的时间
         $LoadBuildInfo->setOutputGoldDate(0);//收获金币的时间
 

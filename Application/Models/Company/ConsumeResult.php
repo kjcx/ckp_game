@@ -33,39 +33,68 @@ class ConsumeResult extends Model
      */
     public function getConsumeResult($Uid,$ShopId)
     {
-        //计算收益
-        $num = $this->getAllCustomerAddtion($Uid,$ShopId);
-        $BuildingLevel = new BuildingLevel();
+        //获取上次收获时间
         $Shop = new Shop();
         $data_shop = $Shop->getInfoById($ShopId);
+
+        $PurchaseItmeDate = $data_shop['PurchaseItmeDate'];
+        $cishu = (time() - $PurchaseItmeDate) % (2 * 3600);
+        $num = $this->getAllCustomerAddtion($Uid,$ShopId);
+        $BuildingLevel = new BuildingLevel();
+
         $data_item = $BuildingLevel->getInfoByLevel($data_shop['Level']);
         $Count = floor($data_item['GoldStock'] * (1 + $num/500));//金币
+
+        $Gold = $Count * $num;
+
         $ShopType = $data_shop['ShopType'];
-        $data_rand_item = $BuildingLevel->getRand($data_shop['Level']);//非绑金
         $Field = $this->type[$ShopType];
         //读取对应的字段
         $str = $data_item[$Field];
         $arr = explode(';',$str);
-        $new = [];
-        foreach ($arr as $item) {
-            $res = explode(',',$item);
-            $DropId = $res[0];
-            $num = $res[1];
-            for($i=0;$i<$num;$i++){
-                $new[] = $DropId;
+        $list = [];
+        $Gold2 = [];
+        for ($i=0;$i<$cishu;$i++){
+            //计算非绑金收益
+            $data_rand_item = $BuildingLevel->getRand($data_shop['Level']);//非绑金
+            if($data_rand_item){
+                if(isset($Gold2[$data_rand_item['ItemId']])){
+                    $Gold2[$data_rand_item['ItemId']] =  $Gold2[$data_rand_item['ItemId']] + $data_rand_item['Count'];
+                }else{
+                    $Gold2[$data_rand_item['ItemId']] = $data_rand_item['Count'];
+                }
+            }
+
+            //计算收益
+            $new = [];
+            foreach ($arr as $item) {
+                $res = explode(',',$item);
+                $DropId = $res[0];
+                $num = $res[1];
+                for($i=0;$i<$num;$i++){
+                    $new[] = $DropId;
+                }
+            }
+
+            mt_srand();
+            $DropId = $new[array_rand($new)];
+            $Drop = new Drop();
+            $data_drop = $Drop->getRandDropLib($DropId);//道具
+            if($data_drop){
+                if(isset( $list[$data_drop['ItemId']])){
+                    $list[$data_drop['ItemId']] =  $list[$data_drop['ItemId']] + $data_drop['Count'];
+                }else{
+                    $list[$data_drop['ItemId']] =  $data_drop['Count'];
+                }
             }
         }
-        mt_srand();
-        $DropId = $new[array_rand($new)];
-        $Drop = new Drop();
-        $data_drop = $Drop->getRandDropLib($DropId);//道具
         if($Count){
             $data_drop[6] = $Count;
         }
-        if($data_rand_item){
-            $data_drop[$data_rand_item['ItemId']] = $data_rand_item['Count'];
+        if($Gold2){
+            $list[$Gold2[2]] = $Gold2['Count'];
         }
-        return ['ShopId'=>$ShopId,'ItemCount'=>$data_drop,'ItmeDate'=>time()];
+        return ['ShopId'=>$ShopId,'ItemCount'=>$list,'PurchaseItmeDate'=>($PurchaseItmeDate + $cishu * 2 *3600)];
     }
 
     /**

@@ -19,6 +19,12 @@ class PkRankingResult extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>map<int32, .AutoMsg.PkRankingInfo> PkRanking = 1;</code>
      */
     private $PkRanking;
+    /**
+     *已参赛数量
+     *
+     * Generated from protobuf field <code>int32 Count = 2;</code>
+     */
+    private $Count = 0;
 
     public function __construct() {
         \GPBMetadata\Src\Protomsg::initOnce();
@@ -43,6 +49,32 @@ class PkRankingResult extends \Google\Protobuf\Internal\Message
     {
         $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::INT32, \Google\Protobuf\Internal\GPBType::MESSAGE, \AutoMsg\PkRankingInfo::class);
         $this->PkRanking = $arr;
+
+        return $this;
+    }
+
+    /**
+     *已参赛数量
+     *
+     * Generated from protobuf field <code>int32 Count = 2;</code>
+     * @return int
+     */
+    public function getCount()
+    {
+        return $this->Count;
+    }
+
+    /**
+     *已参赛数量
+     *
+     * Generated from protobuf field <code>int32 Count = 2;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setCount($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->Count = $var;
 
         return $this;
     }

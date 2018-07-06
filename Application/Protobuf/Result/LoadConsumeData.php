@@ -26,8 +26,8 @@ class LoadConsumeData
         foreach ($ItemCount as $item) {
             $map[$item['ItemId']] = $item['Count'];
         }
-        $HarvestDate = $data['HarvestDate'];
-        $ItmeDate = $data['ItmeDate'];
+//        $HarvestDate = $data['HarvestDate'];
+        $ItmeDate = $data['PurchaseItmeDate'];
         $LoadConsumeData->setShopId($ShopId);//店铺id
 //        $LoadConsumeData->setMoney($Money);//产出的钱
 //        $LoadConsumeData->setMoneyType($MoneyType);//产出的钱的类型

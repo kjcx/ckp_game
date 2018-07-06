@@ -2313,6 +2313,7 @@ message PkRankingReq{
 //pk排行榜返回
 message PkRankingResult{
     map<int32,PkRankingInfo> PkRanking=1;
+    int32 Count=2;//已参赛数量
 }
 //排行榜详情
 message PkRankingInfo{

@@ -92,4 +92,14 @@ class PkInfo extends Model
         $Score = $this->cache->client()->zScore($key,$Uid);
         return $Score;
     }
+
+    /**
+     * 获取本人参赛数量
+     * @param $Uid
+     * @return int
+     */
+    public function getCount($Uid)
+    {
+        return 1;
+    }
 }

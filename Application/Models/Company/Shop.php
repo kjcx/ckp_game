@@ -85,6 +85,7 @@ class Shop extends Model
         $dataCompany['Master'] = [];//初始化经理
         $dataCompany['LeaderTime'] = 0;//雇佣开始时间
         $dataCompany['CurExtendLv'] = 0;//扩展等级
+        $dataCompany['PurchaseItmeDate'] = time();//店铺收获时间
         var_dump($dataCompany);
         $rs = Db::table($this->table)->insert($dataCompany);
         if($rs){
@@ -401,5 +402,16 @@ class Shop extends Model
         }else{
             return false;
         }
+    }
+
+    /**
+     * 更新店铺收获时间
+     * @param $ShopId
+     * @return int|string
+     */
+    public function setPurchaseItmeDate($ShopId)
+    {
+        $rs = Db::table($this->table)->where('ShopId',$ShopId)->update(['PurchaseItmeDate'=>time()]);
+        return $rs;
     }
 }

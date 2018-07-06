@@ -15,7 +15,7 @@ namespace App\Protobuf\Result;
  */
 class PkRankingResult
 {
-    public static function encode($data)
+    public static function encode($data,$Count)
     {
         $PkRankingResult = new \AutoMsg\PkRankingResult();
         $PkRankings = [];
@@ -25,6 +25,7 @@ class PkRankingResult
             }
         }
         $PkRankingResult->setPkRanking($PkRankings);
+        $PkRankingResult->setCount($Count);
         $str = $PkRankingResult->serializeToString();
         return $str;
     }
