@@ -413,7 +413,8 @@ class Shop extends Model
      */
     public function setPurchaseItmeDate($ShopId,$PurchaseItmeDate,$OutputGoldDate)
     {
-        $rs = Db::table($this->table)->where('ShopId',$ShopId)->update(['PurchaseItmeDate'=>$PurchaseItmeDate,'OutputGoldDate'=>$OutputGoldDate]);
+        var_dump($ShopId . '=>shopid' .$PurchaseItmeDate .'->' . $OutputGoldDate);
+        $rs = Db::table($this->table)->where('_id',$ShopId)->update(['PurchaseItmeDate'=>$PurchaseItmeDate,'OutputGoldDate'=>$OutputGoldDate]);
         return $rs;
     }
 }

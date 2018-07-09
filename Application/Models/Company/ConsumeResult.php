@@ -39,21 +39,27 @@ class ConsumeResult extends Model
         $data_shop = $Shop->getInfoById($ShopId);
 
         $PurchaseItmeDate = $data_shop['PurchaseItmeDate'];//道具收获时间
-        $OutputGoldDate = $data_shop['OutputGoldDate'];//金币收获时候
-
+        $OutputGoldDate_History = time() - 86400;//字段没有的情况赋值
+        $OutputGoldDate = isset($data_shop['OutputGoldDate'])?$data_shop['OutputGoldDate']:$OutputGoldDate_History;//金币收获时候
+        var_dump("PurchaseItmeDate" . date('Y-m-d H:i:s',$PurchaseItmeDate) . '=>' . (time() - $OutputGoldDate));
+        var_dump("OutputGoldDate" . date('Y-m-d H:i:s',$OutputGoldDate) . '=>' . (time() - $PurchaseItmeDate));
         $GameConfig = new GameConfig();
         $ItemInterval = $GameConfig->getItemInterval();//店铺道具产出间隔
         $GoldInterval = $GameConfig->getGoldInterval();//金币产出时间
-        $Gold_num = (time() - $OutputGoldDate) % ($GoldInterval * 60);
-        $Item_num = (time() - $PurchaseItmeDate) % ($ItemInterval * 60);
-        $num = $this->getAllCustomerAddtion($Uid,$ShopId);
+
+        var_dump("GoldInterval" . $GoldInterval);
+        var_dump("ItemInterval" . $ItemInterval);
+        $Gold_num = floor((time() - $OutputGoldDate) / ($GoldInterval * 60));
+        $Item_num = floor((time() - $PurchaseItmeDate) / ($ItemInterval * 60));
+        $num = $this->getAllCustomerAddtion($Uid,$ShopId,$data_shop['Level']);
+        var_dump("num:" . $num);
         $BuildingLevel = new BuildingLevel();
 
         $data_item = $BuildingLevel->getInfoByLevel($data_shop['Level']);
-        $Count = floor($data_item['GoldStock'] * (1 + $num/500));//金币
-
+        $Count = (int)floor($data_item['GoldStock'] * (1 + $num/500));//金币
+        var_dump("Count:" . $Count);
         $Gold = $Count * $Gold_num;//金币时间
-
+        var_dump("获得金币:" . $Gold);
         $ShopType = $data_shop['ShopType'];
         $Field = $this->type[$ShopType];
         //读取对应的字段
@@ -61,6 +67,7 @@ class ConsumeResult extends Model
         $arr = explode(';',$str);
         $list = [];
         $Gold2 = [];
+        var_dump("item_num:" . $Item_num);
         for ($i=0;$i<$Item_num;$i++){
             //计算非绑金收益
             $data_rand_item = $BuildingLevel->getRand($data_shop['Level']);//非绑金
@@ -78,7 +85,7 @@ class ConsumeResult extends Model
                 $res = explode(',',$item);
                 $DropId = $res[0];
                 $num = $res[1];
-                for($i=0;$i<$num;$i++){
+                for($j=0;$j<$num;$j++){
                     $new[] = $DropId;
                 }
             }
@@ -87,6 +94,7 @@ class ConsumeResult extends Model
             $DropId = $new[array_rand($new)];
             $Drop = new Drop();
             $data_drop = $Drop->getRandDropLib($DropId);//道具
+
             if($data_drop){
                 if(isset( $list[$data_drop['ItemId']])){
                     $list[$data_drop['ItemId']] =  $list[$data_drop['ItemId']] + $data_drop['Count'];
@@ -96,13 +104,15 @@ class ConsumeResult extends Model
             }
         }
         if($Count){
-            $data_drop[6] = $Count;
+            $list[6] = $Count;
         }
         if($Gold2){
             $list[$Gold2[2]] = $Gold2['Count'];
         }
 
-        return ['ShopId'=>$ShopId,'ItemCount'=>$list,'PurchaseItmeDate'=>($PurchaseItmeDate + $Item_num * 60),'OutputGoldDate'=>$OutputGoldDate + $Gold_num *60];
+        $result =  ['ShopId'=>$ShopId,'ItemCount'=>$list,'PurchaseItmeDate'=>(int)($PurchaseItmeDate + $Item_num * $ItemInterval * 60),'OutputGoldDate'=>(int)($OutputGoldDate + $Gold_num * $GoldInterval *60)];
+        var_dump($result);
+        return $result;
     }
 
     /**
@@ -133,15 +143,13 @@ class ConsumeResult extends Model
      * 获取全部客流量
      * @param $Uid
      * @param $ShopId
+     * @param $Level
      * @return float|int
      */
-    public function getAllCustomerAddtion($Uid,$ShopId)
+    public function getAllCustomerAddtion($Uid,$ShopId,$Level)
     {
         $Staff = new Staff();
         $StaffCustomerAddtion = $Staff->getStaffCustomerAddtionByShopId($Uid,$ShopId);//员工加成
-        $Role = new Role();
-        $info = $Role->getLevel($Uid);
-        $Level = $info['level'];
         $BuildingLevel = new BuildingLevel();
         $data_BuildingLevel = $BuildingLevel->getInfoByLevel($Level);
         $CustomerAddtion = $data_BuildingLevel['CustomerAddtion'];//基础客流量
@@ -164,7 +172,9 @@ class ConsumeResult extends Model
                 $Master_jiaceng = 0;
             }
         }
-
+        var_dump("客流量:CustomerAddtion" . $CustomerAddtion );
+        var_dump("客流量:StaffCustomerAddtion" . $StaffCustomerAddtion );
+        var_dump("客流量:Master_jiaceng" . $Master_jiaceng );
         $keliuliang = $CustomerAddtion + $StaffCustomerAddtion + $Master_jiaceng;
         return $keliuliang;
     }

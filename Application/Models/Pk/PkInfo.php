@@ -17,6 +17,7 @@ class PkInfo extends Model
 {
     public $cache;
     public $Pk = 'PkRanking';
+    public $WaitPk = 'WaitPk';
     public function __construct()
     {
         $this->cache = Cache::getInstance();
@@ -102,4 +103,22 @@ class PkInfo extends Model
     {
         return 1;
     }
+
+    /**
+     * 匹配玩家
+     */
+    public function Pipei($Uid)
+    {
+        $key = $this->WaitPk;
+        $this->cache->client('write')->rPush($key,$Uid);
+        return true;
+    }
+
+    public function Lpop()
+    {
+        $key = $this->WaitPk;
+        $uid = $this->cache->client()->lPop($key);
+        
+    }
+    
 }

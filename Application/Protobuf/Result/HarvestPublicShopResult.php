@@ -20,6 +20,8 @@ class HarvestPublicShopResult
         $HarvestPublicShopResult = new \AutoMsg\HarvestPublicShopResult();
         $LoadConsume = [];
         foreach ($data as $item) {
+            var_dump("item");
+            var_dump($item);
             $LoadConsume[] = LoadConsumeData::encode($item);
         }
         $HarvestPublicShopResult->setLoadConsume($LoadConsume);

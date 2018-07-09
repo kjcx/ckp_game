@@ -274,7 +274,7 @@ class FriendInfo extends Model
         $Search  = $data['Search'];
         $data = $Role->SearchFriend($Uid,$data);
         if($data){
-            return [$data];
+            return $data;
         }else{
             return [];
         }

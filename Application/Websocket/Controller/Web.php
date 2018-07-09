@@ -1218,10 +1218,12 @@ class Web extends WebSocketController
     {
         $data = $this->data;
         $data_Harvest = HarvestPublicShopReq::decode($data);
+        var_dump($data_Harvest);
         $ConsumeResult = new ConsumeResult();
         $list = [];
         $Shop = new \App\Models\Company\Shop();
         foreach ($data_Harvest as $ShopId) {
+            var_dump("shopid:" . $ShopId);
             $data_ConsumeResult = $ConsumeResult->getConsumeResult($this->uid,$ShopId);
             $Shop->setPurchaseItmeDate($ShopId,$data_ConsumeResult['PurchaseItmeDate'],$data_ConsumeResult['OutputGoldDate']);//设置收获时间
             $list[] = $data_ConsumeResult;

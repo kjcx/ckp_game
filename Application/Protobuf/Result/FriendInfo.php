@@ -19,6 +19,8 @@ class FriendInfo
     {
 
         $FriendInfo = new \AutoMsg\FriendInfo();
+        var_dump('111111');
+        var_dump($data);
         if($data){
             $Name = $data['nickname'];
             $Level = $data['level'];
