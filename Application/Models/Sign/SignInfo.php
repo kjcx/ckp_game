@@ -15,8 +15,8 @@ use think\Db;
 class SignInfo extends Model
 {
     public $table = 'ckzc.SignInfo';
-    public $key  = 'Sign:';
-    public $Reward  = 'Reward:';
+    public $key  = 'Sign:uid:';
+    public $Reward  = 'Reward:uid:';
     /**
      * 创建每月信息
      */
@@ -117,10 +117,28 @@ class SignInfo extends Model
         //获取已领取奖励列表
         $Reward = $this->getRedisRewardByUid($Uid);
         if($Reward){
-            $IsSign_Seven = $Reward['Seven'];//判断7天签到奖励是否领取
-            $IsSign_Fourteen = $Reward['IsSign_Fourteen'];//判断14天签到奖励是否领取
-            $IsSign_Twenty_one = $Reward['IsSign_Twenty_one'];//判断2`天签到奖励是否领取
-            $IsSign_Twenty_eight = $Reward['IsSign_Twenty_eight'];//判断18天签到奖励是否领取
+
+            if(isset($Reward['101'])){
+                $IsSign_Seven = $Reward['101'];//判断7天签到奖励是否领取
+            }else{
+                $IsSign_Seven = false;
+            }
+            if(isset($Reward['102'])){
+                $IsSign_Fourteen = $Reward['102'];//判断14天签到奖励是否领取
+            }else{
+                $IsSign_Fourteen = false;
+            }
+            if(isset($Reward['103'])){
+                $IsSign_Twenty_one = $Reward['103'];//判断21天签到奖励是否领取
+            }else{
+                $IsSign_Twenty_one = false;
+            }
+            if(isset($Reward['104'])){
+                $IsSign_Twenty_eight = $Reward['104'];//判断28天签到奖励是否领取
+            }else{
+                $IsSign_Twenty_eight = false;
+            }
+
         }else{
             $IsSign_Seven = false;
             $IsSign_Fourteen = false;
@@ -183,7 +201,7 @@ class SignInfo extends Model
      */
     public function setRedisRewardByUid($Uid,$Num)
     {
-        $key = $this->Reward . date('Ym') . $Uid;
+        $key = $this->Reward . date('Ym') .':'. $Uid;
         $rs = $this->redis->hSet($key,$Num,true);
         return $rs;
     }
@@ -195,7 +213,7 @@ class SignInfo extends Model
      */
     public function getRedisRewardByUid($Uid)
     {
-        $key = $this->Reward . date('Ym') . $Uid;
+        $key = $this->Reward . date('Ym') .':'. $Uid;
         $data = $this->redis->hGetAll($key);
         return $data;
     }
